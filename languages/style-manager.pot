@@ -1,0 +1,927 @@
+# Copyright (C) 2016 Fonto
+# This file is distributed under the same license as the Fonto package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Fonto 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fonto\n"
+"POT-Creation-Date: 2016-06-10 12:36:20+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: includes/class-fonto-init.php:99
+msgid "Minimal version of PHP required: "
+msgstr ""
+
+#: includes/class-fonto-init.php:100
+msgid "Your server's PHP version: "
+msgstr ""
+
+#: includes/class-fonto-init.php:162
+msgid "The <strong>%s</strong> plugin has been updated to version %s. Enjoy!"
+msgstr ""
+
+#: includes/class-fonto-output.php:78 includes/class-fonto-post-types.php:305
+#: includes/class-fonto-post-types.php:348
+msgid "Thin 100"
+msgstr ""
+
+#: includes/class-fonto-output.php:79 includes/class-fonto-post-types.php:306
+#: includes/class-fonto-post-types.php:361
+msgid "Thin Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:80 includes/class-fonto-post-types.php:307
+#: includes/class-fonto-post-types.php:373
+msgid "Extra Light 200"
+msgstr ""
+
+#: includes/class-fonto-output.php:81 includes/class-fonto-post-types.php:308
+#: includes/class-fonto-post-types.php:385
+msgid "Extra Light Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:82 includes/class-fonto-post-types.php:309
+#: includes/class-fonto-post-types.php:397
+msgid "Light 300"
+msgstr ""
+
+#: includes/class-fonto-output.php:83 includes/class-fonto-post-types.php:310
+#: includes/class-fonto-post-types.php:409
+msgid "Light Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:84 includes/class-fonto-post-types.php:311
+#: includes/class-fonto-post-types.php:421
+msgid "Regular 400"
+msgstr ""
+
+#: includes/class-fonto-output.php:85 includes/class-fonto-post-types.php:312
+#: includes/class-fonto-post-types.php:433
+msgid "Regular Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:86 includes/class-fonto-post-types.php:313
+#: includes/class-fonto-post-types.php:445
+msgid "Medium 500"
+msgstr ""
+
+#: includes/class-fonto-output.php:87 includes/class-fonto-post-types.php:314
+#: includes/class-fonto-post-types.php:457
+msgid "Medium Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:88 includes/class-fonto-post-types.php:315
+msgid "SemiBold 600"
+msgstr ""
+
+#: includes/class-fonto-output.php:89 includes/class-fonto-post-types.php:316
+msgid "SemiBold Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:90 includes/class-fonto-post-types.php:317
+#: includes/class-fonto-post-types.php:493
+msgid "Bold 700"
+msgstr ""
+
+#: includes/class-fonto-output.php:91 includes/class-fonto-post-types.php:318
+#: includes/class-fonto-post-types.php:505
+msgid "Bold Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:92 includes/class-fonto-post-types.php:319
+msgid "ExtraBold 800"
+msgstr ""
+
+#: includes/class-fonto-output.php:93 includes/class-fonto-post-types.php:320
+msgid "ExtraBold Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:94
+msgid "Black 100"
+msgstr ""
+
+#: includes/class-fonto-output.php:95 includes/class-fonto-post-types.php:322
+#: includes/class-fonto-post-types.php:553
+msgid "Black Italic"
+msgstr ""
+
+#: includes/class-fonto-output.php:395 includes/class-fonto-output.php:405
+#: includes/class-fonto-post-types.php:709
+#: includes/class-fonto-post-types.php:719 includes/class-fonto.php:398
+#: includes/class-fonto.php:408 includes/lib/class-fonto-option.php:164
+#: includes/lib/class-fonto-option.php:174
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:69
+msgid "Fonts"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:69
+msgid "Font"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:69
+msgid "Custom fonts bonanza"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:159
+msgid "Font Details"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:173
+msgid "Font Source"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:174
+msgid "Select whether you are using a Custom Web Font Service (Typekit, Myfonts, Fonts.com) or you're self-hosting the fonts."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:178
+msgid "Web Font Service"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:179
+msgid "Self-Hosted"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:187
+msgid "Fonts Loading / Embed Code"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:195
+msgid "Font Files"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:196
+msgid "Upload all the files received from the font service/generator."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:210
+msgid "URL Path to the font files"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:211
+msgid "This is the URL path to be used for the uploaded font files. Please use it in the font's CSS rules (i.e. replace <code>Fonts/something.woff</code> with <code>http://yourdomain.com/wp-content/uploads/fonts/123/something.woff</code> )."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:225
+#: includes/class-fonto-post-types.php:242
+msgid "Embed Code"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:236
+msgid "Insert below the embed code (JS/CSS) provided by the font service. <a href=\"#\" target=\"_blank\">Learn More</a>"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:237
+#: includes/class-fonto-post-types.php:254
+msgid "The above code will be inserted in the <head> area of your website."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:253
+msgid "Insert below the CSS code. <a href=\"#\" target=\"_blank\">Learn More</a>"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:260
+msgid "Weights & Styles Matching"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:267
+msgid "How Fonts Variations (weights & styles) are declared?"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:268
+msgid "Based on the format that you received the font names from the font service."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:272
+msgid "Fonts are grouped together in a single \"Font Family\" name"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:273
+msgid "When you have only <em>one</em> font name; we will add weights and styles via CSS.<br/>— Example: <em>\"proxima-nova\"</em> from Typekit or Fonts.com"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:274
+msgid "Font Names are Referenced Individually"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:275
+msgid "If you have <em>multiple</em> font names; this means the weights and styles are bundled within each font and we shouldn't add them again in CSS.<br/>— Example: <em>\"ProximaNW01-Regular\"</em> and <em>\"ProximaNW01-RegularItalic\"</em> from MyFonts.com"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:283
+msgid "Font Family Name"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:284
+msgid "Insert the CSS font name as provided by the font service."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:297
+msgid "Available Font Variations"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:298
+msgid "Check the available variations for this font."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:299
+msgid "*Note that the variations will be available through the Font Selectors and will not make any effect if a specific variation is checked but is not loaded by the font service."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:321
+#: includes/class-fonto-post-types.php:541
+msgid "Black 900"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:335
+msgid "Font Weights & Styles Variations"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:336
+msgid "Pair the provided fonts references names with their matching weights and styles."
+msgstr ""
+
+#: includes/class-fonto-post-types.php:469
+msgid "Semi Bold 600"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:481
+msgid "Semi Bold Italic"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:517
+msgid "Extra Bold 800"
+msgstr ""
+
+#: includes/class-fonto-post-types.php:529
+msgid "Extra Bold Italic"
+msgstr ""
+
+#: includes/integrations/customify.php:22
+msgid "Custom Fonts"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:112
+#: includes/lib/class-fonto-taxonomy.php:116
+msgid "Add New %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:113
+#: includes/lib/class-fonto-taxonomy.php:113
+msgid "Edit %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:114
+msgid "New %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:115
+#: includes/lib/class-fonto-taxonomy.php:112
+msgid "All %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:116
+#: includes/lib/class-fonto-taxonomy.php:114
+msgid "View %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:117
+#: includes/lib/class-fonto-taxonomy.php:120
+msgid "Search %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:118
+msgid "No %s Found"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:119
+msgid "No %s Found In Trash"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:120
+#: includes/lib/class-fonto-taxonomy.php:118
+msgid "Parent %s"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:146
+msgid "%1$s updated. %2$sView %3$s%4$s."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:147
+msgid "Custom field updated."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:148
+msgid "Custom field deleted."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:149
+msgid "%1$s updated."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:150
+msgid "%1$s restored to revision from %2$s."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:152
+msgid "%1$s published. %2$sView %3$s%4s."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:153
+msgid "%1$s saved."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:154
+msgid "%1$s submitted. %2$sPreview post%3$s%4$s."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:155
+msgid "%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:155
+msgid "M j, Y @ G:i"
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:156
+msgid "%1$s draft updated. %2$sPreview %3$s%4$s."
+msgstr ""
+
+#: includes/lib/class-fonto-post-type.php:173
+msgid "%1$s %2$s updated."
+msgid_plural "%1$s %3$s updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/lib/class-fonto-post-type.php:174
+msgid "%1$s %2$s not updated, somebody is editing it."
+msgid_plural "%1$s %3$s not updated, somebody is editing them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/lib/class-fonto-post-type.php:175
+msgid "%1$s %2$s permanently deleted."
+msgid_plural "%1$s %3$s permanently deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/lib/class-fonto-post-type.php:176
+msgid "%1$s %2$s moved to the Trash."
+msgid_plural "%1$s %3$s moved to the Trash."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/lib/class-fonto-post-type.php:177
+msgid "%1$s %2$s restored from the Trash."
+msgid_plural "%1$s %3$s restored from the Trash."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/lib/class-fonto-taxonomy.php:115
+msgid "Update %s"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:117
+msgid "New %s Name"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:119
+msgid "Parent %s:"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:121
+msgid "Popular %s"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:122
+msgid "Separate %s with commas"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:123
+msgid "Add or remove %s"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:124
+msgid "Choose from the most used %s"
+msgstr ""
+
+#: includes/lib/class-fonto-taxonomy.php:125
+msgid "No %s found"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:104
+msgid "Test Metabox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:117
+#: includes/vendor/cmb2/example-functions.php:417
+msgid "Test Text"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:118
+#: includes/vendor/cmb2/example-functions.php:130
+#: includes/vendor/cmb2/example-functions.php:138
+#: includes/vendor/cmb2/example-functions.php:146
+#: includes/vendor/cmb2/example-functions.php:154
+#: includes/vendor/cmb2/example-functions.php:163
+#: includes/vendor/cmb2/example-functions.php:171
+#: includes/vendor/cmb2/example-functions.php:186
+#: includes/vendor/cmb2/example-functions.php:194
+#: includes/vendor/cmb2/example-functions.php:202
+#: includes/vendor/cmb2/example-functions.php:219
+#: includes/vendor/cmb2/example-functions.php:228
+#: includes/vendor/cmb2/example-functions.php:241
+#: includes/vendor/cmb2/example-functions.php:248
+#: includes/vendor/cmb2/example-functions.php:255
+#: includes/vendor/cmb2/example-functions.php:269
+#: includes/vendor/cmb2/example-functions.php:282
+#: includes/vendor/cmb2/example-functions.php:295
+#: includes/vendor/cmb2/example-functions.php:307
+#: includes/vendor/cmb2/example-functions.php:316
+#: includes/vendor/cmb2/example-functions.php:324
+#: includes/vendor/cmb2/example-functions.php:333
+#: includes/vendor/cmb2/example-functions.php:340
+#: includes/vendor/cmb2/example-functions.php:354
+#: includes/vendor/cmb2/example-functions.php:418
+#: includes/vendor/cmb2/example-functions.php:512
+#: includes/vendor/cmb2/example-functions.php:520
+#: includes/vendor/cmb2/example-functions.php:527
+#: includes/vendor/cmb2/example-functions.php:534
+#: includes/vendor/cmb2/example-functions.php:541
+#: includes/vendor/cmb2/example-functions.php:548
+#: includes/vendor/cmb2/example-functions.php:555
+#: includes/vendor/cmb2/example-functions.php:582
+#: includes/vendor/cmb2/example-functions.php:590
+#: includes/vendor/cmb2/example-functions.php:597
+#: includes/vendor/cmb2/example-functions.php:634
+msgid "field description (optional)"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:129
+msgid "Test Text Small"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:137
+msgid "Test Text Medium"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:145
+msgid "Custom Rendered Field"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:153
+msgid "Website URL"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:162
+msgid "Test Text Email"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:170
+msgid "Test Time"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:178
+#: includes/vendor/cmb2/example-functions.php:179
+msgid "Time zone"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:185
+msgid "Test Date Picker"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:193
+msgid "Test Date Picker (UNIX timestamp)"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:201
+msgid "Test Date/Time Picker Combo (UNIX timestamp)"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:218
+msgid "Test Money"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:227
+msgid "Test Color Picker"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:240
+msgid "Test Text Area"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:247
+msgid "Test Text Area Small"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:254
+msgid "Test Text Area for Code"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:261
+msgid "Test Title Weeeee"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:262
+msgid "This is a title description"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:268
+msgid "Test Select"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:274
+#: includes/vendor/cmb2/example-functions.php:287
+#: includes/vendor/cmb2/example-functions.php:299
+msgid "Option One"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:275
+#: includes/vendor/cmb2/example-functions.php:288
+#: includes/vendor/cmb2/example-functions.php:300
+msgid "Option Two"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:276
+#: includes/vendor/cmb2/example-functions.php:289
+#: includes/vendor/cmb2/example-functions.php:301
+msgid "Option Three"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:281
+msgid "Test Radio inline"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:294
+msgid "Test Radio"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:306
+msgid "Test Taxonomy Radio"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:315
+msgid "Test Taxonomy Select"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:323
+msgid "Test Taxonomy Multi Checkbox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:332
+msgid "Test Checkbox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:339
+msgid "Test Multi Checkbox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:345
+msgid "Check One"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:346
+msgid "Check Two"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:347
+msgid "Check Three"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:353
+msgid "Test wysiwyg"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:361
+msgid "Test Image"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:362
+msgid "Upload an image or enter a URL."
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:368
+msgid "Multiple Files"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:369
+msgid "Upload or add multiple images/attachments."
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:376
+msgid "oEmbed"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:377
+msgid "Enter a youtube, twitter, or instagram URL. Supports services listed at <a href=\"http://codex.wordpress.org/Embeds\">http://codex.wordpress.org/Embeds</a>."
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:408
+msgid "About Page Metabox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:437
+msgid "Repeating Field Group"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:445
+msgid "Generates reusable form entries"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:447
+msgid "Entry {#}"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:448
+msgid "Add Another Entry"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:449
+msgid "Remove Entry"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:462
+msgid "Entry Title"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:469
+msgid "Description"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:470
+msgid "Write a short description for this entry"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:476
+msgid "Entry Image"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:482
+msgid "Image Caption"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:501
+msgid "User Profile Metabox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:511
+#: includes/vendor/cmb2/example-functions.php:581
+msgid "Extra Info"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:519
+msgid "Avatar"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:526
+msgid "Facebook URL"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:533
+msgid "Twitter URL"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:540
+msgid "Google+ URL"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:547
+msgid "Linkedin URL"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:554
+msgid "User Field"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:574
+msgid "Category Metabox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:589
+msgid "Term Image"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:596
+msgid "Arbitrary Term Field"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:618
+msgid "Theme Options Metabox"
+msgstr ""
+
+#: includes/vendor/cmb2/example-functions.php:633
+msgid "Site Background Color"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2.php:124
+msgid "Metabox configuration is required to have an ID parameter"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2.php:423
+msgid "Click to toggle"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Ajax.php:71
+msgid "Please Try Again"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Ajax.php:163
+msgid "Remove Embed"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Ajax.php:167
+msgid "No oEmbed Results Found for %s. View more info at"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Field.php:1165
+msgid "Add Group"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Field.php:1166
+msgid "Remove Group"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Field.php:1195
+#: includes/vendor/cmb2/includes/CMB2_Field.php:1199
+msgid "None"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Field.php:1256
+msgid "Sorry, this field does not have a cmb_id specified."
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:92
+#: includes/vendor/cmb2/includes/CMB2_JS.php:125
+msgid "Clear"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:93
+msgid "Default"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:94
+msgid "Select Color"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:95
+msgid "Current Color"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:115
+msgctxt "Valid formatDate string for jquery-ui datepicker"
+msgid "mm/dd/yy"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:116
+msgid "Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:117
+msgid "Su, Mo, Tu, We, Th, Fr, Sa"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:118
+msgid "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:119
+msgid "January, February, March, April, May, June, July, August, September, October, November, December"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:120
+msgid "Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:121
+msgid "Next"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:122
+msgid "Prev"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:123
+msgid "Today"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:124
+#: includes/vendor/cmb2/includes/CMB2_JS.php:134
+msgid "Done"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:128
+msgid "Choose Time"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:129
+msgid "Time"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:130
+msgid "Hour"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:131
+msgid "Minute"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:132
+msgid "Second"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:133
+msgid "Now"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:135
+msgctxt "Valid formatting string, as per http://trentrichardson.com/examples/timepicker/"
+msgid "hh:mm TT"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:141
+msgid "Use this file"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:142
+msgid "Use these files"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:143
+#: includes/vendor/cmb2/includes/types/CMB2_Type_File_Base.php:66
+msgid "Remove Image"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:144
+#: includes/vendor/cmb2/includes/CMB2_Types.php:267
+#: includes/vendor/cmb2/includes/types/CMB2_Type_File_Base.php:87
+msgid "Remove"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:145
+#: includes/vendor/cmb2/includes/types/CMB2_Type_File_Base.php:82
+msgid "File:"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:146
+#: includes/vendor/cmb2/includes/types/CMB2_Type_File_Base.php:85
+msgid "Download"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_JS.php:147
+msgid "Select / Deselect All"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_Types.php:206
+msgid "Add Row"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_hookup.php:118
+msgid "Term Metadata is a WordPress > 4.4 feature. Please upgrade your WordPress install."
+msgstr ""
+
+#: includes/vendor/cmb2/includes/CMB2_hookup.php:122
+msgid "Term metaboxes configuration requires a 'taxonomies' parameter"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/helper-functions.php:278
+msgid "Save"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/types/CMB2_Type_File.php:37
+msgid "Add or Upload File"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/types/CMB2_Type_File_List.php:42
+msgid "Add or Upload Files"
+msgstr ""
+
+#: includes/vendor/cmb2/includes/types/CMB2_Type_Taxonomy_Multicheck.php:29
+#: includes/vendor/cmb2/includes/types/CMB2_Type_Taxonomy_Radio.php:26
+msgid "No terms"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "Fonto"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://pixelgrade.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "This is your starter template for your next WordPress plugin."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "PixelGrade"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://pixelgrade.com"
+msgstr ""
