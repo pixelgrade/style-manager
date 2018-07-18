@@ -1,6 +1,6 @@
 var plugin = 'style-manager',
-	source_SCSS = 'scss/**/*.scss',
-	dest_CSS = './css/',
+	source_SCSS = 'assets/scss/**/*.scss',
+	dest_CSS = './assets/css/',
 
 	gulp 		= require('gulp'),
 	sass 		= require('gulp-sass'),

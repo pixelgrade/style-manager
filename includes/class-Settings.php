@@ -78,7 +78,7 @@ class StyleManager_Settings extends StyleManager_Singleton_Registry {
 			'boxes'	  => $this->cmb2_metatabs_options_add_boxes( $this->key ),
 			'tabs'	  => $this->cmb2_metatabs_options_add_tabs(),
 			'menuargs' => array(
-				'menu_title' => esc_html__('Style Manager', 'style_manager' ),
+				'menu_title' => esc_html__('Style Manager', 'style-manager' ),
 				'position'    => 56.01,
 			),
 			'load'  => array(

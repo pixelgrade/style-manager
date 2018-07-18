@@ -146,7 +146,7 @@ class StyleManager_Cloud_Api {
 			'version' => get_bloginfo('version'),
 		);
 
-		$site_data['style_manager'] = array(
+		$site_data['style-manager'] = array(
 			'version' => StyleManager_Plugin()->get_version(),
 		);
 

@@ -72,9 +72,9 @@ abstract class StyleManager_Plugin_Init extends StyleManager_Singleton_Registry 
 		);
 
 		$html = '<div class="updated fade">' .
-		        __( 'Error: plugin "' . $this->plugin_name . '" requires a newer version of PHP to be running.', 'style_manager' ) .
-		        '<br/>' . __( 'Minimal version of PHP required: ', 'style_manager' ) . '<strong>' . $this->minimalRequiredPhpVersion . '</strong>
-				<br/>' . __( 'Your server\'s PHP version: ', 'style_manager' ) . '<strong>' . phpversion() . '</strong>
+		        __( 'Error: plugin "' . $this->plugin_name . '" requires a newer version of PHP to be running.', 'style-manager' ) .
+		        '<br/>' . __( 'Minimal version of PHP required: ', 'style-manager' ) . '<strong>' . $this->minimalRequiredPhpVersion . '</strong>
+				<br/>' . __( 'Your server\'s PHP version: ', 'style-manager' ) . '<strong>' . phpversion() . '</strong>
 				</div>';
 		echo wp_kses( $html, $allowed );
 	}
@@ -135,7 +135,7 @@ abstract class StyleManager_Plugin_Init extends StyleManager_Singleton_Registry 
 
 		foreach ( $this->new_versions as $new_version ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' .
-			     sprintf( __( 'The <strong>%s</strong> plugin has been updated to version %s. Enjoy!', 'style_manager' ), $this->plugin_name, $new_version ) .
+			     sprintf( __( 'The <strong>%s</strong> plugin has been updated to version %s. Enjoy!', 'style-manager' ), $this->plugin_name, $new_version ) .
 			     '</p></div>';
 		}
 	}

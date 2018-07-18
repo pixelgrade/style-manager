@@ -202,10 +202,7 @@ class StyleManager_Customize_Preset_Control extends StyleManager_Customize_Contr
                             </label>
                             <div class="palette">
                                 <?php foreach ( $choice_config['options'] as $color_setting_id => $color_value ) {
-                                	$field_config = StyleManager_Customizer::getInstance()->get_option_config( $color_setting_id );
-		                            if ( ! empty( $field_config['connected_fields'] ) ) {
-			                            echo '<div class="palette__item ' . esc_attr( $color_setting_id ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
-		                            }
+	                                echo '<div class="palette__item ' . esc_attr( $color_setting_id ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
                                 } ?>
                             </div>
                         </span>

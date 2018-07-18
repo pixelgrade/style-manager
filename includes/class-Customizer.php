@@ -147,7 +147,7 @@ class StyleManager_Customizer extends StyleManager_Singleton_Registry {
 		$this->current_values = $this->get_current_values();
 
 		$this->localized['ajax_url'] = admin_url( 'admin-ajax.php' );
-		$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'customify_style_manager_user_feedback' );
+		$this->localized['style_manager_user_feedback_nonce'] = wp_create_nonce( 'style_manager_user_feedback' );
 		$this->localized['style_manager_user_feedback_provided'] = get_option( 'style_manager_user_feedback_provided', false );
 	}
 
@@ -245,7 +245,7 @@ class StyleManager_Customizer extends StyleManager_Singleton_Registry {
 
 	protected function load_custom_customizer_controls() {
 		// First load the base class for our custom Customizer controls.
-		require_once( StyleManager_Plugin()->get_basepath() . 'includes/customizer/controls/class-StyleManager_Customize_Control.php' );
+		require_once( StyleManager_Plugin()->get_basepath() . 'includes/customizer/controls/class-Customize_Control.php' );
 
 		// Load all the available controls.
 		sm_autoload_dir( StyleManager_Plugin()->get_basepath() . 'includes/customizer/controls/' );
@@ -286,8 +286,8 @@ class StyleManager_Customizer extends StyleManager_Singleton_Registry {
 						$panel_args = array(
 							'priority'                 => 10,
 							'capability'               => 'edit_theme_options',
-							'title'                    => __( 'Panel title is required', 'style-manager' ),
-							'description'              => __( 'Description of what this panel does.', 'style-manager' ),
+							'title'                    => esc_html__( 'Panel title is required', 'style-manager' ),
+							'description'              => esc_html__( 'Description of what this panel does.', 'style-manager' ),
 							'auto_expand_sole_section' => false,
 						);
 
@@ -331,17 +331,17 @@ class StyleManager_Customizer extends StyleManager_Singleton_Registry {
 			if ( sm_get_setting('enable_reset_buttons', false ) ) {
 				// create a toolbar section which will be present all the time
 				$reset_section_settings = array(
-					'title'   => 'SM Toolbox',
+					'title'   => esc_html__( 'SM Toolbox', 'style-manager' ),
 					'capability' => 'manage_options',
 					'priority' => 999999999,
 					'options' => array(
 						'reset_all_button' => array(
 							'type'   => 'button',
-							'label'  => 'Reset Style Manager',
-							'action' => 'reset_customify',
-							'value'  => 'Reset'
+							'label'  => esc_html__( 'Reset Style Manager', 'style-manager' ),
+							'action' => 'reset_sm',
+							'value'  => esc_html__( 'Reset', 'style-manager' ),
 						),
-					)
+					),
 				);
 
 				$wp_customize->add_section(
@@ -350,17 +350,17 @@ class StyleManager_Customizer extends StyleManager_Singleton_Registry {
 				);
 
 				$wp_customize->add_setting(
-					'reset_customify',
+					'reset_sm',
 					array()
 				);
 				$wp_customize->add_control( new StyleManager_Customize_Button_Control(
 					$wp_customize,
-					'reset_customify',
+					'reset_sm',
 					array(
-						'label'    => __( 'Reset All Style Manager Options to Default', 'style-manager' ),
+						'label'    => esc_html__( 'Reset All Style Manager Options to Default', 'style-manager' ),
 						'section'  => 'sm_toolbar',
-						'settings' => 'reset_customify',
-						'action'   => 'reset_customify',
+						'settings' => 'reset_sm',
+						'action'   => 'reset_sm',
 					)
 				) );
 			}
@@ -375,11 +375,11 @@ class StyleManager_Customizer extends StyleManager_Singleton_Registry {
 					'options'    => array(
 						'typkit_user'     => array(
 							'type'  => 'text',
-							'label' => 'Typekit Username',
+							'label' => esc_html__( 'Typekit Username', 'style-manager' ),
 						),
 						'typkit_password' => array(
 							'type'  => 'text',
-							'label' => 'Typekit Username',
+							'label' => esc_html__( 'Typekit Username', 'style-manager' ),
 						),
 					)
 				);

@@ -12,7 +12,7 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 	protected static $typo_settings = null;
 	protected static $options_list = null;
 	protected $theme_fonts = null;
-	protected $customify_CSS_output = array();
+	protected $CSS_output = array();
 
 
 	function __construct() {
@@ -20,7 +20,7 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 
 		$load_location = sm_get_setting( 'style_resources_location', 'head' );
 		add_action( "wp_$load_location", array( $this, 'output_font_dynamic_style' ), 100 );
-		add_action( 'customify_font_family_before_options', array( $this, 'add_customify_theme_fonts' ), 11, 2 );
+		add_action( 'customify_font_family_before_options', array( $this, 'add_theme_fonts' ), 11, 2 );
 
 		if ( sm_get_setting( 'enable_editor_style', true ) ) {
 			add_action( 'admin_head', array( $this, 'add_customizer_settings_into_wp_editor' ) );
@@ -94,7 +94,7 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 		return $this->theme_fonts;
 	}
 
-	function add_customify_theme_fonts( $active_font_family, $val ) {
+	function add_theme_fonts( $active_font_family, $val ) {
 		//first get all the published custom fonts
 		if ( empty( $this->theme_fonts ) ) {
 			return;
@@ -246,7 +246,7 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 		// in customizer the CSS is printed per option, in front-end we need to print them in bulk
 		if ( ! isset( $GLOBALS['wp_customize'] ) ) { ?>
 <style id="customify_fonts_output">
-<?php echo join( "\n", $this->customify_CSS_output ); ?>
+<?php echo join( "\n", $this->CSS_output ); ?>
 </style><?php
 			return;
 		}
@@ -254,7 +254,7 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 
 	function display_webfont_script( $args ) { ?>
 		<script type="text/javascript">
-			var customify_font_loader = function () {
+			var sm_font_loader = function () {
 				var webfontargs = {
 					classes: false,
 					events: false
@@ -272,14 +272,14 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 			};
 
 			if (typeof WebFont !== 'undefined') { <?php // if there is a WebFont object, use it ?>
-				customify_font_loader();
+				sm_font_loader();
 			} else { <?php // basically when we don't have the WebFont object we create the google script dynamically  ?>
 				var tk = document.createElement('script');
 				tk.src = '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
 				tk.type = 'text/javascript';
 
 				tk.onload = tk.onreadystatechange = function () {
-					customify_font_loader();
+					sm_font_loader();
 				};
 				var s = document.getElementsByTagName('script')[0];
 				s.parentNode.insertBefore(tk, s);
@@ -451,7 +451,7 @@ class StyleManager_Font_Selector extends StyleManager_Singleton_Registry {
 			</style><?php
 			return;
 		} else {
-			$this->customify_CSS_output[] = $CSS;
+			$this->CSS_output[] = $CSS;
 		}
 	}
 

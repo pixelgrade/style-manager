@@ -102,12 +102,12 @@ class StyleManager extends StyleManager_Singleton_Registry {
 		/*
 		 * Handle the Customizer Style Manager base config.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'style_manager_section_base_config' ), 12, 1 );
+		add_filter( 'style_manager_customizer_config', array( $this, 'style_manager_section_base_config' ), 12, 1 );
 
 		/*
 		 * Handle the grouping and reorganization of the Customizer theme sections when the Style Manager is active.
 		 */
-		add_filter( 'customify_final_config', array( $this, 'reorganize_sections' ), 10, 1 );
+		add_filter( 'style_manager_customizer_final_config', array( $this, 'reorganize_sections' ), 10, 1 );
 
 		/*
 		 * Handle the logic for user feedback.
@@ -178,7 +178,7 @@ class StyleManager extends StyleManager_Singleton_Registry {
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = array_replace_recursive( $config['sections']['style_manager_section'], array(
-			'title'   => esc_html__( 'Style Manager', 'style_manager' ),
+			'title'   => esc_html__( 'Style Manager', 'style-manager' ),
 			'section_id' => 'style_manager_section', // We will force this section id preventing prefixing and other regular processing.
 			'priority' => 1,
 			'options' => array(),
@@ -222,8 +222,8 @@ class StyleManager extends StyleManager_Singleton_Registry {
 			'priority'    => 22,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'style_manager_panel',
-			'title'       => __( 'Style Manager', 'style_manager' ),
-			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'style_manager' ),
+			'title'       => __( 'Style Manager', 'style-manager' ),
+			'description' => __( '<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression.', 'style-manager' ),
 			'sections' => array(),
 			'auto_expand_sole_section' => true, // If there is only one section in the panel, auto-expand it.
 		);
@@ -260,7 +260,7 @@ class StyleManager extends StyleManager_Singleton_Registry {
 			);
 
 			$color_palettes_section_config = array(
-				'title'      => __( 'Colors', 'style_manager' ),
+				'title'      => __( 'Colors', 'style-manager' ),
 				'section_id' => 'sm_color_palettes_section',
 				'priority'   => 10,
 				'options'    => array(),
@@ -294,7 +294,7 @@ class StyleManager extends StyleManager_Singleton_Registry {
 			);
 
 			$font_palettes_section_config = array(
-				'title'      => __( 'Fonts', 'style_manager' ),
+				'title'      => __( 'Fonts', 'style-manager' ),
 				'section_id' => 'sm_font_palettes_section',
 				'priority'   => 20,
 				'options'    => array(),
@@ -319,8 +319,8 @@ class StyleManager extends StyleManager_Singleton_Registry {
 			'priority'    => 23,
 			'capability'  => 'edit_theme_options',
 			'panel_id'    => 'theme_options_panel',
-			'title'       => __( 'Theme Options', 'style_manager' ),
-			'description' => __( 'Advanced options to change your site look-and-feel on a detailed level.', 'style_manager' ),
+			'title'       => __( 'Theme Options', 'style-manager' ),
+			'description' => __( 'Advanced options to change your site look-and-feel on a detailed level.', 'style-manager' ),
 			'sections' => $other_theme_sections_config,
 		);
 
@@ -401,7 +401,7 @@ class StyleManager extends StyleManager_Singleton_Registry {
 												          id="style-manager-user-feedback-message" rows="4" oninvalid="this.setCustomValidity('May we have a little more info about your experience?')" oninput="setCustomValidity('')" required></textarea>
 												</div>
 											</div>
-											<button id="style-manager-user-feedback_btn" class="button" type="submit"><?php _e( 'Submit my feedback', 'style_manager' ); ?></button>
+											<button id="style-manager-user-feedback_btn" class="button" type="submit"><?php _e( 'Submit my feedback', 'style-manager' ); ?></button>
 										</div>
 										<div class="thanks-step hidden">
 											<h3 class="modal-title">Thanks for your feedback!</h3>
@@ -460,11 +460,11 @@ class StyleManager extends StyleManager_Singleton_Registry {
 		check_ajax_referer( 'style_manager_user_feedback', 'nonce' );
 
 		if ( empty( $_POST['type'] ) ) {
-			wp_send_json_error( esc_html__( 'No type provided', 'style_manager' ) );
+			wp_send_json_error( esc_html__( 'No type provided', 'style-manager' ) );
 		}
 
 		if ( empty( $_POST['rating'] ) ) {
-			wp_send_json_error( esc_html__( 'No rating provided', 'style_manager' ) );
+			wp_send_json_error( esc_html__( 'No rating provided', 'style-manager' ) );
 		}
 
 		$type = sanitize_text_field( $_POST['type'] );
@@ -486,18 +486,18 @@ class StyleManager extends StyleManager_Singleton_Registry {
 		// Send the feedback.
 		$response = $this->cloud_api->send_stats( $request_data, true );
 		if ( is_wp_error( $response ) ) {
-			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'style_manager' ) );
+			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'style-manager' ) );
 		}
 		$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
 		// Bail in case of decode error or failure to retrieve data
 		if ( null === $response_data || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
-			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'style_manager' ) );
+			wp_send_json_error( esc_html__( 'Sorry, something went wrong and we couldn\'t save your feedback.', 'style-manager' ) );
 		}
 
 		// We need to remember that the user provided feedback (and at what timestamp).
 		update_option( 'style_manager_user_feedback_provided', time(), true );
 
-		wp_send_json_success( esc_html__( 'Thank you for your feedback.', 'style_manager' ) );
+		wp_send_json_success( esc_html__( 'Thank you for your feedback.', 'style-manager' ) );
 	}
 }
 

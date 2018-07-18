@@ -244,20 +244,16 @@ final class StyleManager_Plugin extends StyleManager_Plugin_Init {
 	 * @since  1.0.0
 	 */
 	public function l10ni18n() {
-		$loaded = load_plugin_textdomain( 'StyleManager_Plugin', false, '/languages/' );
+		$loaded = load_plugin_textdomain( 'style-manager', false, dirname( $this->get_basepath() ) . '/languages/' );
 
 		if ( ! $loaded ) {
-			$loaded = load_muplugin_textdomain( 'StyleManager_Plugin', '/languages/' );
+			$loaded = load_muplugin_textdomain( 'style-manager', dirname( $this->get_basepath() ) . '/languages/' );
 		}
 
 		if ( ! $loaded ) {
-			$loaded = load_theme_textdomain( 'StyleManager_Plugin', get_stylesheet_directory() . '/languages/' );
-		}
-
-		if ( ! $loaded ) {
-			$locale = apply_filters( 'plugin_locale', get_locale(), 'StyleManager_Plugin' );
-			$mofile = dirname( __DIR__ ) . '/languages/sm-' . $locale . '.mo';
-			load_textdomain( 'StyleManager_Plugin', $mofile );
+			$locale = apply_filters( 'plugin_locale', get_locale(), 'style-manager' );
+			$mofile = dirname( $this->get_basepath() ) . '/languages/sm-' . $locale . '.mo';
+			load_textdomain( 'style-manager', $mofile );
 		}
 	}
 }

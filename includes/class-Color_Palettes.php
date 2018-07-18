@@ -43,9 +43,9 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
+		add_filter( 'style_manager_customizer_config', array( $this, 'add_style_manager_section_master_colors_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
-		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
+		add_filter( 'style_manager_customizer_config', array( $this, 'add_current_palette_control' ), 110, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -159,8 +159,8 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
 					'priority'     => 10,
-					'label'        => esc_html__( 'Select a color palette:', 'style_manager' ),
-					'desc'         => esc_html__( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'style_manager' ),
+					'label'        => esc_html__( 'Select a color palette:', 'style-manager' ),
+					'desc'         => esc_html__( 'Conveniently change the design of your site with color palettes. Easy as pie.', 'style-manager' ),
 					'default'      => 'lilac',
 					'choices_type' => 'color_palette',
 					'choices'      => $this->get_palettes(),
@@ -169,19 +169,19 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'type'         => 'radio',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_color_palette_variation',
-					'label'        => esc_html__( 'Palette Variation', 'style_manager' ),
+					'label'        => esc_html__( 'Palette Variation', 'style-manager' ),
 					'default'      => 'light',
 					'live'         => true,
 					'priority'     => 10.5,
 					'choices'      => array(
-						'light'     => esc_html__( 'light', 'style_manager' ),
-						'light_alt' => esc_html__( 'light_alt', 'style_manager' ),
+						'light'     => esc_html__( 'light', 'style-manager' ),
+						'light_alt' => esc_html__( 'light_alt', 'style-manager' ),
 
-						'dark'     => esc_html__( 'dark', 'style_manager' ),
-						'dark_alt' => esc_html__( 'dark_alt', 'style_manager' ),
+						'dark'     => esc_html__( 'dark', 'style-manager' ),
+						'dark_alt' => esc_html__( 'dark_alt', 'style-manager' ),
 
-						'colorful'     => esc_html__( 'colorful', 'style_manager' ),
-						'colorful_alt' => esc_html__( 'colorful_alt', 'style_manager' ),
+						'colorful'     => esc_html__( 'colorful', 'style-manager' ),
+						'colorful_alt' => esc_html__( 'colorful_alt', 'style-manager' ),
 					),
 				),
 				'sm_color_primary'              => array(
@@ -193,7 +193,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'priority'     => 20,
-					'label'            => esc_html__( 'Color Primary', 'style_manager' ),
+					'label'            => esc_html__( 'Color Primary', 'style-manager' ),
 					'default'          => '#ffeb00',
 					'connected_fields' => array(),
 				),
@@ -203,7 +203,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_color_secondary',
 					'live'             => true,
 					'priority'     => 20.1,
-					'label'            => esc_html__( 'Color Secondary', 'style_manager' ),
+					'label'            => esc_html__( 'Color Secondary', 'style-manager' ),
 					'default'          => '#00ecff',
 					'connected_fields' => array(),
 				),
@@ -213,7 +213,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_color_tertiary',
 					'live'             => true,
 					'priority'     => 20.2,
-					'label'            => esc_html__( 'Color Tertiary', 'style_manager' ),
+					'label'            => esc_html__( 'Color Tertiary', 'style-manager' ),
 					'default'          => '#00ecff',
 					'connected_fields' => array(),
 				),
@@ -223,7 +223,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_dark_primary',
 					'live'             => true,
 					'priority'     => 20.3,
-					'label'            => esc_html__( 'Dark Primary', 'style_manager' ),
+					'label'            => esc_html__( 'Dark Primary', 'style-manager' ),
 					'default'          => '#171617',
 					'connected_fields' => array(),
 				),
@@ -233,7 +233,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_dark_secondary',
 					'live'             => true,
 					'priority'     => 20.4,
-					'label'            => esc_html__( 'Dark Secondary', 'style_manager' ),
+					'label'            => esc_html__( 'Dark Secondary', 'style-manager' ),
 					'default'          => '#383c50',
 					'connected_fields' => array(),
 				),
@@ -243,7 +243,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_dark_tertiary',
 					'live'             => true,
 					'priority'     => 20.5,
-					'label'            => esc_html__( 'Dark Tertiary', 'style_manager' ),
+					'label'            => esc_html__( 'Dark Tertiary', 'style-manager' ),
 					'default'          => '#65726F',
 					'connected_fields' => array(),
 				),
@@ -253,7 +253,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_light_primary',
 					'live'             => true,
 					'priority'     => 20.6,
-					'label'            => esc_html__( 'Light Primary', 'style_manager' ),
+					'label'            => esc_html__( 'Light Primary', 'style-manager' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
 				),
@@ -263,7 +263,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_light_secondary',
 					'live'             => true,
 					'priority'     => 20.7,
-					'label'            => esc_html__( 'Light Secondary', 'style_manager' ),
+					'label'            => esc_html__( 'Light Secondary', 'style-manager' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
 				),
@@ -273,7 +273,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_light_tertiary',
 					'live'             => true,
 					'priority'     => 20.8,
-					'label'            => esc_html__( 'Light Tertiary', 'style_manager' ),
+					'label'            => esc_html__( 'Light Tertiary', 'style-manager' ),
 					'default'          => '#ffffff',
 					'connected_fields' => array(),
 				),
@@ -282,7 +282,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_colors',
 					'priority'     => 30,
-					'label'        => esc_html__( 'Swap Colors', 'style_manager' ),
+					'label'        => esc_html__( 'Swap Colors', 'style-manager' ),
 					'action'       => 'sm_swap_colors',
 				),
 				'sm_swap_dark_light'            => array(
@@ -290,7 +290,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_dark_light',
 					'priority'     => 30.1,
-					'label'        => esc_html__( 'Swap Dark ⇆ Light', 'style_manager' ),
+					'label'        => esc_html__( 'Swap Dark ⇆ Light', 'style-manager' ),
 					'action'       => 'sm_swap_dark_light',
 				),
 				'sm_swap_colors_dark'           => array(
@@ -298,7 +298,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_colors_dark',
 					'priority'     => 30.2,
-					'label'        => esc_html__( 'Swap Colors ⇆ Dark', 'style_manager' ),
+					'label'        => esc_html__( 'Swap Colors ⇆ Dark', 'style-manager' ),
 					'action'       => 'sm_swap_colors_dark',
 				),
 				'sm_swap_secondary_colors_dark' => array(
@@ -306,7 +306,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_secondary_colors_dark',
 					'priority'     => 30.3,
-					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'style_manager' ),
+					'label'        => esc_html__( 'Swap Secondary Color ⇆ Secondary Dark', 'style-manager' ),
 					'action'       => 'sm_swap_secondary_colors_dark',
 				),
 				'sm_advanced_toggle' => array(
@@ -314,7 +314,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_toggle_advanced_settings',
 					'priority'     => 30.4,
-					'label'        => esc_html__( 'Toggle Advanced Settings', 'style_manager' ),
+					'label'        => esc_html__( 'Toggle Advanced Settings', 'style-manager' ),
 					'action'       => 'sm_toggle_advanced_settings',
 				),
 			),
@@ -354,6 +354,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 					'<div class="color ' . $setting_id . '" data-setting="' . $setting_id . '">' . PHP_EOL .
 					'<div class="fill"></div>' . PHP_EOL .
 					'<div class="picker">' .
+					'<div class="disc"></div>'.
 					'<i></i>'.
 					'</div>' . PHP_EOL .
 					'</div>' . PHP_EOL;
@@ -362,6 +363,9 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 		}
 
 		$current_palette .= '<div class="c-color-palette__fields">';
+		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
+		                    __( 'One or more colors connected to yout color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'style-manager' ) . PHP_EOL .
+		                    '</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
 		}
@@ -415,7 +419,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 //              'sm_dark_color_master_slider' => array(
 //	              'setting_id'  => 'sm_dark_color_master_slider',
 //	              'type'        => 'range',
-//	              'label'       => esc_html__( 'Dark to Color (master)', 'style_manager' ),
+//	              'label'       => esc_html__( 'Dark to Color (master)', 'style-manager' ),
 //	              'desc'        => '',
 //	              'live'        => true,
 //	              'default'     => 50, // this should be set by the theme (previously 1300)
@@ -430,7 +434,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 //              'sm_dark_color_primary_slider' => array(
 //	              'setting_id'  => 'sm_dark_color_primary_slider',
 //                  'type'        => 'range',
-//                  'label'       => esc_html__( 'Dark to Color (primary)', 'style_manager' ),
+//                  'label'       => esc_html__( 'Dark to Color (primary)', 'style-manager' ),
 //                  'desc'        => '',
 //                  'live'        => true,
 //                  'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_primary', 'sm_color_primary' ),
@@ -445,7 +449,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 //              'sm_dark_color_secondary_slider' => array(
 //	              'setting_id'  => 'sm_dark_color_secondary_slider',
 //                  'type'        => 'range',
-//                  'label'       => esc_html__( 'Dark to Color (secondary)', 'style_manager' ),
+//                  'label'       => esc_html__( 'Dark to Color (secondary)', 'style-manager' ),
 //                  'desc'        => '',
 //                  'live'        => true,
 //	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_secondary', 'sm_color_secondary' ), // this should be set by the theme (previously 1300)
@@ -460,7 +464,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 //              'sm_dark_color_tertiary_slider' => array(
 //	              'setting_id'  => 'sm_dark_color_tertiary_slider',
 //                  'type'        => 'range',
-//                  'label'       => esc_html__( 'Dark to Color (tertiary)', 'style_manager' ),
+//                  'label'       => esc_html__( 'Dark to Color (tertiary)', 'style-manager' ),
 //                  'desc'        => '',
 //                  'live'        => true,
 //	              'default'     => $this->get_dark_to_color_slider_default_value( $config['sections']['style_manager_section']['options'], 'sm_dark_tertiary', 'sm_color_tertiary' ), // this should be set by the theme (previously 1300)
@@ -475,7 +479,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 //              'sm_colors_dispersion' => array(
 //	              'setting_id'  => 'sm_colors_dispersion',
 //                  'type'        => 'range',
-//                  'label'       => esc_html__( 'Colors dispersion range', 'style_manager' ),
+//                  'label'       => esc_html__( 'Colors dispersion range', 'style-manager' ),
 //                  'desc'        => '',
 //                  'live'        => true,
 //                  'default'     => $this->get_color_dispersion_slider_default_value( $config['sections']['style_manager_section']['options'] ),
@@ -490,7 +494,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 //              'sm_colors_focus_point' => array(
 //	              'setting_id'  => 'sm_colors_focus_point',
 //                  'type'        => 'range',
-//                  'label'       => esc_html__( 'Colors focus point', 'style_manager' ),
+//                  'label'       => esc_html__( 'Colors focus point', 'style-manager' ),
 //                  'desc'        => '',
 //                  'live'        => true,
 //                  'default'     => $this->get_color_focus_slider_default_value( $config['sections']['style_manager_section']['options'] ),
@@ -579,7 +583,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 	protected function get_default_config() {
 		$default_config = array(
 			'vasco'  => array(
-				'label'   => esc_html__( 'Restful Beach', 'style_manager' ),
+				'label'   => esc_html__( 'Restful Beach', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 				),
@@ -596,7 +600,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'felt'  => array(
-				'label'   => esc_html__( 'Warm Summer', 'style_manager' ),
+				'label'   => esc_html__( 'Warm Summer', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/felt-theme-palette.jpg',
 				),
@@ -613,7 +617,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'julia'  => array(
-				'label'   => esc_html__( 'Serenity', 'style_manager' ),
+				'label'   => esc_html__( 'Serenity', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
 				),
@@ -630,7 +634,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'gema'  => array(
-				'label'   => esc_html__( 'Burning Red', 'style_manager' ),
+				'label'   => esc_html__( 'Burning Red', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
 				),
@@ -647,7 +651,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'patch'  => array(
-				'label'   => esc_html__( 'Fresh Lemon', 'style_manager' ),
+				'label'   => esc_html__( 'Fresh Lemon', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
 				),
@@ -664,7 +668,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'silk'  => array(
-				'label'   => esc_html__( 'Floral Bloom', 'style_manager' ),
+				'label'   => esc_html__( 'Floral Bloom', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/silk-theme-palette.jpg',
 				),
@@ -681,7 +685,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'hive'  => array(
-				'label'   => esc_html__( 'Powerful', 'style_manager' ),
+				'label'   => esc_html__( 'Powerful', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
 				),
@@ -698,7 +702,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'lilac'  => array(
-				'label'   => esc_html__( 'Soft Lilac', 'style_manager' ),
+				'label'   => esc_html__( 'Soft Lilac', 'style-manager' ),
 				'preview' => array(
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/lilac-color-palette.jpg',
 				),

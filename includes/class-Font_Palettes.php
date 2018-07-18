@@ -48,10 +48,10 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'add_style_manager_section_master_fonts_config' ), 12, 1 );
+		add_filter( 'style_manager_customizer_config', array( $this, 'add_style_manager_section_master_fonts_config' ), 12, 1 );
 		// This needs to come after the external theme config has been applied
-//		add_filter( 'customify_filter_fields', array( $this, 'add_current_palette_control' ), 110, 1 );
-		add_filter( 'customify_final_config', array( $this, 'standardize_connected_fields' ), 10, 1 );
+//		add_filter( 'style_manager_customizer_config', array( $this, 'add_current_palette_control' ), 110, 1 );
+		add_filter( 'style_manager_customizer_final_config', array( $this, 'standardize_connected_fields' ), 10, 1 );
 
 		/*
 		 * Scripts enqueued in the Customizer.
@@ -352,8 +352,8 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
 					'priority'     => 5,
-					'label'        => esc_html__( 'Select a font palette:', 'style_manager' ),
-					'desc'         => esc_html__( 'Conveniently change the design of your site with font palettes. Easy as pie.', 'style_manager' ),
+					'label'        => esc_html__( 'Select a font palette:', 'style-manager' ),
+					'desc'         => esc_html__( 'Conveniently change the design of your site with font palettes. Easy as pie.', 'style-manager' ),
 					'default'      => 'julia',
 					'choices_type' => 'font_palette',
 					'choices'      => $this->get_palettes(),
@@ -362,14 +362,14 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					'type'         => 'radio',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_palette_variation',
-					'label'        => esc_html__( 'Palette Variation', 'style_manager' ),
+					'label'        => esc_html__( 'Palette Variation', 'style-manager' ),
 					'default'      => 'regular',
 					'live'         => true,
 					'priority'     => 5.5,
 					'choices'      => array(
-						'light'     => esc_html__( 'not light', 'style_manager' ),
-						'regular'     => esc_html__( 'not regular', 'style_manager' ),
-						'big' => esc_html__( 'not big', 'style_manager' ),
+						'light'     => esc_html__( 'not light', 'style-manager' ),
+						'regular'     => esc_html__( 'not regular', 'style-manager' ),
+						'big' => esc_html__( 'not big', 'style-manager' ),
 					),
 				),
 				'sm_font_primary'              => array(
@@ -381,7 +381,7 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
 					'priority'         => 7,
-					'label'            => esc_html__( 'Font Primary', 'style_manager' ),
+					'label'            => esc_html__( 'Font Primary', 'style-manager' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '400',
@@ -409,7 +409,7 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_font_secondary',
 					'live'             => true,
 					'priority'         => 7.1,
-					'label'            => esc_html__( 'Font Secondary', 'style_manager' ),
+					'label'            => esc_html__( 'Font Secondary', 'style-manager' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '300',
@@ -437,7 +437,7 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					'setting_id'       => 'sm_font_body',
 					'live'             => true,
 					'priority'         => 7.2,
-					'label'            => esc_html__( 'Font Body', 'style_manager' ),
+					'label'            => esc_html__( 'Font Body', 'style-manager' ),
 					'default'  => array(
 						'font-family'    => 'Montserrat',
 						'font-weight'    => '300',
@@ -464,7 +464,7 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_fonts',
 					'priority'     => 9,
-					'label'        => esc_html__( 'Swap Fonts', 'style_manager' ),
+					'label'        => esc_html__( 'Swap Fonts', 'style-manager' ),
 					'action'       => 'sm_swap_fonts',
 				),
 				'sm_swap_primary_secondary_fonts'            => array(
@@ -472,7 +472,7 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_swap_primary_secondary_fonts',
 					'priority'     => 9.1,
-					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'style_manager' ),
+					'label'        => esc_html__( 'Swap Primary ⇆ Secondary', 'style-manager' ),
 					'action'       => 'sm_swap_dark_light',
 				),
 			),
@@ -690,11 +690,11 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 	protected function get_default_config() {
 		$default_config = array(
 			'gema' => array(
-				'label'   => esc_html__( 'Gema', 'style_manager' ),
+				'label'   => esc_html__( 'Gema', 'style-manager' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Gema', 'style_manager' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style_manager' ),
+					'title'            => esc_html__( 'Gema', 'style-manager' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style-manager' ),
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/gema-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
@@ -796,11 +796,11 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'julia' => array(
-				'label'   => esc_html__( 'Julia', 'style_manager' ),
+				'label'   => esc_html__( 'Julia', 'style-manager' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Julia', 'style_manager' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style_manager' ),
+					'title'            => esc_html__( 'Julia', 'style-manager' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style-manager' ),
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/julia-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
@@ -907,11 +907,11 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'patch' => array(
-				'label'   => esc_html__( 'Patch', 'style_manager' ),
+				'label'   => esc_html__( 'Patch', 'style-manager' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Patch', 'style_manager' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style_manager' ),
+					'title'            => esc_html__( 'Patch', 'style-manager' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style-manager' ),
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/patch-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
@@ -1040,11 +1040,11 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'hive' => array(
-				'label'   => esc_html__( 'Hive', 'style_manager' ),
+				'label'   => esc_html__( 'Hive', 'style-manager' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Hive', 'style_manager' ),
-					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style_manager' ),
+					'title'            => esc_html__( 'Hive', 'style-manager' ),
+					'description'      => esc_html__( 'A graceful nature, truly tasteful and polished.', 'style-manager' ),
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/hive-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts
@@ -1127,11 +1127,11 @@ class StyleManager_Font_Palettes extends StyleManager_Singleton_Registry {
 				),
 			),
 			'vasco' => array(
-				'label'   => esc_html__( 'Not Vasco', 'style_manager' ),
+				'label'   => esc_html__( 'Not Vasco', 'style-manager' ),
 				'preview' => array(
 					// Font Palette Name
-					'title'            => esc_html__( 'Not Vasco', 'style_manager' ),
-					'description'      => esc_html__( 'Just awesome.', 'style_manager' ),
+					'title'            => esc_html__( 'Not Vasco', 'style-manager' ),
+					'description'      => esc_html__( 'Just awesome.', 'style-manager' ),
 					'background_image_url' => 'http://pxgcdn.com/images/style-manager/color-palettes/vasco-theme-palette.jpg',
 
 					// Use the following options to style the preview card fonts

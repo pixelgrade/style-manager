@@ -73,7 +73,7 @@
 				$( document ).on( 'click', '#customize-control-reset_sm button', function( ev ) {
 					ev.preventDefault();
 
-					var iAgree = confirm( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Customify options and will save them!' );
+					var iAgree = confirm( 'Do you really want to reset to defaults all the fields? Watch out, this will reset all your Style Manager options and will save them!' );
 
 					if ( ! iAgree ) {
 						return;

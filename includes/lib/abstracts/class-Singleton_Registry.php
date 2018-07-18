@@ -156,7 +156,7 @@ abstract class StyleManager_Singleton_Registry {
 	 * @since 1.0.0
 	 */
 	public function __clone() {
-		sm_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cloning is forbidden.', 'style_manager' ) ), '1.0.0' );
+		sm_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cloning is forbidden.', 'style-manager' ) ), '1.0.0' );
 	} // End __clone ()
 
 	/**
@@ -165,7 +165,7 @@ abstract class StyleManager_Singleton_Registry {
 	 * @since 1.0.0
 	 */
 	public function __wakeup() {
-		sm_doing_it_wrong( __FUNCTION__, esc_html( __( 'Unserializing instances of this class is forbidden.', 'style_manager' ) ),  '1.0.0' );
+		sm_doing_it_wrong( __FUNCTION__, esc_html( __( 'Unserializing instances of this class is forbidden.', 'style-manager' ) ),  '1.0.0' );
 	} // End __wakeup ()
 }
 

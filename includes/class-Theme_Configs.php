@@ -51,8 +51,8 @@ class StyleManager_Theme_Configs extends StyleManager_Singleton_Registry {
 		/*
 		 * Handle the external theme configuration logic. We use a late priority to be able to overwrite if we have to.
 		 */
-		add_filter( 'customify_filter_fields', array( $this, 'maybe_activate_external_theme_config' ), 10, 1 );
-		add_filter( 'customify_filter_fields', array( $this, 'maybe_apply_external_theme_config' ), 100, 1 );
+		add_filter( 'style_manager_customizer_config', array( $this, 'maybe_activate_external_theme_config' ), 10, 1 );
+		add_filter( 'style_manager_customizer_config', array( $this, 'maybe_apply_external_theme_config' ), 100, 1 );
 		// Maybe the theme has instructed us to do things like removing sections or controls.
 		add_action( 'customize_register', array( $this, 'maybe_process_external_theme_config_extras' ), 11 );
 

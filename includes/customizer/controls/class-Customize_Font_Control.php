@@ -156,7 +156,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 								}
 
 								foreach ( $grouped_google_fonts as $group_name => $group ) {
-									echo '<optgroup label="' . __( 'Google fonts', 'style_manager' ) . ' ' . $group_name . '">';
+									echo '<optgroup label="' . __( 'Google fonts', 'style-manager' ) . ' ' . $group_name . '">';
 									foreach ( $group as $key => $font ) {
 										self::output_font_option( $key, $font_family, $font );
 									}
@@ -164,7 +164,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 								}
 
 							} else {
-								echo '<optgroup label="' . __( 'Google fonts', 'style_manager' ) . '">';
+								echo '<optgroup label="' . __( 'Google fonts', 'style-manager' ) . '">';
 								foreach ( self::$google_fonts as $key => $font ) {
 									self::output_font_option( $key, $font_family, $font );
 								}
@@ -231,7 +231,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 
 		if ( ! empty( $this->recommended ) ) {
 
-			echo '<optgroup label="' . __( 'Recommended', 'style_manager' ) . '">';
+			echo '<optgroup label="' . __( 'Recommended', 'style-manager' ) . '">';
 
 			foreach ( $this->recommended as $key => $font ) {
 				$font_type = 'std';
@@ -254,7 +254,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 
 		if ( sm_get_setting( 'typography_use_standard_fonts' ) ) {
 
-			echo '<optgroup label="' . __( 'Standard fonts', 'style_manager' ) . '">';
+			echo '<optgroup label="' . __( 'Standard fonts', 'style-manager' ) . '">';
 			foreach ( self::$std_fonts as $key => $font ) {
 				self::output_font_option( $key, $font_family, $font, 'std' );
 			}
@@ -360,7 +360,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 			}
 			?>
 			<li class="sm_font_size_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Font Size', 'style_manager' ); ?></label>
+				<label><?php esc_html_e( 'Font Size', 'style-manager' ); ?></label>
 				<input type="range"
 				       data-field="font_size" <?php $this->input_field_atts( $this->fields['font-size'] ) ?>
 				       value="<?php echo $fs_val; ?>">
@@ -399,7 +399,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 			}
 			?>
 			<li class="sm_line_height_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Line height', 'style_manager' ); ?></label>
+				<label><?php esc_html_e( 'Line height', 'style-manager' ); ?></label>
 				<input type="range"
 				       data-field="line_height" <?php $this->input_field_atts( $this->fields['line-height'] ) ?>
 				       value="<?php echo $lh_val ?>">
@@ -439,7 +439,7 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 			}
 			?>
 			<li class="sm_letter_spacing_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Letter Spacing', 'style_manager' ); ?></label>
+				<label><?php esc_html_e( 'Letter Spacing', 'style-manager' ); ?></label>
 				<input type="range"
 				       data-field="letter_spacing" <?php $this->input_field_atts( $this->fields['letter-spacing'] ) ?>
 				       value="<?php echo $ls_val ?>">
@@ -451,12 +451,12 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 		if ( ! empty( $this->fields['text-align'] ) && $this->fields['text-align'] ) {
 			$ta_val = isset( $current_value->text_align ) ? $current_value->text_align : 'initial'; ?>
 			<li class="sm_text_align_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Align', 'style_manager' ); ?></label>
+				<label><?php esc_html_e( 'Text Align', 'style-manager' ); ?></label>
 				<select data-field="text_align">
-					<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'style_manager' ); ?></option>
-					<option  <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'style_manager' ); ?></option>
+					<option <?php $this->display_option_value( 'initial', $ta_val ); ?>><?php esc_html_e( 'Initial', 'style-manager' ); ?></option>
+					<option  <?php $this->display_option_value( 'center', $ta_val ); ?>><?php esc_html_e( 'Center', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'left', $ta_val ); ?>><?php esc_html_e( 'Left', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'right', $ta_val ); ?>><?php esc_html_e( 'Right', 'style-manager' ); ?></option>
 				</select>
 			</li>
 		<?php }
@@ -466,12 +466,12 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 		if ( ! empty( $this->fields['text-transform'] ) && $this->fields['text-transform'] ) {
 			$tt_val = isset( $current_value->text_transform ) ? $current_value->text_transform : 'none'; ?>
 			<li class="sm_text_transform_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Transform', 'style_manager' ); ?></label>
+				<label><?php esc_html_e( 'Text Transform', 'style-manager' ); ?></label>
 				<select data-field="text_transform">
-					<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'style_manager' ); ?></option>
+					<option <?php $this->display_option_value( 'none', $tt_val ); ?>><?php esc_html_e( 'None', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'capitalize', $tt_val ); ?>><?php esc_html_e( 'Capitalize', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'uppercase', $tt_val ); ?>><?php esc_html_e( 'Uppercase', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'lowercase', $tt_val ); ?>><?php esc_html_e( 'Lowercase', 'style-manager' ); ?></option>
 				</select>
 			</li>
 		<?php }
@@ -481,12 +481,12 @@ class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control
 		if ( ! empty( $this->fields['text-decoration'] ) && $this->fields['text-decoration'] ) {
 			$td_val = isset( $current_value->text_decoration ) ? $current_value->text_decoration : 'none';?>
 			<li class="sm_text_decoration_wrapper customize-control font-options__option">
-				<label><?php esc_html_e( 'Text Decoration', 'style_manager' ); ?></label>
+				<label><?php esc_html_e( 'Text Decoration', 'style-manager' ); ?></label>
 				<select data-field="text_decoration">
-					<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'style_manager' ); ?></option>
-					<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'style_manager' ); ?></option>
+					<option <?php $this->display_option_value( 'none', $td_val ); ?>><?php esc_html_e( 'None', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'underline', $td_val ); ?>><?php esc_html_e( 'Underline', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'overline', $td_val ); ?>><?php esc_html_e( 'Overline', 'style-manager' ); ?></option>
+					<option <?php $this->display_option_value( 'line-through', $td_val ); ?>><?php esc_html_e( 'Line Through', 'style-manager' ); ?></option>
 				</select>
 			</li>
 		<?php }

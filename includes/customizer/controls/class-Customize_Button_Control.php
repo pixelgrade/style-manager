@@ -14,7 +14,7 @@ class StyleManager_Customize_Button_Control extends StyleManager_Customize_Contr
 	 * @since 1.0.0
 	 */
 	public function render_content() { ?>
-		<button type="button" class="customify_button button" <?php $this->input_attrs(); ?> data-action="<?php echo esc_html( $this->action ); ?>" ><?php echo esc_html( $this->label ); ?></button>
+		<button type="button" class="sm_button button" <?php $this->input_attrs(); ?> data-action="<?php echo esc_html( $this->action ); ?>" ><?php echo esc_html( $this->label ); ?></button>
 	<?php
 
 	}

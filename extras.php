@@ -277,12 +277,12 @@ function sm_doing_it_wrong( $function, $message, $version ) {
 function sm_autoload_dir( $path, $depth = 0, $method = 'require_once' ) {
 	// If the $path starts with the absolute path to the WP install or the plugin directory, not good
 	if ( strpos( $path, ABSPATH ) === 0 && strpos( $path, plugin_dir_path( __FILE__ ) ) !== 0 ) {
-		sm_doing_it_wrong( __FUNCTION__, esc_html__( 'Please provide only paths in the Style Manager for autoloading.', 'style_manager' ), null );
+		sm_doing_it_wrong( __FUNCTION__, esc_html__( 'Please provide only paths in the Style Manager for autoloading.', 'style-manager' ), null );
 		return false;
 	}
 
 	if ( ! in_array( $method, array( 'require', 'require_once', 'include', 'include_once' ) ) ) {
-		sm_doing_it_wrong( __FUNCTION__, esc_html__( 'We support only require, require_once, include, and include_once.', 'style_manager' ), null );
+		sm_doing_it_wrong( __FUNCTION__, esc_html__( 'We support only require, require_once, include, and include_once.', 'style-manager' ), null );
 		return false;
 	}
 
