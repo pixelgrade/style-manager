@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Class Pix_Customize_Preset_Control
- * A simple Select2 Control
+ * Class StyleManager_Customize_Preset_Control.
+ *
+ * A preset control.
  */
-class Pix_Customize_Preset_Control extends Pix_Customize_Control {
+class StyleManager_Customize_Preset_Control extends StyleManager_Customize_Control {
 	public $type = 'preset';
 	public $choices_type = 'select';
 	public $description = null;
@@ -140,7 +141,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                         // Make sure that the preview defaults are in place
                         $choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
                             'sample_letter' => 'A',
-                            'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
+                            'background_image_url' => plugins_url( 'assets/images/color_palette_image.jpg', StyleManager_Plugin()->get_file() ),
                         ) );
 
                         // Determine a (primary) color with fallback for missing options
@@ -188,9 +189,6 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                         $label = $choice_config['label'];
                         $options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
                         $data = ' data-options=\'' . json_encode( $options ) . '\'';
-
-	                    $customizer_config = PixCustomifyPlugin()->get_customizer_config();
-
                         ?>
 
                         <span class="customize-inside-control-row <?php echo ( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' );?>" style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
@@ -198,13 +196,13 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
                             <label for="<?php echo esc_attr( $choice_value ) . '-color-palette'; ?>">
                                 <span class="label__inner" style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;">
                                     <i class="preview__letter" style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></i>
-                                    <i class="preview__letter--checked" style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
+                                    <i class="preview__letter--checked" style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugins_url( 'assets/images/check.svg', StyleManager_Plugin()->get_file() ); ?>')"></i>
                                     <?php echo esc_html( $label ); ?>
                                 </span>
                             </label>
                             <div class="palette">
                                 <?php foreach ( $choice_config['options'] as $color_setting_id => $color_value ) {
-                                	$field_config = PixCustomifyPlugin()->get_option_customizer_config( $color_setting_id );
+                                	$field_config = StyleManager_Customizer::getInstance()->get_option_config( $color_setting_id );
 		                            if ( ! empty( $field_config['connected_fields'] ) ) {
 			                            echo '<div class="palette__item ' . esc_attr( $color_setting_id ) . '" style="background: ' . esc_attr( $color_value ) . '"></div>' . PHP_EOL;
 		                            }
@@ -242,7 +240,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						// Make sure that the preview defaults are in place
 						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], array(
 							'sample_letter' => 'A',
-							'background_image_url' => plugins_url( 'images/color_palette_image.jpg', PixCustomifyPlugin()->get_file() ),
+							'background_image_url' => plugins_url( 'assets/images/color_palette_image.jpg', StyleManager_Plugin()->get_file() ),
 						) );
 
 						$label = $choice_config['label'];
@@ -259,7 +257,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
 						$data .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
 
-						$customizer_config = PixCustomifyPlugin()->get_customizer_config();
+						$customizer_config = StyleManager_Customizer::getInstance()->get_customizer_config();
 
 						?>
 
@@ -268,7 +266,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
                                 <span class="label__inner" style="">
                                     <i class="preview__letter" style=""><?php echo $choice_config['preview']['sample_letter']; ?></i>
-                                    <i class="preview__letter--checked" style="background-image: url('<?php echo plugins_url( 'images/check.svg', PixCustomifyPlugin()->get_file() ); ?>')"></i>
+                                    <i class="preview__letter--checked" style="background-image: url('<?php echo plugins_url( 'assets/images/check.svg', StyleManager_Plugin()->get_file() ); ?>')"></i>
 	                                <?php echo esc_html( $label ); ?>
                                 </span>
                             </label>
@@ -437,8 +435,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 			return $settings;
 		}
 
-		$localPlugin = PixCustomifyPlugin();
-		$customizer_config = $localPlugin->get_customizer_config();
+		$customizer_config = StyleManager_Customizer::getInstance()->get_customizer_config();
 
 		// first check the very needed options name
 		if ( empty( $customizer_config['opt-name'] ) ) {
@@ -452,7 +449,7 @@ class Pix_Customize_Preset_Control extends Pix_Customize_Control {
 		}
 
 		foreach ( $options as $option_id => $option_value ) {
-			$option_config = $localPlugin->get_option_customizer_config( $option_id );
+			$option_config = StyleManager_Customizer::getInstance()->get_option_config( $option_id );
 			if ( empty( $option_config ) ) {
 				continue;
 			}

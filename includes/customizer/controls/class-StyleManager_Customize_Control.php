@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class Pix_Customize_Control
+ * Class StyleManager_Customize_Control.
  *
- * with this class we will overwrite the default markup which WordPress comes with
+ * With this class we will overwrite the default markup which WordPress comes with.
  */
-class Pix_Customize_Control extends WP_Customize_Control {
+class StyleManager_Customize_Control extends WP_Customize_Control {
 
 	/**
 	 * Renders the control wrapper and calls $this->render_content() for the internals.

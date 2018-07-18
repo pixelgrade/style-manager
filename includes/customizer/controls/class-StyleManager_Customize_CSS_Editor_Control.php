@@ -1,6 +1,6 @@
 <?php
 
-class Pix_Customize_CSS_Editor_Control extends Pix_Customize_Control {
+class StyleManager_Customize_CSS_Editor_Control extends StyleManager_Customize_Control {
 	public $type = 'css_editor';
 
 	/**

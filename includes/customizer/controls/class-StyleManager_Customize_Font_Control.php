@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Class Pix_Customize_Font_Control
- * A complex Typography Control
+ * Class StyleManager_Customize_Font_Control.
+ *
+ * A complex typography control.
  */
-class Pix_Customize_Font_Control extends Pix_Customize_Control {
+class StyleManager_Customize_Font_Control extends StyleManager_Customize_Control {
 	public $type = 'font';
 	public $backup = null;
 	public $font_weight = true;
@@ -89,7 +90,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		$current_value = $this->current_value;
 
 		//maybe we need to decode it
-		$current_value = PixCustomifyPlugin::decodeURIComponent( $current_value );
+		$current_value = sm_decodeURIComponent( $current_value );
 
 		if ( empty( $current_value ) ) {
 			$current_value = $this->get_default_values();
@@ -143,9 +144,9 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 						do_action( 'sm_font_family_before_google_fonts_options' );
 
-						if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_google_fonts' ) ) {
+						if ( sm_get_setting( 'typography_use_google_fonts' ) ) {
 
-							if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_group_google_fonts' ) ) {
+							if ( sm_get_setting( 'typography_group_google_fonts' ) ) {
 
 								$grouped_google_fonts = array();
 								foreach ( self::$google_fonts as $key => $font ) {
@@ -211,8 +212,8 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	function display_value_holder( $current_value ) { ?>
 		<input class="sm_font_values" id="<?php echo esc_attr( $this->CSSID ); ?>"
 		       type="hidden" <?php $this->link(); ?>
-		       value="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"
-		       data-default="<?php echo esc_attr( PixCustomifyPlugin::encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
+		       value="<?php echo esc_attr( sm_encodeURIComponent( json_encode( $current_value ) ) ); ?>"
+		       data-default="<?php echo esc_attr( sm_encodeURIComponent( json_encode( $current_value ) ) ); ?>"/>
 	<?php }
 
 	function display_field_title( $font_family, $font_name_id ) { ?>
@@ -251,7 +252,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		// Allow others to add options here
 		do_action( 'sm_font_family_before_standard_fonts_options', $font_family, $current_value );
 
-		if ( PixCustomifyPlugin()->get_plugin_setting( 'typography_standard_fonts' ) ) {
+		if ( sm_get_setting( 'typography_use_standard_fonts' ) ) {
 
 			echo '<optgroup label="' . __( 'Standard fonts', 'style_manager' ) . '">';
 			foreach ( self::$std_fonts as $key => $font ) {
@@ -338,7 +339,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					preg_match( "/^([\d.\-+]+)/i", $fs_val, $match );
 
 					if ( ! empty( $match ) && isset( $match[0] ) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
+						if ( ! sm_is_assoc( $this->fields['font-size'] ) ) {
 							$this->fields['font-size'][3] = substr( $fs_val, strlen( $match[0] ) );
 						} else {
 							$this->fields['font-size']['unit'] = substr( $fs_val, strlen( $match[0] ) );
@@ -347,7 +348,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					}
 				} elseif ( is_array( $fs_val ) ) {
 					if ( isset( $fs_val['unit']) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['font-size'] ) ) {
+						if ( ! sm_is_assoc( $this->fields['font-size'] ) ) {
 							$this->fields['font-size'][3] = $fs_val['unit'];
 						} else {
 							$this->fields['font-size']['unit'] = $fs_val['unit'];
@@ -377,7 +378,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					preg_match( "/^([\d.\-+]+)/i", $lh_val, $match );
 
 					if ( ! empty( $match ) && isset( $match[0] ) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
+						if ( ! sm_is_assoc( $this->fields['line-height'] ) ) {
 							$this->fields['line-height'][3] = substr( $lh_val, strlen( $match[0] ) );
 						} else {
 							$this->fields['line-height']['unit'] = substr( $lh_val, strlen( $match[0] ) );
@@ -386,7 +387,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					}
 				} elseif ( is_array( $lh_val ) ) {
 					if ( isset( $lh_val['unit']) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['line-height'] ) ) {
+						if ( ! sm_is_assoc( $this->fields['line-height'] ) ) {
 							$this->fields['line-height'][3] = $lh_val['unit'];
 						} else {
 							$this->fields['line-height']['unit'] = $lh_val['unit'];
@@ -417,7 +418,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					preg_match( "/^([\d.\-+]+)/i", $ls_val, $match );
 
 					if ( ! empty( $match ) && isset( $match[0] ) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
+						if ( ! sm_is_assoc( $this->fields['letter-spacing'] ) ) {
 							$this->fields['letter-spacing'][3] = substr( $ls_val, strlen( $match[0] ) );
 						} else {
 							$this->fields['letter-spacing']['unit'] = substr( $ls_val, strlen( $match[0] ) );
@@ -426,7 +427,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 					}
 				} elseif ( is_array( $ls_val ) ) {
 					if ( isset( $ls_val['unit']) ) {
-						if ( ! PixCustomifyPlugin()->is_assoc( $this->fields['letter-spacing'] ) ) {
+						if ( ! sm_is_assoc( $this->fields['letter-spacing'] ) ) {
 							$this->fields['letter-spacing'][3] = $ls_val['unit'];
 						} else {
 							$this->fields['letter-spacing']['unit'] = $ls_val['unit'];
@@ -520,11 +521,11 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( $type === 'google' ) {
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data .= ' data-variants="' . sm_encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			if ( isset( $font['subsets'] ) && ! empty( $font['subsets'] ) ) {
-				$data .= ' data-subsets="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '"';
+				$data .= ' data-subsets="' . sm_encodeURIComponent( json_encode( (object) $font['subsets'] ) ) . '"';
 			}
 
 			//determine if it's selected
@@ -537,7 +538,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 
 			// Handle the font variants markup, if available
 			if ( isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data .= ' data-variants="' . sm_encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			$selected = ( $active_font_family === $font['family'] ) ? ' selected="selected" ' : '';
@@ -547,7 +548,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		} else {
 			// Handle the font variants markup, if available
 			if ( is_array( $font ) && isset( $font['variants'] ) && ! empty( $font['variants'] ) ) {
-				$data .= ' data-variants="' . PixCustomifyPlugin::encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
+				$data .= ' data-variants="' . sm_encodeURIComponent( json_encode( (object) $font['variants'] ) ) . '"';
 			}
 
 			// by default, we assume we only get a font family string
@@ -628,7 +629,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 		if ( isset( $this->default ) && is_array( $this->default ) ) {
 
 			// Handle special logic for when the $value array is not an associative array.
-			if ( ! PixCustomifyPlugin()->is_assoc( $this->default ) ) {
+			if ( ! sm_is_assoc( $this->default ) ) {
 
 				// Let's determine some type of font.
 				if ( ! isset( $this->default[2] ) || ( isset( $this->default[2] ) && 'google' == $this->default[2] ) ) {
@@ -739,7 +740,7 @@ class Pix_Customize_Font_Control extends Pix_Customize_Control {
 	 */
 	public function input_field_atts( $atts ) {
 
-		if ( ! PixCustomifyPlugin()->is_assoc( $atts ) ) {
+		if ( ! sm_is_assoc( $atts ) ) {
 			$defaults = array(
 				'min',
 				'max',

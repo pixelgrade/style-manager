@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Class Pix_Customize_HTML_Control
- * A simple HTML Control
+ * Class StyleManager_Customize_HTML_Control.
+ *
+ * A simple HTML control.
  */
-class Pix_Customize_HTML_Control extends Pix_Customize_Control {
+class StyleManager_Customize_HTML_Control extends StyleManager_Customize_Control {
 	public $type    = 'html';
 	public $action  = null;
 	public $html    = null;

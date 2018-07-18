@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Class Pix_Customize_Select2_Control
- * A simple Select2 Control
+ * Class StyleManager_Customize_Select2_Control.
+ *
+ * A simple Select2 control.
  */
-class Pix_Customize_Select2_Control extends Pix_Customize_Control {
+class StyleManager_Customize_Select2_Control extends StyleManager_Customize_Control {
 	public $type    = 'select2';
 
 	/**

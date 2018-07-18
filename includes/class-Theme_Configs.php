@@ -11,17 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Style_Manager_Theme_Configs' ) ) :
+if ( ! class_exists( 'StyleManager_Theme_Configs' ) ) :
 
-class Style_Manager_Theme_Configs {
-
-	/**
-	 * Holds the only instance of this class.
-	 * @var     null|Style_Manager_Theme_Configs
-	 * @access  protected
-	 * @since   1.0.0
-	 */
-	protected static $_instance = null;
+class StyleManager_Theme_Configs extends StyleManager_Singleton_Registry {
 
 	/**
 	 * The external theme config for the current active theme.
@@ -106,7 +98,7 @@ class Style_Manager_Theme_Configs {
 	 */
 	public function is_supported() {
 		// For now we will only use the fact that Style Manager is supported.
-		return apply_filters( 'style_manager_theme_configs_are_supported', Style_Manager::instance()->is_supported() );
+		return apply_filters( 'style_manager_theme_configs_are_supported', StyleManager::getInstance()->is_supported() );
 	}
 
 	/**
@@ -122,10 +114,10 @@ class Style_Manager_Theme_Configs {
 		$theme_configs = array();
 
 		// Make sure that the Design Assets class is loaded.
-		require_once 'lib/class-style-manager-design-assets.php';
+		require_once 'class-Design_Assets.php';
 
 		// Get the design assets data.
-		$design_assets = Style_Manager_Design_Assets::instance()->get( $skip_cache );
+		$design_assets = StyleManager_Design_Assets::getInstance()->get( $skip_cache );
 		if ( false !== $design_assets && ! empty( $design_assets['theme_configs'] ) ) {
 			$theme_configs = $design_assets['theme_configs'];
 		}
@@ -191,7 +183,7 @@ class Style_Manager_Theme_Configs {
 		}
 
 		// Now we will order the theme configs by match scores, descending and get the highest matching candidate, if any.
-		$theme_configs = Style_Manager_Array::array_orderby( $theme_configs, 'match_score', SORT_DESC );
+		$theme_configs = StyleManager_Array::array_orderby( $theme_configs, 'match_score', SORT_DESC );
 		$external_theme_config = array_shift( $theme_configs );
 		// If we've ended up with a theme config with a zero match score, bail.
 		if ( empty( $external_theme_config['match_score'] ) || empty( $external_theme_config['config']['sections'] ) ) {
@@ -227,7 +219,7 @@ class Style_Manager_Theme_Configs {
 
 		// Apply the theme config.
 		// If we are dealing with the plugin default config, we need a clean slate, sort of.
-		if ( 'style_manager_defaults' === $config['opt-name'] ) {
+		if ( isset( $config['opt-name'] ) && 'style_manager_defaults' === $config['opt-name'] ) {
 			// We will save the Style Manager config so we can merge with it. But the rest goes away.
 			$style_manager_section = array();
 			if ( isset( $config['sections']['style_manager_section'] ) ) {
@@ -244,8 +236,12 @@ class Style_Manager_Theme_Configs {
 			);
 		}
 
-		// Now merge things.
-		$config['sections'] = Style_Manager_Array::array_merge_recursive_distinct( $config['sections'],$this->external_theme_config['config']['sections'] );
+		if ( empty( $config['opt-name'] ) && ! empty( $this->external_theme_config['config']['opt-name'] ) ) {
+			$config['opt-name'] = $this->external_theme_config['config']['opt-name'];
+		}
+
+		// Now merge the sections config.
+		$config['sections'] = StyleManager_Array::array_merge_recursive_distinct( $config['sections'],$this->external_theme_config['config']['sections'] );
 
 		return $config;
 	}
@@ -334,45 +330,6 @@ class Style_Manager_Theme_Configs {
 			echo PHP_EOL . '<!--' . PHP_EOL . 'Just copy&paste this:' . PHP_EOL . PHP_EOL . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . PHP_EOL . PHP_EOL . '-->' . PHP_EOL;
 		}
 	}
-
-	/**
-	 * Main Style_Manager_Theme_Configs Instance
-	 *
-	 * Ensures only one instance of Style_Manager_Theme_Configs is loaded or can be loaded.
-	 *
-	 * @since  1.0.0
-	 * @static
-	 *
-	 * @return Style_Manager_Theme_Configs Main Style_Manager_Theme_Configs instance
-	 */
-	public static function instance() {
-
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-
-		return self::$_instance;
-	} // End instance ()
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
 }
 
 endif;

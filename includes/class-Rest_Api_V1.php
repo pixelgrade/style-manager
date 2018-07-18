@@ -1,27 +1,9 @@
 <?php
 
 /**
- * Class Style_Manager_Rest_Api_V1
+ * Class StyleManager_Rest_Api_V1
  */
-class Style_Manager_Rest_Api_V1 {
-
-	/**
-	 * Holds the only instance of this class.
-	 *
-	 * @var null|Style_Manager_Rest_Api_V1
-	 * @access protected
-	 * @since 1.0.0
-	 */
-	protected static $_instance = null;
-
-	/**
-	 * The main plugin object (the parent).
-	 *
-	 * @var     Style_Manager_Plugin
-	 * @access  public
-	 * @since     1.0.0
-	 */
-	public $parent = null;
+class StyleManager_Rest_Api_V1 extends StyleManager_Singleton_Registry {
 
 	/**
 	 * The REST API slug used to form the namespace.
@@ -45,12 +27,8 @@ class Style_Manager_Rest_Api_V1 {
 	 * Constructor.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @param $parent
 	 */
-	protected function __construct( $parent = null ) {
-		$this->parent = $parent;
-
+	protected function __construct() {
 		// Register the public REST API routes
 		add_action( 'rest_api_init', array( $this, 'register_public_routes' ) );
 	}
@@ -215,42 +193,4 @@ class Style_Manager_Rest_Api_V1 {
 	public static function sanitize_text_field( $text, $request, $param ) {
 		return sanitize_text_field( $text );
 	}
-
-	/**
-	 * Main Style_Manager_Rest_Api_V1 Instance
-	 *
-	 * Ensures only one instance of Style_Manager_Rest_Api_V1 is loaded or can be loaded.
-	 *
-	 * @since  1.0.0
-	 * @static
-	 * @param  object $parent Main Style_Manager instance.
-	 * @return Style_Manager_Rest_Api_V1 Main Style_Manager_Rest_Api_V1 instance
-	 */
-	public static function instance( $parent = null ) {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self( $parent );
-		}
-
-		return self::$_instance;
-	}
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
 }

@@ -21,19 +21,24 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+require_once( plugin_dir_path( __FILE__ ) . 'includes/lib/abstracts/class-Singleton_Registry.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'includes/lib/abstracts/class-Plugin_Init.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'includes/lib/class-Array.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'extras.php' );
 
+require_once( plugin_dir_path( __FILE__ ) . 'includes/customizer/class-Font_Selector.php' );
+
 /**
- * Returns the main instance of Style_Manager_Plugin to prevent the need to use globals.
+ * Returns the main instance of StyleManager_Plugin to prevent the need to use globals.
  *
  * @since  1.0.0
- * @return Style_Manager_Plugin Style_Manager_Plugin instance.
+ * @return StyleManager_Plugin StyleManager_Plugin instance.
  */
-function Style_Manager_Plugin() {
+function StyleManager_Plugin() {
 
-	require_once( plugin_dir_path( __FILE__ ) . 'includes/class-style-manager.php' );
-	$instance = Style_Manager_Plugin::instance( __FILE__, '1.0.0' );
-	return $instance;
+	require_once( plugin_dir_path( __FILE__ ) . 'includes/class-StyleManager_Plugin.php' );
+
+	return StyleManager_Plugin::getInstance( __FILE__, '1.0.0' );
 }
 
-Style_Manager_Plugin();
+StyleManager_Plugin();

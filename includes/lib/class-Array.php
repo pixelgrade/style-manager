@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Style_Manager_Array' ) ) :
+if ( ! class_exists( 'StyleManager_Array' ) ) :
 
-	class Style_Manager_Array {
+	class StyleManager_Array {
 		/**
 		 * Insert a value or key/value pair before a specific key in an array.  If key doesn't exist, value is prepended
 		 * at the beginning of the array.

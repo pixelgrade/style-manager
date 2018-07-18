@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Style_Manager_Cloud_Api' ) ) :
+if ( ! class_exists( 'StyleManager_Cloud_Api' ) ) :
 
-class Style_Manager_Cloud_Api {
+class StyleManager_Cloud_Api {
 
 	/**
 	 * External REST API endpoints used for communicating with the Pixelgrade Cloud.
@@ -147,7 +147,7 @@ class Style_Manager_Cloud_Api {
 		);
 
 		$site_data['style_manager'] = array(
-			'version' => PixCustomifyPlugin()->get_version(),
+			'version' => StyleManager_Plugin()->get_version(),
 		);
 
 		return apply_filters( 'style_manager_get_site_data', $site_data );

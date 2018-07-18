@@ -2,15 +2,7 @@
 /**
  * Style Manager settings page logic.
  */
-class Style_Manager_Settings {
-
-	/**
-	 * Holds the only instance of this class.
-	 * @var null|string
-	 * @access protected
-	 * @since 1.0.0
-	 */
-	protected static $_instance = null;
+class StyleManager_Settings extends StyleManager_Singleton_Registry {
 
 	/**
  	 * Option key, and, at the same time, option page slug
@@ -35,28 +27,16 @@ class Style_Manager_Settings {
 	protected $options_page = '';
 
 	/**
-	 * The main plugin object (the parent).
-	 * @var     Style_Manager_Plugin
-	 * @access  public
-	 * @since     1.0.0
-	 */
-	public $parent = null;
-
-	/**
-	 * Constructor
-	 * @since 0.1.0
+	 * Constructor.
 	 *
-	 * @param Style_Manager_Plugin $parent
+	 * @since 1.0.0
 	 */
-	private function __construct( $parent = null ) {
-		$this->parent = $parent;
+	protected function __construct() {
 
 		$this->key = $this->prefix('options' );
 
 		// Set our settings page title.
-		$this->title = __( 'Style Manager Setup', 'style-manager' );
-
-
+		$this->title = esc_html__( 'Style Manager Setup', 'style-manager' );
 
 		$this->add_hooks();
 	}
@@ -88,17 +68,17 @@ class Style_Manager_Settings {
 	public function cmb2_init() {
 
 		// Use CMO filter to add an intro at the top of the options page.
-		add_filter( 'cmb2metatabs_before_form', array( $this, 'cmb2_metatabs_options_add_intro_via_filter' ) );
+//		add_filter( 'cmb2metatabs_before_form', array( $this, 'cmb2_metatabs_options_add_intro_via_filter' ) );
 
 		$args = array(
 			'key'     => $this->key,
 			'title'   => $this->title,
-			'topmenu' => '', // put it on the top level in the admin sidebar.
+			'topmenu' => 'themes.php', // put it in Appearance in the admin sidebar.
 			'cols'    => 1, // we will not use sidebar boxes for now.
 			'boxes'	  => $this->cmb2_metatabs_options_add_boxes( $this->key ),
 			'tabs'	  => $this->cmb2_metatabs_options_add_tabs(),
 			'menuargs' => array(
-				'menu_title' => 'Style Manager',
+				'menu_title' => esc_html__('Style Manager', 'style_manager' ),
 				'position'    => 56.01,
 			),
 			'load'  => array(
@@ -120,23 +100,20 @@ class Style_Manager_Settings {
 
 	public function enqueue_admin_scripts() {
 		// The styles.
-		wp_enqueue_style( $this->prefix( 'admin-style' ), plugins_url( 'assets/css/admin.css', Style_Manager_Plugin::instance()->file ), array( $this->prefix( 'jquery-ui-style' ), ), $this->parent->_version );
+		wp_enqueue_style( $this->prefix( 'admin-style' ), plugins_url( 'assets/css/admin.css', StyleManager_Plugin()->get_file() ), array( $this->prefix( 'jquery-ui-style' ), ), StyleManager_Plugin()->get_version() );
 
 		// The scripts.
-		wp_register_script( $this->prefix( 'moment-js' ), plugins_url(  'assets/js/moment.min.js', Style_Manager_Plugin::instance()->file ), array( 'jquery' ), '2.22.1' );
+		wp_register_script( $this->prefix( 'moment-js' ), plugins_url(  'assets/js/moment.min.js', StyleManager_Plugin()->get_file() ), array( 'jquery' ), '2.22.1' );
 
-		wp_register_script( $this->prefix( 'settings-js' ), plugins_url( 'assets/js/settings-page.js', Style_Manager_Plugin::instance()->file ),
+		wp_register_script( $this->prefix( 'settings-js' ), plugins_url( 'assets/js/settings-page.js', StyleManager_Plugin()->get_file() ),
 			array(
 				'jquery',
 				$this->prefix( 'cmb2-conditionals' ),
 				'wp-api',
-			), $this->parent->_version );
+			), StyleManager_Plugin()->get_version() );
 
 		wp_enqueue_script( $this->prefix( 'settings-js' ) );
 
-		// Localize the script so it knows about the REST API route to use to fetch licenses data.
-		$namespace = $this->parent->rest->get_namespace();
-		$base      = 'front';
 		$data = array(
 			'user_id' => get_current_user_id(),
 		);
@@ -166,42 +143,130 @@ class Style_Manager_Settings {
 
 		// we will be adding this to all boxes
 		$show_on = array(
-			'key' => 'options-page',
+			'key'   => 'options-page',
 			'value' => array( $options_key ),
 		);
 
 		$cmb = new_cmb2_box( array(
-			'id'              => $this->prefix( 'color_palettes' ),
-			'title'           => __( 'Color Palettes', 'style-manager' ),
+			'id'              => $this->prefix( 'customizer' ),
+			'title'           => __( 'Customizer', 'style-manager' ),
 			'show_on'         => $show_on,
 			'display_cb'      => false,
 			'admin_menu_hook' => false,
 		) );
 
 		$cmb->add_field( array(
-			'name'    => esc_html__( 'Default Background Image', 'style-manager' ),
-			'desc' => esc_html__( 'The default background image to use for color palettes, preferably JPEG or PNG (if you must). Please note that we will crop this image to the following dimensions: 400x156.', 'style-manager' ),
-			'id'      => $this->prefix( 'color_palettes_default_background_image' ),
-			'type'    => 'file',
-			'preview_size' => 'palette_background',
-			'options' => array(
-				'url' => false, // Hide the text input for the url
-			),
-			'text'    => array(
-				'add_upload_file_text' => esc_html__( 'Select Image', 'style-manager' ), // Change upload button text. Default: "Add or Upload File"
-			),
-			'query_args' => array(
-				'type' => array(
-					'image/jpeg',
-					'image/png',
-				),
+			'name' => esc_html__( 'Enable Editor Style', 'style-manager' ),
+			'desc' => 'field description (optional)',
+			'id'   => $this->prefix( 'enable_editor_style' ),
+			'type' => 'checkbox',
+		) );
+
+		$cmb->add_field( array(
+			'name' => esc_html__( '', 'cmb2' ),
+			'desc' => esc_html__( 'Save Changes', 'style-manager' ),
+			'id'   => $this->prefix( 'customizer_save' ),
+			'type' => 'options_save_button',
+		) );
+		$cmb->object_type( 'options-page' );
+		$boxes[] = $cmb;
+
+		$cmb = new_cmb2_box( array(
+			'id'              => $this->prefix( 'output' ),
+			'title'           => __( 'Output', 'style-manager' ),
+			'show_on'         => $show_on,
+			'display_cb'      => false,
+			'admin_menu_hook' => false,
+		) );
+
+		$cmb->add_field( array(
+			'name'             => esc_html__( 'Where to output the inline CSS style', 'style-manager' ),
+			'desc'             => esc_html__( 'Here you can decide where to put your style output, in header or footer', 'style-manager' ),
+			'id'               => $this->prefix( 'style_resources_location' ),
+			'type'             => 'select',
+			'show_option_none' => false,
+			'default'          => 'head',
+			'options'          => array(
+				'head'   => esc_html__( 'In header (just before the head tag)', 'style-manager' ),
+				'footer' => esc_html__( 'Footer (just before the end of the body tag)', 'style-manager' ),
 			),
 		) );
 
 		$cmb->add_field( array(
 			'name' => esc_html__( '', 'cmb2' ),
 			'desc' => esc_html__( 'Save Changes', 'style-manager' ),
-			'id'   => $this->prefix( 'color_palettes_save' ),
+			'id'   => $this->prefix( 'output_save' ),
+			'type' => 'options_save_button',
+		) );
+		$cmb->object_type( 'options-page' );
+		$boxes[] = $cmb;
+
+		$cmb = new_cmb2_box( array(
+			'id'              => $this->prefix( 'typography' ),
+			'title'           => __( 'Typography', 'style-manager' ),
+			'show_on'         => $show_on,
+			'display_cb'      => false,
+			'admin_menu_hook' => false,
+		) );
+
+		$cmb->add_field( array(
+			'name' => esc_html__( 'Enable Typography Controls', 'style-manager' ),
+			'desc' => 'field description (optional)',
+			'id'   => $this->prefix( 'enable_typography' ),
+			'type' => 'checkbox',
+			'default' => true,
+		) );
+		$cmb->add_field( array(
+			'name' => esc_html__( 'Use Standard/System Fonts', 'style-manager' ),
+			'desc' => 'field description (optional)',
+			'id'   => $this->prefix( 'typography_use_standard_fonts' ),
+			'type' => 'checkbox',
+			'default' => true,
+		) );
+		$cmb->add_field( array(
+			'name' => esc_html__( 'Use Google Fonts', 'style-manager' ),
+			'desc' => 'field description (optional)',
+			'id'   => $this->prefix( 'typography_use_google_fonts' ),
+			'type' => 'checkbox',
+			'default' => true,
+		) );
+		$cmb->add_field( array(
+			'name' => esc_html__( 'Group Google Fonts', 'style-manager' ),
+			'desc' => 'field description (optional)',
+			'id'   => $this->prefix( 'typography_group_google_fonts' ),
+			'type' => 'checkbox',
+			'default' => true,
+		) );
+
+		$cmb->add_field( array(
+			'name' => esc_html__( '', 'cmb2' ),
+			'desc' => esc_html__( 'Save Changes', 'style-manager' ),
+			'id'   => $this->prefix( 'typography_save' ),
+			'type' => 'options_save_button',
+		) );
+		$cmb->object_type( 'options-page' );
+		$boxes[] = $cmb;
+
+		// Dev boxes
+		$cmb = new_cmb2_box( array(
+			'id'              => $this->prefix( 'dev_customizer' ),
+			'title'           => __( 'Customizer', 'style-manager' ),
+			'show_on'         => $show_on,
+			'display_cb'      => false,
+			'admin_menu_hook' => false,
+		) );
+
+		$cmb->add_field( array(
+			'name' => esc_html__( 'Enable Reset Buttons', 'style-manager' ),
+			'desc' => 'field description (optional)',
+			'id'   => $this->prefix( 'enable_reset_buttons' ),
+			'type' => 'checkbox',
+		) );
+
+		$cmb->add_field( array(
+			'name' => esc_html__( '', 'cmb2' ),
+			'desc' => esc_html__( 'Save Changes', 'style-manager' ),
+			'id'   => $this->prefix( 'dev_customizer_save' ),
 			'type' => 'options_save_button',
 		) );
 		$cmb->object_type( 'options-page' );
@@ -226,9 +291,11 @@ class Style_Manager_Settings {
 		$tabs[] = array(
 			'id'    => $this->prefix( 'general_tab' ),
 			'title' => __( 'Setup', 'style-manager' ),
-			'desc'  => '<p>Setup the general cloud settings.</p>',
+			'desc'  => '<p>Setup the general Style Manager settings.</p>',
 			'boxes' => array(
-				$this->prefix( 'color_palettes' ),
+				$this->prefix( 'customizer' ),
+				$this->prefix( 'output' ),
+				$this->prefix( 'typography' ),
 			),
 		);
 		$tabs[] = array(
@@ -236,7 +303,7 @@ class Style_Manager_Settings {
 			'title' => __( 'Dev Help', 'style-manager' ),
 			'desc'  => '<p>Settings to help developers test the system and integration with it.</p>',
 			'boxes' => array(
-//				$this->prefix( 'sandbox_assets_management' ),
+				$this->prefix( 'dev_customizer' ),
 			),
 		);
 		$tabs[] = array(
@@ -283,15 +350,15 @@ class Style_Manager_Settings {
 	}
 
 	/**
-	 * Get a list of terms
+	 * Get a list of terms.
 	 *
 	 * Generic function to return an array of taxonomy terms formatted for CMB2.
 	 * Simply pass in your get_terms arguments and get back a beautifully formatted
 	 * CMB2 options array.
 	 *
-	 * @param string|array $taxonomies Taxonomy name or list of Taxonomy names
-	 * @param  array|string $query_args Optional. Array or string of arguments to get terms
-	 * @return array CMB2 options array
+	 * @param string|array $taxonomies Taxonomy name or list of Taxonomy names.
+	 * @param  array|string $query_args Optional. Array or string of arguments to get terms.
+	 * @return array CMB2 options array.
 	 */
 	protected function get_cmb_options_array_tax( $taxonomies, $query_args = '' ) {
 		$defaults = array(
@@ -309,23 +376,25 @@ class Style_Manager_Settings {
 	}
 
 	/**
-	 * Replaces get_option with get_site_option
-	 * @since  0.1.0
+	 * Replaces get_option with get_site_option.
+	 *
+	 * @since 1.0.0
 	 */
 	public function get_override( $test, $default = false ) {
 		return get_site_option( $this->key, $default );
 	}
 
 	/**
-	 * Replaces update_option with update_site_option
-	 * @since  0.1.0
+	 * Replaces update_option with update_site_option.
+	 *
+	 * @since  1.0.0
 	 */
 	public function update_override( $test, $option_value ) {
 		return update_site_option( $this->key, $option_value );
 	}
 
 	/**
-	 * Public getter method for retrieving protected/private variables
+	 * Public getter method for retrieving protected/private variables.
 	 *
 	 * @throws Exception
 	 * @param  string  $field Field to retrieve
@@ -344,12 +413,12 @@ class Style_Manager_Settings {
 	 * Adds a prefix to an option name.
 	 *
 	 * @param string $option
-	 * @param bool $private Optional. Whether this option name should also get a '_' in front, marking it as private
+	 * @param bool $private Optional. Whether this option name should also get a '_' in front, marking it as private.
 	 *
 	 * @return string
 	 */
 	public function prefix( $option, $private = false ) {
-		$option = $this->parent->metaboxes->prefix( $option );
+		$option = sm_prefix( $option );
 
 		if ( true === $private ) {
 			return '_' . $option;
@@ -357,44 +426,4 @@ class Style_Manager_Settings {
 
 		return $option;
 	}
-
-	/**
-	 * Main Style_Manager_Settings Instance
-	 *
-	 * Ensures only one instance of Style_Manager_Settings is loaded or can be loaded.
-	 *
-	 * @since  1.0.0
-	 * @static
-	 * @see    sm_settings()
-	 * @param  object $parent Main Style_Manager instance.
-	 * @return Style_Manager_Settings Main Style_Manager_Settings instance
-	 */
-	public static function instance( $parent = null ) {
-
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self( $parent );
-		}
-		return self::$_instance;
-	}
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), esc_html( $this->parent->_version ) );
-	} // End __clone ()
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  esc_html( $this->parent->_version ) );
-	} // End __wakeup ()
-
 }

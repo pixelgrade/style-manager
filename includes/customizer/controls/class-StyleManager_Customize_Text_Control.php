@@ -1,9 +1,10 @@
 <?php
 /**
- * Class Pix_Customize_Text_Control
- * A simple Text Control
+ * Class StyleManager_Customize_Text_Control.
+ *
+ * A simple text control.
  */
-class Pix_Customize_Text_Control extends Pix_Customize_Control {
+class StyleManager_Customize_Text_Control extends StyleManager_Customize_Control {
 	public $type    = 'text';
 	public $live    = false;
 

@@ -4,36 +4,20 @@
  *
  * @see         https://pixelgrade.com
  * @author      Pixelgrade
- * @since       1.7.0
+ * @since       1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Style_Manager' ) ) :
+if ( ! class_exists( 'StyleManager' ) ) :
 
-class Style_Manager {
-
-	/**
-	 * Holds the only instance of this class.
-	 * @var     null|Style_Manager
-	 * @access  protected
-	 * @since   1.7.0
-	 */
-	protected static $_instance = null;
-
-	/**
-	 * The main plugin object (the parent).
-	 * @var     null|PixCustomifyPlugin
-	 * @access  public
-	 * @since   1.7.0
-	 */
-	public $parent = null;
+class StyleManager extends StyleManager_Singleton_Registry {
 
 	/**
 	 * The external theme configs object.
-	 * @var     null|Style_Manager_Theme_Configs
+	 * @var     null|StyleManager_Theme_Configs
 	 * @access  public
 	 * @since   1.0.0
 	 */
@@ -41,7 +25,7 @@ class Style_Manager {
 
 	/**
 	 * The color palettes object.
-	 * @var     null|Style_Manager_Color_Palettes
+	 * @var     null|StyleManager_Color_Palettes
 	 * @access  public
 	 * @since   1.0.0
 	 */
@@ -49,7 +33,7 @@ class Style_Manager {
 
 	/**
 	 * The font palettes object.
-	 * @var     null|Style_Manager_Font_Palettes
+	 * @var     null|StyleManager_Font_Palettes
 	 * @access  public
 	 * @since   1.0.0
 	 */
@@ -57,7 +41,7 @@ class Style_Manager {
 
 	/**
 	 * The Cloud API object.
-	 * @var     null|Style_Manager_Cloud_Api
+	 * @var     null|StyleManager_Cloud_Api
 	 * @access  public
 	 * @since   1.0.0
 	 */
@@ -71,7 +55,6 @@ class Style_Manager {
 	 * @param $parent
 	 */
 	protected function __construct( $parent = null ) {
-		$this->parent = $parent;
 
 		$this->init();
 	}
@@ -85,26 +68,26 @@ class Style_Manager {
 		/**
 		 * Initialize the Themes Config logic.
 		 */
-		require_once 'class-style-manager-theme-configs.php';
-		$this->theme_configs = Style_Manager_Theme_Configs::instance();
+		require_once 'class-Theme_Configs.php';
+		$this->theme_configs = StyleManager_Theme_Configs::getInstance();
 
 		/**
 		 * Initialize the Color Palettes logic.
 		 */
-		require_once 'class-style-manager-color-palettes.php';
-		$this->color_palettes = Style_Manager_Color_Palettes::instance();
+		require_once 'class-Color_Palettes.php';
+		$this->color_palettes = StyleManager_Color_Palettes::getInstance();
 
 		/**
 		 * Initialize the Font Palettes logic.
 		 */
-//		require_once 'class-style-manager-font-palettes.php';
-//		$this->font_palettes = Style_Manager_Font_Palettes::instance();
+//		require_once 'class-Font_Palettes.php';
+//		$this->font_palettes = StyleManager_Font_Palettes::instance();
 
 		/**
 		 * Initialize the Cloud API logic.
 		 */
-		require_once 'lib/class-style-manager-cloud-api.php';
-		$this->cloud_api = new Style_Manager_Cloud_Api();
+		require_once 'lib/class-Cloud_Api.php';
+		$this->cloud_api = new StyleManager_Cloud_Api();
 
 		// Hook up.
 		$this->add_hooks();
@@ -143,7 +126,7 @@ class Style_Manager {
 	 * Register Customizer admin scripts.
 	 */
 	function register_admin_customizer_scripts() {
-		wp_register_script( sm_prefix('admin' ), plugins_url( 'js/customizer/style-manager.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
+		wp_register_script( sm_prefix('admin' ), plugins_url( 'assets/js/customizer/style-manager.js', StyleManager_Plugin()->get_file() ), array( 'jquery' ), StyleManager_Plugin()->get_version() );
 	}
 
 	/**
@@ -246,7 +229,7 @@ class Style_Manager {
 		);
 
 		// Maybe handle the color palettes.
-		if ( class_exists( 'Style_Manager_Color_Palettes' ) && Style_Manager_Color_Palettes::instance()->is_supported() ) {
+		if ( class_exists( 'StyleManager_Color_Palettes' ) && StyleManager_Color_Palettes::getInstance()->is_supported() ) {
 
 			// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 			$color_palettes_fields = array(
@@ -298,7 +281,7 @@ class Style_Manager {
 		}
 
 		// Maybe handle the font palettes.
-		if ( class_exists( 'Style_Manager_Font_Palettes' ) && Style_Manager_Font_Palettes::instance()->is_supported() ) {
+		if ( class_exists( 'StyleManager_Font_Palettes' ) && StyleManager_Font_Palettes::instance()->is_supported() ) {
 
 			$font_palettes_fields = array(
 				'sm_font_palette',
@@ -516,46 +499,6 @@ class Style_Manager {
 
 		wp_send_json_success( esc_html__( 'Thank you for your feedback.', 'style_manager' ) );
 	}
-
-	/**
-	 * Main Style_Manager Instance
-	 *
-	 * Ensures only one instance of Style_Manager is loaded or can be loaded.
-	 *
-	 * @since  1.7.0
-	 * @static
-	 * @param  object $parent Main PixCustomifyPlugin instance.
-	 *
-	 * @return Style_Manager Main Style_Manager instance
-	 */
-	public static function instance( $parent = null ) {
-
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self( $parent );
-		}
-
-		return self::$_instance;
-	} // End instance ()
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.7.0
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.7.0
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
 }
 
 endif;

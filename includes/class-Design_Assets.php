@@ -11,17 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Style_Manager_Design_Assets' ) ) :
+if ( ! class_exists( 'StyleManager_Design_Assets' ) ) :
 
-class Style_Manager_Design_Assets {
-
-	/**
-	 * Holds the only instance of this class.
-	 * @var null|Style_Manager_Design_Assets
-	 * @access protected
-	 * @since 1.0.0
-	 */
-	protected static $_instance = null;
+class StyleManager_Design_Assets extends StyleManager_Singleton_Registry {
 
 	/**
 	 * The current design assets config.
@@ -33,7 +25,7 @@ class Style_Manager_Design_Assets {
 
 	/**
 	 * The cloud API object used to communicate with the cloud.
-	 * @var     Style_Manager_Cloud_Api
+	 * @var     StyleManager_Cloud_Api
 	 * @access  public
 	 * @since   1.0.0
 	 */
@@ -44,7 +36,7 @@ class Style_Manager_Design_Assets {
 	 *
 	 * @since 1.0.0
 	 */
-	private function __construct() {
+	protected function __construct() {
 		$this->init();
 	}
 
@@ -57,8 +49,8 @@ class Style_Manager_Design_Assets {
 		/**
 		 * Initialize the Cloud API logic.
 		 */
-		require_once 'class-style-manager-cloud-api.php';
-		$this->cloud_api = new Style_Manager_Cloud_Api();
+		require_once 'lib/class-Cloud_Api.php';
+		$this->cloud_api = new StyleManager_Cloud_Api();
 	}
 
 	/**
@@ -196,45 +188,6 @@ class Style_Manager_Design_Assets {
 
 		return $design_assets;
 	}
-
-	/**
-	 * Main Style_Manager_Design_Assets Instance
-	 *
-	 * Ensures only one instance of Style_Manager_Design_Assets is loaded or can be loaded.
-	 *
-	 * @since  1.0.0
-	 * @static
-	 *
-	 * @return Style_Manager_Design_Assets Main Style_Manager_Design_Assets instance
-	 */
-	public static function instance() {
-
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-
-		return self::$_instance;
-	} // End instance ()
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
 }
 
 endif;

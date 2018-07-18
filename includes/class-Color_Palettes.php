@@ -11,17 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Style_Manager_Color_Palettes' ) ) :
+if ( ! class_exists( 'StyleManager_Color_Palettes' ) ) :
 
-class Style_Manager_Color_Palettes {
-
-	/**
-	 * Holds the only instance of this class.
-	 * @var     null|Style_Manager_Font_Palettes
-	 * @access  protected
-	 * @since   1.0.0
-	 */
-	protected static $_instance = null;
+class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 
 	/**
 	 * Constructor.
@@ -76,13 +68,13 @@ class Style_Manager_Color_Palettes {
 	 * Register Customizer admin scripts
 	 */
 	public function register_admin_customizer_scripts() {
-		wp_register_script( sm_prefix( 'swap-values' ), plugins_url( 'js/customizer/swap-values.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-		wp_register_script( sm_prefix( 'color-palettes-variations' ), plugins_url( 'js/customizer/color-palettes-variations.js', PixCustomifyPlugin()->get_file() ), array( 'jquery' ), PixCustomifyPlugin()->get_version() );
-		wp_register_script( sm_prefix( 'color-palettes' ), plugins_url( 'js/customizer/color-palettes.js', PixCustomifyPlugin()->get_file() ), array(
+		wp_register_script( sm_prefix( 'swap-values' ), plugins_url( 'assets/js/customizer/swap-values.js', StyleManager_Plugin()->get_file() ), array( 'jquery' ), StyleManager_Plugin()->get_version() );
+		wp_register_script( sm_prefix( 'color-palettes-variations' ), plugins_url( 'assets/js/customizer/color-palettes-variations.js', StyleManager_Plugin()->get_file() ), array( 'jquery' ), StyleManager_Plugin()->get_version() );
+		wp_register_script( sm_prefix( 'color-palettes' ), plugins_url( 'assets/js/customizer/color-palettes.js', StyleManager_Plugin()->get_file() ), array(
 			'jquery',
 			sm_prefix( 'color-palettes-variations' ),
 			sm_prefix( 'swap-values' ),
-		), PixCustomifyPlugin()->get_version() );
+		), StyleManager_Plugin()->get_version() );
 	}
 
 	/**
@@ -108,10 +100,10 @@ class Style_Manager_Color_Palettes {
 	 */
 	public function get_palettes( $skip_cache = false ) {
 		// Make sure that the Design Assets class is loaded.
-		require_once 'lib/class-style-manager-design-assets.php';
+		require_once 'class-Design_Assets.php';
 
 		// Get the design assets data.
-		$design_assets = Style_Manager_Design_Assets::instance()->get( $skip_cache );
+		$design_assets = StyleManager_Design_Assets::getInstance()->get( $skip_cache );
 		if ( false === $design_assets || empty( $design_assets['color_palettes'] ) ) {
 			$color_palettes_config = $this->get_default_config();
 		} else {
@@ -130,7 +122,7 @@ class Style_Manager_Color_Palettes {
 	 */
 	public function is_supported() {
 		// For now we will only use the fact that Style Manager is supported.
-		return apply_filters( 'style_manager_color_palettes_are_supported', Style_Manager::instance()->is_supported() );
+		return apply_filters( 'style_manager_color_palettes_are_supported', StyleManager::getInstance()->is_supported() );
 	}
 
 	/**
@@ -851,44 +843,6 @@ class Style_Manager_Color_Palettes {
 
 		return $site_data;
 	}
-
-	/**
-	 * Main Style_Manager_Color_Palettes Instance
-	 *
-	 * Ensures only one instance of Style_Manager_Color_Palettes is loaded or can be loaded.
-	 *
-	 * @since  1.0.0
-	 * @static
-	 *
-	 * @return Style_Manager_Font_Palettes Main Style_Manager_Color_Palettes instance
-	 */
-	public static function instance() {
-
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	} // End instance ()
-
-	/**
-	 * Cloning is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __clone() {
-
-		_doing_it_wrong( __FUNCTION__,esc_html( __( 'Cheatin&#8217; huh?' ) ), null );
-	} // End __clone ()
-
-	/**
-	 * Unserializing instances of this class is forbidden.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __wakeup() {
-
-		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cheatin&#8217; huh?' ) ),  null );
-	} // End __wakeup ()
 }
 
 endif;
