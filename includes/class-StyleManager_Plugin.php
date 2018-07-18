@@ -159,7 +159,7 @@ final class StyleManager_Plugin extends StyleManager_Plugin_Init {
 			$this->customizer = StyleManager_Customizer::getInstance( 'sm' );
 		}
 
-		/* Initialize the Style Manager logic. */
+		/* Initialize the core Style Manager logic. */
 		require_once( $this->plugin_basepath . 'includes/class-StyleManager.php' );
 		if ( is_null( $this->style_manager ) ) {
 			$this->style_manager = StyleManager::getInstance( $this );
