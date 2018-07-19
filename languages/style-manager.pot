@@ -113,7 +113,7 @@ msgid "Toggle Advanced Settings"
 msgstr ""
 
 #: includes/class-Color_Palettes.php:367
-msgid "One or more colors connected to yout color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action."
+msgid "One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action."
 msgstr ""
 
 #: includes/class-Color_Palettes.php:586

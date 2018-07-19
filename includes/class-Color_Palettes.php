@@ -364,7 +364,7 @@ class StyleManager_Color_Palettes extends StyleManager_Singleton_Registry {
 
 		$current_palette .= '<div class="c-color-palette__fields">';
 		$current_palette .= '<div class="c-color-palette__notification  description  hidden  js-altered-notification">' . PHP_EOL .
-		                    __( 'One or more colors connected to yout color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'style-manager' ) . PHP_EOL .
+		                    __( 'One or more colors connected to your color palette have been modified. By changing or altering the current palette you will lose changes made prior to this action.', 'style-manager' ) . PHP_EOL .
 		                    '</div>'  . PHP_EOL;
 		foreach ( $master_color_controls_ids as $setting_id ) {
 			$current_palette .= '<input id="current-palette-' . $setting_id . '" class="c-color-palette__input ' . $setting_id . '" type="text">';
