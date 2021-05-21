@@ -1,0 +1,105 @@
+[id]#sub-accordion-section-rosa2_options\[colors_section\] {
+  background: var(--sm-color-palette-accent-color-1);
+
+  .customize-control-html[id*="sm-description"] {
+    margin-top: var(--customize-control-spacing-y);
+    padding-bottom: var(--customize-control-spacing-y);
+    border: solid var(--customizer-border-color);
+    border-width: 1px 0;
+    background: var(--sm-color-palette-accent-color-2);
+  }
+
+  .customize-section-description-container + [id*="sm-description"] {
+    margin-top: 0;
+    border-top-width: 0;
+  }
+
+  .customize-control-html[id*="sm-group-separator"] {
+    margin-top: var(--customize-control-spacing-y);
+    border: solid var(--customizer-border-color);
+    border-width: 1px 0;
+    background: var(--sm-color-palette-accent-color-2);
+  }
+
+  .sm-group__title {
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+.customize-control-sm_toggle {
+
+  & + & {
+    padding-top: 9px;
+  }
+}
+
+.sm-toggle {
+
+}
+
+.sm-toggle__checkbox {
+  display: none !important;
+}
+
+.sm-toggle__label,
+.sm-toggle__switch,
+.sm-toggle__switch:before {
+  transition: all .2s ease-out;
+}
+
+.sm-toggle__label {
+  display: flex;
+  align-items: center;
+  padding: 8px 6px;
+  background: #f4f7fc;
+  border-radius: 9em;
+  transition-property: background-color;
+
+  .sm-toggle__checkbox:checked + & {
+    background: #fcf8ef;
+
+    .sm-toggle__switch {
+      background: var(--sm-color-palette-accent-color-6);
+
+      &:before {
+        transform: translate(20px, 0);
+      }
+    }
+
+    .sm-toggle__label-text {
+      color: #105f97;
+    }
+  }
+}
+
+.sm-toggle__switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 9em;
+  background: #c6c9cd;
+  transition-property: background-color;
+
+  &:before {
+    content: "";
+
+    position: absolute;
+    top: 2px;
+    left: 2px;
+
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: var(--sm-color-palette-accent-color-1);
+    border-radius: 9em;
+
+    transition-property: background-color, transform;
+  }
+}
+.sm-toggle__label-text {
+  margin-left: 10px;
+  transition-property: color;
+}

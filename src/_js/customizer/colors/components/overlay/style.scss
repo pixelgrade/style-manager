@@ -1,0 +1,34 @@
+.sm-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+
+  width: 100%;
+  height: 100%;
+
+  background: #FFFFFF;
+  transition: all .2s ease;
+  transition-property: opacity;
+
+  overflow: auto;
+  pointer-events: auto;
+
+  &:not(.sm-overlay--visible) {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &, * {
+    font-family: system-ui;
+  }
+}
+
+.sm-overlay__container {
+  padding: 0 80px;
+}
+
+.sm-overlay__wrap {
+  max-width: 920px;
+  margin: 0 auto;
+}

@@ -1,0 +1,29 @@
+.customize-control-range {
+  --customizer-field-padding-x: 0.4em;
+  --customizer-field-padding-y: 0.4em;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  width: auto;
+  margin-left: calc( -1 * var(--customize-control-spacing-x) );
+
+  &[class][class] > * {
+    margin-left: var(--customize-control-spacing-x);
+  }
+
+  .customize-control-title,
+  .customize-control-notifications-container {
+    width: 100%;
+  }
+
+  input[type="range"] {
+    flex-grow: 1;
+  }
+
+  .range-value {
+    flex-basis: 4em;
+    text-align: center;
+  }
+}

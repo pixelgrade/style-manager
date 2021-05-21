@@ -1,0 +1,48 @@
+.customify_radio_html {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+
+  margin-top: calc( -0.5 * var(--customizer-spacing) );
+  margin-left: calc( -0.5 * var(--customizer-spacing) );
+
+  > * {
+    padding-top: calc( 0.5 * var(--customizer-spacing) );
+    padding-left: calc( 0.5 * var(--customizer-spacing) );
+    flex: 0 0 50%;
+  }
+
+  label {
+    display: block;
+    height: 100%;
+
+    > input + div {
+      border-color: var(--customizer-field-border-color);
+      height: 100%;
+    }
+
+    &:hover > input + div {
+      background-color: var(--customizer-field-background-color);
+    }
+  }
+
+  input {
+    display: none;
+
+    + div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: var(--customizer-field-border-width) solid transparent;
+      border-radius: var(--customizer-field-border-radius);
+      padding: var(--customizer-spacing);
+    }
+
+    &:checked + div {
+      background-color: var(--customizer-field-background-color);
+      border-color: var(--customizer-field-focus-border-color);
+      cursor: default;
+    }
+  }
+}
