@@ -1,27 +1,27 @@
 <?php
 /**
- * Customify
+ * Style Manager
  *
- * @package Customify
- * @author  Vlad Olaru <vlad@pixelgrade.com>
+ * @package Style Manager
+ * @author  Pixelgrade <contact@pixelgrade.com>
  * @license GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: Customify
- * Plugin URI:  https://wordpress.org/plugins/customify/
- * Description: A Theme Customizer Booster to easily and consistently customize Fonts, Colors, and other options for your site.
- * Version: 3.0.0
+ * Plugin Name: Style Manager
+ * Plugin URI:  https://wordpress.org/plugins/style-manager
+ * Description: Auto-magical system to style your WordPress site.
+ * Version: 1.0.0
  * Author: Pixelgrade
  * Author URI: https://pixelgrade.com
  * Author Email: contact@pixelgrade.com
- * Text Domain: customify
- * License:     GPL-2.0+
+ * Text Domain: style-manager
+ * License:     GPL-2.0 or later.
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages/
  * Requires at least: 4.9.16
  * Tested up to: 5.7.1
  * Requires PHP: 5.6.20
- * GitHub Plugin URI: pixelgrade/customify
+ * GitHub Plugin URI: pixelgrade/style-manager
  * Release Asset: true
  */
 
@@ -39,7 +39,7 @@ if ( ! \defined( 'ABSPATH' ) ) {
  *
  * @var string
  */
-const VERSION = '3.0.0';
+const VERSION = '1.0.0';
 
 /**
  * Plugin required minimal PHP version.
