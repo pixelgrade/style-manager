@@ -441,7 +441,107 @@ class ColorPalettes extends AbstractHookProvider {
 					      { "value": "#34394B" },
 					      { "value": "#34394B" }
 					    ]
-					  }
+					  },
+					  {
+					    "sourceIndex": 6,
+					    "id": "_info",
+					    "lightColorsCount": 5,
+					    "label": "Info",
+					    "source": [ "#2E72D2" ],
+					    "colors": [
+					      { "value": "#ffffff" },
+					      { "value": "#f6f7fd" },
+					      { "value": "#e1e5f8" },
+					      { "value": "#b2c0ec" },
+					      { "value": "#859ee2" },
+					      { "value": "#527ed3" },
+					      { "value": "#2E72D2", "isSource": true },
+					      { "value": "#0758b0" },
+					      { "value": "#0c4496" },
+					      { "value": "#0e317b" },
+					      { "value": "#0c1861" },
+					      { "value": "#101010" }
+				        ],
+				        "textColors": [
+				          { "value": "#30354c" },
+				          { "value": "#202132" }
+			            ]
+		              },
+					  {
+					    "sourceIndex": 6,
+					    "id": "_error",
+					    "lightColorsCount": 5,
+					    "label": "Error",
+					    "source": [ "#D82C0D" ],
+					    "colors": [
+					      { "value": "#ffffff" },
+					      { "value": "#fff5f2" },
+					      { "value": "#ffdfd6" },
+					      { "value": "#fbaf98" },
+					      { "value": "#f18061" },
+					      { "value": "#de4f2e" },
+					      { "value": "#D82C0D", "isSource": true },
+					      { "value": "#b50f0f" },
+					      { "value": "#901313" },
+					      { "value": "#6c1212" },
+					      { "value": "#4d0000" },
+					      { "value": "#101010" }
+				        ],
+				        "textColors": [
+				          { "value": "#4c2e2e" },
+				          { "value": "#311c1c" }
+			            ]
+		              },
+					  {
+					    "sourceIndex": 3,
+					    "id": "_warning",
+					    "lightColorsCount": 5,
+					    "label": "Warning",
+					    "source": [ "#FFCC00" ],
+					    "colors": [
+					      { "value": "#ffffff" },
+					      { "value": "#fff7df" },
+					      { "value": "#fce690" },
+					      { "value": "#FFCC00", "isSource": true },
+					      { "value": "#c39b10" },
+					      { "value": "#9f7a00" },
+					      { "value": "#896701" },
+					      { "value": "#735507" },
+					      { "value": "#60430a" },
+					      { "value": "#4e2f0d" },
+					      { "value": "#40140b" },
+					      { "value": "#101010" }
+				        ],
+				        "textColors": [
+				          { "value": "#473222" },
+				          { "value": "#311d1b" }
+			            ]
+		              },
+					  {
+					    "sourceIndex": 7,
+					    "id": "_success",
+					    "lightColorsCount": 5,
+					    "label": "Success",
+					    "source": [ "#00703c" ],
+					    "colors": [
+					      { "value": "#ffffff" },
+					      { "value": "#f4f8f5" },
+					      { "value": "#dce9e0" },
+					      { "value": "#a9c9b2" },
+					      { "value": "#7aab89" },
+					      { "value": "#4c8c63" },
+					      { "value": "#257b4a" },
+					      { "value": "#00703c", "isSource": true },
+					      { "value": "#0b5425" },
+					      { "value": "#0d3f12" },
+					      { "value": "#092809" },
+					      { "value": "#101010" }
+				        ],
+				        "textColors": [
+				          { "value": "#223c23" },
+				          { "value": "#142614" }
+			            ]
+		              }
 					]',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
