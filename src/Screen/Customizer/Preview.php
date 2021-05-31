@@ -69,7 +69,7 @@ class Preview extends AbstractHookProvider {
 		$js .= "
 function sm_advanced_palette_output_cb( value, selector, property ) {
     var palettes = JSON.parse( value ),
-        variation = ' . $variation . ',
+        variation = " . $variation . ",
         fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
         
     if ( ! palettes.length ) {

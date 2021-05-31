@@ -50,7 +50,7 @@ const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted = false
     }
 
     return `${ colorsAcc }
-      ${ getColorVariables( palette, `${ index }`, oldColorIndex, isShifted ) }
+      ${ getColorVariables( palette, index, oldColorIndex, isShifted ) }
     `;
   }, '' );
 }
