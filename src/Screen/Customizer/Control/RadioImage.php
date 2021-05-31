@@ -47,7 +47,7 @@ class RadioImage extends BaseControl {
 						foreach ( $this->choices as $value => $image_url ) {
 
 							if ( empty( $image_url ) ) {
-								$image_url = plugins_url() . '/customify/images/default_radio_image.png';
+								$image_url = plugins_url() . '/style-manager/images/default_radio_image.png';
 							} ?>
 							<label>
 								<input <?php $this->link();

@@ -1,7 +1,7 @@
 {
-	"packagename": "Customify",
-	"slug": "customify",
-	"textdomain": "customify",
-	"bugreport": "https://github.com/pixelgrade/customify/issues/new",
-	"repo": "https://github.com/pixelgrade/customify"
+	"packagename": "Style Manager",
+	"slug": "style-manager",
+	"textdomain": "style-manager",
+	"bugreport": "https://github.com/pixelgrade/style-manager/issues/new",
+	"repo": "https://github.com/pixelgrade/style-manager"
 }

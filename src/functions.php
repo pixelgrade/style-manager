@@ -91,7 +91,7 @@ function display_missing_dependencies_notice() {
 	$message = sprintf(
 	/* translators: %s: documentation URL */
 		__( 'Customify is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', '__plugin_txtd' ),
-		'https://github.com/pixelgrade/customify'
+		'https://github.com/pixelgrade/style-manager'
 	);
 
 	printf(

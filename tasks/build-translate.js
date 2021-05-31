@@ -2,12 +2,7 @@ var gulp = require('gulp'),
   fs = require('fs'),
   plugins = require('gulp-load-plugins')()
 
-if (fs.existsSync('./tasks/gulpconfig.json')) {
-  gulpconfig = require('./gulpconfig.json')
-} else {
-  gulpconfig = require('./gulpconfig.example.json')
-  console.warn('Don\'t forget to create your own gulpconfig.json from gulpconfig.json.example')
-}
+const gulpconfig = require('./gulpconfig.json');
 
 var slug = gulpconfig.slug
 var packageName = gulpconfig.packagename
@@ -47,7 +42,12 @@ function generatePotFile () {
 generatePotFile.description = 'Scan the build files and generate the .pot file.'
 gulp.task('build:translate:generatepot', generatePotFile)
 
+// @todo fix generatepot task or translate it to php
+//gulp.task('build:translate', gulp.series(
+//  'build:translate:replacetxtdomain',
+//  'build:translate:generatepot'
+//))
+
 gulp.task('build:translate', gulp.series(
-  'build:translate:replacetxtdomain',
-  'build:translate:generatepot'
+  'build:translate:replacetxtdomain'
 ))

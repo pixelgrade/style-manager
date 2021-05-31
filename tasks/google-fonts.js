@@ -3,12 +3,7 @@ var gulp = require( 'gulp' ),
   request = require('request'),
   plugins = require( 'gulp-load-plugins' )();
 
-if ( fs.existsSync( './tasks/gulpconfig.json' ) ) {
-  gulpconfig = require( './gulpconfig.json' );
-} else {
-  gulpconfig = require( './gulpconfig.example.json' );
-  console.warn( "Don't forget to create your own gulpconfig.json from gulpconfig.json.example" );
-}
+const gulpconfig = require('./gulpconfig.json');
 
 // -----------------------------------------------------------------------------
 // This is a helper function used to update the Google fonts list and recreate the php file holding it (includes/resources/google.fonts.php).

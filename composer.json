@@ -1,6 +1,6 @@
 {
-    "name": "pixelgrade/customify",
-    "description": "Customify is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme.",
+    "name": "pixelgrade/style-manager",
+    "description": "Style Manager is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme.",
     "type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"authors": [
@@ -21,8 +21,8 @@
 		}
 	],
 	"support": {
-		"issues": "https://github.com/pixelgrade/customify/issues",
-		"source": "https://github.com/pixelgrade/customify"
+		"issues": "https://github.com/pixelgrade/style-manager/issues",
+		"source": "https://github.com/pixelgrade/style-manager"
 	},
 	"config": {
 		"optimize-autoloader": true,

@@ -3,12 +3,7 @@ var gulp = require( 'gulp' ),
   cp = require( 'child_process' ),
   plugins = require( 'gulp-load-plugins' )();
 
-if ( fs.existsSync( './tasks/gulpconfig.json' ) ) {
-  gulpconfig = require( './gulpconfig.json' );
-} else {
-  gulpconfig = require( './gulpconfig.example.json' );
-  console.warn( "Don't forget to create your own gulpconfig.json from gulpconfig.json.example" );
-}
+const gulpconfig = require('./gulpconfig.json');
 
 var slug = gulpconfig.slug;
 

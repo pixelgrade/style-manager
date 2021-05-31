@@ -4,12 +4,7 @@ var gulp = require( 'gulp' ),
   merge = require('merge-stream'),
   plugins = require( 'gulp-load-plugins' )();
 
-if ( fs.existsSync( './tasks/gulpconfig.json' ) ) {
-  gulpconfig = require( './gulpconfig.json' );
-} else {
-  gulpconfig = require( './gulpconfig.example.json' );
-  console.warn( "Don't forget to create your own gulpconfig.json from gulpconfig.json.example" );
-}
+const gulpconfig = require('./gulpconfig.json');
 
 gulp.task( 'composer:delete_lock_and_vendor', function () {
   return gulp.src( [ 'composer.lock', 'vendor' ] , { allowEmpty: true, read: false } )
