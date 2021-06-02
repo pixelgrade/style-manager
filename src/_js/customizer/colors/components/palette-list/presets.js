@@ -5,51 +5,51 @@ const presets = [{
   config: [{
     "uid": "color_group_010",
     "sources": [{
-        "uid": "color_0",
-        "label": "Brand primary",
-        "value": "#1d7e70"
-      },
-      {
-        "uid": "color_1",
-        "label": "Interpolated color",
-        "value": "#efdfd2"
-      }
+      "uid": "color_0",
+      "label": "Brand primary",
+      "value": "#1d7e70"
+    },
+    {
+      "uid": "color_1",
+      "label": "Interpolated color",
+      "value": "#efdfd2"
+    }
     ]
   },
   {
-      "uid": "color_group_011",
-      "sources": [{
-        "uid": "color_0",
-        "label": "Secondary",
-        "value": "#FFBD73"
-      }]
+    "uid": "color_group_011",
+    "sources": [{
+      "uid": "color_0",
+      "label": "Secondary",
+      "value": "#FFBD73"
     }]
+  }]
 }, {
   uid: `preset2`,
   quote: "I prefer living in color",
   image: 'https://images.unsplash.com/photo-1549772262-a128a0224ea5?ixid=MnwxMjA3fDB8MXxzZWFyY2h8NHx8Y2l0eSUyMGxpZ2h0c3x8MHx8fHwxNjE5MTY5ODI0&ixlib=rb-1.2.1&dpr=1&auto=format&fit=crop&w=200&h=200&q=80',
   config: [{
-      "uid": "color_group_021",
-      "sources": [{
-          "uid": "color_0",
-          "label": "Brand primary",
-          "value": "#405DA9"
-        },
-        {
-          "uid": "color_1",
-          "label": "Interpolated color",
-          "value": "#7E7E7E"
-        }
-      ]
+    "uid": "color_group_021",
+    "sources": [{
+      "uid": "color_0",
+      "label": "Brand primary",
+      "value": "#405DA9"
     },
     {
-      "uid": "color_group_022",
-      "sources": [{
-        "uid": "color_0",
-        "label": "Secondary",
-        "value": "#E49E71"
-      }]
+      "uid": "color_1",
+      "label": "Interpolated color",
+      "value": "#7E7E7E"
     }
+    ]
+  },
+  {
+    "uid": "color_group_022",
+    "sources": [{
+      "uid": "color_0",
+      "label": "Secondary",
+      "value": "#E49E71"
+    }]
+  }
   ]
 }, {
   uid: `preset3`,
@@ -70,25 +70,25 @@ const presets = [{
   config: [{
     "uid": "color_group_041",
     "sources": [{
-        "uid": "color_0",
-        "label": "Brand primary",
-        "value": "#fde169"
-      },
-      {
-        "uid": "color_1",
-        "label": "Interpolated color",
-        "value": "#920060"
-      }
+      "uid": "color_0",
+      "label": "Brand primary",
+      "value": "#fde169"
+    },
+    {
+      "uid": "color_1",
+      "label": "Interpolated color",
+      "value": "#920060"
+    }
     ]
   },
   {
-      "uid": "color_group_042",
-      "sources": [{
-        "uid": "color_0",
-        "label": "Secondary",
-        "value": "#0161DF"
-      }]
+    "uid": "color_group_042",
+    "sources": [{
+      "uid": "color_0",
+      "label": "Secondary",
+      "value": "#0161DF"
     }]
+  }]
 }, {
   uid: `preset5`,
   quote: "Din grădină în farfurie",
@@ -96,20 +96,20 @@ const presets = [{
   config: [{
     "uid": "color_group_051",
     "sources": [{
-        "uid": "color_0",
-        "label": "Brand primary",
-        "value": "#A2304A"
-      }
+      "uid": "color_0",
+      "label": "Brand primary",
+      "value": "#A2304A"
+    }
     ]
   },
   {
-      "uid": "color_group_052",
-      "sources": [{
-        "uid": "color_0",
-        "label": "Secondary",
-        "value": "#2F6A4C"
-      }]
+    "uid": "color_group_052",
+    "sources": [{
+      "uid": "color_0",
+      "label": "Secondary",
+      "value": "#2F6A4C"
     }]
+  }]
 }, {
   uid: `preset6`,
   quote: "It's liquid sunshine",
@@ -117,31 +117,31 @@ const presets = [{
   config: [{
     "uid": "color_group_061",
     "sources": [{
-        "uid": "color_0",
-        "label": "Brand primary",
-        "value": "#6D931C"
-      }
+      "uid": "color_0",
+      "label": "Brand primary",
+      "value": "#6D931C"
+    }
     ]
   },
   {
-      "uid": "color_group_062",
-      "sources": [{
-        "uid": "color_0",
-        "label": "Secondary",
-        "value": "#F05B32"
-      }]
-    },{
     "uid": "color_group_062",
     "sources": [{
-        "uid": "color_0",
-        "label": "Tertiary",
-        "value": "#5c5c5c"
-      },
-      {
-        "uid": "color_1",
-        "label": "Interpolated color",
-        "value": "#FECB92"
-      }
+      "uid": "color_0",
+      "label": "Secondary",
+      "value": "#F05B32"
+    }]
+  },{
+    "uid": "color_group_063",
+    "sources": [{
+      "uid": "color_0",
+      "label": "Tertiary",
+      "value": "#5c5c5c"
+    },
+    {
+      "uid": "color_1",
+      "label": "Interpolated color",
+      "value": "#FECB92"
+    }
     ]
   }]
 }]
