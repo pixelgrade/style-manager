@@ -25,6 +25,24 @@ const PreviewTabs = ( props ) => {
       } }
   ];
 
+  wp.customize.section( 'sm_color_palettes_section', section => {
+
+    useEffect( () => {
+
+      const callback = expanded => {
+        if ( expanded ) {
+          setActive( 'colors' );
+        }
+      };
+
+      section.expanded.bind( callback );
+
+      return () => {
+        section.expanded.unbind( callback );
+      }
+    } )
+  } )
+
   useEffect( () => {
 
     const previewResizer = window?.sm?.customizer?.resizer;
