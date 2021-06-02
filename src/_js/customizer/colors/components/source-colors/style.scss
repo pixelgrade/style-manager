@@ -81,8 +81,8 @@
     }
 
     &:before {
-      background-image: conic-gradient( var(--sm-source-main-color), currentColor );
-      transform: scale(0.7);
+      background-image: conic-gradient(from 90deg, var(--sm-source-main-color), currentColor );
+      transform: scale(0.8);
     }
 
     &:after {

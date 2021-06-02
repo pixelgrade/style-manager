@@ -134,6 +134,9 @@ const Builder = ( props ) => {
       <div className="sm-group">
         <Accordion>
           <AccordionSection title={ 'Explore colors' }>
+            <div className="customize-control-description">
+              Curated color palettes to help you lay the foundations of the color system and make it easy to get started.
+            </div>
             <PresetsList active={ activePreset } onChange={ ( preset ) => {
               updateSource( preset.config );
               setActivePreset( preset.uid );

@@ -167,7 +167,7 @@ const DropZone = () => {
 
   return (
     <div className="dropzone">
-      <div className="dropzone-description">
+      <div className="customize-control-description">
         Extract colors from an image and generate a color palette for your design system.
       </div>
       <div className="dropzone-container" onDragOver={dragOver}

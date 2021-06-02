@@ -97,7 +97,7 @@
 .customize-control-description {
   margin-bottom: calc( 0.5 * var(--customizer-spacing) );
   font-style: normal;
-  opacity: 0.75;
+  opacity: 0.8;
   clear: both;
 }
 
@@ -2001,8 +2001,8 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   border-radius: 50%;
 }
 .c-palette-builder__source-item:not(:first-child) .c-palette-builder__source-item-preview:before {
-  background-image: conic-gradient(var(--sm-source-main-color), currentColor);
-  transform: scale(0.7);
+  background-image: conic-gradient(from 90deg, var(--sm-source-main-color), currentColor);
+  transform: scale(0.8);
 }
 .c-palette-builder__source-item:not(:first-child) .c-palette-builder__source-item-preview:after {
   transform: scale(0.3);
@@ -2469,11 +2469,6 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
 .dropzone-info-anchor {
   color: var(--sm-color-palette-accent-color-6);
   text-decoration: underline;
-}
-
-.dropzone-description {
-  margin-top: 0;
-  margin-bottom: 1em;
 }
 
 .dropzone-image-source {
