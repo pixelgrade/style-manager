@@ -75,18 +75,41 @@ const DropZone = () => {
 
   useEffect( () => {
     myWorker.onmessage = function( event ) {
+      const order = [
+        "primary",
+        "secondary",
+        "tertiary",
+        "quinary",
+        "senary",
+        "septenary",
+        "octonary",
+        "nonary",
+        "denary"
+      ];
+
       const type = event.data.type;
 
       if ( 'palette' === type ) {
         const groups = maybeInterpolateColors( event.data.colors );
 
         const config = groups.map( ( colors, groupIndex ) => {
+          let label = `${ __( 'Brand', '__plugin_txtd' ) } ${ order[ groupIndex ] }`;
+
+          if ( groupIndex === 0 ) {
+            label = label.charAt( 0 ).toUpperCase() + label.slice( 1 );
+          }
+
           return {
             uid: `color_group_${ groupIndex }`,
             sources: colors.map( ( color, colorIndex ) => {
+
+              if ( colorIndex !== 0 ) {
+                label = __( 'Interpolated Color', '__plugin_txtd' );
+              }
+
               return {
                 uid: `color_${ colorIndex }`,
-                label: `Color ${ colorIndex + 1 }`,
+                label: label,
                 value: chroma( color ).hex()
               }
             } )

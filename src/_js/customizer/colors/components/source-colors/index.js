@@ -13,6 +13,7 @@ import {
 } from "./utils";
 
 import './style.scss';
+import {useCustomizeSettingCallback} from "../../../utils";
 
 const SourceColors = ( props ) => {
   const { config, setConfig } = useContext( ConfigContext );
@@ -47,8 +48,12 @@ const SourceColorsGroup = ( props ) => {
   const { uid, sources } = props;
   const groupIndex = props.index;
 
+  const style = {
+    '--sm-source-main-color': sources[0].value,
+  }
+
   return (
-    <div key={ uid } className="c-palette-builder__source-group">
+    <div key={ uid } className="c-palette-builder__source-group" style={ style }>
       { sources.map( ( color, index ) => (
         <SourceColorControl
           key={ color.uid }

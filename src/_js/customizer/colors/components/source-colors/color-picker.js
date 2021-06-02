@@ -4,7 +4,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import { HexColorPicker } from "react-colorful";
 import { useDidUpdateEffect } from "../../../utils";
 
-
 export const ColorPicker = ( props ) => {
 
   const {

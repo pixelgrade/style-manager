@@ -61,8 +61,34 @@
   background-color: currentColor;
   border-radius: 50%;
   flex: 0 0 auto;
+  position: relative;
 
   border: var(--customizer-field-border-width) solid var(--sm-color-palette-neutral-color-2);
+
+  .c-palette-builder__source-item:not(:first-child) & {
+
+    &:before,
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: currentColor;
+      border-radius: 50%;
+    }
+
+    &:before {
+      background-image: conic-gradient( var(--sm-source-main-color), currentColor );
+      transform: scale(0.7);
+    }
+
+    &:after {
+      transform: scale(0.3);
+    }
+  }
 }
 
 [class][class] {
@@ -90,7 +116,6 @@
 
     &:not(:last-child) {
       padding-bottom: 0.4em;
-      margin-bottom: 0.2em;
     }
 
     &:not(:first-child) {

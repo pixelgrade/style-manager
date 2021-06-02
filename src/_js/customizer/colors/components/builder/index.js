@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, Fragment } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { getBackArray, addToBackArray, setBackArray } from "../../../global-service";
 import { useCustomizeSettingCallback } from "../../../utils";
@@ -24,6 +24,7 @@ export * from './utils';
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
   const sourceSetting = wp.customize( sourceSettingID );
+  const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
   const [ activePreset, setActivePreset ] = useState( null );
   const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] );
@@ -37,6 +38,8 @@ const Builder = ( props ) => {
   const onSourceChange = ( newValue ) => {
     const newConfig = getColorsFromInputValue( newValue );
     const newPalettes = getPalettesFromColors( newConfig );
+
+    setConfig( getColorsFromInputValue( newValue ) );
 
     wp.customize( outputSettingID, setting => {
       setting.set( JSON.stringify( newPalettes ) );
@@ -94,7 +97,7 @@ const Builder = ( props ) => {
   }, [] );
 
   return (
-    <ConfigContext.Provider value={ { config: JSON.parse( sourceSetting() ), setConfig: updateSource, resetActivePreset } }>
+    <ConfigContext.Provider value={ { config: config, setConfig: updateSource, resetActivePreset } }>
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {

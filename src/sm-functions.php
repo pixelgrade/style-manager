@@ -361,7 +361,18 @@ function get_color_variables( object $palette, int $newColorIndex, int $oldColor
  * @return array
  */
 function get_fallback_palettes() {
-	$alphabet = range( 'A', 'Z' );
+
+	$order = array(
+		"primary",
+		"secondary",
+		"tertiary",
+		"quinary",
+		"senary",
+		"septenary",
+		"octonary",
+		"nonary",
+		"denary"
+	);
 
 	$options_details = PixCustomifyPlugin()->get_options_configs();
 
@@ -427,12 +438,20 @@ function get_fallback_palettes() {
 			$textColor_objects[] = $obj;
 		}
 
+		$label = $order[ $index + 1 ];
+
+		if ( $index === 0 ) {
+			$label = __( 'Brand', '__plugin_txtd' ) . ' ' . $label;
+		} else {
+			$label = ucfirst( $label );
+		}
+
 		$palettes[] = ( object ) array(
 			'colors'      => $color_objects,
 			'textColors'  => $textColor_objects,
 			'source'      => $color,
 			'sourceIndex' => 6,
-			'label'       => 'Color ' . $alphabet[ $index + 1 ],
+			'label'       => $label,
 			'id'          => $index + 1
 		);
 	}
@@ -442,7 +461,7 @@ function get_fallback_palettes() {
 
 function get_fallback_color_value( $id ) {
 
-	$color = PixCustomifyPlugin()->get_option( $id . '_final' );
+	$color = Pixelgrade\Customify\get_option( $id . '_final' );
 
 //	if ( empty( $color ) ) {
 //		$color = PixCustomifyPlugin()->get_option( $id );
