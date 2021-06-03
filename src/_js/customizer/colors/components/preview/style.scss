@@ -225,30 +225,32 @@
 
 .palette-preview-swatches__wrap.is-source {
 
-  .palette-preview-swatches__card-content,
-  .palette-preview-swatches__wrap-accent {
+  .palette-preview-swatches__source-badge {
+    content: "";
+    position: absolute;
+    top: 0.85em;
+    right: 0.75em;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--sm-current-bg-color);
+    border-radius: 50%;
 
-    &:before {
-      content: "";
-      position: absolute;
-      top: 0.85em;
-      right: 0.75em;
-      width: 1.5em;
-      height: 1.5em;
-      background: var(--sm-current-accent-color);
-      border-radius: 50%;
-
-      @supports (mask-size: contain) {
-        mask-image: url("../../images/star.svg");
-        mask-size: contain;
-        border-radius: 0;
-      }
-
-      @supports (-webkit-mask-size: contain) {
-        -webkit-mask-image: url("../../images/star.svg");
-        -webkit-mask-size: contain;
-        border-radius: 0;
-      }
+    @supports (mask-size: contain) {
+      mask-image: url("../../images/star.svg");
+      mask-size: contain;
+      border-radius: 0;
     }
+
+    @supports (-webkit-mask-size: contain) {
+      -webkit-mask-image: url("../../images/star.svg");
+      -webkit-mask-size: contain;
+      border-radius: 0;
+    }
+  }
+
+  .palette-preview-swatches__wrap-accent .palette-preview-swatches__source-badge {
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
   }
 }

@@ -114,6 +114,10 @@ const PalettePreview = ( props ) => {
   )
 }
 
+const getStarVariation = ( variation ) => {
+  return variation > 10 ? variation - 2 : variation + 2;
+}
+
 const PalettePreviewGrade = ( props ) => {
 
   const {
@@ -143,6 +147,7 @@ const PalettePreviewGrade = ( props ) => {
       </div>
       <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
       <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } }>
+        <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
         <div className="palette-preview-swatches__text">Accent</div>
       </div>
       <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } }>
@@ -160,6 +165,7 @@ const PalettePreviewGradeCard = ( props ) => {
   return (
     <div className={ `palette-preview-swatches__card` }>
       <div className={ `palette-preview-swatches__card-content` }>
+        <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
         <h2 className="palette-preview-swatches__title">Text</h2>
         <div className="palette-preview-swatches__body">
           <div className="palette-preview-swatches__row" />
