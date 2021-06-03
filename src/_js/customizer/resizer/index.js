@@ -22,6 +22,10 @@ wp.customize.bind( 'ready', () => {
 
   wp.customize.previewedDevice.bind( resize );
 
+  wp.customize.previewer.bind( 'synced', () => {
+    window.requestAnimationFrame( resize );
+  } );
+
   const collapseSidebar = document.querySelector( '.collapse-sidebar' );
 
   if ( ! collapseSidebar ) {
@@ -40,10 +44,15 @@ export const setOffset = ( newOffset ) => {
 
 export const resize = () => {
   const preview = document.querySelector( '.wp-full-overlay' );
-  const iframe = document.querySelector( '#customize-preview iframe' );
+
+  if ( ! preview ) {
+    return;
+  }
+
+  const iframe = preview.querySelector( 'iframe' );
   const previewedDevice = wp.customize.previewedDevice.get();
 
-  if ( ! iframe || ! preview ) {
+  if ( ! iframe ) {
     return;
   }
 
@@ -54,10 +63,6 @@ export const resize = () => {
   iframe.style.removeProperty( 'transform' );
   iframe.style.removeProperty( 'margin-top' );
   iframe.style.removeProperty( 'margin-left' );
-
-  if ( ! iframe ) {
-    return;
-  }
 
   // scaling of the site preview should be done only in desktop preview mode
   if ( previewedDevice !== 'desktop' ) {
