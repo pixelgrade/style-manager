@@ -93,7 +93,7 @@ const DropZone = () => {
         const groups = maybeInterpolateColors( event.data.colors );
 
         const config = groups.map( ( colors, groupIndex ) => {
-          let label = `${ __( 'Brand', '__plugin_txtd' ) } ${ order[ groupIndex ] }`;
+          let label = `Brand ${ order[ groupIndex ] }`;
 
           if ( groupIndex === 0 ) {
             label = label.charAt( 0 ).toUpperCase() + label.slice( 1 );
