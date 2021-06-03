@@ -99,8 +99,10 @@ const DropZone = () => {
             label = label.charAt( 0 ).toUpperCase() + label.slice( 1 );
           }
 
+          const time = new Date().getTime();
+
           return {
-            uid: `color_group_${ groupIndex }`,
+            uid: `color_group_${ time }${ groupIndex }`,
             sources: colors.map( ( color, colorIndex ) => {
 
               if ( colorIndex !== 0 ) {
@@ -108,7 +110,7 @@ const DropZone = () => {
               }
 
               return {
-                uid: `color_${ colorIndex }`,
+                uid: `color_${ time }${ groupIndex }${ colorIndex }`,
                 label: label,
                 value: chroma( color ).hex()
               }

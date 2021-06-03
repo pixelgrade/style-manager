@@ -33,13 +33,16 @@ const SourceColors = ( props ) => {
 
   return (
     <div className="c-palette-builder__source-list">
-      { config.map( ( group, groupIndex ) => (
-        <SourceColorsGroup
-          key={ group.uid }
-          sources={ group.sources }
-          index={ groupIndex }
-        />
-      ) ) }
+      { config.map( ( group, groupIndex ) => {
+
+        return (
+          <SourceColorsGroup
+            key={ group.uid }
+            sources={ group.sources }
+            index={ groupIndex }
+          />
+        );
+      } ) }
     </div>
   )
 }

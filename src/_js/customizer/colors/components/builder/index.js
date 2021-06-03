@@ -30,6 +30,7 @@ const Builder = ( props ) => {
   const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] );
 
   const updateSource = ( newValue ) => {
+
     wp.customize( sourceSettingID, setting => {
       setting.set( getValueFromColors( newValue ) );
     } );

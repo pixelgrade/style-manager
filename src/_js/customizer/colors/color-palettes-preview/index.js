@@ -92,7 +92,7 @@ const PreviewTabs = ( props ) => {
             const callback = typeof tab.callback === 'function' ? tab.callback : noop;
 
             return (
-              <div className={ `sm-preview__tab ${ isActive ? 'sm-preview__tab--active' : '' }` } onClick={ () => {
+              <div key={ tab.id } className={ `sm-preview__tab ${ isActive ? 'sm-preview__tab--active' : '' }` } onClick={ () => {
                 setActive( tab.id );
                 callback();
               } }>{ tab.label }</div>
