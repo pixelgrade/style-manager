@@ -28,7 +28,12 @@ const PalettePreviewList = ( props ) => {
     palettes
   } = props;
 
-  return palettes.map( ( palette, index ) => {
+  const userPalettes = palettes.filter( palette => {
+    const { id } = palette;
+    return ! ( typeof id === 'string' && id.charAt(0) === '_' );
+  } );
+
+  return userPalettes.map( ( palette, index ) => {
     const description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';
 
     return <PalettePreview key={ palette.id } palette={ { description, ...palette } } />
@@ -38,7 +43,6 @@ const PalettePreviewList = ( props ) => {
 const PalettePreview = ( props ) => {
   const { palette } = props;
   const { id, colors, textColors, lightColorsCount } = palette;
-  const [ hover, setHover ] = useState(false );
   const [ lastHover, setLastHover ] = useState( 0 );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
@@ -47,12 +51,6 @@ const PalettePreview = ( props ) => {
   const onSiteVariationChange = ( newValue ) => {
     setSiteVariation( parseInt( newValue, 10 ) );
   }
-
-  useEffect( () => {
-    if ( hover !== false ) {
-      setLastHover( hover );
-    }
-  }, [ hover ] );
 
   useEffect( () => {
     // Attach the listeners on component mount.
@@ -78,20 +76,19 @@ const PalettePreview = ( props ) => {
               const variation = index + 1;
               const showLightForeground = normalize( index ) === 0;
               const showDarkForeground = normalize( index ) === 9;
-              const foregroundToShow = normalize( hover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
+              const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
               const passedProps = {
-                showCard: index === hover,
-                showAccent: ( hover !== false ) && ( index === ( hover + 6 ) % 12 ),
-                showForeground: ( hover !== false ) && foregroundToShow,
+                showCard: index === lastHover,
+                showAccent: ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
+                showForeground: ( lastHover !== false ) && foregroundToShow,
                 textColor: normalize( index ) >= lightColorsCount ? textColors[0].value : '#FFFFFF',
                 variation,
               }
 
               return (
                 <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
-                     onMouseEnter={ () => { setHover( index ) } }
-                     onMouseLeave={ () => { setHover( false ) } }>
+                     onMouseEnter={ () => { setLastHover( index ) } }>
                   <PalettePreviewGrade { ...passedProps } />
                 </div>
               )
