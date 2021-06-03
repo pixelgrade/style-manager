@@ -104,7 +104,7 @@ const DropZone = () => {
             sources: colors.map( ( color, colorIndex ) => {
 
               if ( colorIndex !== 0 ) {
-                label = __( 'Interpolated Color', '__plugin_txtd' );
+                label = 'Interpolated Color';
               }
 
               return {
