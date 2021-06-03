@@ -24,24 +24,34 @@ const Preview = ( props ) => {
 
 const PalettePreviewList = ( props ) => {
 
-  const {
-    palettes
-  } = props;
+  const { palettes } = props;
 
   const userPalettes = palettes.filter( palette => {
     const { id } = palette;
     return ! ( typeof id === 'string' && id.charAt(0) === '_' );
   } );
 
+  if ( ! userPalettes.length ) {
+    return null;
+  }
+
+  const [ active, setActive ] = useState( userPalettes[0].id );
+
   return userPalettes.map( ( palette, index ) => {
     const description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';
 
-    return <PalettePreview key={ palette.id } palette={ { description, ...palette } } />
+    return (
+      <PalettePreview
+        key={ palette.id }
+        isActive={ active === palette.id }
+        setActivePalette={ setActive }
+        palette={ { description, ...palette } } />
+    );
   } )
 }
 
 const PalettePreview = ( props ) => {
-  const { palette } = props;
+  const { palette, isActive, setActivePalette } = props;
   const { id, colors, textColors, lightColorsCount } = palette;
   const [ lastHover, setLastHover ] = useState( 0 );
 
@@ -79,16 +89,19 @@ const PalettePreview = ( props ) => {
               const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
               const passedProps = {
-                showCard: index === lastHover,
-                showAccent: ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
-                showForeground: ( lastHover !== false ) && foregroundToShow,
+                showCard: isActive && index === lastHover,
+                showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
+                showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
                 textColor: normalize( index ) >= lightColorsCount ? textColors[0].value : '#FFFFFF',
                 variation,
               }
 
               return (
                 <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
-                     onMouseEnter={ () => { setLastHover( index ) } }>
+                     onMouseEnter={ () => {
+                       setLastHover( index );
+                       setActivePalette( id );
+                     } }>
                   <PalettePreviewGrade { ...passedProps } />
                 </div>
               )
