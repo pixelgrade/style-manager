@@ -119,7 +119,7 @@
 }
 
 .palette-preview-swatches__wrap:not(.show-fg) .palette-preview-swatches__wrap-foreground {
-  top: 2em;
+  top: 1.5em;
   bottom: 0;
   opacity: 0;
 
@@ -129,7 +129,7 @@
 }
 
 .palette-preview-swatches__wrap:not(.show-accent):not(.show-fg) .palette-preview-swatches__wrap-accent {
-  top: 2em;
+  top: 1.5em;
   bottom: 0;
 }
 
@@ -221,4 +221,34 @@
   display: inline-block;
   background: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color);
+}
+
+.palette-preview-swatches__wrap.is-source {
+
+  .palette-preview-swatches__card-content,
+  .palette-preview-swatches__wrap-accent {
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0.85em;
+      right: 0.75em;
+      width: 1.5em;
+      height: 1.5em;
+      background: var(--sm-current-accent-color);
+      border-radius: 50%;
+
+      @supports (mask-size: contain) {
+        mask-image: url("../../images/star.svg");
+        mask-size: contain;
+        border-radius: 0;
+      }
+
+      @supports (-webkit-mask-size: contain) {
+        -webkit-mask-image: url("../../images/star.svg");
+        -webkit-mask-size: contain;
+        border-radius: 0;
+      }
+    }
+  }
 }
