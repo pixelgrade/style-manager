@@ -89,7 +89,7 @@ const PalettePreview = ( props ) => {
               const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
               const passedProps = {
-                isSource: variation === sourceIndex + 1,
+                isSource: normalize( index ) === sourceIndex + 1,
                 showCard: isActive && index === lastHover,
                 showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
                 showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
