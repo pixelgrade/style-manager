@@ -134,7 +134,7 @@ const Builder = ( props ) => {
       </div>
       <div className="sm-group">
         <Accordion>
-          <AccordionSection title={ 'Explore colors' }>
+          <AccordionSection title={ 'Explore colors' } open={ true }>
             <div className="customize-control-description">
               Curated color presets to help you lay the foundations of the color system and make it easy to get started.
             </div>

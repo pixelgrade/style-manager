@@ -3,7 +3,10 @@ import './style.scss';
 
 const Accordion = ( props ) => {
   const sections = React.Children.toArray( props.children ).filter( child => child.type === AccordionSection );
-  const [active, setActive] = useState( null );
+  const open = sections.findIndex( section => !! section?.props?.open );
+
+  console.log( open );
+  const [ active, setActive ] = useState( open );
 
   return sections.map( ( section, index ) => {
     const { title, children } = section.props;

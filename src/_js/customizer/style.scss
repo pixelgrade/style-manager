@@ -46,4 +46,28 @@
   }
 }
 
+/* prototype for having brand colors always visible
+and other section use the available space
+ */
+#sub-accordion-section-sm_color_palettes_section,
+#customize-control-sm_advanced_palette_source_control,
+#customize-control-sm_advanced_palette_source_control > div,
+#customize-control-sm_advanced_palette_source_control > div > .sm-group:last-child {
+  display: flex !important;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+#customize-control-sm_advanced_palette_source_control > div > .sm-group:last-child > .sm-blinds--open {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  > .sm-blinds__body {
+    flex: 1 0 0;
+    overflow: auto;
+    min-height: 200px;
+  }
+}
+
 @import 'scss/theme';
