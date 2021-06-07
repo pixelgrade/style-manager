@@ -2,32 +2,32 @@
 /**
  * Settings screen provider.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen;
+namespace Pixelgrade\StyleManager\Screen;
 
 use Carbon_Fields\Carbon_Fields;
 use Carbon_Fields\Container\Container;
 use Carbon_Fields\Datastore\Datastore;
 use Carbon_Fields\Field;
-use Pixelgrade\Customify\Capabilities;
-use Pixelgrade\Customify\Provider\Options;
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Capabilities;
+use Pixelgrade\StyleManager\Provider\Options;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Settings screen provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Settings extends AbstractHookProvider {
 
-	const MENU_SLUG = 'customify';
+	const MENU_SLUG = 'style-manager';
 
 	/**
 	 * User messages to display in the WP admin.
@@ -64,7 +64,7 @@ class Settings extends AbstractHookProvider {
 	/**
 	 * Create the setting screen.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options         $options      Options.
 	 * @param Datastore       $cf_datastore The Carbon Fields datastore to use.
@@ -83,10 +83,10 @@ class Settings extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
-		$this->add_action( 'plugins_loaded', 'carbonfields_load' );
+		$this->add_action( 'setup_theme', 'carbonfields_load', 99 );
 		$this->add_action( 'carbon_fields_register_fields', 'setup' );
 		$this->add_action( 'current_screen', 'hook_to_screen' );
 
@@ -101,12 +101,12 @@ class Settings extends AbstractHookProvider {
 	/**
 	 * Setup the settings page and options.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function setup() {
-		Container::make( 'theme_options', 'customify_options', esc_html__( 'Pixelgrade Customify', '__plugin_txtd' ) )
+		Container::make( 'theme_options', 'style_manager_options', esc_html__( 'Style Manager', '__plugin_txtd' ) )
 		         ->set_page_parent( $this->get_page_parent() )
-		         ->set_page_menu_title( esc_html__( 'Customify', '__plugin_txtd' ) )
+		         ->set_page_menu_title( esc_html__( 'Style Manager', '__plugin_txtd' ) )
 		         ->set_page_file( self::MENU_SLUG )
 		         ->where( 'current_user_capability', '=', Capabilities::MANAGE_OPTIONS )
 		         ->set_datastore( $this->cf_datastore )
@@ -120,7 +120,7 @@ class Settings extends AbstractHookProvider {
 			              ->set_default_value( 'theme_mod' )
 			              ->set_required( true ),
 			         Field::make( 'set', 'disable_default_sections', esc_html__( 'Disable default sections', '__plugin_txtd' ) )
-			              ->set_help_text( esc_html__( 'You can disable default sections', '__plugin_txtd' ) )
+			              ->set_help_text( esc_html__( 'By checking the checkboxes above, you can disable sections available by default in the Customize view.', '__plugin_txtd' ) )
 			              ->set_options( [
 				              'nav'               => esc_html__( 'Navigation', '__plugin_txtd' ),
 				              'static_front_page' => esc_html__( 'Front Page', '__plugin_txtd' ),
@@ -134,7 +134,7 @@ class Settings extends AbstractHookProvider {
 			              ->set_help_text( esc_html__( 'You can enable "Reset to defaults" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this.', '__plugin_txtd' ) )
 			              ->set_option_value( 'yes' ),
 			         Field::make( 'checkbox', 'enable_editor_style', esc_html__( 'Enable Editor Style', '__plugin_txtd' ) )
-			              ->set_help_text( esc_html__( 'The styling added by Customify in front-end can be added in the WordPress editor too by enabling this option', '__plugin_txtd' ) )
+			              ->set_help_text( esc_html__( 'The styling added by Style Manager in front-end can be added in the WordPress editor too by enabling this option', '__plugin_txtd' ) )
 			              ->set_option_value( 'yes' )
 			              ->set_default_value( 'yes' ),
 		         ] )
@@ -201,7 +201,7 @@ class Settings extends AbstractHookProvider {
 		         ->add_tab( esc_html__( 'Tools', '__plugin_txtd' ), [
 			         Field::make( 'html', 'reset_customizer_settings', esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) )
 			              ->set_help_text( esc_html__( 'Resets all the Customizer settings introduced by this plugin. It will NOT reset the core WordPress Customizer settings or plugin settings.', '__plugin_txtd' ) )
-			              ->set_html( '<br><div class="reset_customify_settings"><div class="button" id="reset_customizer_settings">' . esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) . '</div></div>' ),
+			              ->set_html( '<br><div class="reset_style_manager_settings"><div class="button" id="reset_customizer_settings">' . esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) . '</div></div>' ),
 		         ] );
 	}
 
@@ -227,7 +227,7 @@ class Settings extends AbstractHookProvider {
 	/**
 	 * Load up the screen.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function load_screen() {
 		$this->add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
@@ -236,16 +236,16 @@ class Settings extends AbstractHookProvider {
 	/**
 	 * Enqueue scripts and styles.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function enqueue_assets() {
-		wp_enqueue_script( 'pixelgrade_customify-settings' );
-		wp_enqueue_style( 'pixelgrade_customify-settings' );
+		wp_enqueue_script( 'pixelgrade_style_manager-settings' );
+		wp_enqueue_style( 'pixelgrade_style_manager-settings' );
 	}
 
 	protected function disable_default_access( bool $enable, string $container_title, Container $container ): bool {
 		// We will define the access ourselves and we don't want the default Carbon Fields behavior.
-		if ( 'customify_options' === $container->get_id() ) {
+		if ( 'style_manager_options' === $container->get_id() ) {
 			return false;
 		}
 
@@ -267,7 +267,7 @@ class Settings extends AbstractHookProvider {
 	 * Register any REST-API routes we need.
 	 */
 	protected function add_rest_api_routes() {
-		register_rest_route( 'customify/v1', '/delete_customizer_settings', [
+		register_rest_route( 'style_manager/v1', '/delete_customizer_settings', [
 			'methods'             => 'POST',
 			'callback'            => [ $this, 'delete_customizer_settings' ],
 			'permission_callback' => [ $this, 'permission_nonce_callback' ],
@@ -290,20 +290,21 @@ class Settings extends AbstractHookProvider {
 
 		$this->options->invalidate_all_caches();
 
+		/* translators: %s: The deleted options key name. */
 		wp_send_json_success( sprintf( esc_html__( 'Deleted the "%s" options key!', '__plugin_txtd' ), $key ) );
 	}
 
 	public function permission_nonce_callback() {
-		return wp_verify_nonce( $this->get_nonce(), 'customify_settings_nonce' );
+		return wp_verify_nonce( $this->get_nonce(), 'style_manager_settings_nonce' );
 	}
 
 	private function get_nonce() {
 		$nonce = null;
 
-		if ( isset( $_REQUEST['customify_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_REQUEST['customify_settings_nonce'] );
-		} elseif ( isset( $_POST['customify_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_POST['customify_settings_nonce'] );
+		if ( isset( $_REQUEST['style_manager_settings_nonce'] ) ) {
+			$nonce = wp_unslash( $_REQUEST['style_manager_settings_nonce'] );
+		} elseif ( isset( $_POST['style_manager_settings_nonce'] ) ) {
+			$nonce = wp_unslash( $_POST['style_manager_settings_nonce'] );
 		}
 
 		return $nonce;

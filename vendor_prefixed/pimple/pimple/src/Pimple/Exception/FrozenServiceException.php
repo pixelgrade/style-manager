@@ -23,15 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Pixelgrade\Customify\Vendor\Pimple\Exception;
+namespace Pixelgrade\StyleManager\Vendor\Pimple\Exception;
 
-use Pixelgrade\Customify\Vendor\Psr\Container\ContainerExceptionInterface;
+use Pixelgrade\StyleManager\Vendor\Psr\Container\ContainerExceptionInterface;
 /**
  * An attempt to modify a frozen service was made.
  *
  * @author Pascal Luna <skalpa@zetareticuli.org>
  */
-class FrozenServiceException extends \RuntimeException implements \Pixelgrade\Customify\Vendor\Psr\Container\ContainerExceptionInterface
+class FrozenServiceException extends \RuntimeException implements \Pixelgrade\StyleManager\Vendor\Psr\Container\ContainerExceptionInterface
 {
     /**
      * @param string $id Identifier of the frozen service

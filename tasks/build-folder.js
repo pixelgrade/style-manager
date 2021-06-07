@@ -27,11 +27,11 @@ function copyFolder() {
                recursive: true,
                emptyDirectories: true,
                clean: true,
-               exclude: ['node_modules']
+               exclude: ['node_modules', 'tests', 'tasks', 'node-tasks']
              } ) );
 }
 
-copyFolder.description = 'Copy plugin production files to a build folder';
+copyFolder.description = 'Copy plugin production files to a separate build folder';
 gulp.task( 'build:copy-folder', copyFolder );
 
 // -----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ async function removeUnneededFiles() {
     }
   } );
 
-  return del( files_to_remove, {force: true} );
+  return del.sync( files_to_remove, {force: true} );
 }
 
 removeUnneededFiles.description = 'Remove unneeded files and folders from the build folder';

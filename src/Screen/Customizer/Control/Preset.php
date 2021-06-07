@@ -2,26 +2,26 @@
 /**
  * Customizer preset control.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen\Customizer\Control;
+namespace Pixelgrade\StyleManager\Screen\Customizer\Control;
 
-use Pixelgrade\Customify\StyleManager\FontPalettes;
-use function Pixelgrade\Customify\get_customizer_config;
-use function Pixelgrade\Customify\get_option_details;
-use function Pixelgrade\Customify\plugin;
+use Pixelgrade\StyleManager\Customize\FontPalettes;
+use function Pixelgrade\StyleManager\get_customizer_config;
+use function Pixelgrade\StyleManager\get_option_details;
+use function Pixelgrade\StyleManager\plugin;
 
 /**
  * Customizer preset control class.
  *
  * This handles the 'preset' control type.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Preset extends BaseControl {
 	/**
@@ -63,12 +63,11 @@ class Preset extends BaseControl {
 	 */
 	public function render_content() {
 
-		do_action( 'customify_before_preset_control', $this );
+		do_action( 'style_manager/before_preset_control', $this );
 
 		switch ( $this->choices_type ) {
 
-			case 'select' :
-			{ ?>
+			case 'select' : { ?>
 				<label>
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -77,7 +76,7 @@ class Preset extends BaseControl {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<select <?php $this->link(); ?> class="js-customify-preset select">
+					<select <?php $this->link(); ?> class="js-style-manager-preset select">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ) {
 							if ( ! isset( $choice_config['options'] ) || ! isset( $choice_config['label'] ) ) {
@@ -93,8 +92,7 @@ class Preset extends BaseControl {
 				<?php break;
 			}
 
-			case 'radio' :
-			{ ?>
+			case 'radio' : { ?>
 				<label>
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -103,7 +101,7 @@ class Preset extends BaseControl {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="js-customify-preset radio customize-control-radio">
+					<div class="js-style-manager-preset radio customize-control-radio">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ) {
 							if ( ! isset( $choice_config['options'] ) || ! isset( $choice_config['label'] ) ) {
@@ -131,8 +129,7 @@ class Preset extends BaseControl {
 				<?php break;
 			}
 
-			case 'buttons' :
-			{ ?>
+			case 'buttons' : { ?>
 				<label>
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -141,7 +138,7 @@ class Preset extends BaseControl {
 						<span class="description customize-control-description"><?php echo $this->description; ?></span>
 					<?php } ?>
 
-					<div class="js-customify-preset radio_buttons">
+					<div class="js-style-manager-preset radio_buttons">
 						<?php
 						foreach ( $this->choices as $choice_value => $choice_config ) {
 							if ( ! isset( $choice_config['options'] ) || ! isset( $choice_config['label'] ) ) {
@@ -156,12 +153,15 @@ class Preset extends BaseControl {
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
-							<fieldset class="customify_radio_button">
-								<input <?php $this->link();
-								echo 'name="' . $this->setting->id . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . ' />'; ?>
-								<label class="button" for="<?php echo $this->setting->id; ?>" <?php echo $color; ?>>
-									<?php echo $label; ?>
-								</label>
+							<fieldset class="style-manager_radio_button">
+								<input <?php $this->link(); ?>
+									name="<?php echo esc_attr( $this->setting->id ); ?>"
+									type="radio"
+									value="<?php echo esc_attr( $choice_value ); ?>"
+									<?php selected( $this->value(), $choice_value ); ?>
+									<?php echo $data; ?>
+								/>
+								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; ?>><?php echo $label; ?></label>
 							</fieldset>
 						<?php } ?>
 					</div>
@@ -169,8 +169,7 @@ class Preset extends BaseControl {
 				<?php break;
 			}
 
-			case 'color_palette' :
-			{ ?>
+			case 'color_palette' : { ?>
 				<?php if ( ! empty( $this->label ) ) { ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php }
@@ -179,7 +178,7 @@ class Preset extends BaseControl {
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php } ?>
 
-				<div class="js-customify-preset js-color-palette customize-control-color-palette">
+				<div class="js-style-manager-preset js-color-palette customize-control-color-palette">
 					<?php
 					foreach ( $this->choices as $choice_value => $choice_config ) {
 						if ( empty( $choice_config['options'] ) ) {
@@ -233,8 +232,15 @@ class Preset extends BaseControl {
 						<span
 							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' ); ?>"
 							style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-                            <input <?php $this->link();
-							echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '-color-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . ' />'; ?>
+                            <input
+	                            <?php $this->link(); ?>
+								name="<?php echo esc_attr( $this->setting->id ); ?>"
+								id="<?php echo esc_attr( $choice_value ); ?>-color-palette"
+								type="radio"
+								value="<?php echo esc_attr( $choice_value ); ?>"
+								<?php selected( $this->value(), $choice_value ) ?>
+								<?php echo $data; ?>
+							/>
                             <label for="<?php echo esc_attr( $choice_value ) . '-color-palette'; ?>">
                                 <span class="label__inner"
                                       style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;">
@@ -257,8 +263,7 @@ class Preset extends BaseControl {
 				<?php break;
 			}
 
-			case 'font_palette' :
-			{ ?>
+			case 'font_palette' : { ?>
 				<?php if ( ! empty( $this->label ) ) { ?>
 				<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php }
@@ -267,7 +272,7 @@ class Preset extends BaseControl {
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php } ?>
 
-				<div class="js-customify-preset js-font-palette customize-control-font-palette">
+				<div class="js-style-manager-preset js-font-palette customize-control-font-palette">
 					<?php
 					$choices = $this->sm_font_palettes->preprocess_config( $this->choices );
 					foreach ( $choices as $choice_value => $choice_config ) {
@@ -305,8 +310,15 @@ class Preset extends BaseControl {
 						<span
 							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' ); ?>"
 							style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-                            <input <?php $this->link();
-							echo 'name="' . esc_attr( $this->setting->id ) . '" id="' . esc_attr( $choice_value ) . '-font-palette" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . ' />'; ?>
+                            <input
+								<?php $this->link(); ?>
+								name="<?php echo esc_attr( $this->setting->id ); ?>"
+								id="<?php echo esc_attr( $choice_value ); ?>-font-palette"
+								type="radio"
+								value="<?php echo esc_attr( $choice_value ); ?>"
+								<?php selected( $this->value(), $choice_value ); ?>
+								<?php echo $data; ?>
+							/>
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
 								<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
 							</label>
@@ -317,14 +329,13 @@ class Preset extends BaseControl {
 				<?php break;
 			}
 
-			case 'awesome' :
-			{ ?>
+			case 'awesome' : { ?>
 				<label>
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php } ?>
 
-					<div class="js-customify-preset awesome_presets">
+					<div class="js-style-manager-preset awesome_presets">
 						<?php
 
 						$google_links = [];
@@ -383,8 +394,14 @@ class Preset extends BaseControl {
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
 							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 							<div class="awesome_preset" <?php echo $preset_text_color; ?>>
-								<input <?php $this->link();
-								echo 'name="' . $this->setting->id . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . ' >' . '</input>'; ?>
+								<input
+									<?php $this->link(); ?>
+									name="<?php echo esc_attr( $this->setting->id ); ?>"
+									type="radio"
+									value="<?php echo esc_attr( $choice_value ); ?>"
+									<?php selected( $this->value(), $choice_value ); ?>
+									<?php echo $data; ?>
+								></input>
 								<div class="preset-wrap">
 									<div class="preset-color" <?php echo $preset_style; ?>>
 										<span
@@ -415,7 +432,7 @@ class Preset extends BaseControl {
 				break;
 		}
 
-		do_action( 'customify_after_preset_control', $this );
+		do_action( 'style_manager/after_preset_control', $this );
 	}
 
 	/**
@@ -470,7 +487,7 @@ class Preset extends BaseControl {
 	}
 
 	/**
-	 * We will receive the choice options IDs as defined in the Customify config (the options array keys) and we will convert them to actual setting IDs.
+	 * We will receive the choice options IDs as defined in the Style Manager config (the options array keys) and we will convert them to actual setting IDs.
 	 *
 	 * @param array $options
 	 *

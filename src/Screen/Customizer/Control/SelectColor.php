@@ -2,21 +2,21 @@
 /**
  * Customizer select color control.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen\Customizer\Control;
+namespace Pixelgrade\StyleManager\Screen\Customizer\Control;
 
 /**
  * Customizer select color control class.
  *
  * This handles the 'select_color' control type.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class SelectColor extends BaseControl {
 	/**

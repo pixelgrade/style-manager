@@ -4,12 +4,11 @@ var gulp = require( 'gulp' ),
   merge = require('merge-stream'),
   plugins = require( 'gulp-load-plugins' )();
 
-const gulpconfig = require('./gulpconfig.json');
-
 gulp.task( 'composer:delete_lock_and_vendor', function () {
   return gulp.src( [ 'composer.lock', 'vendor' ] , { allowEmpty: true, read: false } )
     .pipe( plugins.clean() );
 } );
+
 gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
   return gulp.src(
     [
@@ -24,19 +23,14 @@ gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
   )
     .pipe( plugins.clean() );
 } );
+
 gulp.task( 'composer:create_vendor_prefixed_folder', function () {
   return gulp.src( '*.*', { read: false } )
     .pipe( gulp.dest( './vendor_prefixed' ) );
 } );
-gulp.task( 'composer:prefix_lite', function ( cb ) {
-  exec( 'composer prefix-dependencies-lite', function ( err, stdout, stderr ) {
-    console.log( stdout );
-    console.log( stderr );
-    cb( err );
-  } );
-} );
+
 gulp.task( 'composer:prefix', function ( cb ) {
-  exec( 'composer prefix-dependencies', function ( err, stdout, stderr ) {
+  plugins.exec( 'composer prefix-dependencies', function ( err, stdout, stderr ) {
     console.log( stdout );
     console.log( stderr );
     cb( err );
@@ -50,15 +44,15 @@ gulp.task( 'composer:prefix_outside_files', function () {
   return merge(
 
     gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php' ], { allowEmpty: true } )
-      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use Customify\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
+      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use Pixelgrade\\StyleManager\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
       .pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/' ) ),
 
     gulp.src( [ 'vendor_prefixed/symfony/polyfill-mbstring/Resources/mb_convert_variables.php8' ], { allowEmpty: true } )
-      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use Customify\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
+      .pipe( plugins.replace( /use Symfony\\Polyfill\\Mbstring/gm, 'use Pixelgrade\\StyleManager\\Vendor\\Symfony\\Polyfill\\Mbstring' ) )
       .pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-mbstring/Resources/' ) ),
 
     gulp.src( [ 'vendor_prefixed/symfony/polyfill-php72/bootstrap.php' ], { allowEmpty: true } )
-      .pipe( plugins.replace( /use Symfony\\Polyfill\\Php72/gm, 'use Customify\\Vendor\\Symfony\\Polyfill\\Php72' ) )
+      .pipe( plugins.replace( /use Symfony\\Polyfill\\Php72/gm, 'use Pixelgrade\\StyleManager\\Vendor\\Symfony\\Polyfill\\Php72' ) )
       .pipe( gulp.dest( 'vendor_prefixed/symfony/polyfill-php72/' ) )
   );
 } );

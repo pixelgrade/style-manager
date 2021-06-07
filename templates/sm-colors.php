@@ -24,7 +24,7 @@ get_header(); ?>
 		<div class="wp-group">
 			<div class="wp-group__inner-container">
 				<h3>Secondary color palette</h3>
-				<p>A pallete generated from your secondary color than can be used alternatively to the primary color palette to draw more attention to certain sections.</p>
+				<p>A palette generated from your secondary color than can be used alternatively to the primary color palette to draw more attention to certain sections.</p>
 			</div>
 		</div>
 

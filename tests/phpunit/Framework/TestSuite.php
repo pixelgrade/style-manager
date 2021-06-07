@@ -2,14 +2,14 @@
 /**
  * Test suite.
  *
- * @package   Customify\Tests
+ * @package   Pixelgrade\StyleManager\Tests
  * @copyright Copyright (c) 2019 Cedaro, LLC
  * @license   MIT
  */
 
 declare ( strict_types=1 );
 
-namespace Customify\Tests\Framework;
+namespace Pixelgrade\StyleManager\Tests\Framework;
 
 use Exception;
 use PHPUnit\Framework\TestSuite as PHPUnitTestSuite;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestSuite as PHPUnitTestSuite;
 /**
  * Test suite class.
  *
- * @package Customify\Tests
+ * @package Pixelgrade\StyleManager\Tests
  */
 class TestSuite extends PHPUnitTestSuite {
 	/**

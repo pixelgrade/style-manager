@@ -4,30 +4,30 @@
  *
  * Logs messages to error_log().
  *
- * @package Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\StyleManager;
 
 use Exception;
-use Pixelgrade\Customify\Vendor\Psr\Log\AbstractLogger;
-use Pixelgrade\Customify\Vendor\Psr\Log\LogLevel;
-use Pixelgrade\Customify\Utils\JSONCleaner;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\AbstractLogger;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LogLevel;
+use Pixelgrade\StyleManager\Utils\JSONCleaner;
 
 /**
  * Default logger class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 final class Logger extends AbstractLogger {
 	/**
 	 * PSR log levels.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 * @var array
 	 */
 	protected $levels = [
@@ -44,7 +44,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Minimum log level.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 * @var int
 	 */
 	protected $minimum_level_code;
@@ -52,7 +52,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Constructor method.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $minimum_level Minimum level to log.
 	 */
@@ -63,7 +63,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Log a message.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $level   PSR log level.
 	 * @param string $message Log message.
@@ -91,7 +91,7 @@ final class Logger extends AbstractLogger {
 	 * - Appends additional context data as JSON.
 	 * - Appends exception data.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $message Log message.
 	 * @param array  $context Additional data.
@@ -135,7 +135,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Format an exception.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Exception $e Exception.
 	 * @return string
@@ -165,7 +165,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Convert a value to a string.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $value Message.
 	 * @return string
@@ -185,7 +185,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Whether a message with a given level should be logged.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $level PSR Log level.
 	 * @return bool
@@ -197,7 +197,7 @@ final class Logger extends AbstractLogger {
 	/**
 	 * Retrieve a numeric code for a given PSR log level.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $level PSR log level.
 	 * @return int

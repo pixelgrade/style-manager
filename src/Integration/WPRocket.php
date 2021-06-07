@@ -4,27 +4,27 @@
  *
  * @link    https://wp-rocket.me/
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Integration;
+namespace Pixelgrade\StyleManager\Integration;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
  * WP-Rocket plugin integration provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class WPRocket extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		$this->add_filter( 'rocket_exclude_js', 'exclude_webfontloader_script', 10, 1 );
@@ -37,7 +37,7 @@ class WPRocket extends AbstractHookProvider {
 	/**
 	 * Exclude the webfontloader script from all operations.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array $list
 	 *
@@ -54,14 +54,14 @@ class WPRocket extends AbstractHookProvider {
 	/**
 	 * Exclude the inline script from all operations.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param $inline_js
 	 *
 	 * @return mixed
 	 */
 	protected function exclude_inline_script( array $inline_js ): array {
-		$webfontloader_inline_script = 'customifyFontLoader = function()';
+		$webfontloader_inline_script = 'styleManagerFontLoader = function()';
 		$inline_js[] = $webfontloader_inline_script;
 
 		return $inline_js;

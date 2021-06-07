@@ -9,13 +9,13 @@ $( document ).ready( function() {
     }
 
     $.ajax( {
-      url: customify.config.wp_rest.root + 'customify/v1/delete_customizer_settings',
+      url: styleManager.config.wp_rest.root + 'style_manager/v1/delete_customizer_settings',
       method: 'POST',
       beforeSend: function( xhr ) {
-        xhr.setRequestHeader( 'X-WP-Nonce', customify.config.wp_rest.nonce );
+        xhr.setRequestHeader( 'X-WP-Nonce', styleManager.config.wp_rest.nonce );
       },
       data: {
-        'customify_settings_nonce': customify.config.wp_rest.customify_settings_nonce
+        'style_manager_settings_nonce': styleManager.config.wp_rest.style_manager_settings_nonce
       }
     } ).done( function( response ) {
       if ( response.success ) {

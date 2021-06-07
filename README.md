@@ -1,6 +1,6 @@
-# Customify - Intuitive Website Styling for WordPress
+# Style Manager - Auto-magical system to style your WordPress site
 
-With [Customify](https://github.com/pixelgrade/customify), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
+With [Style Manager](https://github.com/pixelgrade/style-manager), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
 
 This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with it's capabilities is to study the way [one of Pixelgrade's themes](https://github.com/pixelgrade/rosa2-lite/tree/master/inc/integrations/customify) integrates with it.
 
@@ -8,30 +8,30 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 
 ## How to use it?
 
-First you need to install and activate the stable version. This will always be on [wordpress.org](https://wordpress.org/plugins/customify/)
+First you need to install and activate the stable version. This will always be on [wordpress.org](https://wordpress.org/plugins/style-manager/)
 
 Now go to ‘Appearance -> Customize’ menu and have fun with the new fields provided by your active theme.
 
 ## WordPress Developer Love
 
-We know developers are a special kind of breed and they need special kinds of treats. That is why we have introduced options dedicated to them.
+We know developers are a special kind of breed and that they need special kinds of treats. That is why we have introduced options dedicated to them.
 
 ### Reset Buttons
 
-In the plugin's settings page (*WP Dashboard > Settings > Customify*) you will find a checkbox called **Enable Reset Buttons** that once activated will show a new Customizer section called **Customify Toolbox** and also introduce buttons in each section or panel configured via the plugin.
+In the plugin's settings page (*WordPress Dashboard > Settings > Style Manager*) you will find a checkbox called **Enable Reset Buttons** that once activated will show a new Customizer section called **Style Manager Toolbox** and also introduce buttons in each section or panel configured via the plugin.
 
 All these buttons will reset the options to their default values.
 
 ### Continuous Default Values
 
-If you want to go even further, there is a nuclear option. Simply define the `CUSTOMIFY_DEV_FORCE_DEFAULTS` constant to `true` and everywhere the default value will be used. You can play with the values in the Customizer and the live preview will work, but no value gets saved in the database.
+If you want to go even further, there is a nuclear option. Simply define the `STYLE_MANAGER_DEV_FORCE_DEFAULTS` constant to `true` and everywhere the default value will be used. You can play with the values in the Customizer and the live preview will work, but no value gets saved in the database.
 
 Add this in your `wp-config.php` file:
 ```php
-define( 'CUSTOMIFY_DEV_FORCE_DEFAULTS', true);
+define( 'STYLE_MANAGER_DEV_FORCE_DEFAULTS', true);
 ```
 
-## Developing Customify
+## Developing Style Manager
 
 Before you can get developing, you need to have `node` and `composer` installed globally. Google is your best friend to get you to the resource to set things up.
 
@@ -47,9 +47,9 @@ You will set up all node_modules, composer packages, and compile the scripts and
 
 ## Building The Release .zip 
 
-Since Customify is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (5.6), and generate a cleaned-up zip.
+Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (5.6), and generate a cleaned-up zip.
 
-After you have updated the version, added the changelog, blessed everything, **you need to clone the repo in a temporary directory** since **the build process is destructive.**
+After you have updated the version, added the changelog, blessed everything, **you NEED to clone the repo in a TEMPORARY directory** since **the build process is DESTRUCTIVE!!!**
 
 **From the temporary directory,** run this from the command line:
 
@@ -78,7 +78,7 @@ Bear in mind that there are **simple unit tests** (hence the `--testsuite=Unit` 
 GPLv2 and later, of course!
 
 ## Thanks!
-This plugin also includes the following libraries:
+This plugin also includes the following third-party libraries:
 
 * Select 2 - https://select2.github.io/
 * Ace Editor - https://ace.c9.io/

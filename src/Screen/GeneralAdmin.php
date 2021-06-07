@@ -2,22 +2,22 @@
 /**
  * General admin dashboard screen provider.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen;
+namespace Pixelgrade\StyleManager\Screen;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * General admin dashboard screen provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class GeneralAdmin extends AbstractHookProvider {
 
@@ -31,7 +31,7 @@ class GeneralAdmin extends AbstractHookProvider {
 	/**
 	 * Create the setting screen.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param LoggerInterface $logger       Logger.
 	 */
@@ -44,19 +44,22 @@ class GeneralAdmin extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		$this->add_action( 'after_switch_theme', 'maybe_show_notice_to_migrate_when_child_theme', 100, 2 );
-		$this->add_action( 'wp_ajax_customify_migrate_customizations_from_parent_to_child_theme', 'migrate_customizations_from_parent_to_child_theme' );
+		$this->add_action( 'wp_ajax_style_manager_migrate_customizations_from_parent_to_child_theme', 'migrate_customizations_from_parent_to_child_theme' );
 		$this->add_action( 'admin_init', 'migrate_to_advanced_dark_mode_control' );
 		$this->add_action( 'admin_enqueue_scripts', 'enqueue_assets' );
+
+		// Prevent the old Customify from being activated via the Plugins dashboard page.
+		$this->add_action( 'load-plugins.php', 'add_plugin_action_link_filters', 1 );
 	}
 
 	/**
 	 * Hook up to show notice for customization options migration.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string    $old_theme_name
 	 * @param \WP_Theme $old_theme
@@ -75,7 +78,7 @@ class GeneralAdmin extends AbstractHookProvider {
 	/**
 	 * Output a notice allowing for theme mods migration from the parent theme to the current child theme.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @global string $pagenow
 	 */
@@ -85,7 +88,7 @@ class GeneralAdmin extends AbstractHookProvider {
 		// We only show the notice on the themes dashboard, and if we are allowed to.
 		if ( 'themes.php' !== $pagenow
 		     || ! is_child_theme()
-		     || true !== apply_filters( 'customify_allow_child_theme_mod_migrate_notice', true )
+		     || true !== apply_filters( 'style_manager/allow_child_theme_mod_migrate_notice', true )
 		     || ! current_user_can( 'manage_options' ) ) {
 
 			return;
@@ -97,8 +100,11 @@ class GeneralAdmin extends AbstractHookProvider {
 		}
 
 		ob_start(); ?>
-		<div class="customify-notice__container updated notice fade is-dismissible">
-			<h3><?php echo sprintf( __( 'You have activated a child theme for "%s". Good for you!', '__plugin_txtd' ), $parent_theme->get('Name') ); ?></h3>
+		<div class="style-manager-notice__container updated notice fade is-dismissible">
+			<h3><?php
+				/* translators: %s: The parent theme name. */
+				echo sprintf( __( 'You have activated a child theme for "%s". Good for you!', '__plugin_txtd' ), $parent_theme->get('Name') );
+			?></h3>
 			<p>
 				<?php echo wp_kses_post( __( 'If you have already <strong>set up things in the Customizer,</strong> you may want to <strong>keep those customizations</strong> so you don\'t start over.', '__plugin_txtd' ) ); ?>
 			</p>
@@ -108,27 +114,27 @@ class GeneralAdmin extends AbstractHookProvider {
 			<p>
 				<?php echo wp_kses_post( __( 'All parent theme customizations will remain in place, while those of the active child theme will be overwritten, if any.', '__plugin_txtd' ) ); ?>
 			</p>
-			<form class="customify-notice-form" method="post">
-				<noscript><input type="hidden" name="customify-notice-no-js" value="1"/></noscript>
+			<form class="style-manager-notice-form" method="post">
+				<noscript><input type="hidden" name="style-manager-notice-no-js" value="1"/></noscript>
 
 				<p>
-					<button class="customify-notice-button button button-primary js-handle-customify">
-						<span class="customify-notice-button__text"><?php esc_html_e( 'Yes, migrate customizations', '__plugin_txtd' ); ?></span>
+					<button class="style-manager-notice-button button button-primary js-handle-style-manager">
+						<span class="style-manager-notice-button__text"><?php esc_html_e( 'Yes, migrate customizations', '__plugin_txtd' ); ?></span>
 					</button>
-					<button type="submit" class="customify-dismiss-button button button-secondary js-dismiss-customify"><?php esc_html_e( 'No, thank you', '__plugin_txtd' ); ?></button>
+					<button type="submit" class="style-manager-dismiss-button button button-secondary js-dismiss-style-manager"><?php esc_html_e( 'No, thank you', '__plugin_txtd' ); ?></button>
 					&nbsp;<span class="message js-plugin-message" style="font-style:italic"></span>
 				</p>
 
-				<?php wp_nonce_field( 'customify_migrate_customizations_from_parent_to_child_theme', 'nonce-customify_theme_mods_migrate' ); ?>
+				<?php wp_nonce_field( 'style_manager_migrate_customizations_from_parent_to_child_theme', 'nonce-style_manager_theme_mods_migrate' ); ?>
 			</form>
 		</div>
 		<script>
 			(function ($) {
 				$(function () {
-					let $noticeContainer = $('.customify-notice__container'),
-						$button = $noticeContainer.find('.js-handle-customify'),
-						$buttonText = $noticeContainer.find('.customify-notice-button__text'),
-						$dismissButton = $noticeContainer.find('.js-dismiss-customify'),
+					let $noticeContainer = $('.style-manager-notice__container'),
+						$button = $noticeContainer.find('.js-handle-style-manager'),
+						$buttonText = $noticeContainer.find('.style-manager-notice-button__text'),
+						$dismissButton = $noticeContainer.find('.js-dismiss-style-manager'),
 						$statusMessage = $noticeContainer.find('.js-plugin-message')
 
 					$button.on('click', function (e) {
@@ -143,8 +149,8 @@ class GeneralAdmin extends AbstractHookProvider {
 							url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
 							type: 'post',
 							data: {
-								action: 'customify_migrate_customizations_from_parent_to_child_theme',
-								nonce_migrate: $noticeContainer.find('#nonce-customify_theme_mods_migrate').val()
+								action: 'style_manager_migrate_customizations_from_parent_to_child_theme',
+								nonce_migrate: $noticeContainer.find('#nonce-style_manager_theme_mods_migrate').val()
 							}
 						})
 							.done(function(response) {
@@ -178,11 +184,11 @@ class GeneralAdmin extends AbstractHookProvider {
 	/**
 	 * Process ajax call to migrate customizations from parent to current child theme.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	function migrate_customizations_from_parent_to_child_theme() {
 		// Check nonce.
-		check_ajax_referer( 'customify_migrate_customizations_from_parent_to_child_theme', 'nonce_migrate' );
+		check_ajax_referer( 'style_manager_migrate_customizations_from_parent_to_child_theme', 'nonce_migrate' );
 
 		$parent_theme = wp_get_theme( get_template() );
 		if ( ! $parent_theme->exists() ) {
@@ -219,7 +225,7 @@ class GeneralAdmin extends AbstractHookProvider {
 	/**
 	 * Migrate data from the simple Dark Mode control to Advanced Dark Mode Control, if the current theme supports it.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	function migrate_to_advanced_dark_mode_control() {
 		// Bail if the current theme doesn't support the advanced control.
@@ -264,9 +270,64 @@ class GeneralAdmin extends AbstractHookProvider {
 	/**
 	 * Enqueue assets.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function enqueue_assets() {
-		wp_enqueue_style( 'pixelgrade_customify-sm-colors-custom-properties' );
+		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
+	}
+
+	/**
+	 * Hook in plugin action link filters for the WP native plugins page.
+	 *
+	 * - Prevent activation of plugins which don't meet the minimum version requirements.
+	 * - Prevent deactivation of force-activated plugins.
+	 *
+	 * @since 2.0.0
+	 */
+	protected function add_plugin_action_link_filters() {
+		$prevent_activate = [];
+		foreach ( get_plugins() as $plugin_filename => $plugin_data ) {
+			// We will search all plugins by the Customify file name and deactivate any one of them that are active.
+			// This way we account for modified directories, etc.
+			if ( strrpos( $plugin_filename, 'customify.php' ) === ( strlen( $plugin_filename ) - strlen( 'customify.php' ) ) ) {
+				$prevent_activate[] = $plugin_filename;
+			}
+		}
+
+		if ( ! empty( $prevent_activate ) ) {
+			foreach ( $prevent_activate as $filename ) {
+				$this->add_filter( 'plugin_action_links_' . $filename, 'filter_plugin_action_links_activate', 20 );
+			}
+		}
+	}
+
+	/**
+	 * Remove the 'Activate' link on the WP native plugins page if a plugin should not be activated as long as Style Manager is active.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $actions Action links.
+	 *
+	 * @return array
+	 */
+	protected function filter_plugin_action_links_activate( array $actions ): array {
+		unset( $actions['activate'] );
+
+		return $actions;
+	}
+
+	/**
+	 * Remove the 'Deactivate' link on the WP native plugins page if the plugin should not be deactivated as long as Style Manager is active.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $actions Action links.
+	 *
+	 * @return array
+	 */
+	public function filter_plugin_action_links_deactivate( array $actions ): array {
+		unset( $actions['deactivate'] );
+
+		return $actions;
 	}
 }

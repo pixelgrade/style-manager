@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2015 Cedaro, LLC
  * @license   MIT
  */
-namespace Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin;
+namespace Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin;
 
 /**
  * Plugin aware trait.
@@ -28,7 +28,7 @@ trait PluginAwareTrait
      * @param  PluginInterface $plugin Main plugin instance.
      * @return $this
      */
-    public function set_plugin(\Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\PluginInterface $plugin)
+    public function set_plugin(\Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\PluginInterface $plugin)
     {
         $this->plugin = $plugin;
         return $this;

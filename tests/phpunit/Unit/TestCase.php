@@ -1,7 +1,7 @@
 <?php
 declare ( strict_types = 1 );
 
-namespace Customify\Tests\Unit;
+namespace Pixelgrade\StyleManager\Tests\Unit;
 
 use Brain\Monkey;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;

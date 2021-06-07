@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<ruleset name="Customify"
+<ruleset name="StyleManager"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
 
-	<description>Custom ruleset for the Customify plugin.</description>
+	<description>Custom ruleset for the Style Manager plugin.</description>
 
 	<!-- For help in understanding this file: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 	<!-- For help in using PHPCS: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->

@@ -2,14 +2,14 @@
 /**
  * HTTP exception.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\Exception;
+namespace Pixelgrade\StyleManager\Exception;
 
 use Throwable;
 use WP_Http as HTTP;
@@ -17,9 +17,9 @@ use WP_Http as HTTP;
 /**
  * HTTP exception class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
-class HttpException extends \Exception implements CustomifyException {
+class HttpException extends \Exception implements StyleManagerException {
 	/**
 	 * HTTP status code.
 	 *
@@ -30,7 +30,7 @@ class HttpException extends \Exception implements CustomifyException {
 	/**
 	 * Constructor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string         $message     Message.
 	 * @param int            $status_code Optional. HTTP status code. Defaults to 500.
@@ -52,7 +52,7 @@ class HttpException extends \Exception implements CustomifyException {
 	/**
 	 * Create an exception for a forbidden resource request.
 	 *
-	 * @since 3.0.0.
+	 * @since 2.0.0.
 	 *
 	 * @param int            $code     Optional. The Exception code.
 	 * @param Throwable|null $previous Optional. The previous throwable used for the exception chaining.
@@ -73,7 +73,7 @@ class HttpException extends \Exception implements CustomifyException {
 	/**
 	 * Retrieve the HTTP status code.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return int
 	 */

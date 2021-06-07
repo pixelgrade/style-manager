@@ -2,21 +2,21 @@
 /**
  * Customizer radio HTML control.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen\Customizer\Control;
+namespace Pixelgrade\StyleManager\Screen\Customizer\Control;
 
 /**
  * Customizer radio HTML control class.
  *
  * This handles the 'radio_html' control type.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class RadioHTML extends BaseControl {
 	/**
@@ -35,7 +35,7 @@ class RadioHTML extends BaseControl {
 			<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 		<?php } ?>
 
-		<div class="customify_radio_html">
+		<div class="style-manager_radio_html">
 			<?php
 			foreach ( $this->choices as $value => $html ) { ?>
 				<div>

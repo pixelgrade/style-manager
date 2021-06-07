@@ -2,21 +2,21 @@
 /**
  * Customizer background control.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen\Customizer\Control;
+namespace Pixelgrade\StyleManager\Screen\Customizer\Control;
 
 /**
  * Customizer background control class.
  *
  * This handles the 'custom_background' control type.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Background extends BaseControl {
 	/**
@@ -94,7 +94,7 @@ class Background extends BaseControl {
 			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', '__plugin_txtd' );
 
 			echo '<input type="text" 
-				class="customify_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" 
+				class="style-manager_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" 
 				name="' . esc_attr( $this->setting->id ) . '[background-image]" 
 				id="_customize-input-' . esc_attr( $this->setting->id ) . '[background-image]" 
 				value="' . $this->value['background-image'] . '"  
@@ -175,7 +175,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . $this->id . '-repeat-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-repeat]" 
-				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				class="style-manager_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-repeat" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
 			echo '<option disabled ' . selected( $this->value['background-repeat'], '', false ) . '>' . esc_html__( 'Background repeat..', '__plugin_txtd' ) . '</option>';
@@ -199,7 +199,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . $this->id . '-clip-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-clip]" 
-				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				class="style-manager_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-clip" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
 			echo '<option disabled ' . selected( $this->value['background-clip'], '', false ) . '>' . esc_html__( 'Background clip..', '__plugin_txtd' ) . '</option>';
@@ -223,7 +223,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . $this->id . '-origin-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-origin]" 
-				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				class="style-manager_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-origin" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
 			echo '<option disabled ' . selected( $this->value['background-origin'], '', false ) . '>' . esc_html__( 'Background origin..', '__plugin_txtd' ) . '</option>';
@@ -246,7 +246,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . $this->id . '-size-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-size]" 
-				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				class="style-manager_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				data-select_name="background-size" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
 			echo '<option disabled ' . selected( $this->value['background-size'], '', false ) . '>' . esc_html__( 'Background size..', '__plugin_txtd' ) . '</option>';
@@ -267,7 +267,7 @@ class Background extends BaseControl {
 				$this->value['background-attachment'] = '';
 			}
 
-			echo '<select id="' . $this->id . '-attachment-select" name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-attachment]" class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
+			echo '<select id="' . $this->id . '-attachment-select" name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-attachment]" class="style-manager_background_select ' . $this->field['class'] . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
 			echo '<option disabled ' . selected( $this->value['background-attachment'], '', false ) . '>' . esc_html__( 'Background attachment..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . $k . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . $v . '</option>';
@@ -294,7 +294,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . $this->id . '-position-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-position]" 
-				class="customify_background_select ' . $this->field['class'] . ' ' . $hide . '" 
+				class="style-manager_background_select ' . $this->field['class'] . ' ' . $hide . '" 
 				placeholder="Background position?"
 				data-select_name="background-position" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';

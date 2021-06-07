@@ -2,19 +2,19 @@
 /**
  * JSON response body.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\HTTP\ResponseBody;
+namespace Pixelgrade\StyleManager\HTTP\ResponseBody;
 
 /**
  * JSON response body class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class JsonBody implements ResponseBody {
 	/**
@@ -27,7 +27,7 @@ class JsonBody implements ResponseBody {
 	/**
 	 * Create a JSON response body.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $data Response data.
 	 */
@@ -38,7 +38,7 @@ class JsonBody implements ResponseBody {
 	/**
 	 * Emit the data as a JSON-serialized string.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function emit() {
 		echo wp_json_encode( $this->data );

@@ -2,22 +2,22 @@
 /**
  * This is the class that handles the communication with the Pixelgrade Cloud.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Client;
+namespace Pixelgrade\StyleManager\Client;
 
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
-use const Pixelgrade\Customify\VERSION;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
+use const Pixelgrade\StyleManager\VERSION;
 
 /**
  * Provides the interface to communicate with the Pixelgrade Cloud.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class PixelgradeCloud implements CloudInterface {
 
@@ -38,7 +38,7 @@ class PixelgradeCloud implements CloudInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param LoggerInterface $logger Logger.
 	 */
@@ -53,7 +53,7 @@ class PixelgradeCloud implements CloudInterface {
 	/**
 	 * Fetch the design assets data from the Pixelgrade Cloud.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
@@ -79,7 +79,13 @@ class PixelgradeCloud implements CloudInterface {
 			$request_data['post_status'][] = 'future';
 		}
 
-		// Allow others to filter the data we send.
+		/**
+		 * Filters request data sent to the cloud.
+		 *
+		 * @param array  $request_data
+		 */
+		$request_data = apply_filters( 'style_manager/pixelgrade_cloud_request_data', $request_data );
+		// This is for backwards compatibility.
 		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
 		$request_args = [
@@ -103,13 +109,13 @@ class PixelgradeCloud implements CloudInterface {
 			return [];
 		}
 
-		return apply_filters( 'customify_style_manager_fetch_design_assets', $response_data['data'] );
+		return apply_filters( 'style_manager/fetch_design_assets', $response_data['data'] );
 	}
 
 	/**
 	 * Get the active theme data.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
@@ -135,13 +141,13 @@ class PixelgradeCloud implements CloudInterface {
 			$theme_data['wupdates'] = $wupdates_ids[ $slug ];
 		}
 
-		return apply_filters( 'customify_style_manager_get_theme_data', $theme_data );
+		return apply_filters( 'style_manager/get_theme_data', $theme_data );
 	}
 
 	/**
 	 * Get the site data.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
@@ -152,18 +158,18 @@ class PixelgradeCloud implements CloudInterface {
 			'wp' => [
 				'version' => get_bloginfo('version'),
 			],
-			'customify' => [
+			'style_manager' => [
 				'version' => VERSION,
 			],
 		];
 
-		return apply_filters( 'customify_style_manager_get_site_data', $site_data );
+		return apply_filters( 'style_manager/get_site_data', $site_data );
 	}
 
 	/**
 	 * Send stats to the Pixelgrade Cloud.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array $data     The data to be sent.
 	 * @param bool  $blocking Optional. Whether this should be a blocking request. Defaults to false.
@@ -186,8 +192,9 @@ class PixelgradeCloud implements CloudInterface {
 		 * Filters request data sent to the cloud.
 		 *
 		 * @param array  $data
-		 * @param object $this @todo This argument is no longer needed and should be removed when Pixelgrade Care doesn't rely on it.
 		 */
+		$data = apply_filters( 'style_manager/pixelgrade_cloud_request_data', $data );
+		// This is for backwards compatibility.
 		$data = apply_filters( 'customify_pixelgrade_cloud_request_data', $data, $this );
 
 		$request_args = [

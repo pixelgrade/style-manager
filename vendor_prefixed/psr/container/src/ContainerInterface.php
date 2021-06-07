@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Pixelgrade\Customify\Vendor\Psr\Container;
+namespace Pixelgrade\StyleManager\Vendor\Psr\Container;
 
 /**
  * Describes the interface of a container that exposes methods to read its entries.

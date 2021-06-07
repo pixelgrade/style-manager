@@ -4,25 +4,25 @@
  * Based on the logic from this WordPress plugin: https://wordpress.org/plugins/customizer-search/
  */
 
-/** @namespace customify */
-window.customify = window.customify || parent.customify || {};
+/** @namespace styleManager */
+window.styleManager = window.styleManager || parent.styleManager || {};
 
-(function ($, customify, wp) {
+(function ($, styleManager, wp) {
 
   /**
-   * Expose the API publicly on window.customify.search
+   * Expose the API publicly on window.styleManager.search
    *
-   * @namespace customify.search
+   * @namespace styleManager.search
    */
-  if (typeof customify.search === 'undefined') {
-    customify.search = {}
+  if (typeof styleManager.search === 'undefined') {
+    styleManager.search = {}
   }
 
-  _.extend(customify.search, function () {
+  _.extend(styleManager.search, function () {
     const api = wp.customize
 
-    const searchWrapperSelector = '#accordion-section-customify-customizer-search'
-    const searchInputSelector = '#customify-customizer-search-input'
+    const searchWrapperSelector = '#accordion-section-style-manager-customizer-search'
+    const searchInputSelector = '#style-manager-customizer-search-input'
 
     let customizePanelsParent = null
 
@@ -35,7 +35,7 @@ window.customify = window.customify || parent.customify || {};
           controlId = String(controlId)
         }
         // Determine if the control should be excluded from search results.
-        const excluded = _.find( customify.search.excludedControls, function (partial) {
+        const excluded = _.find( styleManager.search.excludedControls, function (partial) {
           return controlId.indexOf(partial) !== -1;
         })
         if (excluded !== undefined) {
@@ -105,7 +105,7 @@ window.customify = window.customify || parent.customify || {};
       const $customizeInfo = $('#customize-info')
 
       customizePanelsParent = $('#customize-theme-controls')
-      customizePanelsParent.after('<div id="customify-search-results"></div>')
+      customizePanelsParent.after('<div id="style-manager-search-results"></div>')
 
       $customizeInfo.on('keyup', searchInputSelector, function (event) {
         event.preventDefault()
@@ -190,7 +190,7 @@ window.customify = window.customify || parent.customify || {};
                 <li id="accordion-section-${result.item.section}" class="accordion-section control-section control-section-default customizer-search-results" aria-owns="sub-accordion-section-${result.item.section}" data-section="${result.item.section}">
                     <h3 class="accordion-section-title" tabindex="0">
                         ${highlightedResult.item.label}
-                        <span class="screen-reader-text">${customify.l10n.search.resultsSectionScreenReaderText}</span>
+                        <span class="screen-reader-text">${styleManager.l10n.search.resultsSectionScreenReaderText}</span>
                     </h3>
                     <span class="search-setting-path">${controlTrail}</i></span>
                 </li>
@@ -198,9 +198,9 @@ window.customify = window.customify || parent.customify || {};
       }).join('')
 
       customizePanelsParent.addClass('search-found')
-      document.getElementById('customify-search-results').innerHTML = `<ul>${html}</ul>`
+      document.getElementById('style-manager-search-results').innerHTML = `<ul>${html}</ul>`
 
-      const searchSettings = document.querySelectorAll('#customify-search-results .accordion-section')
+      const searchSettings = document.querySelectorAll('#style-manager-search-results .accordion-section')
       searchSettings.forEach(setting => setting.addEventListener('click', expandSection))
     }
 
@@ -233,12 +233,12 @@ window.customify = window.customify || parent.customify || {};
      * or footer is already set for this page.
      */
     const showSearchButtonToggle = function () {
-      let template = wp.template('customify-search-button')
+      let template = wp.template('style-manager-search-button')
       if ($('#customize-info .accordion-section-title .customize-search-toggle').length === 0) {
         $('#customize-info .accordion-section-title').append(template())
       }
 
-      template = wp.template('customify-search-form')
+      template = wp.template('style-manager-search-form')
       if ($('#customize-info '+searchWrapperSelector).length === 0) {
         $('#customize-info .customize-panel-description').after(template())
       }
@@ -271,7 +271,7 @@ window.customify = window.customify || parent.customify || {};
       const section = api.section(sectionName)
 
       customizePanelsParent.removeClass('search-found')
-      document.getElementById('customify-search-results').innerHTML = ''
+      document.getElementById('style-manager-search-results').innerHTML = ''
       $(searchInputSelector).focus()
 
       section.expand()
@@ -282,8 +282,8 @@ window.customify = window.customify || parent.customify || {};
      */
     const clearSearch = function () {
       customizePanelsParent.removeClass('search-found')
-      document.getElementById('customify-search-results').innerHTML = ''
-      document.getElementById('customify-customizer-search-input').value = ''
+      document.getElementById('style-manager-search-results').innerHTML = ''
+      document.getElementById('style-manager-customizer-search-input').value = ''
 
       $(searchInputSelector).focus()
     }
@@ -296,4 +296,4 @@ window.customify = window.customify || parent.customify || {};
     }
   }())
 
-})(jQuery, customify, wp)
+})(jQuery, styleManager, wp)

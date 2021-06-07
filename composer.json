@@ -1,6 +1,6 @@
 {
     "name": "pixelgrade/style-manager",
-    "description": "Style Manager is a theme Customizer booster to easily customize Fonts, Colors, and other options for a certain WordPress theme.",
+    "description": "Style Manager is an auto-magical system to style your WordPress site.",
     "type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"authors": [
@@ -58,7 +58,7 @@
         "pclzip/pclzip": "^2.8",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpunit/phpunit": "^7.5",
-        "rector/rector-prefixed": "^0.10.4",
+        "rector/rector": "^0.11",
         "roave/security-advisories": "dev-master",
         "squizlabs/php_codesniffer": "^3.3",
         "vlucas/phpdotenv": "^5.3",
@@ -67,7 +67,7 @@
     },
 	"autoload": {
 		"psr-4": {
-			"Pixelgrade\\Customify\\": "src/"
+			"Pixelgrade\\StyleManager\\": "src/"
 		},
 		"classmap": [
 			"vendor_prefixed"
@@ -84,7 +84,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Pixelgrade\\Customify\\Tests\\": "tests/phpunit/"
+			"Pixelgrade\\StyleManager\\Tests\\": "tests/phpunit/"
 		},
 		"files": [
 
@@ -134,7 +134,8 @@
 			"npm run gulp composer:delete_lock_and_vendor",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
-			"@downgrade-to-php-56"
+			"@downgrade-to-php-56",
+			"@composer dump-autoload --no-dev --optimize"
 		],
 		"zip": [
 			"@pre-build",

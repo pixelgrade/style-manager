@@ -13,7 +13,7 @@ export { updateVariantField } from './update-variant-field';
 export * as fontsService from './fonts-service';
 
 const wrapperSelector = '.font-options__wrapper';
-const valueHolderSelector = '.customify_font_values';
+const valueHolderSelector = '.style-manager_font_values';
 
 export const getSettingID = ( $element ) => {
   return getWrapper( $element ).find( valueHolderSelector ).data( 'customize-setting-link' );

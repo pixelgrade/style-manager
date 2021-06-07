@@ -2,22 +2,22 @@
 /**
  * Plugin deactivation routines.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Class to deactivate the plugin.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Deactivation extends AbstractHookProvider {
 
@@ -38,7 +38,7 @@ class Deactivation extends AbstractHookProvider {
 	/**
 	 * Constructor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options         $options Options.
 	 * @param LoggerInterface $logger  Logger.
@@ -54,7 +54,7 @@ class Deactivation extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		register_deactivation_hook( $this->plugin->get_file(), [ $this, 'deactivate' ] );
@@ -65,11 +65,11 @@ class Deactivation extends AbstractHookProvider {
 	 *
 	 * Deleting the rewrite rules option should force WordPress to regenerate them next time they're needed.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function deactivate() {
 		delete_option( 'rewrite_rules' );
-		delete_option( 'pixelgrade_customify_flush_rewrite_rules' );
+		delete_option( 'pixelgrade_style_manager_flush_rewrite_rules' );
 
 		$this->options->invalidate_all_caches();
 	}

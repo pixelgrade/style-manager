@@ -2,17 +2,17 @@
 /**
  * Options class to handle all options management.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\Customify\Utils\ArrayHelpers;
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Utils\ArrayHelpers;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
  * Class Options to handle all options management (including their configuration).
@@ -20,22 +20,22 @@ use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
  * so we don't have to do that. But we want to minimize cyclomatic complexity
  * of calling a bunch of WP functions, thus we will cache them in a class as well.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Options extends AbstractHookProvider {
 
-	const MINIMAL_DETAILS_CACHE_KEY = 'pixelgrade_customify_options_minimal_details';
-	const EXTRA_DETAILS_CACHE_KEY = 'pixelgrade_customify_options_extra_details';
-	const DETAILS_CACHE_TIMESTAMP_KEY = 'pixelgrade_customify_options_details_timestamp';
-	const CUSTOMIZER_CONFIG_CACHE_KEY = 'pixelgrade_customify_customizer_config';
-	const CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY = 'pixelgrade_customify_customizer_config_timestamp';
-	const CUSTOMIZER_OPT_NAME_CACHE_KEY = 'pixelgrade_customify_customizer_opt_name';
-	const CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY = 'pixelgrade_customify_customizer_opt_name_timestamp';
+	const MINIMAL_DETAILS_CACHE_KEY = 'pixelgrade_style_manager_options_minimal_details';
+	const EXTRA_DETAILS_CACHE_KEY = 'pixelgrade_style_manager_options_extra_details';
+	const DETAILS_CACHE_TIMESTAMP_KEY = 'pixelgrade_style_manager_options_details_timestamp';
+	const CUSTOMIZER_CONFIG_CACHE_KEY = 'pixelgrade_style_manager_customizer_config';
+	const CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY = 'pixelgrade_style_manager_customizer_config_timestamp';
+	const CUSTOMIZER_OPT_NAME_CACHE_KEY = 'pixelgrade_style_manager_customizer_opt_name';
+	const CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY = 'pixelgrade_style_manager_customizer_opt_name_timestamp';
 
 	/**
 	 * The cached options with just the minimal details.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -44,7 +44,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * The cached full options details.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -53,7 +53,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * The current option name as defined by the theme.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @var string
 	 */
@@ -62,7 +62,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * The cached Customizer config.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -78,7 +78,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Create the options provider.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param PluginSettings  $plugin_settings Plugin settings.
 	 */
@@ -91,7 +91,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 
@@ -110,7 +110,7 @@ class Options extends AbstractHookProvider {
 	 * Get an option's value, if there is a value, and return it.
 	 * Otherwise, try to get the default parameter or the default from config.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string     $option_id
 	 * @param mixed|null $default        Optional.
@@ -125,10 +125,10 @@ class Options extends AbstractHookProvider {
 			$option_details = $this->get_details( $option_id, true );
 		}
 
-		// If the development constant CUSTOMIFY_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
+		// If the development constant STYLE_MANAGER_DEV_FORCE_DEFAULTS has been defined we will not retrieve anything from the database
 		// Always go with the default
-		if ( defined( 'CUSTOMIFY_DEV_FORCE_DEFAULTS' )
-		     && true === CUSTOMIFY_DEV_FORCE_DEFAULTS
+		if ( defined( 'STYLE_MANAGER_DEV_FORCE_DEFAULTS' )
+		     && true === STYLE_MANAGER_DEV_FORCE_DEFAULTS
 		     && ! $this->skip_dev_mode_force_defaults( $option_id, $option_details ) ) {
 
 			$value = null;
@@ -198,7 +198,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Determine if a certain option exists.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key The option key.
 	 *
@@ -214,9 +214,9 @@ class Options extends AbstractHookProvider {
 	}
 
 	/**
-	 * Get the Customify configuration (and value, hence "details") of a certain option.
+	 * Get the Style Manager configuration (and value, hence "details") of a certain option.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $option_id
 	 * @param bool   $minimal_details Optional. Whether to return only the minimum amount of details (mainly what is needed on the frontend).
@@ -241,7 +241,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Get the value of a setting ID saved in a wp_options array entry.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string                 $option_id  This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
 	 * @param string                 $setting_id We will use this to get the Customizer value, when in that context.
@@ -276,7 +276,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Get the value of a certain setting ID saved in the theme mod array.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string                 $option_id  This is only the option ID, that may differ from setting ID ( like in `body_font` vs `rosa_opt[body_font]`)
 	 * @param string                 $setting_id We will use this to get the Customizer value, when in that context.
@@ -320,9 +320,9 @@ class Options extends AbstractHookProvider {
 	}
 
 	/**
-	 * Determine if we should NOT enforce the CUSTOMIFY_DEV_FORCE_DEFAULTS behavior on a certain option.
+	 * Determine if we should NOT enforce the STYLE_MANAGER_DEV_FORCE_DEFAULTS behavior on a certain option.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string     $option_id
 	 * @param array|null $option_config Optional.
@@ -368,7 +368,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Invalidate all caches.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function invalidate_all_caches() {
 		$this->invalidate_customizer_config_cache();
@@ -376,7 +376,7 @@ class Options extends AbstractHookProvider {
 		$this->invalidate_customizer_opt_name_cache();
 		$this->invalidate_details_cache();
 
-		\do_action( 'customify_invalidate_all_caches' );
+		\do_action( 'style_manager/invalidate_all_caches' );
 	}
 
 	/**
@@ -385,7 +385,7 @@ class Options extends AbstractHookProvider {
 	 *
 	 * This may be called during a request when something happens that (potentially) invalidates our data mid-request.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function clear_locally_cached_data() {
 		$this->opt_name = '';
@@ -399,7 +399,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Get the key under which all options are saved.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to skip the options cache and regenerate.
 	 *                         Defaults to using the cache.
@@ -445,7 +445,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Invalidate the Customizer options name (opt-name) cache.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function invalidate_customizer_opt_name_cache() {
 		update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
@@ -456,7 +456,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Wrapper to invalidate_customizer_opt_name_cache() for hooking into filters.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $value The value is just passed along, not modified.
 	 *
@@ -471,7 +471,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Get all options' details.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param bool $only_minimal_details Optional. Whether to return only the minimal details.
 	 *                                   Defaults to returning all details.
@@ -494,8 +494,7 @@ class Options extends AbstractHookProvider {
 			$skip_cache = true;
 		}
 
-		// We will first look for cached data
-
+		// We will first look for cached data.
 		$data = \get_option( self::MINIMAL_DETAILS_CACHE_KEY );
 		if ( false !== $data && false === $only_minimal_details ) {
 			$this->minimal_details = $data;
@@ -611,8 +610,8 @@ class Options extends AbstractHookProvider {
 		// If our development constant is defined and true, we will always skip the cache, except for AJAX calls.
 		// Other, more specific cases may impose skipping the cache also on AJAX calls.
 		if ( ! wp_doing_ajax()
-		     && defined( 'CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
-		     && true === CUSTOMIFY_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
+		     && defined( 'STYLE_MANAGER_ALWAYS_GENERATE_CUSTOMIZER_CONFIG' )
+		     && true === STYLE_MANAGER_ALWAYS_GENERATE_CUSTOMIZER_CONFIG ) {
 			return true;
 		}
 
@@ -642,7 +641,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Invalidate the options details cache.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function invalidate_details_cache() {
 		\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
@@ -653,7 +652,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Wrapper to invalidate_options_details_cache() for hooking into filters.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $value The value is just passed along, not modified.
 	 *
@@ -668,7 +667,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Get the entire Customizer fields config or a certain entry key.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param bool|string $key
 	 *
@@ -691,7 +690,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Load and set the customizer configuration.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param bool $skip_cache Optional. Whether to use the cached config or generate a new one.
 	 *
@@ -711,7 +710,7 @@ class Options extends AbstractHookProvider {
 
 		// For performance reasons, we will use the cached data (even if stale)
 		// when a user is not logged in or a user without administrative capabilities is logged in.
-		if ( false !== $data && false === $skip_cache && ! current_user_can( \Pixelgrade\Customify\Capabilities::MANAGE_OPTIONS ) ) {
+		if ( false !== $data && false === $skip_cache && ! current_user_can( \Pixelgrade\StyleManager\Capabilities::MANAGE_OPTIONS ) ) {
 			$this->customizer_config = $data;
 
 			return $data;
@@ -728,18 +727,22 @@ class Options extends AbstractHookProvider {
 		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			// Allow themes or other plugins to filter the config.
-			$data = \apply_filters( 'customify_filter_fields', [] );
+			$data = \apply_filters( 'style_manager/filter_fields', [] );
+			// This is just for backwards compatibility.
+			$data = apply_filters( 'customify_filter_fields', $data );
 			// Make sure that we have an array.
 			if ( ! is_array( $data ) ) {
-				\_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_filter_fields\'.', '__plugin_txtd' ), null );
+				\_doing_it_wrong( __METHOD__, esc_html__( 'The Style Manager fields configuration should be an array. Please check the filters that are hooked into \'style_manager/filter_fields\'.', '__plugin_txtd' ), null );
 
 				$data = [];
 			}
 			// We apply a second filter for those that wish to work with the final config and not rely on a huge priority number.
+			$data = apply_filters( 'style_manager/final_config', $data );
+			// This is just for backwards compatibility.
 			$data = apply_filters( 'customify_final_config', $data );
 			// Make sure that we have an array.
 			if ( ! is_array( $data ) ) {
-				\_doing_it_wrong( __METHOD__, esc_html__( 'The Customify fields configuration should be an array. Please check the filters that are hooked into \'customify_final_config\'.', '__plugin_txtd' ), null );
+				\_doing_it_wrong( __METHOD__, esc_html__( 'The Style Manager fields configuration should be an array. Please check the filters that are hooked into \'style_manager/final_config\'.', '__plugin_txtd' ), null );
 
 				$data = [];
 			}
@@ -760,7 +763,7 @@ class Options extends AbstractHookProvider {
 	/**
 	 * Invalidate the Customizer fields config cache.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function invalidate_customizer_config_cache() {
 		\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );

@@ -1,5 +1,5 @@
 <?php
-namespace Customify\Tests\Framework\Mock;
+namespace Pixelgrade\StyleManager\Tests\Framework\Mock;
 
 use Cedaro\WP\Plugin\AbstractHookProvider;
 

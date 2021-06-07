@@ -22,9 +22,9 @@ export const initSubfield = function( $subField, select2 = false ) {
 const onSubfieldChange = ( event, who ) => {
   const $subField = $( event.target );
 
-  // The change was triggered programmatically by Customify.
+  // The change was triggered programmatically by Style Manager.
   // No need to self-update the value.
-  if ( 'customify' === who ) {
+  if ( 'style-manager' === who ) {
     return;
   }
 

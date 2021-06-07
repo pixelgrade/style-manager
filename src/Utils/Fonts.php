@@ -2,26 +2,26 @@
 /**
  * This is a utility class that groups all our fonts related helper functions.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Utils;
+namespace Pixelgrade\StyleManager\Utils;
 
 /**
  * Fonts Helper class.
  *
- * @since   3.0.0
- * @package Pixelgrade Customify
+ * @since   2.0.0
+ * @package Style Manager
  */
 class Fonts {
 
 	/**
 	 * The precision to use when dealing with float values.
-	 * @since    3.0.0
+	 * @since    2.0.0
 	 */
 	const FLOAT_PRECISION = 2;
 
@@ -218,7 +218,7 @@ class Fonts {
 		}
 
 		// Allow others to filter this.
-		return apply_filters( 'customify_standardized_fonts_list', $newFontsList, $fontList );
+		return apply_filters( 'style_manager/standardized_fonts_list', $newFontsList, $fontList );
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Fonts {
 		}
 
 		foreach ( $variantsList as $key => $variant ) {
-			$variantsList[ $key ] = \Pixelgrade\Customify\Utils\Fonts::standardizeFontVariant( $variant );
+			$variantsList[ $key ] = \Pixelgrade\StyleManager\Utils\Fonts::standardizeFontVariant( $variant );
 		}
 
 		// Make sure the variants list is ordered ascending, by value.
@@ -458,7 +458,7 @@ class Fonts {
 	}
 
 	public static function getValidSubfieldValues( $subfield, $labels = false ) {
-		$valid_values = apply_filters( 'customify_fonts_valid_subfield_values', [
+		$valid_values = apply_filters( 'style_manager/fonts_valid_subfield_values', [
 			'text_align'      => [
 				'initial' => esc_html__( 'Initial', '__plugin_txtd' ),
 				'center'  => esc_html__( 'Center', '__plugin_txtd' ),
@@ -528,7 +528,7 @@ class Fonts {
 
 	/**
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param $value
 	 *

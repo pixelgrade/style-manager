@@ -2,17 +2,17 @@
 /**
  * Container.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
  * @since 0.1.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\StyleManager;
 
-use Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface;
-use Pixelgrade\Customify\Vendor\Pimple\Container as PimpleContainer;
+use Pixelgrade\StyleManager\Vendor\Psr\Container\ContainerInterface;
+use Pixelgrade\StyleManager\Vendor\Pimple\Container as PimpleContainer;
 
 /**
  * Container class.

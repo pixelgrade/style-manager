@@ -1,6 +1,6 @@
 <?php
 
-namespace Pixelgrade\Customify\Vendor\Psr\Log;
+namespace Pixelgrade\StyleManager\Vendor\Psr\Log;
 
 /**
  * Describes a logger instance.

@@ -1,12 +1,12 @@
 <?php
 /**
- * Functions that can be used in the Customify config for filtering values.
+ * Functions that can be used in the Style Manager config for filtering values.
  *
  * Think modifying colors, dividing values, etc.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );

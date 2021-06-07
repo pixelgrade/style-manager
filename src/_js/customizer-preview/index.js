@@ -14,10 +14,10 @@ import {
   window.fontsCache = [];
 
   window.wp = window?.wp || parent?.wp;
-  window.customify = window?.customify || parent?.customify;
+  window.styleManager = window?.styleManager || parent?.styleManager;
 
   $( function() {
-    const settings = customify.config.settings;
+    const settings = styleManager.config.settings;
     const getStyleTagID = ( settingID => `dynamic_style_${ settingID.replace( /\\W/g, '_' ) }` );
 
     const properKeys = Object.keys( settings ).filter( settingID => {
@@ -69,7 +69,7 @@ const maybeLoadWebfontloaderScript = function() {
 
   if ( typeof WebFont === 'undefined' ) {
     let tk = document.createElement( 'script' );
-    tk.src = parent.customify.config.webfontloader_url;
+    tk.src = parent.styleManager.config.webfontloader_url;
     tk.type = 'text/javascript';
     let s = document.getElementsByTagName( 'script' )[0];
     s.parentNode.insertBefore( tk, s );

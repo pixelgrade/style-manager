@@ -2,28 +2,28 @@
 /**
  * Plugin settings class.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
 /**
  * Provides the plugin settings values.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class PluginSettings {
 
-	const OPTION_NAME = 'pixelgrade_customify_settings';
+	const OPTION_NAME = 'pixelgrade_style_manager_settings';
 
 	/**
 	 * Retrieve a setting.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key     Setting name.
 	 * @param mixed  $default Optional. Default setting value.
@@ -39,7 +39,7 @@ class PluginSettings {
 	/**
 	 * Retrieve all settings.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
@@ -50,7 +50,7 @@ class PluginSettings {
 	/**
 	 * Set a setting value.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key     Setting name.
 	 * @param mixed  $value Optional. If given null, will delete the setting entry from the array.
@@ -74,7 +74,7 @@ class PluginSettings {
 	/**
 	 * Set all settings in one go.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array  $settings
 	 *

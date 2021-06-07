@@ -2,25 +2,25 @@
 /**
  * Upgrade routines.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\Customify\Capabilities;
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Capabilities;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
-use const Pixelgrade\Customify\VERSION;
+use const Pixelgrade\StyleManager\VERSION;
 
 /**
  * Class for upgrade routines.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Upgrade extends AbstractHookProvider {
 	/**
@@ -28,7 +28,7 @@ class Upgrade extends AbstractHookProvider {
 	 *
 	 * @var string
 	 */
-	const VERSION_OPTION_NAME = 'customify_dbversion';
+	const VERSION_OPTION_NAME = 'style_manager_dbversion';
 
 	/**
 	 * Options.
@@ -54,7 +54,7 @@ class Upgrade extends AbstractHookProvider {
 	/**
 	 * Constructor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options         $options         Options.
 	 * @param PluginSettings  $plugin_settings Plugin settings.
@@ -73,7 +73,7 @@ class Upgrade extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		add_action( 'admin_init', [ $this, 'maybe_upgrade' ] );
@@ -82,19 +82,16 @@ class Upgrade extends AbstractHookProvider {
 	/**
 	 * Upgrade when the database version is outdated.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function maybe_upgrade() {
 		$saved_version = get_option( self::VERSION_OPTION_NAME, '0' );
 
-		// For versions, previous of version 2.0.0 (the Color Palettes v2.0 release).
+		// For versions, previous of version 2.0.0 (the rewrite release).
 		if ( version_compare( $saved_version, '2.0.0', '<' ) ) {
 			// Delete the option holding the fact that the user offered feedback.
 			delete_option( 'style_manager_user_feedback_provided' );
-		}
 
-		// For versions, previous of version 3.0.0 (the rewrite release).
-		if ( version_compare( $saved_version, '3.0.0', '<' ) ) {
 			// Make sure that admins have the required capability to access the plugin settings page.
 			Capabilities::register();
 
@@ -140,18 +137,9 @@ class Upgrade extends AbstractHookProvider {
 
 				if ( ! empty( $new_settings ) ) {
 					$this->plugin_settings->set_all( $new_settings );
-					delete_option( 'pixcustomify_settings' );
+					// Do not delete the old Customify settings just in case people revert back to it.
 				}
 			}
-
-			// Cleanup old options since we use new keys.
-			delete_option( 'customify_options_minimal_details' );
-			delete_option( 'customify_options_extra_details' );
-			delete_option( 'customify_options_details_timestamp' );
-			delete_option( 'customify_customizer_config' );
-			delete_option( 'customify_customizer_config_timestamp' );
-			delete_option( 'customify_customizer_opt_name' );
-			delete_option( 'customify_customizer_opt_name_timestamp' );
 		}
 
 		if ( version_compare( $saved_version, VERSION, '<' ) ) {

@@ -32,7 +32,7 @@ function makeZip() {
 	versionString = '-' + versionString.replace(/\./g, '-');
 
 	return gulp.src('./')
-	           .pipe( plugins.exec('cd ./../; rm -rf ' + slug[0].toUpperCase() + slug.slice(1) + '*.zip; cd ./build/; zip -r -X ./../' + slug[0].toUpperCase() + slug.slice(1) + versionString + '.zip ./; cd ./../; rm -rf build'));
+	           .pipe( plugins.exec('cd ./../; rm -rf ' + slug + '*.zip; cd ./build/; zip -r -X ./../' + slug + versionString + '.zip ./; cd ./../; rm -rf build'));
 }
 makeZip.description = 'Create the plugin installer archive and delete the build folder';
 gulp.task( 'build:zip', makeZip );

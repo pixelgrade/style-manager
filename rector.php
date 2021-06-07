@@ -3,7 +3,7 @@
 use Rector\Core\Configuration\Option;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\DowngradeSetList;
-use RectorPrefix20210326\Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 /** Define ABSPATH as this file's directory */
 if (!defined('ABSPATH')) {
@@ -24,6 +24,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$parameters->set(Option::AUTOLOAD_PATHS, [
 		__DIR__ . "/vendor/autoload.php",
 		__DIR__ . "/src/functions.php",
+		__DIR__ . "/src/sm-functions.php",
+		__DIR__ . "/src/cloud-filter-functions.php",
+		__DIR__ . "/src/deprecated.php",
 		__DIR__ . "/vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
 		__DIR__ . "/vendor_prefixed/symfony/polyfill-php72/bootstrap.php",
 		__DIR__ . "/vendor_prefixed",
@@ -36,14 +39,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	]);
 
 	// here we can define, what sets of rules will be applied
-	$parameters->set(Option::SETS, [
-		DowngradeSetList::PHP_80,
-		DowngradeSetList::PHP_74,
-		DowngradeSetList::PHP_73,
-		DowngradeSetList::PHP_72,
-		DowngradeSetList::PHP_71,
-		DowngradeSetList::PHP_70,
-	]);
+	$containerConfigurator->import( DowngradeSetList::PHP_80 );
+	$containerConfigurator->import( DowngradeSetList::PHP_74 );
+	$containerConfigurator->import( DowngradeSetList::PHP_73 );
+	$containerConfigurator->import( DowngradeSetList::PHP_72 );
+	$containerConfigurator->import( DowngradeSetList::PHP_71 );
+	$containerConfigurator->import( DowngradeSetList::PHP_70 );
 
 	// is your PHP version different from the one your refactor to? [default: your PHP version]
 	$parameters->set(Option::PHP_VERSION_FEATURES, '7.4');

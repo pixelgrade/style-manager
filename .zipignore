@@ -8,9 +8,11 @@ node-tasks
 gulpfile.js
 gulpconfig.json
 gulpconfig.example.json
+webpack.config.js
 webpack.common.js
 webpack.dev.js
 webpack.prod.js
+webpack-stats.json
 package.json
 package-lock.json
 pxg.json
@@ -28,6 +30,7 @@ css
 **/.DS_Store
 __MACOSX
 **/__MACOSX
+CHANGELOG.md
 README.md
 **/README.md
 palettes.md
@@ -52,7 +55,6 @@ browserslist
 .stylelintrc
 tsconfig.json
 tslint.json
-webpack.config.js
 .labels
 .jscsrc
 .jshintignore
@@ -65,9 +67,9 @@ postcss.config.js
 .phpcs.xml.dist
 
 # From src we will only exclude js and scss, since the rest of the files (PHP) are needed.
-src/js
-src/css
-src/scss
+src/_js
+src/_css
+src/_scss
 
 #
 # Composer related
@@ -85,6 +87,9 @@ vendor/psr
 vendor/pimple
 # cedaro/wp-plugin is prefixed and located in vendor_prefixed folder.
 vendor/cedaro
+
+# The rector is only used during development.
+rector.php
 
 # These are all dev or unit testing related.
 vendor/bin

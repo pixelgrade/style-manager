@@ -2,28 +2,28 @@
 /**
  * Capabilities provider.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Capabilities as Caps;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Capabilities as Caps;
 
 /**
  * Capabilities provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Capabilities extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		add_filter( 'map_meta_cap', [ $this, 'map_meta_cap' ], 10, 4 );
@@ -32,7 +32,7 @@ class Capabilities extends AbstractHookProvider {
 	/**
 	 * Map meta capabilities to primitive capabilities.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array  $caps Returns the user's actual capabilities.
 	 * @param string $cap  Capability name.
