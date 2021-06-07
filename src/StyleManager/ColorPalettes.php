@@ -558,7 +558,7 @@ class ColorPalettes extends AbstractHookProvider {
 				],
 				'sm_site_color_variation'       => [
 					'type'         => 'range',
-					'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-4 for subtle shades, 5-8 for colorful, or 9 and above for darker shades.', '__plugin_txtd' ), [ 'strong' => [] ] ),
+					'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-3 for subtle shades, 4-7 for colorful, above 8 for darker shades.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_site_color_variation',
