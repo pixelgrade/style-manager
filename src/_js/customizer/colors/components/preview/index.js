@@ -53,7 +53,7 @@ const PalettePreviewList = ( props ) => {
 const PalettePreview = ( props ) => {
   const { palette, isActive, setActivePalette } = props;
   const { id, colors, textColors, lightColorsCount, sourceIndex } = palette;
-  const [ lastHover, setLastHover ] = useState( 0 );
+  const [ lastHover, setLastHover ] = useState( sourceIndex );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
   const [ siteVariation, setSiteVariation ] = useState( parseInt( siteVariationSetting(), 10 ) );
@@ -61,6 +61,10 @@ const PalettePreview = ( props ) => {
   const onSiteVariationChange = ( newValue ) => {
     setSiteVariation( parseInt( newValue, 10 ) );
   }
+
+  useEffect( () => {
+    setLastHover( sourceIndex );
+  }, [ palette ] );
 
   useEffect( () => {
     // Attach the listeners on component mount.
@@ -89,7 +93,7 @@ const PalettePreview = ( props ) => {
               const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
               const passedProps = {
-                isSource: normalize( index ) === sourceIndex + 1,
+                isSource: normalize( index ) === sourceIndex,
                 showCard: isActive && index === lastHover,
                 showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
                 showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
