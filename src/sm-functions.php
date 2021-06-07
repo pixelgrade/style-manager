@@ -217,7 +217,14 @@ function sm_variation_range_cb( string $value ) {
 	return '';
 }
 
-function sm_get_palette_output_from_color_config( string $value ) {
+/**
+ * @since   2.0.0
+ *
+ * @param string $value
+ *
+ * @return string
+ */
+function sm_get_palette_output_from_color_config( $value ) {
 	$output = '';
 
 	$palettes = json_decode( $value );
