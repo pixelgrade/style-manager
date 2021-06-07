@@ -2,21 +2,21 @@
 /**
  * Customizer radio image control.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen\Customizer\Control;
+namespace Pixelgrade\StyleManager\Screen\Customizer\Control;
 
 /**
  * Customizer radio image control class.
  *
  * This handles the 'radio_image' control type.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class RadioImage extends BaseControl {
 	/**
@@ -42,7 +42,7 @@ class RadioImage extends BaseControl {
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php } ?>
 
-					<div class="customify_radio_image">
+					<div class="style-manager_radio_image">
 						<?php
 						foreach ( $this->choices as $value => $image_url ) {
 
@@ -50,9 +50,14 @@ class RadioImage extends BaseControl {
 								$image_url = plugins_url() . '/style-manager/images/default_radio_image.png';
 							} ?>
 							<label>
-								<input <?php $this->link();
-								echo 'name="' . $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . ' ></input>'; ?>
-								<img src="<?php echo $image_url; ?>"
+								<input
+									<?php $this->link(); ?>
+									name="<?php echo esc_attr( $this->setting->id ); ?>"
+									type="radio"
+									value="<?php echo esc_attr( $value ); ?>"
+									<?php selected( $this->value(), $value ); ?>
+								></input>
+								<img src="<?php echo esc_url( $image_url ); ?>"
 								     style="width: 50px; display: block; height: auto;"></span>
 							</label>
 						<?php } ?>
@@ -72,7 +77,7 @@ class RadioImage extends BaseControl {
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php } ?>
 
-					<div class="customify_radio_image radio_buttons">
+					<div class="style-manager_radio_image radio_buttons">
 						<?php
 						foreach ( $this->choices as $value => $setts ) {
 							if ( ! isset( $setts['options'] ) || ! isset( $setts['label'] ) ) {
@@ -87,10 +92,16 @@ class RadioImage extends BaseControl {
 							$options = $setts['options'];
 							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
 
-							<fieldset class="customify_radio_button">
-								<input <?php $this->link();
-								echo 'name="' . $this->setting->id . '" type="radio" value="' . esc_attr( $value ) . '"' . selected( $this->value(), $value, false ) . $data . ' />'; ?>
-								<label class="button" for="<?php echo $this->setting->id; ?>" <?php echo $color; ?>>
+							<fieldset class="style-manager_radio_button">
+								<input
+									<?php $this->link(); ?>
+									name="<?php echo esc_attr( $this->setting->id ); ?>"
+									type="radio"
+									value="<?php echo esc_attr( $value ); ?>"
+									<?php selected( $this->value(), $value ); ?>
+									<?php echo $data; ?>
+								/>
+								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; ?>>
 									<?php echo $label; ?>
 								</label>
 							</fieldset>

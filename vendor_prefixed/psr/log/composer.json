@@ -11,7 +11,7 @@
     "authors": [
         {
             "name": "PHP-FIG",
-            "homepage": "http:\/\/www.php-fig.org\/"
+            "homepage": "https:\/\/www.php-fig.org\/"
         }
     ],
     "require": {
@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pixelgrade\\Customify\\Vendor\\Psr\\Log\\": "Psr\/Log\/"
+            "Pixelgrade\\StyleManager\\Vendor\\Psr\\Log\\": "Psr\/Log\/"
         }
     },
     "extra": {

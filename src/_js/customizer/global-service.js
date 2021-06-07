@@ -22,7 +22,7 @@ export const getSetting = ( settingID ) => {
 }
 
 export const getSettingConfig = ( settingID ) => {
-  return customify.config.settings[ settingID ];
+  return styleManager.config.settings[ settingID ];
 }
 
 export const setSetting = ( settingID, value ) => {

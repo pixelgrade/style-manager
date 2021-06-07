@@ -2,27 +2,27 @@
 /**
  * Invalid file name exception.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\Exception;
+namespace Pixelgrade\StyleManager\Exception;
 
 use Throwable;
 
 /**
  * Invalid file name exception class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
-class InvalidFileName extends \InvalidArgumentException implements CustomifyException {
+class InvalidFileName extends \InvalidArgumentException implements StyleManagerException {
 	/**
 	 * Create an exception for an invalid file name argument.
 	 *
-	 * @since 3.0.0.
+	 * @since 2.0.0.
 	 *
 	 * @param string          $filename        File name.
 	 * @param int             $validation_code Validation code returned from validate_file().

@@ -8,17 +8,17 @@ export const getFontDetails = function( fontFamily, fontType = false ) {
 
   switch ( fontType ) {
     case 'theme_font':
-      return customify.fonts.theme_fonts[fontFamily]
+      return styleManager.fonts.theme_fonts[fontFamily]
       break
     case 'cloud_font':
-      return customify.fonts.cloud_fonts[fontFamily]
+      return styleManager.fonts.cloud_fonts[fontFamily]
       break
     case 'google_font':
-      return customify.fonts.google_fonts[fontFamily]
+      return styleManager.fonts.google_fonts[fontFamily]
       break
     case 'system_font':
-      if ( typeof customify.fonts.system_fonts[fontFamily] !== 'undefined' ) {
-        return customify.fonts.system_fonts[fontFamily]
+      if ( typeof styleManager.fonts.system_fonts[fontFamily] !== 'undefined' ) {
+        return styleManager.fonts.system_fonts[fontFamily]
       }
       break
     default:

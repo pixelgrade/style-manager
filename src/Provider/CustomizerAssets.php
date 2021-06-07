@@ -2,22 +2,22 @@
 /**
  * Customizer assets provider.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use const Pixelgrade\Customify\VERSION;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use const Pixelgrade\StyleManager\VERSION;
 
 /**
  * Customizer assets provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class CustomizerAssets extends AbstractHookProvider {
 	/**
@@ -30,7 +30,7 @@ class CustomizerAssets extends AbstractHookProvider {
 	/**
 	 * Register scripts and styles.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_assets() {
 		$scripts_suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
@@ -39,7 +39,7 @@ class CustomizerAssets extends AbstractHookProvider {
 		/**
 		 * GENERAL CUSTOMIZER RELATED
 		 */
-		wp_register_script( 'pixelgrade_customify-select2',
+		wp_register_script( 'pixelgrade_style_manager-select2',
 			$this->plugin->get_url( 'vendor_js/select2-4.0.13/dist/js/select2.full' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
 			VERSION );
@@ -47,42 +47,42 @@ class CustomizerAssets extends AbstractHookProvider {
 			$this->plugin->get_url( 'vendor_js/jquery-react' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
 			VERSION );
-		wp_register_script( 'pixelgrade_customify-regression',
+		wp_register_script( 'pixelgrade_style_manager-regression',
 			$this->plugin->get_url( 'vendor_js/regression' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
-		wp_register_script( 'pixelgrade_customify-chroma',
+		wp_register_script( 'pixelgrade_style_manager-chroma',
 			$this->plugin->get_url( 'vendor_js/chroma' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
-		wp_register_script( 'pixelgrade_customify-previewer-resizer',
+		wp_register_script( 'pixelgrade_style_manager-previewer-resizer',
 			$this->plugin->get_url( 'dist/js/customizer-preview-resizer' . $scripts_suffix . '.js' ),
 			[
 				'customize-preview',
 			],
 			VERSION, true );
-		wp_register_script( 'pixelgrade_customify-customizer',
+		wp_register_script( 'pixelgrade_style_manager-customizer',
 			$this->plugin->get_url( 'dist/js/customizer' . $scripts_suffix . '.js' ),
 			[
 				'jquery',
 				'jquery-react',
-				'pixelgrade_customify-chroma',
-				'pixelgrade_customify-previewer-resizer',
-				'pixelgrade_customify-select2',
-				'pixelgrade_customify-regression',
+				'pixelgrade_style_manager-chroma',
+				'pixelgrade_style_manager-previewer-resizer',
+				'pixelgrade_style_manager-select2',
+				'pixelgrade_style_manager-regression',
 				'react',
 				'react-dom',
 				'underscore',
 				'customize-controls',
 			],
 			VERSION );
-		wp_localize_script( 'pixelgrade_customify-customizer', 'WP_API_Settings', [
+		wp_localize_script( 'pixelgrade_style_manager-customizer', 'WP_API_Settings', [
 			'root'  => esc_url_raw( rest_url() ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 		] );
 
 		wp_register_style(
-			'pixelgrade_customify-customizer',
+			'pixelgrade_style_manager-customizer',
 			$this->plugin->get_url( 'dist/js/customizer' . $rtl_suffix . '.css' ),
 			[],
 			VERSION
@@ -91,7 +91,7 @@ class CustomizerAssets extends AbstractHookProvider {
 		/**
 		 * CUSTOMIZER CONTROLS RELATED
 		 */
-		wp_register_script( 'pixelgrade_customify-ace-editor',
+		wp_register_script( 'pixelgrade_style_manager-ace-editor',
 			$this->plugin->get_url( 'vendor_js/ace/ace.js' ),
 			[ 'jquery' ],
 			VERSION,
@@ -101,7 +101,7 @@ class CustomizerAssets extends AbstractHookProvider {
 		 * STYLE MANAGER RELATED
 		 */
 		wp_register_script(
-			'pixelgrade_customify-dark-mode',
+			'pixelgrade_style_manager-dark-mode',
 			$this->plugin->get_url( 'dist/js/dark-mode' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
 			VERSION
@@ -115,26 +115,26 @@ class CustomizerAssets extends AbstractHookProvider {
 		/**
 		 * FONT PALETTES RELATED
 		 */
-		//		wp_register_script( 'pixelgrade_customify-font-palettes',
+		//		wp_register_script( 'pixelgrade_style_manager-font-palettes',
 		//			$this->plugin->get_url( 'js/customizer/font-palettes' . $scripts_suffix . '.js' ),
 		//			[
-		//				'pixelgrade_customify-regression',
+		//				'pixelgrade_style_manager-regression',
 		//				'jquery',
-		//				//'pixelgrade_customify-fontfields',
+		//				//'pixelgrade_style_manager-fontfields',
 		//			],
 		//			VERSION );
 
 		/**
 		 * CONTROLS SEARCH FIELD RELATED
 		 */
-		wp_register_script( 'pixelgrade_customify-fuse',
+		wp_register_script( 'pixelgrade_style_manager-fuse',
 			$this->plugin->get_url( 'vendor_js/fuse-6.0.0/fuse.basic' . $scripts_suffix . '.js' ),
 			[],
 			null );
 
-		wp_register_script( 'pixelgrade_customify-customizer-search',
+		wp_register_script( 'pixelgrade_style_manager-customizer-search',
 			$this->plugin->get_url( 'dist/js/customizer-search' . $scripts_suffix . '.js' ),
-			[ 'jquery', 'pixelgrade_customify-fuse', ],
+			[ 'jquery', 'pixelgrade_style_manager-fuse', ],
 			VERSION );
 
 

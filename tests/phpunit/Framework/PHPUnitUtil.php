@@ -1,7 +1,7 @@
 <?php
 declare ( strict_types=1 );
 
-namespace Customify\Tests\Framework;
+namespace Pixelgrade\StyleManager\Tests\Framework;
 
 use PHPUnit\TextUI\Command;
 use PHPUnit\Util\Getopt;

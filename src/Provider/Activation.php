@@ -2,23 +2,23 @@
 /**
  * Plugin activation routines.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Capabilities;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Capabilities;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Class to activate the plugin.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Activation extends AbstractHookProvider {
 
@@ -46,7 +46,7 @@ class Activation extends AbstractHookProvider {
 	/**
 	 * Constructor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options         $options Options.
 	 * @param PluginSettings  $plugin_settings
@@ -65,7 +65,7 @@ class Activation extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		register_activation_hook( $this->plugin->get_file(), [ $this, 'activate' ] );
@@ -74,12 +74,14 @@ class Activation extends AbstractHookProvider {
 	/**
 	 * Activate the plugin.
 	 *
+	 * - Set default plugin settings.
 	 * - Sets a flag to flush rewrite rules after plugin rewrite rules have been
 	 *   registered.
 	 * - Registers capabilities for the admin role.
+	 * - Make sure the Customify plugin is deactivated upon activation.
 	 *
-	 * @since 3.0.0
-	 * @see   \Pixelgrade\Customify\Provider\RewriteRules::maybe_flush_rewrite_rules()
+	 * @since 2.0.0
+	 * @see   \Pixelgrade\StyleManager\Provider\RewriteRules::maybe_flush_rewrite_rules()
 	 *
 	 */
 	public function activate() {
@@ -87,9 +89,11 @@ class Activation extends AbstractHookProvider {
 
 		$this->options->invalidate_all_caches();
 
-		update_option( 'pixelgrade_customify_flush_rewrite_rules', 'yes' );
+		update_option( 'pixelgrade_style_manager_flush_rewrite_rules', 'yes' );
 
 		Capabilities::register();
+
+		$this->maybe_deactivate_customify();
 	}
 
 	/*
@@ -119,6 +123,22 @@ class Activation extends AbstractHookProvider {
 			// If we have different keys (possibly new keys).
 			$plugin_settings = array_merge( $default_settings, $current_settings );
 			$this->plugin_settings->set_all( $plugin_settings );
+		}
+	}
+
+	protected function maybe_deactivate_customify() {
+		$deactivate = [];
+		foreach ( get_plugins() as $plugin_filename => $plugin_data ) {
+			// We will search all plugins by the Customify file name and deactivate any one of them that are active.
+			// This way we account for modified directories, etc.
+			if ( strrpos( $plugin_filename, 'customify.php' ) === ( strlen( $plugin_filename ) - strlen( 'customify.php' ) )
+				&& is_plugin_active( $plugin_filename ) ) {
+				$deactivate[] = $plugin_filename;
+			}
+		}
+
+		if ( ! empty( $deactivate ) ) {
+			deactivate_plugins( $deactivate );
 		}
 	}
 }

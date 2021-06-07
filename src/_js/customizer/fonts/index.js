@@ -18,7 +18,7 @@ import {
 import { getCallback, getSetting, setCallback } from "../global-service";
 
 const wrapperSelector = '.font-options__wrapper';
-const fontVariantSelector = '.customify_font_weight';
+const fontVariantSelector = '.style-manager_font_weight';
 
 export const initializeFonts = function() {
   const $fontFields = $( wrapperSelector );
@@ -36,8 +36,8 @@ export const initializeFonts = function() {
 }
 
 const initializeFontFamilyField = ( $fontField ) => {
-  const $fontFamilyField = $fontField.find( '.customify_font_family' );
-  const familyPlaceholderText = customify.l10n.fonts.familyPlaceholderText;
+  const $fontFamilyField = $fontField.find( '.style-manager_font_family' );
+  const familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText;
 
   // Add the Google Fonts opts to each control
   addGoogleFontsToFontFamilyField( $fontFamilyField );
@@ -98,8 +98,8 @@ const onFontFamilyChange = ( event ) => {
   // Update the variant subfield with the new options given by the selected font family.
   updateVariantField( newFontDetails, $wrapper )
 
-  if ( typeof who !== 'undefined' && who === 'customify' ) {
-    // The change was triggered programmatically by Customify.
+  if ( typeof who !== 'undefined' && who === 'style-manager' ) {
+    // The change was triggered programmatically by Style Manager.
     // No need to self-update the value.
   } else {
     // Mark this input as touched by the user.
@@ -126,7 +126,7 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
 
 
 const reloadConnectedFields = debounce( () => {
-  const settingIDs = customify.fontPalettes.masterSettingIds;
+  const settingIDs = styleManager.fontPalettes.masterSettingIds;
 
   globalService.unbindConnectedFields( settingIDs );
 

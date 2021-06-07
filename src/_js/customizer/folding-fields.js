@@ -7,7 +7,7 @@ import $ from 'jquery';
  */
 export const handleFoldingFields = () => {
 
-  if ( _.isUndefined( customify.config ) || _.isUndefined( customify.config.settings ) ) {
+  if ( _.isUndefined( styleManager.config ) || _.isUndefined( styleManager.config.settings ) ) {
     return // bail
   }
 
@@ -40,8 +40,8 @@ export const handleFoldingFields = () => {
     let value = 1, // by default we use 1 the most used value for checkboxes or inputs
       between = [0, 1] // can only be `show` or `hide`
 
-    const target_key = customify.config.options_name + '[' + key + ']'
-    const target_type = customify.config.settings[target_key].type
+    const target_key = styleManager.config.options_name + '[' + key + ']'
+    const target_type = styleManager.config.settings[target_key].type
 
     // we support the usual syntax like a config array like `array( 'id' => $id, 'value' => $value, 'compare' => $compare )`
     // but we also support a non-associative array like `array( $id, $value, $compare )`
@@ -58,7 +58,7 @@ export const handleFoldingFields = () => {
     /**
      * Now for each target we have, we will bind a change event to hide or show the dependent fields
      */
-    const target_selector = '[data-customize-setting-link="' + customify.config.options_name + '[' + key + ']"]'
+    const target_selector = '[data-customize-setting-link="' + styleManager.config.options_name + '[' + key + ']"]'
 
     switch ( target_type ) {
       case 'checkbox':
@@ -111,11 +111,11 @@ export const handleFoldingFields = () => {
         break
     }
 
-    $( target_selector ).trigger( 'change', ['customify'] )
+    $( target_selector ).trigger( 'change', ['style-manager'] )
     $( '.reactor' ).trigger( 'change.reactor' ) // triggers all events on load
   }
 
-  $.each( customify.config.settings, function( id, field ) {
+  $.each( styleManager.config.settings, function( id, field ) {
     /**
      * Here we have the id of the fields. but we know for sure that we just need his parent selector
      * So we just create it

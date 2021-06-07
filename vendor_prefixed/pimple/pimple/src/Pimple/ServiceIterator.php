@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Pixelgrade\Customify\Vendor\Pimple;
+namespace Pixelgrade\StyleManager\Vendor\Pimple;
 
 /**
  * Lazy service iterator.
@@ -34,7 +34,7 @@ final class ServiceIterator implements \Iterator
 {
     private $container;
     private $ids;
-    public function __construct(\Pixelgrade\Customify\Vendor\Pimple\Container $container, array $ids)
+    public function __construct(\Pixelgrade\StyleManager\Vendor\Pimple\Container $container, array $ids)
     {
         $this->container = $container;
         $this->ids = $ids;

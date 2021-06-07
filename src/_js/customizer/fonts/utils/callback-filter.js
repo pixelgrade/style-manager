@@ -16,7 +16,7 @@ export const getCallbackFilter = ( connectedFieldData ) => {
 
     if ( typeof fontsLogic.reset !== 'undefined' ) {
       const settingID = connectedFieldData.setting_id;
-      const defaultValue = customify.config.settings[settingID].default
+      const defaultValue = styleManager.config.settings[settingID].default
 
       if ( !_.isUndefined( setting ) && !_.isEmpty( defaultValue ) ) {
         newFontData['font_family'] = defaultValue['font_family']
@@ -58,7 +58,7 @@ export const getCallbackFilter = ( connectedFieldData ) => {
             overallFontSizeMultiplier = 1.0
           }
         }
-        newFontData['font_size'].value = round( parseFloat( newFontData['font_size'].value ) * overallFontSizeMultiplier, customify.fonts.floatPrecision )
+        newFontData['font_size'].value = round( parseFloat( newFontData['font_size'].value ) * overallFontSizeMultiplier, styleManager.fonts.floatPrecision )
       }
 
       // The font variant, letter spacing and text transform all come together from the font styles (intervals).
@@ -98,13 +98,13 @@ export const getCallbackFilter = ( connectedFieldData ) => {
             }
           }
 
-          newFontData['font_size'].value = round( parseFloat( newFontData['font_size'].value ) * fontSizeMultiplier, customify.fonts.floatPrecision )
+          newFontData['font_size'].value = round( parseFloat( newFontData['font_size'].value ) * fontSizeMultiplier, styleManager.fonts.floatPrecision )
         }
       }
 
       // The line height is determined by getting the value of the polynomial function determined by points.
       if ( typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray( fontsLogic.font_size_to_line_height_points ) ) {
-        const result = regression.logarithmic( fontsLogic.font_size_to_line_height_points, {precision: customify.fonts.floatPrecision} )
+        const result = regression.logarithmic( fontsLogic.font_size_to_line_height_points, {precision: styleManager.fonts.floatPrecision} )
         const lineHeight = result.predict( newFontData['font_size'].value )[1]
         newFontData['line_height'] = standardizeNumericalValue( lineHeight )
       }

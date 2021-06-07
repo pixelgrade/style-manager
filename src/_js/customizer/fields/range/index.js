@@ -3,7 +3,7 @@ import $ from 'jquery';
 export const handleRangeFields = () => {
 
   const rangeControlSelectors = [
-    `.accordion-section-content[id*="${ customify.config.options_name }"]`,
+    `.accordion-section-content[id*="${ styleManager.config.options_name }"]`,
     `#sub-accordion-section-sm_color_palettes_section`,
     `#sub-accordion-section-sm_color_usage_section`,
   ];
@@ -58,7 +58,7 @@ function onRangePreviewBlur( event ) {
     $number.val( $range.val() );
     shake( $number );
   } else {
-    // Do not mark this trigger as being programmatically triggered by Customify since it is a result of a user input.
+    // Do not mark this trigger as being programmatically triggered by Style Manager since it is a result of a user input.
     $range.val( $number.val() ).trigger( 'change' );
   }
 }

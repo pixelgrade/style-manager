@@ -1,5 +1,5 @@
 import $ from "jquery";
-const fontVariantSelector = '.customify_font_weight';
+const fontVariantSelector = '.style-manager_font_weight';
 
 /**
  * This function updates the data in font weight selector from the given <option> element
@@ -30,7 +30,7 @@ export const updateVariantField = function( newFontDetails, wrapper ) {
     return
   }
 
-  const variantAutoText = customify.l10n.fonts.variantAutoText
+  const variantAutoText = styleManager.l10n.fonts.variantAutoText
 
   // Initialize the options with an empty one.
   newVariants.push( {

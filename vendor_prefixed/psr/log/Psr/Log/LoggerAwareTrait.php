@@ -1,6 +1,6 @@
 <?php
 
-namespace Pixelgrade\Customify\Vendor\Psr\Log;
+namespace Pixelgrade\StyleManager\Vendor\Psr\Log;
 
 /**
  * Basic Implementation of LoggerAwareInterface.
@@ -10,7 +10,7 @@ trait LoggerAwareTrait
     /**
      * The logger instance.
      *
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
     protected $logger;
     /**
@@ -18,7 +18,7 @@ trait LoggerAwareTrait
      *
      * @param LoggerInterface $logger
      */
-    public function setLogger(\Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface $logger)
+    public function setLogger(\Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface $logger)
     {
         $this->logger = $logger;
     }

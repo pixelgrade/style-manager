@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-  fs = require('fs'),
+  cp = require( 'child_process' ),
   plugins = require('gulp-load-plugins')()
 
 const gulpconfig = require('./gulpconfig.json');
@@ -26,28 +26,20 @@ function pluginTextdomainReplace () {
 pluginTextdomainReplace.description = 'Replace the __plugin_txtd text-domain placeholder with the actual text-domain, in the build files.'
 gulp.task('build:translate:replacetxtdomain', pluginTextdomainReplace)
 
-function generatePotFile () {
-  return gulp.src([
-    '../build/' + slug + '/**/*.php'
-  ])
-    .pipe(plugins.wpPot({
-      domain: textdomain,
-      package: packageName,
-      relativeTo: '../build/' + slug + '/languages/',
-      bugReport: bugReport
-    }))
-    .pipe(gulp.dest('../build/' + slug + '/languages/' + slug + '.pot'))
+function generatePotFile ( done ) {
+  cp.execSync( 'wp i18n make-pot ../build/' + slug + '/ ../build/' + slug + '/languages/' + slug + '.pot',
+    {
+      stdio: 'inherit' // Use the same console as the io for the child process.
+    }
+  );
+
+  return done();
 }
 
 generatePotFile.description = 'Scan the build files and generate the .pot file.'
 gulp.task('build:translate:generatepot', generatePotFile)
 
-// @todo fix generatepot task or translate it to php
-//gulp.task('build:translate', gulp.series(
-//  'build:translate:replacetxtdomain',
-//  'build:translate:generatepot'
-//))
-
 gulp.task('build:translate', gulp.series(
-  'build:translate:replacetxtdomain'
+  'build:translate:replacetxtdomain',
+  'build:translate:generatepot'
 ))

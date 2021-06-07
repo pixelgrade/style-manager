@@ -2,19 +2,19 @@
 /**
  * Plugin service definitions.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
  * @since 0.1.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\StyleManager;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\Provider\I18n;
-use Pixelgrade\Customify\Vendor\Pimple\Container as PimpleContainer;
-use Pixelgrade\Customify\Vendor\Pimple\ServiceProviderInterface;
-use Pixelgrade\Customify\Vendor\Psr\Log\LogLevel;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\Provider\I18n;
+use Pixelgrade\StyleManager\Vendor\Pimple\Container as PimpleContainer;
+use Pixelgrade\StyleManager\Vendor\Pimple\ServiceProviderInterface;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LogLevel;
 
 /**
  * Plugin service provider class.
@@ -38,7 +38,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			// Make sure our constants are in place, if not already defined.
 			defined( 'PIXELGRADE_CLOUD__API_BASE' ) || define( 'PIXELGRADE_CLOUD__API_BASE', 'https://cloud.pixelgrade.com/' );
 
-			return apply_filters( 'customify_style_manager_external_api_endpoints', [
+			$endpoints = apply_filters( 'style_manager/external_api_endpoints', [
 				'cloud' => [
 					'getDesignAssets' => [
 						'method' => 'GET',
@@ -50,6 +50,55 @@ class ServiceProvider implements ServiceProviderInterface {
 					],
 				],
 			] );
+
+			// This is for backwards compatibility.
+			$endpoints = apply_filters( 'customify_style_manager_external_api_endpoints', $endpoints );
+
+			return $endpoints;
+		};
+
+		$container['customize.cloud_fonts'] = function( $container ) {
+			return new Customize\CloudFonts(
+				$container['customize.design_assets'],
+				$container['logger']
+			);
+		};
+		$container['customize.color_palettes'] = function( $container ) {
+			return new Customize\ColorPalettes(
+				$container['logger']
+			);
+		};
+		$container['customize.design_assets'] = function( $container ) {
+			return new Customize\DesignAssets(
+				$container['client.pixelgrade_cloud'],
+				$container['logger']
+			);
+		};
+		$container['customize.font_palettes'] = function( $container ) {
+			return new Customize\FontPalettes(
+				$container['options'],
+				$container['customize.design_assets'],
+				$container['logger']
+			);
+		};
+		$container['customize.fonts'] = function( $container ) {
+			return new Customize\Fonts(
+				$container['options'],
+				$container['plugin.settings'],
+				$container['logger']
+			);
+		};
+		$container['customize.general'] = function( $container ) {
+			return new Customize\Customize(
+				$container['client.pixelgrade_cloud'],
+				$container['logger']
+			);
+		};
+		$container['customize.theme_configs'] = function( $container ) {
+			return new Customize\ThemeConfigs(
+				$container['customize.design_assets'],
+				$container['logger']
+			);
 		};
 
 		$container['hooks.activation'] = function( $container ) {
@@ -176,8 +225,8 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\Customizer(
 				$container['options'],
 				$container['plugin.settings'],
-				$container['sm.fonts'],
-				$container['sm.font_palettes'],
+				$container['customize.fonts'],
+				$container['customize.font_palettes'],
 				$container['logger']
 			);
 		};
@@ -192,7 +241,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\EditWithBlocks(
 				$container['options'],
 				$container['plugin.settings'],
-				$container['sm.fonts'],
+				$container['customize.fonts'],
 				$container['hooks.frontend_output'],
 				$container['logger']
 			);
@@ -202,7 +251,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\EditWithClassicEditor(
 				$container['options'],
 				$container['plugin.settings'],
-				$container['sm.fonts'],
+				$container['customize.fonts'],
 				$container['hooks.frontend_output'],
 				$container['logger']
 			);
@@ -218,50 +267,6 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\Settings(
 				$container['options'],
 				$container['plugin.settings.cfdatastore'],
-				$container['logger']
-			);
-		};
-
-		$container['sm.cloud_fonts'] = function( $container ) {
-			return new StyleManager\CloudFonts(
-				$container['sm.design_assets'],
-				$container['logger']
-			);
-		};
-		$container['sm.color_palettes'] = function( $container ) {
-			return new StyleManager\ColorPalettes(
-				$container['logger']
-			);
-		};
-		$container['sm.design_assets'] = function( $container ) {
-			return new StyleManager\DesignAssets(
-				$container['client.pixelgrade_cloud'],
-				$container['logger']
-			);
-		};
-		$container['sm.font_palettes'] = function( $container ) {
-			return new StyleManager\FontPalettes(
-				$container['options'],
-				$container['sm.design_assets'],
-				$container['logger']
-			);
-		};
-		$container['sm.fonts'] = function( $container ) {
-			return new StyleManager\Fonts(
-				$container['options'],
-				$container['plugin.settings'],
-				$container['logger']
-			);
-		};
-		$container['sm.general'] = function( $container ) {
-			return new StyleManager\StyleManager(
-				$container['client.pixelgrade_cloud'],
-				$container['logger']
-			);
-		};
-		$container['sm.theme_configs'] = function( $container ) {
-			return new StyleManager\ThemeConfigs(
-				$container['sm.design_assets'],
 				$container['logger']
 			);
 		};

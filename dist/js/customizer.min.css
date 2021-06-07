@@ -121,11 +121,11 @@
   padding-bottom: 0;
 }
 
-.customify-color-select__option-list {
+.style-manager-color-select__option-list {
   display: flex;
   margin-left: -5px;
 }
-.customify-color-select__option-list > * {
+.style-manager-color-select__option-list > * {
   border-radius: 50%;
   overflow: hidden;
   text-indent: -999em;
@@ -134,28 +134,28 @@
   margin-left: 5px;
   border: var(--customizer-field-border-width) solid var(--sm-color-palette-neutral-color-2);
 }
-.customify-color-select__option-list > *:before {
+.style-manager-color-select__option-list > *:before {
   content: "";
   padding-top: 100%;
   display: block;
   background-color: currentColor;
 }
-.customify-color-select__option-label {
+.style-manager-color-select__option-label {
   display: none;
 }
-.customify-color-select__option--text {
+.style-manager-color-select__option--text {
   color: #333;
 }
-.customify-color-select__option--titles {
+.style-manager-color-select__option--titles {
   color: #222;
 }
-.customify-color-select__option--accent {
+.style-manager-color-select__option--accent {
   color: #A22;
 }
-.customify-color-select__option--background {
+.style-manager-color-select__option--background {
   color: #EEE;
 }
-.customify-color-select__option--selected {
+.style-manager-color-select__option--selected {
   box-shadow: var(--sm-color-palette-neutral-color-6) 0 0 0 var(--customizer-field-border-width);
 }
 
@@ -646,33 +646,33 @@ input.font-options__checkbox {
   margin-bottom: 0;
 }
 
-.customify_radio_html {
+.style-manager_radio_html {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   margin-top: calc( -0.5 * var(--customizer-spacing) );
   margin-left: calc( -0.5 * var(--customizer-spacing) );
 }
-.customify_radio_html > * {
+.style-manager_radio_html > * {
   padding-top: calc( 0.5 * var(--customizer-spacing) );
   padding-left: calc( 0.5 * var(--customizer-spacing) );
   flex: 0 0 50%;
 }
-.customify_radio_html label {
+.style-manager_radio_html label {
   display: block;
   height: 100%;
 }
-.customify_radio_html label > input + div {
+.style-manager_radio_html label > input + div {
   border-color: var(--customizer-field-border-color);
   height: 100%;
 }
-.customify_radio_html label:hover > input + div {
+.style-manager_radio_html label:hover > input + div {
   background-color: var(--customizer-field-background-color);
 }
-.customify_radio_html input {
+.style-manager_radio_html input {
   display: none;
 }
-.customify_radio_html input + div {
+.style-manager_radio_html input + div {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -680,7 +680,7 @@ input.font-options__checkbox {
   border-radius: var(--customizer-field-border-radius);
   padding: var(--customizer-spacing);
 }
-.customify_radio_html input:checked + div {
+.style-manager_radio_html input:checked + div {
   background-color: var(--customizer-field-background-color);
   border-color: var(--customizer-field-focus-border-color);
   cursor: default;
@@ -949,33 +949,33 @@ input.font-options__checkbox {
   transition-property: color;
 }
 
-#accordion-section-customify-customizer-search {
+#accordion-section-style-manager-customizer-search {
   margin-bottom: 0;
   color: #555d66;
   background: #fff;
   border-top: 1px solid #ddd;
 }
-#accordion-section-customify-customizer-search .accordion-section-title:after {
+#accordion-section-style-manager-customizer-search .accordion-section-title:after {
   content: none;
 }
-#accordion-section-customify-customizer-search .search-field-wrapper {
+#accordion-section-style-manager-customizer-search .search-field-wrapper {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
 }
-#accordion-section-customify-customizer-search .search-field-wrapper .search-field-button-wrapper {
+#accordion-section-style-manager-customizer-search .search-field-wrapper .search-field-button-wrapper {
   display: flex;
   align-items: stretch;
 }
-#accordion-section-customify-customizer-search .search-field-wrapper .clear-search {
+#accordion-section-style-manager-customizer-search .search-field-wrapper .clear-search {
   margin-left: 6px;
   height: 36px;
   font-weight: 500;
 }
-#accordion-section-customify-customizer-search .search-field-wrapper .clear-search.has-next-sibling {
+#accordion-section-style-manager-customizer-search .search-field-wrapper .clear-search.has-next-sibling {
   border-radius: 3px 0 0 3px;
 }
-#accordion-section-customify-customizer-search .search-field-wrapper .close-search {
+#accordion-section-style-manager-customizer-search .search-field-wrapper .close-search {
   text-indent: 0;
   border-radius: 0 3px 3px 0;
   padding-left: 0;
@@ -988,10 +988,10 @@ input.font-options__checkbox {
   margin-top: 0;
   line-height: 2;
 }
-#accordion-section-customify-customizer-search .search-field-wrapper .button-primary.has-next-sibling {
+#accordion-section-style-manager-customizer-search .search-field-wrapper .button-primary.has-next-sibling {
   border-right: 1px solid #98c6dd;
 }
-#accordion-section-customify-customizer-search .customizer-search-input {
+#accordion-section-style-manager-customizer-search .customizer-search-input {
   display: flex;
   align-items: center;
   width: 100%;
@@ -1010,37 +1010,37 @@ input.font-options__checkbox {
   height: 38px;
   padding: 8px 8px;
 }
-#accordion-section-customify-customizer-search .customizer-search-input:focus {
+#accordion-section-style-manager-customizer-search .customizer-search-input:focus {
   border-color: var(--customizer-field-focus-border-color);
   box-shadow: none;
 }
-#accordion-section-customify-customizer-search input::-webkit-input-placeholder {
+#accordion-section-style-manager-customizer-search input::-webkit-input-placeholder {
   font-size: 14px;
   color: #999;
   opacity: 1;
   line-height: 1.5;
 }
-#accordion-section-customify-customizer-search input:-moz-placeholder {
+#accordion-section-style-manager-customizer-search input:-moz-placeholder {
   /* Firefox 18- */
   font-size: 14px;
   color: #999;
   opacity: 1;
   line-height: 1.5;
 }
-#accordion-section-customify-customizer-search input::-moz-placeholder {
+#accordion-section-style-manager-customizer-search input::-moz-placeholder {
   /* Firefox 19+ */
   font-size: 14px;
   color: #999;
   opacity: 1;
   line-height: 1.5;
 }
-#accordion-section-customify-customizer-search input:-ms-input-placeholder {
+#accordion-section-style-manager-customizer-search input:-ms-input-placeholder {
   font-size: 14px;
   color: #999;
   opacity: 1;
   line-height: 1.5;
 }
-#accordion-section-customify-customizer-search .search-input-label {
+#accordion-section-style-manager-customizer-search .search-input-label {
   display: block;
   margin-bottom: 8px;
 }
@@ -1079,7 +1079,7 @@ input.font-options__checkbox {
   display: none;
 }
 
-#customify-search-results .accordion-section {
+#style-manager-search-results .accordion-section {
   border-left: none;
   border-right: none;
   padding: 10px 10px 11px 14px;
@@ -1092,17 +1092,17 @@ input.font-options__checkbox {
   border-top: 1px solid var(--customizer-border-color);
   border-bottom: none;
 }
-#customify-search-results .accordion-section:last-of-type {
+#style-manager-search-results .accordion-section:last-of-type {
   border-bottom: 1px solid var(--customizer-border-color);
 }
-#customify-search-results .accordion-section:hover {
+#style-manager-search-results .accordion-section:hover {
   background: #f7fbff;
   cursor: pointer;
 }
-#customify-search-results .accordion-section:hover h3.accordion-section-title {
+#style-manager-search-results .accordion-section:hover h3.accordion-section-title {
   background: #f7fbff;
 }
-#customify-search-results .accordion-section:after {
+#style-manager-search-results .accordion-section:after {
   font: normal 20px/1 dashicons;
   speak: none;
   display: block;
@@ -1116,15 +1116,15 @@ input.font-options__checkbox {
   right: 10px;
   z-index: 1;
 }
-#customify-search-results .accordion-section h3.accordion-section-title {
+#style-manager-search-results .accordion-section h3.accordion-section-title {
   padding: 0;
   margin: 0;
 }
-#customify-search-results .accordion-section h3.accordion-section-title:after {
+#style-manager-search-results .accordion-section h3.accordion-section-title:after {
   content: none;
   background: inherit;
 }
-#customify-search-results .accordion-section h3.accordion-section-title:hover {
+#style-manager-search-results .accordion-section h3.accordion-section-title:hover {
   background: #f7fbff;
   cursor: pointer;
 }

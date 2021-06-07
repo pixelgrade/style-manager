@@ -50,10 +50,10 @@ export const loadFontValue = function( wrapper, value, settingID ) {
       if ( subfieldUnit != subfieldValueUnit ) {
         if ( _.includes( ['em', 'rem'], subfieldValueUnit ) && 'px' === subfieldUnit ) {
           // We will have to multiply the value.
-          subfieldValue.value = round( subfieldValue.value * baseSize, customify.fonts.floatPrecision )
+          subfieldValue.value = round( subfieldValue.value * baseSize, styleManager.fonts.floatPrecision )
         } else if ( _.includes( ['em', 'rem'], subfieldUnit ) && 'px' === subfieldValueUnit ) {
           // We will have to divide the value.
-          subfieldValue.value = round( subfieldValue.value / baseSize, customify.fonts.floatPrecision )
+          subfieldValue.value = round( subfieldValue.value / baseSize, styleManager.fonts.floatPrecision )
         }
       }
 
@@ -73,7 +73,7 @@ export const loadFontValue = function( wrapper, value, settingID ) {
     // Mark this input as not touched by the user.
     $input.data( 'touched', false )
 
-    $input.trigger( 'change', ['customify'] )
+    $input.trigger( 'change', ['style-manager'] )
   } )
 
   // Finished with the field value loading.

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-use Customify\Vendor\Symfony\Polyfill\Php72 as p;
+use Pixelgrade\StyleManager\Vendor\Symfony\Polyfill\Php72 as p;
 
 if (\PHP_VERSION_ID >= 70200) {
     return;

@@ -4,22 +4,22 @@
  *
  * @link    https://pixelgrade.com/
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Integration;
+namespace Pixelgrade\StyleManager\Integration;
 
-use Pixelgrade\Customify\Provider\Options;
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Provider\Options;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
  * Pixelgrade Care plugin integration provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class PixelgradeCare extends AbstractHookProvider {
 
@@ -33,7 +33,7 @@ class PixelgradeCare extends AbstractHookProvider {
 	/**
 	 * Constructor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options $options Options.
 	 */
@@ -46,7 +46,7 @@ class PixelgradeCare extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		$this->add_filter( 'pre_set_theme_mod_pixcare_license', 'invalidate_all_caches', 10, 1 );
@@ -55,7 +55,7 @@ class PixelgradeCare extends AbstractHookProvider {
 	/**
 	 * Invalidate all caches on license update.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param $value
 	 *

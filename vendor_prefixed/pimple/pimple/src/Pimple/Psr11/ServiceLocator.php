@@ -23,17 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Pixelgrade\Customify\Vendor\Pimple\Psr11;
+namespace Pixelgrade\StyleManager\Vendor\Pimple\Psr11;
 
-use Pixelgrade\Customify\Vendor\Pimple\Container as PimpleContainer;
-use Pixelgrade\Customify\Vendor\Pimple\Exception\UnknownIdentifierException;
-use Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface;
+use Pixelgrade\StyleManager\Vendor\Pimple\Container as PimpleContainer;
+use Pixelgrade\StyleManager\Vendor\Pimple\Exception\UnknownIdentifierException;
+use Pixelgrade\StyleManager\Vendor\Psr\Container\ContainerInterface;
 /**
  * Pimple PSR-11 service locator.
  *
  * @author Pascal Luna <skalpa@zetareticuli.org>
  */
-class ServiceLocator implements \Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface
+class ServiceLocator implements \Pixelgrade\StyleManager\Vendor\Psr\Container\ContainerInterface
 {
     private $container;
     private $aliases = [];
@@ -41,7 +41,7 @@ class ServiceLocator implements \Pixelgrade\Customify\Vendor\Psr\Container\Conta
      * @param PimpleContainer $container The Container instance used to locate services
      * @param array           $ids       Array of service ids that can be located. String keys can be used to define aliases
      */
-    public function __construct(\Pixelgrade\Customify\Vendor\Pimple\Container $container, array $ids)
+    public function __construct(\Pixelgrade\StyleManager\Vendor\Pimple\Container $container, array $ids)
     {
         $this->container = $container;
         foreach ($ids as $key => $id) {
@@ -54,7 +54,7 @@ class ServiceLocator implements \Pixelgrade\Customify\Vendor\Psr\Container\Conta
     public function get(string $id)
     {
         if (!isset($this->aliases[$id])) {
-            throw new \Pixelgrade\Customify\Vendor\Pimple\Exception\UnknownIdentifierException($id);
+            throw new \Pixelgrade\StyleManager\Vendor\Pimple\Exception\UnknownIdentifierException($id);
         }
         return $this->container[$this->aliases[$id]];
     }

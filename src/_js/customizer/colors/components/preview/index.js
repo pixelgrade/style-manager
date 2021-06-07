@@ -12,7 +12,7 @@ const Preview = ( props ) => {
           <div className={ `sm-overlay__container` }>
             <div className={ `palette-preview-header-wrap` }>
               <h1 className={ `palette-preview-title` }>The color system</h1>
-              <p className={ `palette-preview-description` }>The color system presented below it’s designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.</p>
+              <p className={ `palette-preview-description` }>The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.</p>
             </div>
           </div>
         </div>

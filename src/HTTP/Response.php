@@ -2,23 +2,23 @@
 /**
  * HTTP response.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\HTTP;
+namespace Pixelgrade\StyleManager\HTTP;
 
 use Exception;
 use InvalidArgumentException;
-use Pixelgrade\Customify\Exception\AuthenticationException;
-use Pixelgrade\Customify\Exception\HttpException;
-use Pixelgrade\Customify\HTTP\ResponseBody\ErrorBody;
-use Pixelgrade\Customify\HTTP\ResponseBody\FileBody;
-use Pixelgrade\Customify\HTTP\ResponseBody\JsonBody;
-use Pixelgrade\Customify\HTTP\ResponseBody\ResponseBody;
+use Pixelgrade\StyleManager\Exception\AuthenticationException;
+use Pixelgrade\StyleManager\Exception\HttpException;
+use Pixelgrade\StyleManager\HTTP\ResponseBody\ErrorBody;
+use Pixelgrade\StyleManager\HTTP\ResponseBody\FileBody;
+use Pixelgrade\StyleManager\HTTP\ResponseBody\JsonBody;
+use Pixelgrade\StyleManager\HTTP\ResponseBody\ResponseBody;
 use WP_Error;
 use WP_Http as HTTP;
 use WP_REST_Response;
@@ -26,7 +26,7 @@ use WP_REST_Response;
 /**
  * HTTP response class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Response {
 	/**
@@ -53,7 +53,7 @@ class Response {
 	/**
 	 * Create an HTTP response.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param ResponseBody $body        Message body.
 	 * @param int          $status_code HTTP status code.
@@ -68,7 +68,7 @@ class Response {
 	/**
 	 * Retrieve response body.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return ResponseBody
 	 */
@@ -79,7 +79,7 @@ class Response {
 	/**
 	 * Retrieve headers.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return array Map of header name to header value.
 	 */
@@ -90,7 +90,7 @@ class Response {
 	/**
 	 * Set response headers.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array $headers Map of header name to header value.
 	 */
@@ -101,7 +101,7 @@ class Response {
 	/**
 	 * Retrieve the HTTP status code.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return int The 3-digit HTTP status code.
 	 */
@@ -112,7 +112,7 @@ class Response {
 	/**
 	 * Set the HTTP status code.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param int $status_code HTTP status.
 	 * @throws InvalidArgumentException If the status code is not between 100 and 599.
@@ -128,7 +128,7 @@ class Response {
 	/**
 	 * Create a response to stream a file.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $filename Absolute path to the file to stream.
 	 * @return Response
@@ -155,7 +155,7 @@ class Response {
 	/**
 	 * Create a response from an exception.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Exception $e Exception.
 	 * @return Response
@@ -190,7 +190,7 @@ class Response {
 	/**
 	 * Create a response from a REST authentication error.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param WP_Error|WP_REST_Response $response WP REST response.
 	 * @return Response
@@ -216,7 +216,7 @@ class Response {
 	 *
 	 * @see WP_REST_Server::error_to_response()
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param  WP_Error $error Error object.
 	 * @return WP_REST_Response

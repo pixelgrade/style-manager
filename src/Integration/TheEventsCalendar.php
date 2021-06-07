@@ -2,29 +2,29 @@
 /**
  * The Events Calendar (including the PRO version) plugin integration.
  *
- * @link    https://wordpress.org/plugins/autoptimize/
+ * @link    https://theeventscalendar.com/
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Integration;
+namespace Pixelgrade\StyleManager\Integration;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
  * The Events Calendar plugin (including the PRO version) integration provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class TheEventsCalendar extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		$this->add_action( 'admin_enqueue_scripts', 'deregister_select2', 99 );
@@ -33,7 +33,7 @@ class TheEventsCalendar extends AbstractHookProvider {
 	/**
 	 * Deregister The Event Calendar's select2 scripts and styles since they mess up our Select2.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function deregister_select2() {
 		if ( ! is_customize_preview() ) {

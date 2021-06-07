@@ -2,28 +2,28 @@
 /**
  * Provider for screens when editing posts/pages with the block editor.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen;
+namespace Pixelgrade\StyleManager\Screen;
 
-use Pixelgrade\Customify\Provider\FrontendOutput;
-use Pixelgrade\Customify\Provider\Options;
-use Pixelgrade\Customify\Provider\PluginSettings;
-use Pixelgrade\Customify\StyleManager\Fonts;
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Provider\FrontendOutput;
+use Pixelgrade\StyleManager\Provider\Options;
+use Pixelgrade\StyleManager\Provider\PluginSettings;
+use Pixelgrade\StyleManager\Customize\Fonts;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Provider class for screens when editing posts/pages with the block editor.
  *
  * This is the class that handles the overall logic for integration with the new Gutenberg Editor (WordPress 5.0+).
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class EditWithBlocks extends AbstractHookProvider {
 
@@ -69,49 +69,49 @@ class EditWithBlocks extends AbstractHookProvider {
 		'/^\s*#/',    // ignore all ids
 		'/^\s*div#/', // ignore all ids
 
-//		'/\.u-/',
-//		'/\.c-/',
-//		'/\.o-/',
-//		'/\.site-/',
-//		'/\.card/',
-//
-//		'/^\s*\.archive/',
-//		'/^\s*\.search/',
-//		'/^\s*\.no-results/',
-//		'/^\s*\.home/',
-//		'/^\s*\.blog/',
-//		'/^\s*\.site-/',
-//		'/\.search/',
-//		'/\.page/',
-//		'/\.mce-content-body/',
-//		'/\.attachment/',
-//		'/\.mobile/',
-//
-//		'/\.sticky/',
-//		'/\.custom-logo-link/',
-//
-//		'/\.entry-meta/',
-//		'/\.entry-footer/',
-//		'/\.header-meta/',
-//		'/\.nav/',
-//		'/\.main-navigation/',
-//		'/navbar/',
-//		'/comment/',
-//		'/\.dummy/',
-//		'/\.back-to-top/',
-//		'/\.page-numbers/',
-//		'/\.featured/',
-//		'/\.widget/',
-//		'/\.edit-link/',
-//		'/\.posted-on/',
-//		'/\.cat-links/',
-//		'/\.posted-by/',
-//		'/\.more-link/',
-//
-//		'/jetpack/',
-//		'/wpforms/',
-//		'/contact-form/',
-//		'/sharedaddy/',
+		//		'/\.u-/',
+		//		'/\.c-/',
+		//		'/\.o-/',
+		//		'/\.site-/',
+		//		'/\.card/',
+		//
+		//		'/^\s*\.archive/',
+		//		'/^\s*\.search/',
+		//		'/^\s*\.no-results/',
+		//		'/^\s*\.home/',
+		//		'/^\s*\.blog/',
+		//		'/^\s*\.site-/',
+		//		'/\.search/',
+		//		'/\.page/',
+		//		'/\.mce-content-body/',
+		//		'/\.attachment/',
+		//		'/\.mobile/',
+		//
+		//		'/\.sticky/',
+		//		'/\.custom-logo-link/',
+		//
+		//		'/\.entry-meta/',
+		//		'/\.entry-footer/',
+		//		'/\.header-meta/',
+		//		'/\.nav/',
+		//		'/\.main-navigation/',
+		//		'/navbar/',
+		//		'/comment/',
+		//		'/\.dummy/',
+		//		'/\.back-to-top/',
+		//		'/\.page-numbers/',
+		//		'/\.featured/',
+		//		'/\.widget/',
+		//		'/\.edit-link/',
+		//		'/\.posted-on/',
+		//		'/\.cat-links/',
+		//		'/\.posted-by/',
+		//		'/\.more-link/',
+		//
+		//		'/jetpack/',
+		//		'/wpforms/',
+		//		'/contact-form/',
+		//		'/sharedaddy/',
 	];
 
 	/**
@@ -163,7 +163,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Create the edit with blocks screen.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options         $options         Options.
 	 * @param PluginSettings  $plugin_settings Plugin settings.
@@ -188,7 +188,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		// Styles and scripts when editing.
@@ -199,7 +199,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Determine if Gutenberg is supported.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -218,13 +218,13 @@ class EditWithBlocks extends AbstractHookProvider {
 			$gutenberg = true;
 		}
 
-		return apply_filters( 'customify_gutenberg_is_supported', $gutenberg );
+		return apply_filters( 'style_manager/gutenberg_is_supported', $gutenberg );
 	}
 
 	/**
 	 * Retrieve the editor CSS file handle.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -262,7 +262,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Return the frontend CSS file handle.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -303,9 +303,9 @@ class EditWithBlocks extends AbstractHookProvider {
 	}
 
 	/**
-	 * Output Customify's dynamic styles and scripts in the Gutenberg context.
+	 * Output Style Manager's dynamic styles and scripts in the Gutenberg context.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function dynamic_styles_scripts() {
 		if ( ! $this->plugin_settings->get( 'enable_editor_style', true ) ) {
@@ -317,20 +317,20 @@ class EditWithBlocks extends AbstractHookProvider {
 			return;
 		}
 
-		add_filter( 'customify_font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );
+		add_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );
 		$this->sm_fonts->enqueue_frontend_scripts_styles();
 		wp_add_inline_style( $enqueue_parent_handle, $this->sm_fonts->getFontsDynamicStyle() );
-		remove_filter( 'customify_font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10 );
+		remove_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10 );
 
-		add_filter( 'customify_css_selector', [ $this, 'gutenbergify_css_selectors' ], 10, 2 );
+		add_filter( 'style_manager/css_selector', [ $this, 'gutenbergify_css_selectors' ], 10, 2 );
 		wp_add_inline_style( $enqueue_parent_handle, $this->frontend_output->get_dynamic_style() );
-		remove_filter( 'customify_css_selector', [ $this, 'gutenbergify_css_selectors' ], 10 );
+		remove_filter( 'style_manager/css_selector', [ $this, 'gutenbergify_css_selectors' ], 10 );
 	}
 
 	/**
 	 * Transform a set of selectors to target the Gutenberg editor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $selectors
 	 * @param array  $css_property
@@ -396,7 +396,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Transform a set of font selectors to target the Gutenberg editor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array $selectors An array of standardized, cleaned selectors where the key is the selector and the value is possible details array.
 	 *
@@ -449,7 +449,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Preg_match a series of regex against a subject.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string|array $regexes
 	 * @param string       $subject
@@ -478,7 +478,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	 * Attempt to split a string with selectors and return the parts as an array.
 	 * If not a string or no comma present, just returns the value.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $value
 	 *

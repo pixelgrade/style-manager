@@ -2,21 +2,21 @@
 /**
  * Customizer SM radio control.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen\Customizer\Control;
+namespace Pixelgrade\StyleManager\Screen\Customizer\Control;
 
 /**
  * Customizer SM radio control class.
  *
  * This handles the 'sm_radio' control type.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class SMRadio extends BaseControl {
 	/**
@@ -33,7 +33,7 @@ class SMRadio extends BaseControl {
 		$input_id = '_customize-input-' . $this->id;
 		$name     = '_customize-radio-' . $this->id;
 
-		do_action( 'customify_before_sm_radio_control', $this );
+		do_action( 'style_manager/before_sm_radio_control', $this );
 
 		if ( ! empty( $this->label ) ) { ?>
 			<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -61,6 +61,6 @@ class SMRadio extends BaseControl {
 		<?php } ?>
 
 		<?php
-		do_action( 'customify_after_sm_radio_control', $this );
+		do_action( 'style_manager/after_sm_radio_control', $this );
 	}
 }

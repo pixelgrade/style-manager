@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pixelgrade\\Customify\\Vendor\\Symfony\\Polyfill\\Php72\\": ""
+            "Pixelgrade\\StyleManager\\Vendor\\Symfony\\Polyfill\\Php72\\": ""
         },
         "files": [
             "bootstrap.php"
@@ -34,7 +34,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-main": "1.22-dev"
+            "dev-main": "1.23-dev"
         },
         "thanks": {
             "name": "symfony\/polyfill",

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Pixelgrade\Customify\Provider;
+namespace Pixelgrade\StyleManager\Provider;
 
 use Carbon_Fields\Field\Field;
 use Carbon_Fields\Datastore\Datastore;

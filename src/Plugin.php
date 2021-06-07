@@ -2,41 +2,41 @@
 /**
  * Main plugin class
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\StyleManager;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\Plugin as BasePlugin;
-use Pixelgrade\Customify\Vendor\Psr\Container\ContainerInterface;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\Plugin as BasePlugin;
+use Pixelgrade\StyleManager\Vendor\Psr\Container\ContainerInterface;
 
 /**
  * Main plugin class - composition root.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Plugin extends BasePlugin implements Composable {
 	/**
 	 * Compose the object graph.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function compose() {
 		$container = $this->get_container();
 
 		/**
-		 * Start composing the object graph in Pixelgrade Customify.
+		 * Start composing the object graph in Style Manager.
 		 *
-		 * @since 3.0.0
+		 * @since 2.0.0
 		 *
 		 * @param Plugin             $plugin    Main plugin instance.
 		 * @param ContainerInterface $container Dependency container.
 		 */
-		do_action( 'pixelgrade_customify_compose', $this, $container );
+		do_action( 'style_manager/compose', $this, $container );
 
 		// Register hook providers.
 
@@ -49,13 +49,13 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'hooks.customizer_preview_assets' ) )
 			->register_hooks( $container->get( 'hooks.frontend_output' ) )
 			// @todo We should investigate if we could register these only in the Customizer.
-			->register_hooks( $container->get( 'sm.cloud_fonts' ) )
-			->register_hooks( $container->get( 'sm.color_palettes' ) )
-			->register_hooks( $container->get( 'sm.design_assets' ) )
-			->register_hooks( $container->get( 'sm.font_palettes' ) )
-			->register_hooks( $container->get( 'sm.fonts' ) )
-			->register_hooks( $container->get( 'sm.general' ) )
-			->register_hooks( $container->get( 'sm.theme_configs' ) )
+			->register_hooks( $container->get( 'customize.cloud_fonts' ) )
+			->register_hooks( $container->get( 'customize.color_palettes' ) )
+			->register_hooks( $container->get( 'customize.design_assets' ) )
+			->register_hooks( $container->get( 'customize.font_palettes' ) )
+			->register_hooks( $container->get( 'customize.fonts' ) )
+			->register_hooks( $container->get( 'customize.general' ) )
+			->register_hooks( $container->get( 'customize.theme_configs' ) )
 			->register_hooks( $container->get( 'screen.customizer' ) );
 
 
@@ -108,13 +108,13 @@ class Plugin extends BasePlugin implements Composable {
 		}
 
 		/**
-		 * Finished composing the object graph in Pixelgrade Customify.
+		 * Finished composing the object graph in Style Manager.
 		 *
-		 * @since 3.0.0
+		 * @since 2.0.0
 		 *
 		 * @param Plugin             $plugin    Main plugin instance.
 		 * @param ContainerInterface $container Dependency container.
 		 */
-		do_action( 'pixelgrade_customify_composed', $this, $container );
+		do_action( 'style_manager/composed', $this, $container );
 	}
 }

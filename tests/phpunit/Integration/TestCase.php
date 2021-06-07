@@ -1,7 +1,7 @@
 <?php
 declare ( strict_types = 1 );
 
-namespace Customify\Tests\Integration;
+namespace Pixelgrade\StyleManager\Tests\Integration;
 
 use WP_UnitTestCase;
 

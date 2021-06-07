@@ -2,28 +2,28 @@
 /**
  * Provider for screens when editing posts/pages with the classic editor (TinyMCE).
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Screen;
+namespace Pixelgrade\StyleManager\Screen;
 
-use Pixelgrade\Customify\Provider\FrontendOutput;
-use Pixelgrade\Customify\Provider\Options;
-use Pixelgrade\Customify\Provider\PluginSettings;
-use Pixelgrade\Customify\StyleManager\Fonts;
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
-use Pixelgrade\Customify\Vendor\Psr\Log\LoggerInterface;
+use Pixelgrade\StyleManager\Provider\FrontendOutput;
+use Pixelgrade\StyleManager\Provider\Options;
+use Pixelgrade\StyleManager\Provider\PluginSettings;
+use Pixelgrade\StyleManager\Customize\Fonts;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
  * Provider class for screens when editing posts/pages with the classic editor.
  *
  * This is the class that handles the overall logic for integration with the classic editor (TinyMCE).
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class EditWithClassicEditor extends AbstractHookProvider {
 
@@ -76,7 +76,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 	/**
 	 * Create the edit with classic editor screen.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param Options         $options         Options.
 	 * @param PluginSettings  $plugin_settings Plugin settings.
@@ -91,17 +91,17 @@ class EditWithClassicEditor extends AbstractHookProvider {
 		FrontendOutput $frontend_output,
 		LoggerInterface $logger
 	) {
-		$this->options      = $options;
+		$this->options         = $options;
 		$this->plugin_settings = $plugin_settings;
 		$this->sm_fonts        = $sm_fonts;
 		$this->frontend_output = $frontend_output;
-		$this->logger       = $logger;
+		$this->logger          = $logger;
 	}
 
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		$this->add_action( 'admin_enqueue_scripts', 'script_to_add_customizer_settings_into_wp_editor', 10, 1 );
@@ -110,7 +110,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 	/**
 	 * Add our customizer styling edits into the wp_editor.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function script_to_add_customizer_settings_into_wp_editor() {
 		$current_screen = get_current_screen();
@@ -126,15 +126,15 @@ class EditWithClassicEditor extends AbstractHookProvider {
 		$script = $this->get_fonts_editor_dynamic_script();
 		if ( ! empty( $script ) ) {
 			// Make sure the the script is enqueued in the footer. We want all the DOM to be loaded and need jQuery.
-			wp_deregister_script( 'pixelgrade_customify-web-font-loader' );
+			wp_deregister_script( 'pixelgrade_style_manager-web-font-loader' );
 			wp_register_script(
-				'pixelgrade_customify-web-font-loader',
+				'pixelgrade_style_manager-web-font-loader',
 				$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ),
 				['jquery'],
 				null,
 				true );
-			wp_enqueue_script( 'pixelgrade_customify-web-font-loader' );
-			wp_add_inline_script( 'pixelgrade_customify-web-font-loader', $script );
+			wp_enqueue_script( 'pixelgrade_style_manager-web-font-loader' );
+			wp_add_inline_script( 'pixelgrade_style_manager-web-font-loader', $script );
 		}
 
 		ob_start();
@@ -208,7 +208,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 	/**
 	 * Get the fonts editor dynamic inline script.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -226,7 +226,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 
 		ob_start(); ?>
 (function ($) { $(window).on('load',function () {
-const customifyIframeFontLoader = function(context) {
+const styleManagerIframeFontLoader = function(context) {
 	const webfontargs = {
 		classes: true,
 		events: true,
@@ -265,13 +265,13 @@ const customifyIframeFontLoader = function(context) {
 if (typeof WebFont !== 'undefined') {
 	$('.mce-edit-area iframe').each(function(idx, el) {
 		if (typeof el.id !== 'undefined' ) {
-			customifyIframeFontLoader(frames[el.id].contentWindow)
+			styleManagerIframeFontLoader(frames[el.id].contentWindow)
 		}
 	})
 }
 }); })(jQuery);<?php
 		$output = ob_get_clean();
 
-		return apply_filters( 'customify_fonts_editor_webfont_script', $output );
+		return apply_filters( 'style_manager/fonts_editor_webfont_script', $output );
 	}
 }

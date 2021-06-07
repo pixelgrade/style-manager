@@ -3,21 +3,21 @@
  * Capabilities.
  *
  * Meta capabilities are mapped to primitive capabilities in
- * \Pixelgrade\Customify\Provider\Capabilities.
+ * \Pixelgrade\StyleManager\Provider\Capabilities.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\StyleManager;
 
 /**
  * Capabilities.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 final class Capabilities {
 
@@ -26,12 +26,12 @@ final class Capabilities {
 	 *
 	 * @var string
 	 */
-	const MANAGE_OPTIONS = 'pixelgrade_customify_manage_options';
+	const MANAGE_OPTIONS = 'pixelgrade_style_manager_manage_options';
 
 	/**
 	 * Register capabilities.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public static function register() {
 		$wp_roles = wp_roles();

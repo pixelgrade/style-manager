@@ -9,7 +9,7 @@ use Isolated\Symfony\Component\Finder\Finder;
  *
  * @return array
  */
-function customify_php_scoper_get_list_of_files( $path ) {
+function sm_php_scoper_get_list_of_files( $path ) {
 
 	$files = [];
 
@@ -32,7 +32,7 @@ function customify_php_scoper_get_list_of_files( $path ) {
 }
 
 $config = [
-	'prefix'                     => 'Pixelgrade\Customify\Vendor',
+	'prefix'                     => 'Pixelgrade\StyleManager\Vendor',
 	'whitelist-global-constants' => false,
 	'whitelist-global-classes'   => false,
 	'whitelist-global-functions' => false,

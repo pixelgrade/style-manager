@@ -2,14 +2,14 @@
 /**
  * HTTP error message body.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
  * @since 0.1.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\HTTP\ResponseBody;
+namespace Pixelgrade\StyleManager\HTTP\ResponseBody;
 
 use WP_Http as HTTP;
 

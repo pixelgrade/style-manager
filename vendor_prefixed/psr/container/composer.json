@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pixelgrade\\Customify\\Vendor\\Psr\\Container\\": "src\/"
+            "Pixelgrade\\StyleManager\\Vendor\\Psr\\Container\\": "src\/"
         }
     }
 }

@@ -2,7 +2,7 @@
 /**
  * Configuration for the WordPress testing suite.
  *
- * @package   Customify\Tests
+ * @package   Pixelgrade\StyleManager\Tests
  * @copyright Copyright (c) 2019 Cedaro, LLC
  * @license   MIT
  */

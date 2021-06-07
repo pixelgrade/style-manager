@@ -4,27 +4,27 @@
  *
  * @link    https://wordpress.org/plugins/autoptimize/
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Integration;
+namespace Pixelgrade\StyleManager\Integration;
 
-use Pixelgrade\Customify\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
  * Autoptimize plugin integration provider class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class Autoptimize extends AbstractHookProvider {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function register_hooks() {
 		$this->add_filter( 'autoptimize_filter_js_dontmove', 'js_dontmove', 10, 1 );
@@ -34,7 +34,7 @@ class Autoptimize extends AbstractHookProvider {
 	/**
 	 * Prevent moving the webfontloader script.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param array $dontmove
 	 *
@@ -49,7 +49,7 @@ class Autoptimize extends AbstractHookProvider {
 	/**
 	 * Exclude the webfontloader script.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param $excludeJS
 	 *

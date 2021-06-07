@@ -34,7 +34,7 @@ wp.customize.bind( 'ready', () => {
   }, 1000 );
 
   // Initialize simple select2 fields.
-  $( '.customify_select2' ).select2();
+  $( '.style-manager_select2' ).select2();
 
   initializeColors();
   initializeFonts();

@@ -2,15 +2,15 @@
 /**
  * Style Manager functions to be used by themes mainly.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param          $label
  * @param          $selector
@@ -24,7 +24,7 @@ function sm_get_color_select_darker_config( $label, $selector, $default, $proper
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param          $label
  * @param          $selector
@@ -77,7 +77,7 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param string $value
  * @param string $selector
@@ -90,7 +90,7 @@ function sm_color_select_dark_cb( string $value, string $selector, string $prope
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param string $value
  * @param string $selector
@@ -103,7 +103,7 @@ function sm_color_select_darker_cb( string $value, string $selector, string $pro
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param          $label
  * @param          $selector
@@ -117,7 +117,7 @@ function sm_get_color_switch_darker_config( $label, $selector, $default, $proper
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param          $label
  * @param          $selector
@@ -158,7 +158,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param string $value
  * @param string $selector
@@ -177,7 +177,7 @@ function sm_color_switch_dark_cb( bool $value, string $selector, string $propert
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param string $value
  * @param string $selector
@@ -196,7 +196,7 @@ function sm_color_switch_darker_cb( bool $value, string $selector, string $prope
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param string $value
  *
@@ -207,7 +207,7 @@ function sm_advanced_palette_output_cb( string $value ) {
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param string $value
  *
@@ -217,7 +217,14 @@ function sm_variation_range_cb( string $value ) {
 	return '';
 }
 
-function sm_get_palette_output_from_color_config( string $value ) {
+/**
+ * @since   2.0.0
+ *
+ * @param string $value
+ *
+ * @return string
+ */
+function sm_get_palette_output_from_color_config( $value ) {
 	$output = '';
 
 	$palettes = json_decode( $value );
@@ -232,7 +239,7 @@ function sm_get_palette_output_from_color_config( string $value ) {
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param array $palettes
  *
@@ -261,7 +268,7 @@ function palettes_output( array $palettes ) {
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param object $palette
  *
@@ -287,7 +294,7 @@ function get_initial_color_variables( object $palette ) {
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param object $palette
  * @param int    $offset
@@ -320,7 +327,7 @@ function get_variables_css( object $palette, int $offset = 0, bool $isDark = fal
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @param object $palette
  * @param int    $newColorIndex
@@ -356,7 +363,7 @@ function get_color_variables( object $palette, int $newColorIndex, int $oldColor
 }
 
 /**
- * @since   3.0.0
+ * @since   2.0.0
  *
  * @return array
  */
@@ -374,7 +381,7 @@ function get_fallback_palettes() {
 		"denary"
 	);
 
-	$options_details = PixCustomifyPlugin()->get_options_configs();
+	$options_details = \Pixelgrade\StyleManager\get_option_details_all();
 
 	$color_control_ids = array(
 		'sm_color_primary',
@@ -461,7 +468,7 @@ function get_fallback_palettes() {
 
 function get_fallback_color_value( $id ) {
 
-	$color = Pixelgrade\Customify\get_option( $id . '_final' );
+	$color = \Pixelgrade\StyleManager\get_option( $id . '_final' );
 
 //	if ( empty( $color ) ) {
 //		$color = PixCustomifyPlugin()->get_option( $id );
@@ -476,4 +483,19 @@ function get_fallback_color_value( $id ) {
 //	}
 
 	return $color;
+}
+
+if ( ! function_exists( 'pixelgrade_option' ) ) {
+	/**
+	 * Get option value from the database
+	 *
+	 * @param string $option_id           The option name.
+	 * @param mixed  $default             Optional. The default value to return when the option was not found or saved.
+	 * @param bool   $force_given_default Optional. Ignored.
+	 *
+	 * @return mixed
+	 */
+	function pixelgrade_option( $option_id, $default = null, $force_given_default = false ) {
+		return \Pixelgrade\StyleManager\get_option( $option_id, $default );
+	}
 }

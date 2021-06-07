@@ -2,19 +2,19 @@
 /**
  * Helper functions
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify;
+namespace Pixelgrade\StyleManager;
 
 /**
  * Retrieve the main plugin instance.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @return Plugin
  */
@@ -28,7 +28,7 @@ function plugin(): Plugin {
 /**
  * Autoload mapped classes.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param string $class Class name.
  */
@@ -45,7 +45,7 @@ function autoloader_classmap( string $class ) {
 /**
  * Generate a random string.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param int $length Length of the string to generate.
  *
@@ -72,7 +72,7 @@ function generate_random_string( int $length = 12 ): string {
  *
  * This doesn't validate whether or not the plugin actually exists.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param string $plugin_file Plugin slug or relative path to the main plugin file.
  *
@@ -85,17 +85,17 @@ function is_plugin_file( string $plugin_file ): bool {
 /**
  * Display a notice about missing dependencies.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 function display_missing_dependencies_notice() {
 	$message = sprintf(
 	/* translators: %s: documentation URL */
-		__( 'Customify is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', '__plugin_txtd' ),
+		__( 'Style Manager is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', '__plugin_txtd' ),
 		'https://github.com/pixelgrade/style-manager'
 	);
 
 	printf(
-		'<div class="customify-compatibility-notice notice notice-error"><p>%s</p></div>',
+		'<div class="style-manager-compatibility-notice notice notice-error"><p>%s</p></div>',
 		wp_kses(
 			$message,
 			[
@@ -124,14 +124,14 @@ function is_customizer(): bool {
  * @return bool
  */
 function is_sm_supported(): bool {
-	return apply_filters( 'customify_style_manager_is_supported', current_theme_supports( 'customizer_style_manager' ) );
+	return apply_filters( 'style_manager/is_supported', current_theme_supports( 'customizer_style_manager' ) );
 }
 
 /**
- * Get a Customify option's value, if there is a value, and return it.
+ * Get a Style Manager option's value, if there is a value, and return it.
  * Otherwise, try to get the default parameter or the default from config.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param string     $option_id
  * @param mixed|null $default        Optional.
@@ -144,9 +144,9 @@ function get_option( string $option_id, $default = null, $option_details = null 
 }
 
 /**
- * Get the Customify configuration (and value, hence "details") of a certain option.
+ * Get the Style Manager configuration (and value, hence "details") of a certain option.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param string $option_id
  * @param bool   $minimal_details Optional. Whether to return only the minimum amount of details (mainly what is needed on the frontend).
@@ -160,9 +160,9 @@ function get_option_details( string $option_id, $minimal_details = false, $skip_
 }
 
 /**
- * Get all Customify options' details.
+ * Get all Style Manager options' details.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param bool $only_minimal_details Optional. Whether to return only the minimal details.
  *                                   Defaults to returning all details.
@@ -177,7 +177,7 @@ function get_option_details_all( $only_minimal_details = false, $skip_cache = fa
 /**
  * Determine if a certain option exists.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param string $key The option key.
  *
@@ -188,9 +188,9 @@ function has_option( string $key ): bool {
 }
 
 /**
- * Get the key under which all Customify options are saved.
+ * Get the key under which all Style Manager options are saved.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param bool $skip_cache Optional. Whether to skip the options cache and regenerate.
  *                         Defaults to using the cache.
@@ -202,9 +202,9 @@ function get_options_key( bool $skip_cache = false ): string {
 }
 
 /**
- * Get the entire Customify Customizer fields config or a certain entry key.
+ * Get the entire Style Manager Customizer fields config or a certain entry key.
  *
- * @since 3.0.0
+ * @since 2.0.0
  *
  * @param bool|string $key
  *

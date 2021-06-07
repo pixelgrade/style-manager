@@ -1,5 +1,5 @@
 <?php
-namespace Customify\Tests\Framework;
+namespace Pixelgrade\StyleManager\Tests\Framework;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 	public function setUp() {

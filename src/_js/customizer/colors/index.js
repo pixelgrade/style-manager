@@ -47,7 +47,7 @@ export const initializeColors = () => {
 
 const ColorizeElementsButton = ( props ) => {
 
-  const targetSectionID = `${ customify.config.options_name }[colors_section]`;
+  const targetSectionID = `${ styleManager.config.options_name }[colors_section]`;
 
   useEffect( () => {
 

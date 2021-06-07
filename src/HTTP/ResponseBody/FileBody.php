@@ -2,21 +2,21 @@
 /**
  * File body handler.
  *
- * @package Pixelgrade Customify
+ * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 3.0.0
+ * @since 2.0.0
  */
 
 declare ( strict_types = 1 );
 
-namespace Pixelgrade\Customify\HTTP\ResponseBody;
+namespace Pixelgrade\StyleManager\HTTP\ResponseBody;
 
-use Pixelgrade\Customify\Exception\InvalidFileName;
+use Pixelgrade\StyleManager\Exception\InvalidFileName;
 
 /**
  * File body handler class.
  *
- * @since 3.0.0
+ * @since 2.0.0
  */
 class FileBody implements ResponseBody {
 	/**
@@ -29,7 +29,7 @@ class FileBody implements ResponseBody {
 	/**
 	 * Create a file response body.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $filename Absolute path to the file to stream.
 	 * @throws InvalidFileName If the file name fails validation.
@@ -46,7 +46,7 @@ class FileBody implements ResponseBody {
 	/**
 	 * Stream the file.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	public function emit() {
 		$this->configure_environment();
@@ -57,7 +57,7 @@ class FileBody implements ResponseBody {
 	/**
 	 * Configure the environment before sending a file.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function configure_environment() {
 		session_write_close();
@@ -80,7 +80,7 @@ class FileBody implements ResponseBody {
 	/**
 	 * Clean output buffers.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 */
 	protected function clean_buffers() {
 		$levels = ob_get_level();
@@ -96,7 +96,7 @@ class FileBody implements ResponseBody {
 	 *
 	 * @link https://github.com/bcit-ci/CodeIgniter/wiki/Download-helper-for-large-files
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $filename Absolute path to a file.
 	 */
@@ -122,7 +122,7 @@ class FileBody implements ResponseBody {
 	/**
 	 * Whether a function exists and is enabled.
 	 *
-	 * @since 3.0.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Function name.
 	 * @return bool

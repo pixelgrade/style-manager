@@ -136,7 +136,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
 
 // Mirror logic of server-side Utils\Fonts::getFontStyle()
 export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
-  const fontConfig = customify.config.settings[settingID];
+  const fontConfig = styleManager.config.settings[settingID];
   const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix
 
   let output = ''
@@ -214,7 +214,7 @@ export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
 
 // This is a mirror logic of the server-side Utils\Fonts::getSubFieldUnit()
 export const getFieldUnit = ( settingID, field ) => {
-  if ( typeof customify.config.settings[settingID] === 'undefined' || typeof customify.config.settings[settingID].fields[field] === 'undefined' ) {
+  if ( typeof styleManager.config.settings[settingID] === 'undefined' || typeof styleManager.config.settings[settingID].fields[field] === 'undefined' ) {
     // These fields don't have an unit, by default.
     if ( _.includes( [
       'font-family',
@@ -232,22 +232,22 @@ export const getFieldUnit = ( settingID, field ) => {
     return 'px'
   }
 
-  if ( typeof customify.config.settings[settingID].fields[field].unit !== 'undefined' ) {
+  if ( typeof styleManager.config.settings[settingID].fields[field].unit !== 'undefined' ) {
     // Make sure that we convert all falsy unit values to the boolean false.
     return _.includes( [
       '',
       'false',
       false
-    ], customify.config.settings[settingID].fields[field].unit ) ? false : customify.config.settings[settingID].fields[field].unit
+    ], styleManager.config.settings[settingID].fields[field].unit ) ? false : styleManager.config.settings[settingID].fields[field].unit
   }
 
-  if ( typeof customify.config.settings[settingID].fields[field][3] !== 'undefined' ) {
+  if ( typeof styleManager.config.settings[settingID].fields[field][3] !== 'undefined' ) {
     // Make sure that we convert all falsy unit values to the boolean false.
     return _.includes( [
       '',
       'false',
       false
-    ], customify.config.settings[settingID].fields[field][3] ) ? false : customify.config.settings[settingID].fields[field][3]
+    ], styleManager.config.settings[settingID].fields[field][3] ) ? false : styleManager.config.settings[settingID].fields[field][3]
   }
 
   return 'px'
@@ -340,7 +340,7 @@ export const maybeLoadFontFamily = function (font, settingID) {
     return
   }
 
-  const fontConfig = customify.config.settings[settingID]
+  const fontConfig = styleManager.config.settings[settingID]
 
   let family = font.font_family
   // The font family may be a comma separated list like "Roboto, sans"
@@ -444,12 +444,12 @@ const getFontFamilyFallbackStack = function (fontFamily) {
   } else if (typeof fontDetails.category !== 'undefined' && !_.isEmpty(fontDetails.category)) {
     const category = fontDetails.category
     // Search in the available categories for a match.
-    if (typeof customify.fonts.categories[category] !== 'undefined') {
+    if (typeof styleManager.fonts.categories[category] !== 'undefined') {
       // Matched by category ID/key
-      fallbackStack = typeof customify.fonts.categories[category].fallback_stack !== 'undefined' ? customify.fonts.categories[category].fallback_stack : ''
+      fallbackStack = typeof styleManager.fonts.categories[category].fallback_stack !== 'undefined' ? styleManager.fonts.categories[category].fallback_stack : ''
     } else {
       // We need to search for aliases.
-      _.find(customify.fonts.categories, function (categoryDetails) {
+      _.find(styleManager.fonts.categories, function (categoryDetails) {
         if (typeof categoryDetails.aliases !== 'undefined') {
           const aliases = maybeImplodeList(categoryDetails.aliases)
           if (aliases.indexOf(category) !== -1) {

@@ -2,20 +2,20 @@
 /**
  * This is a utility class that groups all our array related helper functions.
  *
- * @since   3.0.0
+ * @since   2.0.0
  * @license GPL-2.0-or-later
- * @package Pixelgrade Customify
+ * @package Style Manager
  */
 
 declare ( strict_types=1 );
 
-namespace Pixelgrade\Customify\Utils;
+namespace Pixelgrade\StyleManager\Utils;
 
 /**
  * Array Helper class.
  *
- * @since   3.0.0
- * @package Pixelgrade Customify
+ * @since   2.0.0
+ * @package Style Manager
  */
 class ArrayHelpers {
 	/**
