@@ -5,7 +5,6 @@ const Accordion = ( props ) => {
   const sections = React.Children.toArray( props.children ).filter( child => child.type === AccordionSection );
   const open = sections.findIndex( section => !! section?.props?.open );
 
-  console.log( open );
   const [ active, setActive ] = useState( open );
 
   return sections.map( ( section, index ) => {
