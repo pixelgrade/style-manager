@@ -80,60 +80,72 @@ class SpacingSection extends AbstractHookProvider {
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
 				'sm_site_container_width' => array(
-					'type'        => 'range',
-					'live'        => true,
-					'label'       => esc_html__( 'Site Container', '__theme_txtd' ),
-					'desc'        => esc_html__( 'Adjust the maximum amount of width where your site content extends.', '__theme_txtd' ),
-					'default'     => 75,
-					'input_attrs' => array(
+					'type'         => 'range',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_site_container_width',
+					'live'         => true,
+					'label'        => esc_html__( 'Site Container', '__theme_txtd' ),
+					'desc'         => esc_html__( 'Adjust the maximum amount of width where your site content extends.', '__theme_txtd' ),
+					'default'      => 75,
+					'input_attrs'  => array(
 						'min'          => 60,
 						'max'          => 100,
 						'step'         => 1,
 						'data-preview' => true,
 					),
-					'css'         => array(
+					'css'          => array(
 						array(
-							'property' => '--theme-content-width-wide-addon',
+							'property' => '--sm-site-container-width',
 							'selector' => ':root',
 							'unit'     => '',
 						),
 					),
 				),
-				'sm_content_inset' => array(
-					'type'        => 'range',
-					'live'        => true,
-					'label'       => esc_html__( 'Content Inset', '__theme_txtd' ),
-					'desc'        => esc_html__( 'Adjust how much the content is visually inset within the Site Container.', '__theme_txtd' ),
-					'default'     => 230,
-					'input_attrs' => array(
+				'sm_content_inset'        => array(
+					'type'         => 'range',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_content_inset',
+					'live'         => true,
+					'label'        => esc_html__( 'Content Inset', '__theme_txtd' ),
+					'desc'         => esc_html__( 'Adjust how much the content is visually inset within the Site Container.', '__theme_txtd' ),
+					'default'      => 230,
+					'input_attrs'  => array(
 						'min'          => 100,
 						'max'          => 300,
 						'step'         => 10,
 						'data-preview' => true,
 					),
-					'css'         => array(
+					'css'          => array(
 						array(
-							'property' => '--theme-offset-width-addon',
+							'property' => '--sm-content-inset',
 							'selector' => ':root',
 							'unit'     => '',
 						),
 					),
 				),
-				'sm_spacing_level' => array(
-					'type'        => 'range',
-					'live'        => true,
-					'label'       => esc_html__( 'Spacing Level', '__theme_txtd' ),
-					'desc'        => esc_html__( 'Adjust the multiplication factor of the distance between elements.', '__theme_txtd' ),
-					'default'     => 1,
-					'input_attrs' => array(
+				'sm_spacing_level'        => array(
+					'type'         => 'range',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_spacing_level',
+					'live'         => true,
+					'label'        => esc_html__( 'Spacing Level', '__theme_txtd' ),
+					'desc'         => esc_html__( 'Adjust the multiplication factor of the distance between elements.', '__theme_txtd' ),
+					'default'      => 1,
+					'input_attrs'  => array(
 						'min'          => 0,
 						'max'          => 2,
 						'step'         => 0.1,
 						'data-preview' => true,
 					),
-					'css'         => array(
+					'css'          => array(
 						array(
-							'property' => '--theme-spacing-ratio',
+							'property' => '--sm-spacing-level',
 							'selector' => ':root',
 							'unit'     => '',
 						),
