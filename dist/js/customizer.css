@@ -1711,6 +1711,16 @@ and other section use the available space
   min-height: 200px;
 }
 
+/* Remove customizer transitions on complex navigation to avoid confusing the user */
+.remove-customizer-transitions .customize-pane-parent,
+.remove-customizer-transitions .customize-pane-child {
+  transition-duration: 1ms !important;
+}
+.remove-customizer-transitions .customize-pane-parent,
+.remove-customizer-transitions [id=sub-accordion-panel-style_manager_panel] {
+  opacity: 0 !important;
+}
+
 #customize-theme-controls .control-section[class] .accordion-section-title {
   font-weight: normal;
   padding: calc( 0.5 * var(--customizer-spacing) ) var(--customizer-spacing);

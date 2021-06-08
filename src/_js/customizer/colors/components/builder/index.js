@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { getBackArray, addToBackArray, setBackArray } from "../../../global-service";
+import { popFromBackArray, pushToBackArray } from "../../../global-service";
 import { useCustomizeSettingCallback } from "../../../utils";
 
 import { SourceColors } from "../source-colors";
@@ -73,14 +73,7 @@ const Builder = ( props ) => {
     const callback = ( isExpanded ) => {
 
       if ( ! isExpanded ) {
-        const backArray = getBackArray();
-        const targetSectionID = backArray.pop();
-
-        if ( targetSectionID ) {
-          wp.customize.section( targetSectionID, ( targetSection ) => {
-            targetSection.focus();
-          } );
-        }
+        popFromBackArray();
       }
     }
 
@@ -102,11 +95,7 @@ const Builder = ( props ) => {
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
-            const backArray = getBackArray();
-            setBackArray( [] );
-            colorUsageSection.focus();
-            setBackArray( backArray );
-            addToBackArray( 'sm_color_palettes_section' );
+            pushToBackArray( colorUsageSection, 'sm_color_palettes_section' );
           } );
         } }>
           <div className="sm-panel-toggle__icon" dangerouslySetInnerHTML={{

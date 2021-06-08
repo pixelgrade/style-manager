@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 
 import { debounce } from '../../utils';
 import * as globalService from "../global-service";
-import { getBackArray, setBackArray, addToBackArray } from "../global-service";
+import { getBackArray, pushToBackArray } from "../global-service";
 import colorizeElementsIcon from "../svg/colorize-elements.svg";
 
 import { initializePaletteBuilder } from './color-palette-builder';
@@ -83,11 +83,7 @@ const ColorizeElementsButton = ( props ) => {
     <div className="sm-group" style={ { marginTop: 0 } }>
       <div className="sm-panel-toggle" id="sm-colorize-elements-button" style={ { borderTopWidth: 0 } } onClick={ () => {
         wp.customize.section( targetSectionID, ( targetSection ) => {
-          const backArray = getBackArray();
-          setBackArray( [] );
-          targetSection.focus();
-          setBackArray( backArray );
-          addToBackArray( 'sm_color_usage_section' );
+          pushToBackArray( targetSection, 'sm_color_usage_section' );
         } );
       } }>
         <div className="sm-panel-toggle__icon" dangerouslySetInnerHTML={{

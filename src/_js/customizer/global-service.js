@@ -59,6 +59,31 @@ export const setBackArray = ( newArray ) => {
   overrideCustomizerBack = newArray.slice();
 }
 
+export const pushToBackArray = ( targetSection, section ) => {
+  const backArray = getBackArray();
+  window.document.body.classList.add( 'remove-customizer-transitions' );
+  setBackArray( [] );
+  targetSection.focus();
+  setBackArray( backArray );
+  addToBackArray( section );
+}
+
+export const popFromBackArray = () => {
+  const backArray = getBackArray();
+  const targetSectionID = backArray.pop();
+
+  if ( targetSectionID ) {
+    wp.customize.section( targetSectionID, ( targetSection ) => {
+      targetSection.focus();
+      if ( ! backArray.length ) {
+        setTimeout( () => {
+          window.document.body.classList.remove( 'remove-customizer-transitions' );
+        }, 100 );
+      }
+    } );
+  }
+}
+
 export const bindConnectedFields = function( settingIDs, filter = noop ) {
 
   settingIDs.forEach( settingID => {
