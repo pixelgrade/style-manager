@@ -572,6 +572,7 @@ class FontPalettes extends AbstractHookProvider {
 			'priority'   => 20,
 			'options'    => [],
 		];
+
 		foreach ( $font_palettes_fields as $field_id ) {
 			if ( ! isset( $sm_section_config['options'][ $field_id ] ) ) {
 				continue;

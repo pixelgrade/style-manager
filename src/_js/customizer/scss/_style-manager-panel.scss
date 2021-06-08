@@ -1,54 +1,67 @@
 $sm-colors-id: unquote( '#accordion-section-sm_color_palettes_section' );
 $sm-fonts-id: unquote( '#accordion-section-sm_font_palettes_section' );
-
-// Add spacing and borders between section toggle buttons
-#customize-theme-controls {
-
-  #{$sm-colors-id} > .accordion-section-title,
-  #{$sm-fonts-id} > .accordion-section-title {
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-  }
-
-  #{$sm-colors-id} + #{$sm-fonts-id} > .accordion-section-title {
-    margin-top: calc( 0.25 * var(--customizer-spacing) );
-  }
-}
+$sm-spacing-id: unquote( '#accordion-section-sm_spacing_section' );
 
 // Make icons stand out
 #customize-theme-controls {
 
-  #{$sm-colors-id},
-  #{$sm-fonts-id} {
+  [id="sub-accordion-panel-style_manager_panel"] {
 
-    > .accordion-section-title {
-      @include section-title-with-icon;
-      justify-content: flex-start;
+    > li:not(.customize-info) {
 
-      &:before {
-        width: 2em;
-        height: 2em;
-        margin-right: 15px;
-        padding-left: 0.1em;
+      + li > .accordion-section-title {
+        margin-top: calc( 0.5 * var(--customizer-spacing) );
+      }
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+      > .accordion-section-title {
+        @include section-title-with-icon;
+        justify-content: flex-start;
 
-        background-color: var(--sm-color-palette-accent-color-7);
-        color: var(--sm-color-palette-neutral-color-2);
+        border-top-width: 1px;
+        border-bottom-width: 1px;
+        padding-top: calc( 0.75 * var(--customizer-spacing) );
+        padding-bottom: calc( 0.75 * var(--customizer-spacing) );
 
-        border-radius: 50%;
+        &:before {
+          content: "";
+          width: 2em;
+          height: 2em;
+          margin-right: 15px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+
+          border-radius: 50%;
+          color: var(--sm-color-palette-neutral-color-2);
+        }
       }
     }
   }
 
   #{$sm-colors-id} > .accordion-section-title:before {
-    content: "\f100";
+    background: conic-gradient(from 180deg at 50% 50%, #020031 0deg, #090035 4.68deg, #2B045E 29.09deg, #3E0578 37.08deg, #7708BE 64.88deg, #C80EEC 108.66deg, #E839DE 147.4deg, #F35AAA 159.09deg, #F8668A 168.49deg, #FFA290 179.83deg, #FE8E68 180deg, #FF8134 191.01deg, #FFB97D 192deg, #F7BD4F 206.51deg, #F3C07A 219.02deg, #EBD4C3 226.4deg, #DEDFE3 246.49deg, #D8E7F8 269.42deg, #94D7FC 277.72deg, rgba(0, 156, 233, 0.87) 306.55deg, #0058AA 322.31deg, #02205D 343.18deg, #020031 360deg);
   }
 
-  #{$sm-fonts-id} > .accordion-section-title:before {
-    content: "\f122";
+  #{$sm-fonts-id} {
+
+    > .accordion-section-title:before {
+      background-color: var(--sm-color-palette-accent-color-10);
+      background-image: url("../../images/font-palettes-icon.svg");
+      background-size: 55% 55%;
+      background-repeat: no-repeat;
+      background-position: 55% 50%;
+    }
+  }
+
+  #{$sm-spacing-id} > .accordion-section-title:before {
+    background: linear-gradient(
+      180deg,
+      var(--sm-color-palette-accent-color-4) 35%,
+      transparent 35%,
+      transparent 65%,
+      var(--sm-color-palette-accent-color-6) 65%
+    );
   }
 }
