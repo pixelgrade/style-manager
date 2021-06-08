@@ -13,7 +13,6 @@ import {
 } from "./utils";
 
 import './style.scss';
-import {useCustomizeSettingCallback} from "../../../utils";
 
 const SourceColors = ( props ) => {
   const { config, setConfig } = useContext( ConfigContext );
@@ -86,8 +85,8 @@ const SourceColorControl = ( props ) => {
 
   const { config, setConfig, resetActivePreset } = useContext( ConfigContext );
 
-  const onChange = useCallback(( hex ) => {
-    const newConfig = updateColor( config, groupIndex, index, { value: hex } );
+  const onChange = useCallback(( color ) => {
+    const newConfig = updateColor( config, groupIndex, index, color );
     setConfig( newConfig );
     resetActivePreset();
   }, [config, groupIndex, index]);
@@ -151,7 +150,7 @@ const SourceColorControl = ( props ) => {
       onClick={ () => { setShowPicker( ! showPicker ) } }
       ref={ pickerRef }
       className={ `c-palette-builder__source-item ${ active ? 'c-palette-builder__source-item--active' : '' }` }>
-      <ColorPicker hex={ color.value } onChange={ onChange } isOpen={ showPicker } />
+      <ColorPicker hex={ color.value } onChange={ ( hex ) => { onChange( { value: hex } ) } } isOpen={ showPicker } />
       { ! editable && <div className="c-palette-builder__source-item-label">{ color.label }</div> }
       { editable &&
         <input type="text"
