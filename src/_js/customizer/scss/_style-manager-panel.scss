@@ -22,6 +22,9 @@ $sm-spacing-id: unquote( '#accordion-section-sm_spacing_section' );
         padding-top: calc( 0.75 * var(--customizer-spacing) );
         padding-bottom: calc( 0.75 * var(--customizer-spacing) );
 
+        font-size: 18px;
+        letter-spacing: -0.01em;
+
         &:before {
           content: "";
           width: 2em;

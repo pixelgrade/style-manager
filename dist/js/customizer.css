@@ -1636,6 +1636,8 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   border-bottom-width: 1px;
   padding-top: calc( 0.75 * var(--customizer-spacing) );
   padding-bottom: calc( 0.75 * var(--customizer-spacing) );
+  font-size: 18px;
+  letter-spacing: -0.01em;
 }
 #customize-theme-controls [id=sub-accordion-panel-style_manager_panel] > li:not(.customize-info) > .accordion-section-title:before {
   font-family: dashicons;

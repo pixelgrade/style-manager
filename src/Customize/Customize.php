@@ -205,6 +205,7 @@ class Customize extends AbstractHookProvider {
 		if ( empty( $config['panels'] ) ) {
 			$config['panels'] = [];
 		}
+
 		// Allow others to have a say in this (like Color Palettes, or Font Palettes).
 		$config['panels']['style_manager_panel'] = apply_filters( 'style_manager/sm_panel_config', $sm_panel_config, $sm_section_config );
 
