@@ -395,19 +395,21 @@ class ColorPalettes extends AbstractHookProvider {
 				],
 				// This is just a setting to hold the currently selected color palette (its hashid).
 				self::SM_COLOR_PALETTE_OPTION_KEY => [
-                   'type'         => 'hidden_control',
+					'type'         => 'hidden_control',
+					'live'         => true,
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-                   'setting_type' => 'option',
+					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-                   'setting_id'   => self::SM_COLOR_PALETTE_OPTION_KEY,
+					'setting_id'   => self::SM_COLOR_PALETTE_OPTION_KEY,
 				],
 				// This is just a setting to hold the currently selected color palette (its hashid).
 				self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY => [
-                   'type'         => 'hidden_control',
+					'type'         => 'hidden_control',
+					'live'         => true,
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-                   'setting_type' => 'option',
+					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-                   'setting_id'   => self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
+					'setting_id'   => self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 				],
 				'sm_advanced_palette_output' => [
 					'type'    => 'text',
