@@ -23,6 +23,17 @@ use function Pixelgrade\StyleManager\is_sm_supported;
  */
 class ColorPalettes extends AbstractHookProvider {
 
+	const SM_COLOR_PALETTE_OPTION_KEY = 'sm_color_palette';
+	const SM_COLOR_PALETTE_VARIATION_OPTION_KEY = 'sm_color_palette_variation';
+	const SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY = 'sm_is_custom_color_palette';
+
+	/**
+	 * Design assets.
+	 *
+	 * @var DesignAssets
+	 */
+	protected DesignAssets $design_assets;
+
 	/**
 	 * Logger.
 	 *
@@ -35,11 +46,15 @@ class ColorPalettes extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @param DesignAssets    $design_assets Design assets.
 	 * @param LoggerInterface $logger Logger.
 	 */
 	public function __construct(
+		DesignAssets $design_assets,
 		LoggerInterface $logger
 	) {
+
+		$this->design_assets = $design_assets;
 		$this->logger = $logger;
 	}
 
@@ -67,6 +82,11 @@ class ColorPalettes extends AbstractHookProvider {
 		 * Scripts enqueued in the Customizer.
 		 */
 		$this->add_action( 'customize_controls_enqueue_scripts', 'enqueue_admin_customizer_scripts', 10 );
+
+		/*
+		 * Handle the logic on settings update/save.
+		 */
+		$this->add_action( 'customize_save_after', 'update_custom_palette_in_use', 10, 1 );
 
 		/**
 		 * Add color palettes usage to site data.
@@ -128,6 +148,24 @@ class ColorPalettes extends AbstractHookProvider {
 		}
 
 		wp_enqueue_script( 'pixelgrade_style_manager-dark-mode' );
+	}
+
+	/**
+	 * Get the color palettes configuration.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 *
+	 * @return array
+	 */
+	public function get_palettes( $skip_cache = false ): array {
+		$config = $this->design_assets->get_entry( 'color_palettes_v2', $skip_cache );
+		if ( is_null( $config ) ) {
+			$config = $this->get_default_config();
+		}
+
+		return apply_filters( 'style_manager/get_color_palettes', $config );
 	}
 
 	/**
@@ -775,6 +813,73 @@ class ColorPalettes extends AbstractHookProvider {
 	}
 
 	/**
+	 * Get the current font palette ID or false if none is selected.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return string|false
+	 */
+	protected function get_current_palette() {
+		return get_option( self::SM_COLOR_PALETTE_OPTION_KEY, false );
+	}
+
+	/**
+	 * Get the current font palette variation ID or false if none is selected.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return string|false
+	 */
+	protected function get_current_palette_variation() {
+		return get_option( self::SM_COLOR_PALETTE_VARIATION_OPTION_KEY, false );
+	}
+
+	/**
+	 * Determine if the selected font palette has been customized and remember this in an option.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool
+	 */
+	protected function update_custom_palette_in_use(): bool {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return false;
+		}
+
+		$current_palette = $this->get_current_palette();
+		if ( empty( $current_palette ) ) {
+			return false;
+		}
+
+		$color_palettes = $this->get_palettes();
+		if ( ! isset( $color_palettes[ $current_palette ] ) || empty( $color_palettes[ $current_palette ]['color_groups'] ) ) {
+			return false;
+		}
+
+		$is_custom_palette = false;
+
+		// @todo Determine if a custom color palette is in use.
+
+		update_option( self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY, $is_custom_palette, true );
+
+		do_action( 'style_manager/updated_custom_color_palette_in_use', $is_custom_palette );
+
+		return true;
+	}
+
+	/**
+	 * Determine if a custom font palette is in use.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool
+	 */
+	protected function is_using_custom_palette(): bool {
+		return (bool) get_option( self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY, false );
+	}
+
+	/**
 	 * Get the default (hard-coded) color palettes configuration.
 	 *
 	 * This is only a fallback config in case we can't communicate with the cloud, the first time.
@@ -803,11 +908,10 @@ class ColorPalettes extends AbstractHookProvider {
 		}
 
 		// If others have added data before us, we will merge with it.
-		// @todo Add actual data here.
 		$site_data['color_palettes_v2'] = array_merge( $site_data['color_palettes_v2'], [
-			'current'   => false,
-			'variation' => false,
-			'custom'    => false,
+			'current'   => $this->get_current_palette(),
+			'variation' => $this->get_current_palette_variation(),
+			'custom'    => $this->is_using_custom_palette(),
 		] );
 
 		return $site_data;

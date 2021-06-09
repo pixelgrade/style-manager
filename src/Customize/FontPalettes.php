@@ -63,6 +63,7 @@ class FontPalettes extends AbstractHookProvider {
 		DesignAssets $design_assets,
 		LoggerInterface $logger
 	) {
+
 		$this->options = $options;
 		$this->design_assets = $design_assets;
 		$this->logger  = $logger;
@@ -397,12 +398,12 @@ class FontPalettes extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
-				'sm_font_palette'                 => [
+				self::SM_FONT_PALETTE_OPTION_KEY                 => [
 					'type'         => 'preset',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'   => 'sm_font_palette',
+					'setting_id'   => self::SM_FONT_PALETTE_OPTION_KEY,
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
 					'priority'     => 5,
@@ -555,8 +556,8 @@ class FontPalettes extends AbstractHookProvider {
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 		$font_palettes_fields = [
 			'sm_current_font_palette',
-			'sm_font_palette',
-			'sm_font_palette_variation',
+			self::SM_FONT_PALETTE_OPTION_KEY,
+			self::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
 			'sm_font_primary',
 			'sm_font_secondary',
 			'sm_font_body',

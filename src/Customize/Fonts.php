@@ -713,8 +713,8 @@ class Fonts extends AbstractHookProvider {
 
 		// These are fields that should have no frontend impact.
 		$excluded_fields = [
-			'sm_font_palette',
-			'sm_font_palette_variation',
+			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
+			FontPalettes::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
 			'sm_font_primary',
 			'sm_font_secondary',
 			'sm_font_body',
@@ -821,8 +821,8 @@ class Fonts extends AbstractHookProvider {
 
 		// These are fields that should have no frontend impact.
 		$excluded_fields = [
-			'sm_font_palette',
-			'sm_font_palette_variation',
+			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
+			FontPalettes::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
 			'sm_font_primary',
 			'sm_font_secondary',
 			'sm_font_body',

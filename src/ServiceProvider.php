@@ -65,6 +65,7 @@ class ServiceProvider implements ServiceProviderInterface {
 		};
 		$container['customize.color_palettes'] = function( $container ) {
 			return new Customize\ColorPalettes(
+				$container['customize.design_assets'],
 				$container['logger']
 			);
 		};

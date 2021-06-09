@@ -11,6 +11,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Screen\Customizer;
 
+use Pixelgrade\StyleManager\Customize\FontPalettes;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
@@ -143,8 +144,8 @@ class Search extends AbstractHookProvider {
 			'sm_advanced_toggle',
 			'sm_spacing_bottom',
 			// Font Palettes Controls
-			'sm_font_palette',
-			'sm_font_palette_variation',
+			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
+			FontPalettes::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
 			'sm_font_primary',
 			'sm_font_secondary',
 			'sm_font_body',
