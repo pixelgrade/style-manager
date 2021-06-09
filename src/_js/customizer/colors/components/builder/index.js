@@ -34,9 +34,15 @@ const Builder = ( props ) => {
   const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] );
 
   useEffect( () => {
+
+    wp.customize( 'sm_color_palette_in_use', setting => {
+      setting.set( activePreset === null );
+    } );
+
     wp.customize( 'sm_is_custom_color_palette', setting => {
       setting.set( activePreset === null );
     } );
+
   }, [ activePreset ] );
 
   const updateSource = ( newValue ) => {
