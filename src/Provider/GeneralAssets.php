@@ -45,7 +45,7 @@ class GeneralAssets extends AbstractHookProvider {
 	 * Register hooks.
 	 */
 	public function register_hooks() {
-		add_action( 'init', [ $this, 'register_assets' ], 1 );
+		$this->add_action( 'init', 'register_assets', 1 );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class GeneralAssets extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 */
-	public function register_assets() {
+	protected function register_assets() {
 
 		wp_register_style(
 			'pixelgrade_style_manager-sm-colors-custom-properties',

@@ -46,7 +46,6 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'hooks.rewrite_rules' ) )
 			->register_hooks( $container->get( 'hooks.general_assets' ) )
 			->register_hooks( $container->get( 'hooks.customizer_assets' ) )
-			->register_hooks( $container->get( 'hooks.customizer_preview_assets' ) )
 			->register_hooks( $container->get( 'hooks.frontend_output' ) )
 			// @todo We should investigate if we could register these only in the Customizer.
 			->register_hooks( $container->get( 'customize.cloud_fonts' ) )
@@ -70,14 +69,15 @@ class Plugin extends BasePlugin implements Composable {
 				->register_hooks( $container->get( 'screen.edit_with_blocks' ) );
 
 			if ( is_customizer() ) {
-				$this
-					->register_hooks( $container->get( 'screen.customizer.search' ) );
+				$this->register_hooks( $container->get( 'screen.customizer.search' ) );
 			}
 		}
 
 		// Only in the Customizer Preview.
-		if ( ! is_admin() && is_customize_preview() ) {
-			$this->register_hooks( $container->get( 'screen.customizer.preview' ) );
+		if ( is_customize_preview() ) {
+			$this
+				->register_hooks( $container->get( 'screen.customizer.preview' ) )
+				->register_hooks( $container->get( 'hooks.customizer_preview_assets' ) );
 		}
 
 		if ( \defined( 'AUTOPTIMIZE_PLUGIN_VERSION' ) ) {
