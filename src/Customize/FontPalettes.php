@@ -398,7 +398,7 @@ class FontPalettes extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
-				self::SM_FONT_PALETTE_OPTION_KEY                 => [
+				self::SM_FONT_PALETTE_OPTION_KEY => [
 					'type'         => 'preset',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',

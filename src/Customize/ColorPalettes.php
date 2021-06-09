@@ -23,7 +23,7 @@ use function Pixelgrade\StyleManager\is_sm_supported;
  */
 class ColorPalettes extends AbstractHookProvider {
 
-	const SM_COLOR_PALETTE_OPTION_KEY = 'sm_color_palette';
+	const SM_COLOR_PALETTE_OPTION_KEY = 'sm_color_palette_in_use';
 	const SM_COLOR_PALETTE_VARIATION_OPTION_KEY = 'sm_color_palette_variation';
 	const SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY = 'sm_is_custom_color_palette';
 
@@ -93,6 +93,9 @@ class ColorPalettes extends AbstractHookProvider {
 		 */
 		$this->add_filter( 'style_manager/get_site_data', 'add_palettes_to_site_data', 10, 1 );
 
+		// Add data to be passed to JS.
+		$this->add_filter( 'style_manager/localized_js_settings', 'add_to_localized_data', 10, 1 );
+
 		$this->add_filter( 'language_attributes', 'add_dark_mode_data_attribute', 10, 2 );
 
 		$this->add_action( 'admin_init', 'editor_color_palettes', 20 );
@@ -159,7 +162,7 @@ class ColorPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_palettes( $skip_cache = false ): array {
+	public function get_palettes( bool $skip_cache = false ): array {
 		$config = $this->design_assets->get_entry( 'color_palettes_v2', $skip_cache );
 		if ( is_null( $config ) ) {
 			$config = $this->get_default_config();
@@ -394,6 +397,14 @@ class ColorPalettes extends AbstractHookProvider {
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'   => 'sm_advanced_palette_source',
 					'label'        => esc_html__( 'Palette Source', '__plugin_txtd' ),
+				],
+				// This is just a setting to hold the currently selected color palette (its hashid).
+				self::SM_COLOR_PALETTE_OPTION_KEY => [
+                   'type'         => 'hidden_control',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+                   'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+                   'setting_id'   => self::SM_COLOR_PALETTE_OPTION_KEY,
 				],
 				'sm_advanced_palette_output' => [
 					'type'    => 'text',
@@ -915,6 +926,25 @@ class ColorPalettes extends AbstractHookProvider {
 		] );
 
 		return $site_data;
+	}
+
+	/**
+	 * Add data to be available to JS.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $localized
+	 *
+	 * @return array
+	 */
+	protected function add_to_localized_data( array $localized ): array {
+		if ( empty( $localized['colorPalettes'] ) ) {
+			$localized['colorPalettes'] = [];
+		}
+
+		$localized['colorPalettes']['palettes'] = $this->get_palettes();
+
+		return $localized;
 	}
 
 	/**
