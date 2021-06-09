@@ -139,6 +139,8 @@ class EditWithClassicEditor extends AbstractHookProvider {
 
 		ob_start();
 
+		wp_print_styles( 'pixelgrade_style_manager-sm-colors-custom-properties' );
+		wp_print_styles( 'sm-dark-mode' );
 		$this->frontend_output->output_dynamic_style();
 		$this->sm_fonts->outputFontsDynamicStyle();
 

@@ -273,7 +273,7 @@ class GeneralAdmin extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	protected function enqueue_assets() {
-		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
+
 	}
 
 	/**
