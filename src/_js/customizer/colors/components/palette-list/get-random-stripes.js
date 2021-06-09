@@ -3,9 +3,8 @@ const getRandomBetween = ( min, max ) => {
   return Math.floor( random * (max - min + 1) + min );
 };
 
-const getRandomStripes = ( preset => {
+const getRandomStripes = ( palettes => {
   const widths = [1, 1, 2, 2, 4];
-  const { palettes } = preset;
 
   if ( ! palettes.length ) {
     return [];

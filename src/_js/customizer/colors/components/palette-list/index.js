@@ -1,16 +1,8 @@
 import React from 'react';
-import getRandomStripes from './get-random-stripes';
-import getTextColor from './get-text-color';
-import presets from './presets';
-
+import { normalizeCloudPresets } from './utils';
 import './style.scss';
-import { getPalettesFromColors } from "../builder";
 
-presets.forEach( ( preset ) => {
-  preset.palettes = getPalettesFromColors( preset.config );
-  preset.stripes = getRandomStripes( preset );
-  preset.textColor = getTextColor( preset );
-} );
+const presets = normalizeCloudPresets( styleManager.colorPalettes.palettes );
 
 const PresetsList = ( props ) => {
 
