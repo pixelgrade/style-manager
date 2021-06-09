@@ -26,11 +26,26 @@ const Builder = ( props ) => {
   const sourceSetting = wp.customize( sourceSettingID );
   const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
-  const [ activePreset, setActivePreset ] = useState( null );
+
+  const activePresetSetting = wp.customize( 'sm_color_palette_in_use' );
+  const activePresetValue = activePresetSetting ? activePresetSetting() : null;
+  const [ activePreset, setActivePreset ] = useState( activePresetValue );
+
   const resetActivePreset = useCallback( () => { setActivePreset( null ) }, [] );
 
-  const updateSource = ( newValue ) => {
+  useEffect( () => {
 
+    wp.customize( 'sm_color_palette_in_use', setting => {
+      setting.set( activePreset === null );
+    } );
+
+    wp.customize( 'sm_is_custom_color_palette', setting => {
+      setting.set( activePreset === null );
+    } );
+
+  }, [ activePreset ] );
+
+  const updateSource = ( newValue ) => {
     wp.customize( sourceSettingID, setting => {
       setting.set( getValueFromColors( newValue ) );
     } );
