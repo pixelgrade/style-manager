@@ -63,10 +63,6 @@ const PalettePreview = ( props ) => {
   }
 
   useEffect( () => {
-    setLastHover( sourceIndex );
-  }, [ palette ] );
-
-  useEffect( () => {
     // Attach the listeners on component mount.
     siteVariationSetting.bind( onSiteVariationChange );
 
@@ -104,8 +100,8 @@ const PalettePreview = ( props ) => {
               return (
                 <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
                      onMouseEnter={ () => {
-                       setLastHover( index );
                        setActivePalette( id );
+                       setLastHover( index );
                      } }>
                   <PalettePreviewGrade { ...passedProps } />
                 </div>
