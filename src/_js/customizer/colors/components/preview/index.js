@@ -63,6 +63,10 @@ const PalettePreview = ( props ) => {
   }
 
   useEffect( () => {
+    setLastHover( sourceIndex );
+  }, [ colors ] );
+
+  useEffect( () => {
     // Attach the listeners on component mount.
     siteVariationSetting.bind( onSiteVariationChange );
 
