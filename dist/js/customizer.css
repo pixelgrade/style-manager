@@ -1655,9 +1655,14 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
   text-align: center;
   border-radius: 50%;
   color: var(--sm-color-palette-neutral-color-2);
+  transform: rotate(0deg);
+  transition: all 0.3s;
 }
 #customize-theme-controls #accordion-section-sm_color_palettes_section > .accordion-section-title:before {
-  background: conic-gradient(from 180deg at 50% 50%, #020031 0deg, #090035 4.68deg, #2B045E 29.09deg, #3E0578 37.08deg, #7708BE 64.88deg, #C80EEC 108.66deg, #E839DE 147.4deg, #F35AAA 159.09deg, #F8668A 168.49deg, #FFA290 179.83deg, #FE8E68 180deg, #FF8134 191.01deg, #FFB97D 192deg, #F7BD4F 206.51deg, #F3C07A 219.02deg, #EBD4C3 226.4deg, #DEDFE3 246.49deg, #D8E7F8 269.42deg, #94D7FC 277.72deg, rgba(0, 156, 233, 0.87) 306.55deg, #0058AA 322.31deg, #02205D 343.18deg, #020031 360deg);
+  background: conic-gradient(from 180deg at 50% 50%, #020031 0deg, #090035 4.68deg, #2B045E 29.09deg, #3E0578 37.08deg, #7708BE 64.88deg, #C80EEC 108.66deg, #E839DE 147.4deg, #F35AAA 159.09deg, #F8668A 168.49deg, #FFA290 179.83deg, #FE8E68 180.64deg, #FF8134 191.01deg, #FFB97D 199.96deg, #F7BD4F 206.51deg, #F3C07A 219.02deg, #EBD4C3 226.4deg, #DEDFE3 246.49deg, #D8E7F8 269.42deg, #94D7FC 277.72deg, rgba(0, 156, 233, 0.87) 306.55deg, #0058AA 322.31deg, #02205D 343.18deg, #020031 360deg);
+}
+#customize-theme-controls #accordion-section-sm_color_palettes_section:hover > .accordion-section-title:before {
+  transform: rotate(30deg);
 }
 #customize-theme-controls #accordion-section-sm_font_palettes_section > .accordion-section-title:before {
   background-color: var(--sm-color-palette-accent-color-10);
@@ -1668,6 +1673,9 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
 }
 #customize-theme-controls #accordion-section-sm_spacing_section > .accordion-section-title:before {
   background: linear-gradient(180deg, var(--sm-color-palette-accent-color-4) 35%, transparent 35%, transparent 65%, var(--sm-color-palette-accent-color-6) 65%);
+}
+#customize-theme-controls #accordion-section-sm_spacing_section:hover .accordion-section-title:before {
+  background: linear-gradient(180deg, var(--sm-color-palette-accent-color-4) 45%, transparent 45%, transparent 55%, var(--sm-color-palette-accent-color-6) 55%);
 }
 
 .wp-full-overlay-sidebar, .wp-full-overlay-sidebar *, .wp-full-overlay-sidebar *:before, .wp-full-overlay-sidebar *:after {
@@ -1710,7 +1718,7 @@ and other section use the available space
 #customize-control-sm_advanced_palette_source_control > div > .sm-group:last-child > .sm-blinds--open > .sm-blinds__body {
   flex: 1 0 0;
   overflow: auto;
-  min-height: 200px;
+  min-height: 250px;
 }
 
 /* Remove customizer transitions on complex navigation to avoid confusing the user */
