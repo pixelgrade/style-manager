@@ -798,12 +798,17 @@ class ColorPalettes extends AbstractHookProvider {
 	 */
 	protected function add_palettes_to_site_data( array $site_data ): array {
 
-		if ( empty( $site_data['color_palettes'] ) ) {
-			$site_data['color_palettes'] = [];
+		if ( empty( $site_data['color_palettes_v2'] ) ) {
+			$site_data['color_palettes_v2'] = [];
 		}
 
 		// If others have added data before us, we will merge with it.
-		$site_data['color_palettes'] = array_merge( $site_data['color_palettes'], [] );
+		// @todo Add actual data here.
+		$site_data['color_palettes_v2'] = array_merge( $site_data['color_palettes_v2'], [
+			'current'   => false,
+			'variation' => false,
+			'custom'    => false,
+		] );
 
 		return $site_data;
 	}
