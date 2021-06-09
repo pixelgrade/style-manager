@@ -46,7 +46,6 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'hooks.rewrite_rules' ) )
 			->register_hooks( $container->get( 'hooks.general_assets' ) )
 			->register_hooks( $container->get( 'hooks.customizer_assets' ) )
-			->register_hooks( $container->get( 'hooks.frontend_output' ) )
 			// @todo We should investigate if we could register these only in the Customizer.
 			->register_hooks( $container->get( 'customize.cloud_fonts' ) )
 			->register_hooks( $container->get( 'customize.color_palettes' ) )
@@ -71,6 +70,8 @@ class Plugin extends BasePlugin implements Composable {
 			if ( is_customizer() ) {
 				$this->register_hooks( $container->get( 'screen.customizer.search' ) );
 			}
+		} else {
+			$this->register_hooks( $container->get( 'hooks.frontend_output' ) );
 		}
 
 		// Only in the Customizer Preview.

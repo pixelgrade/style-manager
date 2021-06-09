@@ -299,6 +299,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	}
 
 	protected function enqueue_style_manager_scripts() {
+		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
 		wp_enqueue_script( 'sm-dark-mode' );
 	}
 
