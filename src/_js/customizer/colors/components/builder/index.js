@@ -36,7 +36,7 @@ const Builder = ( props ) => {
   useEffect( () => {
 
     wp.customize( 'sm_color_palette_in_use', setting => {
-      setting.set( activePreset === null );
+      setting.set( activePreset );
     } );
 
     wp.customize( 'sm_is_custom_color_palette', setting => {
