@@ -83,11 +83,6 @@ class ColorPalettes extends AbstractHookProvider {
 		 */
 		$this->add_action( 'customize_controls_enqueue_scripts', 'enqueue_admin_customizer_scripts', 10 );
 
-		/*
-		 * Handle the logic on settings update/save.
-		 */
-		$this->add_action( 'customize_save_after', 'update_custom_palette_in_use', 10, 1 );
-
 		/**
 		 * Add color palettes usage to site data.
 		 */
@@ -744,6 +739,7 @@ class ColorPalettes extends AbstractHookProvider {
 		// We need to split the fields in the Style Manager section into two: color palettes and fonts.
 		$color_palettes_fields = [
 			'sm_advanced_palette_source',
+			self::SM_COLOR_PALETTE_OPTION_KEY,
 			'sm_advanced_palette_output',
 
 			'sm_dark_color_switch_slider',
@@ -843,40 +839,6 @@ class ColorPalettes extends AbstractHookProvider {
 	 */
 	protected function get_current_palette_variation() {
 		return get_option( self::SM_COLOR_PALETTE_VARIATION_OPTION_KEY, false );
-	}
-
-	/**
-	 * Determine if the selected font palette has been customized and remember this in an option.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @return bool
-	 */
-	protected function update_custom_palette_in_use(): bool {
-		// If there is no style manager support, bail early.
-		if ( ! $this->is_supported() ) {
-			return false;
-		}
-
-		$current_palette = $this->get_current_palette();
-		if ( empty( $current_palette ) ) {
-			return false;
-		}
-
-		$color_palettes = $this->get_palettes();
-		if ( ! isset( $color_palettes[ $current_palette ] ) || empty( $color_palettes[ $current_palette ]['color_groups'] ) ) {
-			return false;
-		}
-
-		$is_custom_palette = false;
-
-		// @todo Determine if a custom color palette is in use.
-
-		update_option( self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY, $is_custom_palette, true );
-
-		do_action( 'style_manager/updated_custom_color_palette_in_use', $is_custom_palette );
-
-		return true;
 	}
 
 	/**
