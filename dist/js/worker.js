@@ -1,32 +1,241 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (function() { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
+var __webpack_exports__ = {};
+importScripts('../../vendor_js/chroma.min.js');
 
-/***/ "./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0].use!./src/_js/customizer/colors/components/dropzone/worker.js":
-/*!***********************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0].use!./src/_js/customizer/colors/components/dropzone/worker.js ***!
-  \***********************************************************************************************************************************/
-/***/ (function() {
+function sendPalette(label, colors) {
+  self.postMessage({
+    // eslint-disable-line no-restricted-globals
+    type: 'palette',
+    label: label,
+    colors: colors
+  });
+}
 
-eval("importScripts('../../vendor_js/chroma.min.js');\n\nfunction sendPalette(label, colors) {\n  self.postMessage({\n    // eslint-disable-line no-restricted-globals\n    type: 'palette',\n    label: label,\n    colors: colors\n  });\n}\n\naddEventListener('message', function (event) {\n  // eslint-disable-line no-restricted-globals\n  var points = getDataArrayFromImage(event.data.imageData);\n  var clusters = getClusters(points, 5, 10);\n  clusters.sort(function (cluster1, cluster2) {\n    return cluster1.points.length > cluster2.points.length ? -1 : 1;\n  });\n  clusters.splice(3);\n  var palette = clusters.map(function (cluster) {\n    return chroma(cluster.centroid, 'lab').rgb();\n  });\n  sendPalette('Palette', palette);\n});\n\nvar getLuminance = function getLuminance(rgb) {\n  return Number((0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]).toFixed(3));\n};\n\nfunction getDataArrayFromImage(imageData, width, height) {\n  var rgbArray = [];\n  var i,\n      j,\n      temparray,\n      chunk = 4,\n      col = 0,\n      row = 0;\n\n  for (i = 0, j = imageData.length; i < j; i += chunk) {\n    temparray = imageData.slice(i, i + chunk);\n\n    if (temparray[3] !== 0) {\n      var color = chroma([temparray[0], temparray[1], temparray[2]]);\n      var point = color.lab();\n\n      if (color.luminance() > 0.05) {\n        rgbArray.push(point);\n      }\n    }\n\n    if (col < width - 1) {\n      col = col + 1;\n    } else {\n      col = 0;\n      row = row + 1;\n    }\n  }\n\n  return rgbArray;\n}\n\nfunction getClusters(array) {\n  var k = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;\n  var iterations = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;\n  // clusters count\n  clusterMaker.k(k); // eslint-disable-line no-undef\n  // iterations (more means more precision but longer time to process)\n\n  clusterMaker.iterations(iterations); // eslint-disable-line no-undef\n  // set data\n\n  clusterMaker.data(array); // eslint-disable-line no-undef\n  // get clusters\n\n  return clusterMaker.clusters();\n}\n\nvar clusterMaker = {\n  data: getterSetter([], function (arrayOfArrays) {\n    var n = arrayOfArrays[0].length;\n    return arrayOfArrays.map(function (array) {\n      return array.length === n;\n    }).reduce(function (boolA, boolB) {\n      return boolA & boolB;\n    }, true);\n  }),\n  clusters: function clusters() {\n    var pointsAndCentroids = kmeans(this.data(), {\n      k: this.k(),\n      iterations: this.iterations()\n    });\n    var points = pointsAndCentroids.points;\n    var centroids = pointsAndCentroids.centroids;\n    return centroids.map(function (centroid) {\n      return {\n        centroid: centroid.location(),\n        points: points.filter(function (point) {\n          return point.label() === centroid.label();\n        }).map(function (point) {\n          return point.location();\n        })\n      };\n    });\n  },\n  k: getterSetter(undefined, function (value) {\n    return value % 1 === 0 & value > 0;\n  }),\n  iterations: getterSetter(Math.pow(10, 3), function (value) {\n    return value % 1 === 0 & value > 0;\n  })\n};\n\nfunction kmeans(data, config) {\n  // default k\n  var k = config.k || Math.round(Math.sqrt(data.length / 2));\n  var iterations = config.iterations; // initialize point objects with data\n\n  var points = data.map(function (vector) {\n    return new Point(vector);\n  }); // intialize centroids randomly\n\n  var centroids = [];\n\n  for (var i = 0; i < k; i++) {\n    centroids.push(new Centroid(points[i % points.length].location(), i));\n  }\n\n  ; // update labels and centroid locations until convergence\n\n  for (var iter = 0; iter < iterations; iter++) {\n    points.forEach(function (point) {\n      point.updateLabel(centroids);\n    });\n    centroids.forEach(function (centroid) {\n      centroid.updateLocation(points);\n    });\n  }\n\n  ; // return points and centroids\n\n  return {\n    points: points,\n    centroids: centroids\n  };\n}\n\n; // objects\n\nfunction Point(location) {\n  var self = this;\n  this.location = getterSetter(location);\n  this.label = getterSetter();\n\n  this.updateLabel = function (centroids) {\n    var distancesSquared = centroids.map(function (centroid) {\n      return sumOfSquareDiffs(self.location(), centroid.location());\n    });\n    self.label(mindex(distancesSquared));\n  };\n}\n\n;\n\nfunction Centroid(initialLocation, label) {\n  var self = this;\n  this.location = getterSetter(initialLocation);\n  this.label = getterSetter(label);\n\n  this.updateLocation = function (points) {\n    var pointsWithThisCentroid = points.filter(function (point) {\n      return point.label() === self.label();\n    });\n    if (pointsWithThisCentroid.length > 0) self.location(averageLocation(pointsWithThisCentroid));\n  };\n}\n\n; // convenience functions\n\nfunction getterSetter(initialValue, validator) {\n  var thingToGetSet = initialValue;\n\n  var isValid = validator || function (val) {\n    return true;\n  };\n\n  return function (newValue) {\n    if (typeof newValue === 'undefined') return thingToGetSet;\n    if (isValid(newValue)) thingToGetSet = newValue;\n  };\n}\n\n;\n\nfunction sumOfSquareDiffs(oneVector, anotherVector) {\n  var squareDiffs = oneVector.map(function (component, i) {\n    return Math.pow(component - anotherVector[i], 2);\n  });\n  return squareDiffs.reduce(function (a, b) {\n    return a + b;\n  }, 0);\n}\n\n;\n\nfunction mindex(array) {\n  var min = array.reduce(function (a, b) {\n    return Math.min(a, b);\n  });\n  return array.indexOf(min);\n}\n\n;\n\nfunction sumVectors(a, b) {\n  return a.map(function (val, i) {\n    return val + b[i];\n  });\n}\n\n;\n\nfunction averageLocation(points) {\n  var zeroVector = points[0].location().map(function () {\n    return 0;\n  });\n  var locations = points.map(function (point) {\n    return point.location();\n  });\n  var vectorSum = locations.reduce(function (a, b) {\n    return sumVectors(a, b);\n  }, zeroVector);\n  return vectorSum.map(function (val) {\n    return val / points.length;\n  });\n}\n\n;\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/dropzone/worker.js?./node_modules/babel-loader/lib/index.js??ruleSet%5B1%5D.rules%5B0%5D.use");
+addEventListener('message', function (event) {
+  // eslint-disable-line no-restricted-globals
+  var points = getDataArrayFromImage(event.data.imageData);
+  var clusters = getClusters(points, 5, 10);
+  clusters.sort(function (cluster1, cluster2) {
+    return cluster1.points.length > cluster2.points.length ? -1 : 1;
+  });
+  clusters.splice(3);
+  var palette = clusters.map(function (cluster) {
+    return chroma(cluster.centroid, 'lab').rgb();
+  });
+  sendPalette('Palette', palette);
+});
 
-/***/ })
+var getLuminance = function getLuminance(rgb) {
+  return Number((0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]).toFixed(3));
+};
 
-/******/ 	});
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./node_modules/babel-loader/lib/index.js??ruleSet[1].rules[0].use!./src/_js/customizer/colors/components/dropzone/worker.js"]();
-/******/ 	
+function getDataArrayFromImage(imageData, width, height) {
+  var rgbArray = [];
+  var i,
+      j,
+      temparray,
+      chunk = 4,
+      col = 0,
+      row = 0;
+
+  for (i = 0, j = imageData.length; i < j; i += chunk) {
+    temparray = imageData.slice(i, i + chunk);
+
+    if (temparray[3] !== 0) {
+      var color = chroma([temparray[0], temparray[1], temparray[2]]);
+      var point = color.lab();
+
+      if (color.luminance() > 0.05) {
+        rgbArray.push(point);
+      }
+    }
+
+    if (col < width - 1) {
+      col = col + 1;
+    } else {
+      col = 0;
+      row = row + 1;
+    }
+  }
+
+  return rgbArray;
+}
+
+function getClusters(array) {
+  var k = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+  var iterations = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
+  // clusters count
+  clusterMaker.k(k); // eslint-disable-line no-undef
+  // iterations (more means more precision but longer time to process)
+
+  clusterMaker.iterations(iterations); // eslint-disable-line no-undef
+  // set data
+
+  clusterMaker.data(array); // eslint-disable-line no-undef
+  // get clusters
+
+  return clusterMaker.clusters();
+}
+
+var clusterMaker = {
+  data: getterSetter([], function (arrayOfArrays) {
+    var n = arrayOfArrays[0].length;
+    return arrayOfArrays.map(function (array) {
+      return array.length === n;
+    }).reduce(function (boolA, boolB) {
+      return boolA & boolB;
+    }, true);
+  }),
+  clusters: function clusters() {
+    var pointsAndCentroids = kmeans(this.data(), {
+      k: this.k(),
+      iterations: this.iterations()
+    });
+    var points = pointsAndCentroids.points;
+    var centroids = pointsAndCentroids.centroids;
+    return centroids.map(function (centroid) {
+      return {
+        centroid: centroid.location(),
+        points: points.filter(function (point) {
+          return point.label() === centroid.label();
+        }).map(function (point) {
+          return point.location();
+        })
+      };
+    });
+  },
+  k: getterSetter(undefined, function (value) {
+    return value % 1 === 0 & value > 0;
+  }),
+  iterations: getterSetter(Math.pow(10, 3), function (value) {
+    return value % 1 === 0 & value > 0;
+  })
+};
+
+function kmeans(data, config) {
+  // default k
+  var k = config.k || Math.round(Math.sqrt(data.length / 2));
+  var iterations = config.iterations; // initialize point objects with data
+
+  var points = data.map(function (vector) {
+    return new Point(vector);
+  }); // intialize centroids randomly
+
+  var centroids = [];
+
+  for (var i = 0; i < k; i++) {
+    centroids.push(new Centroid(points[i % points.length].location(), i));
+  }
+
+  ; // update labels and centroid locations until convergence
+
+  for (var iter = 0; iter < iterations; iter++) {
+    points.forEach(function (point) {
+      point.updateLabel(centroids);
+    });
+    centroids.forEach(function (centroid) {
+      centroid.updateLocation(points);
+    });
+  }
+
+  ; // return points and centroids
+
+  return {
+    points: points,
+    centroids: centroids
+  };
+}
+
+; // objects
+
+function Point(location) {
+  var self = this;
+  this.location = getterSetter(location);
+  this.label = getterSetter();
+
+  this.updateLabel = function (centroids) {
+    var distancesSquared = centroids.map(function (centroid) {
+      return sumOfSquareDiffs(self.location(), centroid.location());
+    });
+    self.label(mindex(distancesSquared));
+  };
+}
+
+;
+
+function Centroid(initialLocation, label) {
+  var self = this;
+  this.location = getterSetter(initialLocation);
+  this.label = getterSetter(label);
+
+  this.updateLocation = function (points) {
+    var pointsWithThisCentroid = points.filter(function (point) {
+      return point.label() === self.label();
+    });
+    if (pointsWithThisCentroid.length > 0) self.location(averageLocation(pointsWithThisCentroid));
+  };
+}
+
+; // convenience functions
+
+function getterSetter(initialValue, validator) {
+  var thingToGetSet = initialValue;
+
+  var isValid = validator || function (val) {
+    return true;
+  };
+
+  return function (newValue) {
+    if (typeof newValue === 'undefined') return thingToGetSet;
+    if (isValid(newValue)) thingToGetSet = newValue;
+  };
+}
+
+;
+
+function sumOfSquareDiffs(oneVector, anotherVector) {
+  var squareDiffs = oneVector.map(function (component, i) {
+    return Math.pow(component - anotherVector[i], 2);
+  });
+  return squareDiffs.reduce(function (a, b) {
+    return a + b;
+  }, 0);
+}
+
+;
+
+function mindex(array) {
+  var min = array.reduce(function (a, b) {
+    return Math.min(a, b);
+  });
+  return array.indexOf(min);
+}
+
+;
+
+function sumVectors(a, b) {
+  return a.map(function (val, i) {
+    return val + b[i];
+  });
+}
+
+;
+
+function averageLocation(points) {
+  var zeroVector = points[0].location().map(function () {
+    return 0;
+  });
+  var locations = points.map(function (point) {
+    return point.location();
+  });
+  var vectorSum = locations.reduce(function (a, b) {
+    return sumVectors(a, b);
+  }, zeroVector);
+  return vectorSum.map(function (val) {
+    return val / points.length;
+  });
+}
+
+;
 /******/ })()
 ;

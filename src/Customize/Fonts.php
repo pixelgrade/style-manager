@@ -53,6 +53,16 @@ class Fonts extends AbstractHookProvider {
 	protected array $cloud_fonts = [];
 
 	/**
+	 * The third-party fonts list.
+	 *
+	 * These are fonts that can be populated by other plugins (like Fonto).
+	 *
+	 * @since    2.0.0
+	 * @var      array
+	 */
+	protected $third_party_fonts = [];
+
+	/**
 	 * The font categories list.
 	 * @since    2.0.0
 	 * @var      array
@@ -142,6 +152,16 @@ class Fonts extends AbstractHookProvider {
 		/*
 		 * Gather all fonts, by type.
 		 */
+
+		$this->third_party_fonts = FontsHelper::standardizeFontsList( apply_filters( 'style_manager/third_party_fonts', [] ) );
+		// Add the fonts to selects of the Customizer controls.
+		// Since these are quite advanced fonts, we will put them first since the user went through all that trouble for a reason.
+		if ( ! empty( $this->third_party_fonts ) ) {
+			add_action( 'style_manager/font_family_select_before_options', array(
+				$this,
+				'output_third_party_fonts_select_options_group',
+			), 15, 2 );
+		}
 
 		if ( $this->plugin_settings->get( 'typography_cloud_fonts', 'yes' ) ) {
 			$this->cloud_fonts = FontsHelper::standardizeFontsList( apply_filters( 'style_manager/cloud_fonts', [] ) );
@@ -475,6 +495,10 @@ class Fonts extends AbstractHookProvider {
 		return $this->cloud_fonts;
 	}
 
+	public function get_third_party_fonts() {
+		return $this->third_party_fonts;
+	}
+
 	public function get_categories(): array {
 		return $this->categories;
 	}
@@ -497,11 +521,36 @@ class Fonts extends AbstractHookProvider {
 					return $this->system_fonts[ $font_family ];
 				}
 				break;
+			case 'third_party_font':
+				if ( isset( $this->third_party_fonts[ $font_family ] ) ) {
+					return $this->third_party_fonts[ $font_family ];
+				}
+				break;
 			default:
 				return [];
 		}
 
 		return [];
+	}
+
+	function output_third_party_fonts_select_options_group( $active_font_family, $current_value ) {
+		// Allow others to add options here
+		do_action( 'style_manager/font_family_before_third_party_fonts_options', $active_font_family, $current_value );
+
+		if ( ! empty( $this->third_party_fonts ) ) {
+			$group_label = apply_filters( 'style_manager/third_party_font_group_label', esc_html__( 'Third-Party Fonts', '__plugin_txtd' ), $active_font_family, $current_value );
+			echo '<optgroup label="' . esc_attr( $group_label ) . '">';
+			foreach ( $this->get_third_party_fonts() as $font ) {
+				if ( ! empty( $font['family'] ) ) {
+					// Display the select option's HTML.
+					$this->output_font_family_option( $font['family'], $active_font_family );
+				}
+			}
+			echo "</optgroup>";
+		}
+
+		// Allow others to add options here
+		do_action( 'style_manager/font_family_after_third_party_fonts_options', $active_font_family, $current_value );
 	}
 
 	public function output_cloud_fonts_select_options_group( $active_font_family, $current_value ) {
@@ -583,7 +632,7 @@ class Fonts extends AbstractHookProvider {
 	 * @param string|false $active_font_family Optional. The active font family to add the selected attribute to the appropriate opt.
 	 *                                         False to not mark any opt as selected.
 	 */
-	protected function output_font_family_option( $font_family, $active_font_family = false ) {
+	public function output_font_family_option( $font_family, $active_font_family = false ) {
 		echo $this->get_font_family_option_markup( $font_family, $active_font_family );
 	}
 
@@ -1388,49 +1437,49 @@ class Fonts extends AbstractHookProvider {
 		}
 
 		ob_start(); ?>
-const styleManagerFontLoader = function() {
-	const webfontargs = {
+		const styleManagerFontLoader = function() {
+		const webfontargs = {
 		classes: true,
 		events: true,
 		loading: function() {
-			window.dispatchEvent(new Event('wf-loading'));
+		window.dispatchEvent(new Event('wf-loading'));
 		},
 		active: function() {
-			window.dispatchEvent(new Event('wf-active'));
+		window.dispatchEvent(new Event('wf-active'));
 		},
 		inactive: function() {
-			window.dispatchEvent(new Event('wf-inactive'));
-			// Since we rely on this event to show text, if [all] the webfonts have failed, we still want to let the browser handle it.
-			// So we set the .wf-active class on the html element.
-			document.getElementByTag('html')[0].classList.add('wf-active');
+		window.dispatchEvent(new Event('wf-inactive'));
+		// Since we rely on this event to show text, if [all] the webfonts have failed, we still want to let the browser handle it.
+		// So we set the .wf-active class on the html element.
+		document.getElementByTag('html')[0].classList.add('wf-active');
 		}
-	};
-<?php if ( ! empty( $args['google_families'] ) ) { ?>
-	webfontargs.google = {
-		families: [<?php echo join( ',', $args['google_families'] ); ?>]
-	};
-<?php }
+		};
+		<?php if ( ! empty( $args['google_families'] ) ) { ?>
+			webfontargs.google = {
+			families: [<?php echo join( ',', $args['google_families'] ); ?>]
+			};
+		<?php }
 
-$custom_families = [];
-$custom_urls     = [];
+		$custom_families = [];
+		$custom_urls     = [];
 
-if ( ! empty( $args['custom_families'] ) && ! empty( $args['custom_srcs'] ) ) {
-	$custom_families += $args['custom_families'];
-	$custom_urls     += $args['custom_srcs'];
-}
+		if ( ! empty( $args['custom_families'] ) && ! empty( $args['custom_srcs'] ) ) {
+			$custom_families += $args['custom_families'];
+			$custom_urls     += $args['custom_srcs'];
+		}
 
-if ( ! empty( $custom_families ) && ! empty( $custom_urls ) ) { ?>
-	webfontargs.custom = {
-		families: [<?php echo join( ',', $custom_families ); ?>],
-		urls: [<?php echo join( ',', $custom_urls ) ?>]
-	};
-<?php } ?>
-	WebFont.load(webfontargs);
-};
+		if ( ! empty( $custom_families ) && ! empty( $custom_urls ) ) { ?>
+			webfontargs.custom = {
+			families: [<?php echo join( ',', $custom_families ); ?>],
+			urls: [<?php echo join( ',', $custom_urls ) ?>]
+			};
+		<?php } ?>
+		WebFont.load(webfontargs);
+		};
 
-if (typeof WebFont !== 'undefined') {
-	styleManagerFontLoader();
-}<?php
+		if (typeof WebFont !== 'undefined') {
+		styleManagerFontLoader();
+		}<?php
 		$output = ob_get_clean();
 
 		return apply_filters( 'style_manager/fonts_webfont_script', $output );
@@ -1503,11 +1552,12 @@ if (typeof WebFont !== 'undefined') {
 
 		$localized['fonts']['floatPrecision'] = FontsHelper::FLOAT_PRECISION;
 
-		$localized['fonts']['theme_fonts']  = $this->get_theme_fonts();
-		$localized['fonts']['cloud_fonts']  = $this->get_cloud_fonts();
-		$localized['fonts']['google_fonts'] = $this->get_google_fonts();
-		$localized['fonts']['system_fonts'] = $this->get_system_fonts();
-		$localized['fonts']['categories']   = $this->get_categories();
+		$localized['fonts']['third_party_fonts'] = $this->get_third_party_fonts();
+		$localized['fonts']['theme_fonts']       = $this->get_theme_fonts();
+		$localized['fonts']['cloud_fonts']       = $this->get_cloud_fonts();
+		$localized['fonts']['google_fonts']      = $this->get_google_fonts();
+		$localized['fonts']['system_fonts']      = $this->get_system_fonts();
+		$localized['fonts']['categories']        = $this->get_categories();
 
 		if ( empty( $localized['l10n'] ) ) {
 			$localized['l10n'] = [];
@@ -1591,19 +1641,21 @@ if (typeof WebFont !== 'undefined') {
 	/**
 	 * Determine a font type based on its font family.
 	 *
-	 * We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, system fonts.
+	 * We will follow a stack in the following order: third-party fonts, cloud fonts, theme fonts, Google fonts, system fonts.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param string $fontFamily
 	 *
-	 * @return string The font type: google_font, theme_font, cloud_font, or system_font.
+	 * @return string The font type: third_party_font, cloud_font, theme_font, google_font, or system_font.
 	 */
 	public function determineFontType( string $fontFamily ): string {
 		// The default is a standard font (aka no special loading or processing).
 		$fontType = 'system_font';
 
-		if ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
+		if ( ! empty( $this->third_party_fonts[ $fontFamily ] ) ) {
+			$fontType = 'third_party_font';
+		} elseif ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
 			$fontType = 'cloud_font';
 		} elseif ( ! empty( $this->theme_fonts[ $fontFamily ] ) ) {
 			$fontType = 'theme_font';

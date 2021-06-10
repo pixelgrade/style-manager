@@ -197,13 +197,11 @@ class Font extends BaseControl {
 					        class="style-manager_font_family"<?php echo $select_data; ?> data-value_entry="font_family">
 
 						<?php
-						// Allow others to add options here. This is mostly for backwards compatibility purposes.
-						do_action( 'customify_font_family_before_options', $current_font_family, $current_value, $this->id );
+						do_action( 'style_manager/font_family_select_before_options', $current_font_family, $current_value, $this->id );
 
 						do_action( 'style_manager/font_family_select_options', $current_font_family, $current_value, $this->id );
 
-						// Allow others to add options here. This is mostly for backwards compatibility purposes.
-						do_action( 'customify_font_family_after_options', $current_font_family, $current_value, $this->id ); ?>
+						do_action( 'style_manager/font_family_select_after_options', $current_font_family, $current_value, $this->id ); ?>
 
 					</select>
 				</li>

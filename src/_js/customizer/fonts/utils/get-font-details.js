@@ -21,6 +21,11 @@ export const getFontDetails = function( fontFamily, fontType = false ) {
         return styleManager.fonts.system_fonts[fontFamily]
       }
       break
+    case 'third_party_font':
+      if ( typeof styleManager.fonts.third_party_fonts[fontFamily] !== 'undefined' ) {
+        return styleManager.fonts.third_party_fonts[fontFamily]
+      }
+      break
     default:
   }
 

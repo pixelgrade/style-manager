@@ -1,821 +1,1691 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/_js/customizer/colors/color-palette-builder/index.js":
-/*!******************************************************************!*\
-  !*** ./src/_js/customizer/colors/color-palette-builder/index.js ***!
-  \******************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initializePaletteBuilder\": function() { return /* binding */ initializePaletteBuilder; }\n/* harmony export */ });\n/* harmony import */ var _components_builder__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/builder */ \"./src/_js/customizer/colors/components/builder/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ \"react-dom\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);\n\n\n\nvar initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID, outputSettingID) {\n  var containerID = \"customize-control-\".concat(sourceSettingID, \"_control\");\n  var container = document.getElementById(containerID);\n  var target = document.createElement('DIV');\n\n  if (typeof container === \"undefined\") {\n    return;\n  }\n\n  container.children.forEach(function (child) {\n    child.style.display = 'none';\n  });\n  container.insertBefore(target, container.firstChild);\n  react_dom__WEBPACK_IMPORTED_MODULE_1___default().render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_builder__WEBPACK_IMPORTED_MODULE_2__.Builder, {\n    sourceSettingID: sourceSettingID,\n    outputSettingID: outputSettingID\n  }), target);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/color-palette-builder/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/color-palettes-preview/index.js":
-/*!*******************************************************************!*\
-  !*** ./src/_js/customizer/colors/color-palettes-preview/index.js ***!
-  \*******************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/color-palettes-preview/style.scss\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom */ \"react-dom\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _components_overlay__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/overlay */ \"./src/_js/customizer/colors/components/overlay/index.js\");\n/* harmony import */ var _components_preview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/preview */ \"./src/_js/customizer/colors/components/preview/index.js\");\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\n\n\nvar PreviewTabs = function PreviewTabs(props) {\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)('site'),\n      _useState2 = _slicedToArray(_useState, 2),\n      active = _useState2[0],\n      setActive = _useState2[1];\n\n  var previewdDevice = wp.customize.previewedDevice.get();\n\n  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(previewdDevice === 'desktop'),\n      _useState4 = _slicedToArray(_useState3, 2),\n      visible = _useState4[0],\n      setVisible = _useState4[1];\n\n  var previewRef = (0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)();\n  var previewHeaderRef = (0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)();\n  var setting = wp.customize('sm_advanced_palette_output');\n  var tabs = [{\n    id: 'site',\n    label: 'Live site'\n  }, {\n    id: 'colors',\n    label: 'Color system',\n    callback: function callback() {\n      wp.customize.section('sm_color_palettes_section', function (section) {\n        section.focus();\n      });\n    }\n  }];\n  wp.customize.section('sm_color_palettes_section', function (section) {\n    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n      var callback = function callback(expanded) {\n        if (expanded) {\n          setActive('colors');\n        }\n      };\n\n      section.expanded.bind(callback);\n      return function () {\n        section.expanded.unbind(callback);\n      };\n    });\n  });\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    var _window, _window$sm, _window$sm$customizer;\n\n    var previewResizer = (_window = window) === null || _window === void 0 ? void 0 : (_window$sm = _window.sm) === null || _window$sm === void 0 ? void 0 : (_window$sm$customizer = _window$sm.customizer) === null || _window$sm$customizer === void 0 ? void 0 : _window$sm$customizer.resizer;\n\n    if (!previewResizer) {\n      return;\n    }\n\n    var top = previewHeaderRef.current.offsetHeight;\n    var style = getComputedStyle(previewRef.current, null);\n    var left = parseFloat(style.left.replace(\"px\", \"\"));\n    var right = parseFloat(style.right.replace(\"px\", \"\"));\n    previewResizer.setOffset({\n      top: top,\n      right: right,\n      bottom: 0,\n      left: left\n    });\n    previewResizer.resize();\n  }, []);\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    var callback = function callback(previewdDevice) {\n      setVisible(previewdDevice === 'desktop');\n    };\n\n    wp.customize.previewedDevice.bind(callback);\n    return function () {\n      wp.customize.previewedDevice.unbind(callback);\n    };\n  }, []);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-preview \".concat(visible ? 'sm-preview--visible' : ''),\n    ref: previewRef\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-preview__header\",\n    ref: previewHeaderRef\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-preview__tabs\"\n  }, tabs.map(function (tab) {\n    var isActive = active === tab.id;\n\n    var noop = function noop() {};\n\n    var callback = typeof tab.callback === 'function' ? tab.callback : noop;\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n      key: tab.id,\n      className: \"sm-preview__tab \".concat(isActive ? 'sm-preview__tab--active' : ''),\n      onClick: function onClick() {\n        setActive(tab.id);\n        callback();\n      }\n    }, tab.label);\n  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-preview__content\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(ColorsOverlay, {\n    show: active === 'colors',\n    setting: setting\n  })));\n};\n\nvar initializePreview = function initializePreview() {\n  wp.customize.bind('ready', function () {\n    wp.customize.panel('style_manager_panel', function (smPanel) {\n      wp.customize.section('sm_color_palettes_section', function (smColorsSection) {\n        wp.customize.previewer.bind('ready', function () {\n          var iframe = document.querySelector('#customize-preview iframe');\n\n          if (!iframe) {\n            return;\n          }\n\n          var smPreviewTabs = document.createElement('div');\n          iframe.insertAdjacentElement('beforebegin', smPreviewTabs);\n          react_dom__WEBPACK_IMPORTED_MODULE_2___default().render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(PreviewTabs, {\n            smPanel: smPanel\n          }), smPreviewTabs);\n        });\n      });\n    });\n  });\n};\n\nvar ColorsOverlay = function ColorsOverlay(props) {\n  var setting = props.setting,\n      show = props.show;\n\n  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(JSON.parse(setting())),\n      _useState6 = _slicedToArray(_useState5, 2),\n      palettes = _useState6[0],\n      setPalettes = _useState6[1];\n\n  var changeListener = function changeListener(newValue) {\n    setPalettes(JSON.parse(newValue));\n  };\n\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    // Attach the listeners on component mount.\n    setting.bind(changeListener); // Detach the listeners on component unmount.\n\n    return function () {\n      setting.unbind(changeListener);\n    };\n  }, []);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(_components_overlay__WEBPACK_IMPORTED_MODULE_3__.default, {\n    show: show\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(_components_preview__WEBPACK_IMPORTED_MODULE_4__.default, {\n    palettes: palettes\n  }));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (initializePreview);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/color-palettes-preview/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/accordion/index.js":
-/*!*****************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/accordion/index.js ***!
-  \*****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Accordion\": function() { return /* binding */ Accordion; },\n/* harmony export */   \"AccordionSection\": function() { return /* binding */ AccordionSection; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/accordion/style.scss\");\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\nvar Accordion = function Accordion(props) {\n  var sections = react__WEBPACK_IMPORTED_MODULE_0___default().Children.toArray(props.children).filter(function (child) {\n    return child.type === AccordionSection;\n  });\n  var open = sections.findIndex(function (section) {\n    var _section$props;\n\n    return !!(section !== null && section !== void 0 && (_section$props = section.props) !== null && _section$props !== void 0 && _section$props.open);\n  });\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(open),\n      _useState2 = _slicedToArray(_useState, 2),\n      active = _useState2[0],\n      setActive = _useState2[1];\n\n  return sections.map(function (section, index) {\n    var _section$props2 = section.props,\n        title = _section$props2.title,\n        children = _section$props2.children;\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      className: \"sm-blinds sm-blinds--\".concat(active === index ? 'open' : 'closed')\n    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      className: \"sm-blinds__header\",\n      onClick: function onClick() {\n        setActive(active !== index ? index : null);\n      }\n    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      className: \"sm-blinds__title\"\n    }, title), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      className: \"sm-blinds__toggle\"\n    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      className: \"sm-blinds__body\"\n    }, children));\n  });\n};\n\nvar AccordionSection = function AccordionSection(props) {\n  return null;\n};\n\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/accordion/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/builder/index.js":
-/*!***************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/builder/index.js ***!
-  \***************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Builder\": function() { return /* binding */ Builder; },\n/* harmony export */   \"getCSSFromPalettes\": function() { return /* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_1__.getCSSFromPalettes; },\n/* harmony export */   \"getColorsFromInputValue\": function() { return /* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_1__.getColorsFromInputValue; },\n/* harmony export */   \"getPalettesFromColors\": function() { return /* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_1__.getPalettesFromColors; },\n/* harmony export */   \"getValueFromColors\": function() { return /* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_1__.getValueFromColors; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _global_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../global-service */ \"./src/_js/customizer/global-service.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../utils */ \"./src/_js/customizer/utils/use-customize-setting-callback.js\");\n/* harmony import */ var _source_colors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../source-colors */ \"./src/_js/customizer/colors/components/source-colors/index.js\");\n/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../context */ \"./src/_js/customizer/colors/context.js\");\n/* harmony import */ var _dropzone__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../dropzone */ \"./src/_js/customizer/colors/components/dropzone/index.js\");\n/* harmony import */ var _palette_list__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../palette-list */ \"./src/_js/customizer/colors/components/palette-list/index.js\");\n/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../accordion */ \"./src/_js/customizer/colors/components/accordion/index.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/colors/components/builder/utils/index.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js\");\n/* harmony import */ var _svg_customize_colors_usage_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../svg/customize-colors-usage.svg */ \"./src/_js/customizer/svg/customize-colors-usage.svg\");\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nvar Builder = function Builder(props) {\n  var sourceSettingID = props.sourceSettingID,\n      outputSettingID = props.outputSettingID;\n  var sourceSetting = wp.customize(sourceSettingID);\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((0,_utils__WEBPACK_IMPORTED_MODULE_1__.getColorsFromInputValue)(sourceSetting())),\n      _useState2 = _slicedToArray(_useState, 2),\n      config = _useState2[0],\n      setConfig = _useState2[1];\n\n  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),\n      _useState4 = _slicedToArray(_useState3, 2),\n      CSSOutput = _useState4[0],\n      setCSSOutput = _useState4[1];\n\n  var activePresetSetting = wp.customize('sm_color_palette_in_use');\n  var activePresetValue = activePresetSetting ? activePresetSetting() : null;\n\n  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(activePresetValue),\n      _useState6 = _slicedToArray(_useState5, 2),\n      activePreset = _useState6[0],\n      setActivePreset = _useState6[1];\n\n  var resetActivePreset = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {\n    setActivePreset(null);\n  }, []);\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    wp.customize('sm_color_palette_in_use', function (setting) {\n      setting.set(activePreset);\n    });\n    wp.customize('sm_is_custom_color_palette', function (setting) {\n      setting.set(activePreset === null);\n    });\n  }, [activePreset]);\n\n  var updateSource = function updateSource(newValue) {\n    wp.customize(sourceSettingID, function (setting) {\n      setting.set((0,_utils__WEBPACK_IMPORTED_MODULE_1__.getValueFromColors)(newValue));\n    });\n  };\n\n  var onSourceChange = function onSourceChange(newValue) {\n    var newConfig = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.getColorsFromInputValue)(newValue);\n    var newPalettes = (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getPalettesFromColors)(newConfig);\n    setConfig((0,_utils__WEBPACK_IMPORTED_MODULE_1__.getColorsFromInputValue)(newValue));\n    wp.customize(outputSettingID, function (setting) {\n      setting.set(JSON.stringify(newPalettes));\n    });\n  };\n\n  var onOutputChange = function onOutputChange(value) {\n    var palettes = JSON.parse(value);\n    wp.customize('sm_site_color_variation', function (setting) {\n      var variation = setting();\n      setCSSOutput((0,_utils__WEBPACK_IMPORTED_MODULE_3__.getCSSFromPalettes)(palettes, variation));\n    });\n  };\n\n  var onSiteVariationChange = function onSiteVariationChange(newVariation) {\n    wp.customize(outputSettingID, function (setting) {\n      var output = setting();\n      var palettes = JSON.parse(output);\n      setCSSOutput((0,_utils__WEBPACK_IMPORTED_MODULE_3__.getCSSFromPalettes)(palettes, newVariation));\n    });\n  };\n\n  (0,_utils__WEBPACK_IMPORTED_MODULE_4__.default)(sourceSettingID, onSourceChange);\n  (0,_utils__WEBPACK_IMPORTED_MODULE_4__.default)(outputSettingID, onOutputChange);\n  (0,_utils__WEBPACK_IMPORTED_MODULE_4__.default)('sm_site_color_variation', onSiteVariationChange);\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    var callback = function callback(isExpanded) {\n      if (!isExpanded) {\n        (0,_global_service__WEBPACK_IMPORTED_MODULE_5__.popFromBackArray)();\n      }\n    };\n\n    var sourceSection = wp.customize.section('sm_color_usage_section');\n\n    if (!sourceSection) {\n      return;\n    }\n\n    sourceSection.expanded.bind(callback);\n    return function () {\n      sourceSection.expanded.unbind(callback);\n    };\n  }, []);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_context__WEBPACK_IMPORTED_MODULE_6__.default.Provider, {\n    value: {\n      config: config,\n      setConfig: updateSource,\n      resetActivePreset: resetActivePreset\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-group\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-panel-toggle\",\n    onClick: function onClick() {\n      wp.customize.section('sm_color_usage_section', function (colorUsageSection) {\n        (0,_global_service__WEBPACK_IMPORTED_MODULE_5__.pushToBackArray)(colorUsageSection, 'sm_color_palettes_section');\n      });\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-panel-toggle__icon\",\n    dangerouslySetInnerHTML: {\n      __html: \"\\n                <svg viewBox=\\\"\".concat(_svg_customize_colors_usage_svg__WEBPACK_IMPORTED_MODULE_7__.default.viewBox, \"\\\">\\n                  <use xlink:href=\\\"#\").concat(_svg_customize_colors_usage_svg__WEBPACK_IMPORTED_MODULE_7__.default.id, \"\\\" />\\n                </svg>\")\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-panel-toggle__label\"\n  }, \"Customize colors usage\"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-group\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-group__body\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Control, {\n    label: 'Brand Colors'\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_source_colors__WEBPACK_IMPORTED_MODULE_8__.SourceColors, {\n    sourceSetting: sourceSetting,\n    onChange: function onChange() {\n      setActivePreset(null);\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"style\", null, CSSOutput)))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-group\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_accordion__WEBPACK_IMPORTED_MODULE_9__.Accordion, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_accordion__WEBPACK_IMPORTED_MODULE_9__.AccordionSection, {\n    title: 'Explore colors',\n    open: true\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"customize-control-description\"\n  }, \"Curated color presets to help you lay the foundations of the color system and make it easy to get started.\"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_palette_list__WEBPACK_IMPORTED_MODULE_10__.default, {\n    active: activePreset,\n    onChange: function onChange(preset) {\n      updateSource(preset.config);\n      setActivePreset(preset.uid);\n    }\n  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_accordion__WEBPACK_IMPORTED_MODULE_9__.AccordionSection, {\n    title: 'Extract from Image'\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_dropzone__WEBPACK_IMPORTED_MODULE_11__.default, null)))));\n};\n\nvar Control = function Control(props) {\n  var label = props.label,\n      children = props.children;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-control\"\n  }, label && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-control__header\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-control__label\"\n  }, label)), children && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-control__body\"\n  }, children));\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/builder/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/builder/utils/contrast-array.js":
-/*!******************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/builder/utils/contrast-array.js ***!
-  \******************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar optimalContrastArray = Array.from(Array(12)).map(function (x, i) {\n  return Math.pow(21, i / 11);\n}); //\thttps://medium.com/envoy-design/designing-an-accessible-color-scheme-again-fd35cfa9d796\n\nvar contrastRangesArray = [[1, 1], [1.07, 1.17], [1.21, 1.31], [1.5, 1.91], [2.1, 2.63], [3, 3.5], [4.51, 4.67], [6, 7], [8.75, 10.5], [11.67, 15], [16.15, 19.1], [21, 21]]; // powers of 21 ^ 1/10 but with small adjustments for the lighter colors\n\nvar myOptimalContrastArray = [1, 1.07, // 1.32\n1.25, // 1.74\n1.8, // 2.29\n2.63, // 3.03\n3.99, 5.26, 6.94, 9.15, 12.07, // fg1\n15.92, // fg2\n19 // almost black (21)\n];\nvar myOptimalContrastArray2 = [1, // 21 ^ 0\n1.079, // 21 ^ 0.025\n1.35588, // 21 ^ 0.1\n1.83841, // 21 ^ 0.2\n2.49267, // 21 ^ 0.3\n3.37977, // 21 ^ 0.4\n4.58257, // 21 ^ 0.5\n6.21343, // 21 ^ 0.6\n8.42468, // 21 ^ 0.7\n11.42287, // 21 ^ 0.8\n15.48807, // 21 ^ 0.9\n19.4609 // 21 ^ 0.975\n//  21, // 21 ^ 1\n];\nvar mathematicArray = [1, 1.1, 1.25, 1.5275, 2.3332, 3, // AA\n4.5825, // AA\n7, // AAA\n9, 13.7475, 16.8, 19 //  21,\n];\nvar minContrastArray = contrastRangesArray.map(function (x) {\n  return x[0];\n});\nvar maxContrastArray = contrastRangesArray.map(function (x) {\n  return x[1];\n});\n/* harmony default export */ __webpack_exports__[\"default\"] = (myOptimalContrastArray);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/builder/utils/contrast-array.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js":
-/*!*************************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js ***!
-  \*************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getCSSFromPalettes\": function() { return /* binding */ getCSSFromPalettes; }\n/* harmony export */ });\nvar getCSSFromPalettes = function getCSSFromPalettes(palettesArray) {\n  var variation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;\n  var palettes = palettesArray.slice();\n\n  if (!palettes.length) {\n    return '';\n  } // the old implementation generates 3 fallback palettes and\n  // we need to overwrite all 3 of them when the user starts building a new palette\n  // @todo this is necessary only in the Customizer preview\n\n\n  while (palettes.length < 3) {\n    palettes.push(palettes[0]);\n  }\n\n  return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {\n    var id = palette.id,\n        sourceIndex = palette.sourceIndex;\n    return \"\\n      \".concat(palettesAcc, \"\\n      \\n      html {\\n        \").concat(getInitialColorVaraibles(palette), \"\\n        \").concat(getVariablesCSS(palette, variation - 1), \"\\n        \").concat(getVariablesCSS(palette, sourceIndex, false, true), \"\\n      } \\n      \\n      .is-dark {\\n        \").concat(getVariablesCSS(palette, variation - 1, true), \"\\n        \").concat(getVariablesCSS(palette, sourceIndex, true, true), \"\\n      }\\n    \");\n  }, '');\n};\n\nvar getVariablesCSS = function getVariablesCSS(palette) {\n  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;\n  var isDark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;\n  var isShifted = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;\n  var colors = palette.colors;\n  var count = colors.length;\n  return colors.reduce(function (colorsAcc, color, index) {\n    var oldColorIndex = (index + offset) % count;\n\n    if (isDark) {\n      if (oldColorIndex < count / 2) {\n        oldColorIndex = 11 - oldColorIndex;\n      } else {\n        return colorsAcc;\n      }\n    }\n\n    return \"\".concat(colorsAcc, \"\\n      \").concat(getColorVariables(palette, index, oldColorIndex, isShifted), \"\\n    \");\n  }, '');\n};\n\nvar getInitialColorVaraibles = function getInitialColorVaraibles(palette) {\n  var colors = palette.colors,\n      textColors = palette.textColors,\n      id = palette.id;\n  var prefix = '--sm-color-palette-';\n  var accentColors = colors.reduce(function (colorsAcc, color, index) {\n    return \"\".concat(colorsAcc, \"\\n      \").concat(prefix).concat(id, \"-color-\").concat(index + 1, \": \").concat(color.value, \";\\n    \");\n  }, '');\n  var darkColors = textColors.reduce(function (colorsAcc, color, index) {\n    return \"\".concat(colorsAcc, \"\\n      \").concat(prefix).concat(id, \"-text-color-\").concat(index + 1, \": \").concat(color.value, \";\\n    \");\n  }, '');\n  return \"\\n    \".concat(accentColors, \"\\n    \").concat(darkColors, \"\\n  \");\n};\n\nvar getColorVariables = function getColorVariables(palette, newColorIndex, oldColorIndex, isShifted) {\n  var colors = palette.colors,\n      id = palette.id,\n      lightColorsCount = palette.lightColorsCount;\n  var count = colors.length;\n  var accentColorIndex = (oldColorIndex + count / 2) % count;\n  var prefix = '--sm-color-palette-';\n  var suffix = isShifted ? '-shifted' : '';\n  var newIndex = parseInt(newColorIndex, 10) + 1;\n  var accentColors = \"\\n    \".concat(prefix).concat(id, \"-bg-color-\").concat(newIndex).concat(suffix, \": var(\").concat(prefix).concat(id, \"-color-\").concat(oldColorIndex + 1, \");\\n    \").concat(prefix).concat(id, \"-accent-color-\").concat(newIndex).concat(suffix, \": var(\").concat(prefix).concat(id, \"-color-\").concat(accentColorIndex + 1, \");\\n  \");\n  var darkColors = '';\n\n  if (oldColorIndex < lightColorsCount) {\n    darkColors = \"\\n      \".concat(prefix).concat(id, \"-fg1-color-\").concat(newIndex).concat(suffix, \": var(\").concat(prefix).concat(id, \"-text-color-1);\\n      \").concat(prefix).concat(id, \"-fg2-color-\").concat(newIndex).concat(suffix, \": var(\").concat(prefix).concat(id, \"-text-color-2);\\n    \");\n  } else {\n    darkColors = \"\\n      \".concat(prefix).concat(id, \"-fg1-color-\").concat(newIndex).concat(suffix, \": var(\").concat(prefix).concat(id, \"-color-1);\\n      \").concat(prefix).concat(id, \"-fg2-color-\").concat(newIndex).concat(suffix, \": var(\").concat(prefix).concat(id, \"-color-1);\\n    \");\n  }\n\n  return \"\\n    \".concat(accentColors, \"\\n    \").concat(darkColors, \"\\n  \");\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js":
-/*!****************************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js ***!
-  \****************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getPalettesFromColors\": function() { return /* binding */ getPalettesFromColors; },\n/* harmony export */   \"getFunctionalColors\": function() { return /* binding */ getFunctionalColors; }\n/* harmony export */ });\n/* harmony import */ var hsluv__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! hsluv */ \"./node_modules/hsluv/hsluv.js\");\n/* harmony import */ var hsluv__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(hsluv__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! chroma-js */ \"chroma-js\");\n/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _contrast_array__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./contrast-array */ \"./src/_js/customizer/colors/components/builder/utils/contrast-array.js\");\nfunction ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }\n\nfunction _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\n\n\n\nvar getPalettesFromColors = function getPalettesFromColors(colorGroups) {\n  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {\n    correctLightness: true,\n    useSources: true,\n    mode: 'lch',\n    bezierInterpolation: false\n  };\n  var functionalColors = getFunctionalColors(colorGroups);\n  var palettes = colorGroups.map(mapColorToPalette(attributes));\n  var functionalPalettes = functionalColors.map(mapColorToPalette(attributes));\n  var allPalettes = palettes.concat(functionalPalettes);\n  return mapSanitizePalettes(allPalettes, attributes);\n};\n\nvar noop = function noop(palette) {\n  return palette;\n};\n\nvar mapSanitizePalettes = function mapSanitizePalettes(colors) {\n  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};\n  return colors.map(mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex(attributes)).map(mapAddTextColors);\n};\n\nvar mapAddTextColors = function mapAddTextColors(palette) {\n  palette.textColors = palette.colors.slice(9, 11).map(function (color, index) {\n    return _objectSpread(_objectSpread({}, color), {}, {\n      value: getTextColor(color.value, 9 + index)\n    });\n  });\n  return palette;\n};\n\nvar mapAddSourceIndex = function mapAddSourceIndex(attributes) {\n  return function (palette, index, palettes) {\n    var source = palette.source,\n        colors = palette.colors;\n    var sourceIndex = getSourceIndex(palette); // falback sourceIndex when the source isn't used in the palette\n\n    if (!sourceIndex > -1) {\n      sourceIndex = getBestPositionInPalette(source[0], colors.map(function (color) {\n        return color.value;\n      }), attributes);\n    }\n\n    return _objectSpread({\n      sourceIndex: sourceIndex\n    }, palette);\n  };\n};\n\nvar mapColorToPalette = function mapColorToPalette(attributes) {\n  return function (groupObject, index) {\n    var colorObjects = groupObject.sources;\n    var sources = colorObjects.map(function (colorObj) {\n      return colorObj.value;\n    });\n    var colors = createAutoPalette(sources, attributes);\n    var _colorObjects$ = colorObjects[0],\n        label = _colorObjects$.label,\n        id = _colorObjects$.id;\n    return {\n      id: id || index + 1,\n      lightColorsCount: 5,\n      label: label,\n      source: sources,\n      colors: colors\n    };\n  };\n};\n\nvar mapCorrectLightness = function mapCorrectLightness(_ref) {\n  var correctLightness = _ref.correctLightness,\n      mode = _ref.mode;\n\n  if (!correctLightness) {\n    return noop;\n  }\n\n  return function (palette) {\n    palette.colors = palette.colors.map(function (color, index) {\n      var luminance = contrastToLuminance(_contrast_array__WEBPACK_IMPORTED_MODULE_2__.default[index]);\n      return chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(color).luminance(luminance, 'rgb').hex();\n    });\n    return palette;\n  };\n};\n\nvar mapUpdateProps = function mapUpdateProps(palette) {\n  palette.colors = palette.colors.map(function (color, index) {\n    return Object.assign({}, {\n      value: color\n    });\n  });\n  return palette;\n};\n\nvar mapUseSource = function mapUseSource(attributes) {\n  var useSources = attributes.useSources;\n\n  if (!useSources) {\n    return noop;\n  }\n\n  return function (palette) {\n    var source = palette.source;\n    var position = getBestPositionInPalette(source[0], palette.colors.map(function (color) {\n      return color.value;\n    }), attributes);\n    palette.colors.splice(position, 1, {\n      value: source[0],\n      isSource: true\n    });\n    return palette;\n  };\n};\n\nvar getSourceIndex = function getSourceIndex(palette) {\n  return palette.colors.findIndex(function (color) {\n    return color.value === palette.source;\n  });\n};\n\nvar getBestPositionInPalette = function getBestPositionInPalette(color, colors, attributes, byColorDistance) {\n  var min = Number.MAX_SAFE_INTEGER;\n  var pos = -1;\n\n  for (var i = 0; i < colors.length - 1; i++) {\n    var distance = void 0;\n\n    if (!!byColorDistance) {\n      distance = chroma_js__WEBPACK_IMPORTED_MODULE_1___default().distance(colors[i], color, 'rgb');\n    } else {\n      distance = Math.abs(chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(colors[i]).luminance() - chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(color).luminance());\n    }\n\n    if (distance < min) {\n      min = distance;\n      pos = i;\n    }\n  }\n\n  var firstDarkPos = Math.ceil(colors.length / 2); // if we want to preserve contrast we should do this\n\n  if (attributes !== null && attributes !== void 0 && attributes.correctLightness) {\n    if (chroma_js__WEBPACK_IMPORTED_MODULE_1___default().contrast(color, 'white') > Math.sqrt(21)) {\n      pos = Math.max(firstDarkPos, pos);\n    } else {\n      pos = Math.min(firstDarkPos - 1, pos);\n    }\n  }\n\n  return pos;\n};\n\nvar getTextColor = function getTextColor(hex, position) {\n  var luminance = contrastToLuminance(_contrast_array__WEBPACK_IMPORTED_MODULE_2__.default[position]);\n  var hpluv = (0,hsluv__WEBPACK_IMPORTED_MODULE_0__.hexToHpluv)(hex);\n  var h = Math.min(Math.max(hpluv[0], 0), 360);\n  var p = Math.min(Math.max(hpluv[1], 0), 100);\n  var l = Math.min(Math.max(hpluv[2], 0), 100);\n  var rgb = (0,hsluv__WEBPACK_IMPORTED_MODULE_0__.hpluvToRgb)([h, p, l]).map(function (x) {\n    return x * 255;\n  });\n  return chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(rgb).luminance(luminance).hex();\n};\n\nvar contrastToLuminance = function contrastToLuminance(contrast) {\n  return 1.05 / contrast - 0.05;\n};\n\nvar createAutoPalette = function createAutoPalette(colors) {\n  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};\n  var mode = attributes.mode,\n      bezierInterpolation = attributes.bezierInterpolation;\n  var newColors = colors.slice();\n  newColors.splice(0, 0, '#FFFFFF');\n  newColors.push('#000000');\n  newColors.sort(function (c1, c2) {\n    return chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(c1).luminance() > chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(c2).luminance() ? -1 : 1;\n  });\n\n  if (!!bezierInterpolation) {\n    return chroma_js__WEBPACK_IMPORTED_MODULE_1___default().bezier(newColors).scale().mode(mode).correctLightness().colors(12);\n  } else {\n    return chroma_js__WEBPACK_IMPORTED_MODULE_1___default().scale(newColors).mode(mode).correctLightness().colors(12);\n  }\n};\n\nvar blend = function blend(functionalColor, brandColor) {\n  var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;\n  var l1 = chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(functionalColor).get('hsl.s');\n  var l2 = chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(brandColor).get('hsl.s');\n  var l3 = l1 * (1 - 0.8 * ratio) + l2 * 0.8 * ratio;\n  return chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(functionalColor).mix(brandColor, 0.1 * ratio).set('hsl.s', l3).hex();\n};\n\nvar getFunctionalColors = function getFunctionalColors(colorGroups) {\n  var _colorGroups$, _colorGroups$$sources;\n\n  if (!(colorGroups !== null && colorGroups !== void 0 && colorGroups.length) || !((_colorGroups$ = colorGroups[0]) !== null && _colorGroups$ !== void 0 && (_colorGroups$$sources = _colorGroups$.sources) !== null && _colorGroups$$sources !== void 0 && _colorGroups$$sources.length)) {\n    return [];\n  }\n\n  var color = colorGroups[0].sources[0].value;\n  var blue = blend('#2E72D2', color);\n  var red = blend('#D82C0D', color);\n  var yellow = blend('#FFCC00', color, 0.5);\n  var green = blend('#00703c', color, 0.75);\n  return [{\n    sources: [{\n      value: blue,\n      label: 'Info',\n      id: '_info'\n    }]\n  }, {\n    sources: [{\n      value: red,\n      label: 'Error',\n      id: '_error'\n    }]\n  }, {\n    sources: [{\n      value: yellow,\n      label: 'Warning',\n      id: '_warning'\n    }]\n  }, {\n    sources: [{\n      value: green,\n      label: 'Success',\n      id: '_success'\n    }]\n  }];\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/builder/utils/index.js":
-/*!*********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/builder/utils/index.js ***!
-  \*********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getPalettesFromColors\": function() { return /* reexport safe */ _get_palettes_from_colors__WEBPACK_IMPORTED_MODULE_0__.getPalettesFromColors; },\n/* harmony export */   \"getCSSFromPalettes\": function() { return /* reexport safe */ _get_css_from_palettes__WEBPACK_IMPORTED_MODULE_1__.getCSSFromPalettes; },\n/* harmony export */   \"getColorsFromInputValue\": function() { return /* binding */ getColorsFromInputValue; },\n/* harmony export */   \"getValueFromColors\": function() { return /* binding */ getValueFromColors; }\n/* harmony export */ });\n/* harmony import */ var _get_palettes_from_colors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./get-palettes-from-colors */ \"./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js\");\n/* harmony import */ var _get_css_from_palettes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get-css-from-palettes */ \"./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js\");\n\n\nvar getColorsFromInputValue = function getColorsFromInputValue(value) {\n  var colors;\n\n  try {\n    colors = JSON.parse(value);\n  } catch (e) {\n    colors = [];\n  }\n\n  return colors;\n};\nvar getValueFromColors = function getValueFromColors(colors) {\n  return JSON.stringify(colors);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/builder/utils/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/contextual-menu/index.js":
-/*!***********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/contextual-menu/index.js ***!
-  \***********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ContextualMenu\": function() { return /* binding */ ContextualMenu; }\n/* harmony export */ });\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/contextual-menu/style.scss\");\n/* harmony import */ var _utils_use_outside_click__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../utils/use-outside-click */ \"./src/_js/customizer/utils/use-outside-click.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\nvar ContextualMenu = function ContextualMenu(props) {\n  var actions = props.actions;\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false),\n      _useState2 = _slicedToArray(_useState, 2),\n      isOpen = _useState2[0],\n      setIsOpen = _useState2[1];\n\n  var onToggle = typeof props.onToggle === 'function' ? props.onToggle : function (isOpen) {};\n  var onClick = typeof props.onClick === 'function' ? props.onClick : function (event) {\n    event.stopPropagation();\n  };\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    onToggle(isOpen);\n  }, [isOpen]);\n  var ref = (0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null);\n  (0,_utils_use_outside_click__WEBPACK_IMPORTED_MODULE_2__.default)(ref, function () {\n    setIsOpen(false);\n  });\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    onClick: onClick,\n    ref: ref,\n    className: \"c-contextual-menu c-contextual-menu--\".concat(isOpen ? 'visible' : 'hidden')\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"button\", {\n    className: \"c-contextual-menu__toggle\",\n    onClick: function onClick(e) {\n      e.preventDefault();\n      setIsOpen(!isOpen);\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"span\", null, \"Toggle Menu\")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"c-contextual-menu__list\"\n  }, actions.map(function (_ref, index) {\n    var label = _ref.label,\n        callback = _ref.callback,\n        className = _ref.className;\n\n    var onClick = function onClick(e) {\n      e.preventDefault();\n      setIsOpen(false);\n      callback();\n    };\n\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n      key: index,\n      className: \"c-contextual-menu__list-item \".concat(className),\n      onClick: onClick\n    }, label);\n  })));\n};\n\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/contextual-menu/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/dropzone/index.js":
-/*!****************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/dropzone/index.js ***!
-  \****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"myWorker\": function() { return /* binding */ myWorker; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! chroma-js */ \"chroma-js\");\n/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _palette_list__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../palette-list */ \"./src/_js/customizer/colors/components/palette-list/index.js\");\n/* harmony import */ var _svg_upload_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../svg/upload.svg */ \"./src/_js/customizer/svg/upload.svg\");\n/* harmony import */ var worker_loader_worker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! worker-loader!./worker.js */ \"./node_modules/worker-loader/dist/cjs.js!./src/_js/customizer/colors/components/dropzone/worker.js\");\n/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../context */ \"./src/_js/customizer/colors/context.js\");\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/dropzone/style.scss\");\n/* harmony import */ var _palette_list_get_random_stripes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../palette-list/get-random-stripes */ \"./src/_js/customizer/colors/components/palette-list/get-random-stripes.js\");\n/* harmony import */ var _builder__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../builder */ \"./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js\");\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\n\n\n\n\n\nvar myWorker = new worker_loader_worker_js__WEBPACK_IMPORTED_MODULE_3__.default();\n\nvar canInterpolate = function canInterpolate(color1, color2) {\n  var luminance1 = chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(color1).luminance();\n  var luminance2 = chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(color2).luminance();\n  return Math.abs(luminance1 - luminance2) > 0.3;\n};\n\nvar maybeInterpolateColors = function maybeInterpolateColors(colors) {\n  if (colors.length >= 3 && canInterpolate(colors[0], colors[1]) && canInterpolate(colors[0], colors[2]) && canInterpolate(colors[1], colors[2])) {\n    return [colors];\n  }\n\n  if (colors.length >= 2 && canInterpolate(colors[0], colors[1])) {\n    return [[colors[0], colors[1]], [colors[2]]];\n  }\n\n  if (colors.length >= 3 && canInterpolate(colors[0], colors[2])) {\n    return [[colors[0], colors[2]], [colors[1]]];\n  }\n\n  if (colors.length >= 3 && canInterpolate(colors[0], colors[2])) {\n    return [[colors[0]], [colors[1], colors[2]]];\n  }\n\n  return [[colors[0]], [colors[1]], [colors[2]]];\n};\n\nvar DropZone = function DropZone() {\n  var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_context__WEBPACK_IMPORTED_MODULE_4__.default),\n      setConfig = _useContext.setConfig;\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),\n      _useState2 = _slicedToArray(_useState, 2),\n      files = _useState2[0],\n      setFiles = _useState2[1];\n\n  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),\n      _useState4 = _slicedToArray(_useState3, 2),\n      stripes = _useState4[0],\n      setStripes = _useState4[1];\n\n  var imgSourceRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n  var imgPreviewRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n  var canvasRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n  var previewRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n\n  var dragOver = function dragOver(e) {\n    e.preventDefault();\n  };\n\n  var dragEnter = function dragEnter(e) {\n    e.preventDefault();\n  };\n\n  var dragLeave = function dragLeave(e) {\n    e.preventDefault();\n  };\n\n  var fileDrop = function fileDrop(e) {\n    e.preventDefault();\n    var files = e.dataTransfer.files;\n    setFiles(files);\n  };\n\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    myWorker.onmessage = function (event) {\n      var order = [\"primary\", \"secondary\", \"tertiary\", \"quinary\", \"senary\", \"septenary\", \"octonary\", \"nonary\", \"denary\"];\n      var type = event.data.type;\n\n      if ('palette' === type) {\n        var groups = maybeInterpolateColors(event.data.colors);\n        var config = groups.map(function (colors, groupIndex) {\n          var label = \"Brand \".concat(order[groupIndex]);\n\n          if (groupIndex === 0) {\n            label = label.charAt(0).toUpperCase() + label.slice(1);\n          }\n\n          var time = new Date().getTime();\n          return {\n            uid: \"color_group_\".concat(time).concat(groupIndex),\n            sources: colors.map(function (color, colorIndex) {\n              if (colorIndex !== 0) {\n                label = 'Interpolated Color';\n              }\n\n              return {\n                uid: \"color_\".concat(time).concat(groupIndex).concat(colorIndex),\n                label: label,\n                value: chroma_js__WEBPACK_IMPORTED_MODULE_1___default()(color).hex()\n              };\n            })\n          };\n        });\n        setConfig(config);\n        var preset = {};\n        preset.palettes = (0,_builder__WEBPACK_IMPORTED_MODULE_5__.getPalettesFromColors)(config);\n        setStripes((0,_palette_list_get_random_stripes__WEBPACK_IMPORTED_MODULE_6__.default)(preset));\n      }\n    };\n\n    return function () {\n      delete myWorker.onmessage;\n    };\n  }, []);\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    var imgSource = imgSourceRef.current;\n    var imgPreview = imgPreviewRef.current; // FileReader support\n\n    if (FileReader && files && files.length) {\n      var fr = new FileReader();\n\n      fr.onload = function () {\n        imgSource.src = fr.result;\n        imgPreview.src = fr.result;\n      };\n\n      fr.readAsDataURL(files[0]);\n    }\n  }, [files]);\n\n  var onImageLoad = function onImageLoad() {\n    var imgSource = imgSourceRef.current;\n    var canvas = canvasRef.current;\n    var context = canvas.getContext('2d');\n    canvas.width = Math.min(imgSource.width, 100);\n    canvas.height = canvas.width * imgSource.height / imgSource.width;\n    context.drawImage(imgSource, 0, 0, canvas.width, canvas.height);\n    var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;\n    myWorker.postMessage({\n      type: 'image',\n      imageData: imageData,\n      width: canvas.width,\n      height: canvas.height\n    });\n  };\n\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"customize-control-description\"\n  }, \"Extract colors from an image and generate a color palette for your design system.\"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone-container\",\n    onDragOver: dragOver,\n    onDragEnter: dragEnter,\n    onDragLeave: dragLeave,\n    onDrop: fileDrop\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone-placeholder\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone-info\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone-info-icon\",\n    dangerouslySetInnerHTML: {\n      __html: \"\\n                <svg viewBox=\\\"\".concat(_svg_upload_svg__WEBPACK_IMPORTED_MODULE_7__.default.viewBox, \"\\\">\\n                  <use xlink:href=\\\"#\").concat(_svg_upload_svg__WEBPACK_IMPORTED_MODULE_7__.default.id, \"\\\" />\\n                </svg>\")\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone-info-title\"\n  }, \"Drag and drop your image\"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"dropzone-info-text\"\n  }, \"or \", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"span\", {\n    className: \"dropzone-info-anchor\"\n  }, \"select a file\"), \" from your computer\"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_palette_list__WEBPACK_IMPORTED_MODULE_8__.PresetPreview, {\n    stripes: stripes\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"img\", {\n    alt: \"Preview\",\n    className: \"dropzone-image-preview\",\n    ref: imgPreviewRef\n  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"img\", {\n    alt: \"Source\",\n    className: \"dropzone-image-source\",\n    ref: imgSourceRef,\n    onLoad: onImageLoad\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"canvas\", {\n    className: \"dropzone-canvas\",\n    ref: canvasRef\n  }));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (DropZone);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/dropzone/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/overlay/index.js":
-/*!***************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/overlay/index.js ***!
-  \***************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/overlay/style.scss\");\n\n\n\nvar Overlay = function Overlay(props) {\n  var show = props.show;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-overlay sm-overlay--\".concat(show ? 'visible' : 'hidden')\n  }, props.children);\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Overlay);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/overlay/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/palette-list/get-random-stripes.js":
-/*!*********************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/palette-list/get-random-stripes.js ***!
-  \*********************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar getRandomBetween = function getRandomBetween(min, max) {\n  var random = Math.max(0, Math.random() - Number.MIN_VALUE);\n  return Math.floor(random * (max - min + 1) + min);\n};\n\nvar getRandomStripes = function getRandomStripes(palettes) {\n  var widths = [1, 1, 2, 2, 4];\n\n  if (!palettes.length) {\n    return [];\n  }\n\n  var stripes = Array.from(Array(5).keys()).map(function (idx) {\n    var stripe = document.createElement('div');\n    var widthPos = getRandomBetween(0, widths.length - 1);\n    var width = widths[widthPos];\n    widths.splice(widthPos, 1);\n    return {\n      index: idx,\n      element: stripe,\n      width: width\n    };\n  });\n  stripes.sort(function (a, b) {\n    return a.width > b.width ? -1 : 1;\n  });\n  var segments = [Array.from(Array(10).keys())];\n  stripes.forEach(function (stripe) {\n    var segmentsIndexes = Array.from(Array(segments.length).keys());\n    var availSegmentsIndexes = segmentsIndexes.filter(function (index) {\n      return segments[index].length >= stripe.width;\n    });\n    var segmentRandom = getRandomBetween(0, availSegmentsIndexes.length - 1);\n    var segmentIndex = availSegmentsIndexes[segmentRandom];\n    var thisSegment = segments[segmentIndex];\n    var positionRandom = getRandomBetween(0, thisSegment.length - stripe.width);\n    var position = thisSegment[positionRandom];\n    segments.splice(segmentIndex, 1, thisSegment.slice(0, positionRandom), thisSegment.slice(positionRandom + stripe.width, thisSegment.length));\n    stripe.pos = position;\n  });\n  var sourceColors = [];\n  var otherColors = [];\n  palettes.forEach(function (palette) {\n    var id = palette.id + '';\n    var sourceIndex = palette.sourceIndex;\n\n    if (id.charAt(0) === '_') {\n      return;\n    }\n\n    sourceColors.push(palette.colors[sourceIndex].value);\n    var remainingColors = palette.colors.slice().map(function (color) {\n      return color.value;\n    });\n    remainingColors.splice(sourceIndex, 1);\n    otherColors = otherColors.concat(remainingColors);\n  }); // Randomize order of generated colors\n\n  otherColors.sort(function () {\n    return Math.random() > 0.5 ? -1 : 1;\n  }); // merge sources and other colors\n\n  var colors = sourceColors.concat(otherColors).slice(0, 5);\n  stripes.sort(function (a, b) {\n    return a.width > b.width ? -1 : 1;\n  });\n  stripes.forEach(function (stripe, index) {\n    stripe.color = colors[index];\n  });\n  stripes.sort(function (a, b) {\n    return a.index > b.index ? -1 : 1;\n  });\n  return stripes;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (getRandomStripes);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/palette-list/get-random-stripes.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/palette-list/get-text-color.js":
-/*!*****************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/palette-list/get-text-color.js ***!
-  \*****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar getTextColor = function getTextColor(palette) {\n  var lightColorsCount = palette.lightColorsCount,\n      sourceIndex = palette.sourceIndex,\n      textColors = palette.textColors;\n  return sourceIndex > lightColorsCount ? '#FFFFFF' : textColors[0].value;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (getTextColor);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/palette-list/get-text-color.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/palette-list/index.js":
-/*!********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/palette-list/index.js ***!
-  \********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"PresetPreview\": function() { return /* binding */ PresetPreview; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/colors/components/palette-list/utils.js\");\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/palette-list/style.scss\");\nfunction _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }\n\n\n\n\nvar presets = (0,_utils__WEBPACK_IMPORTED_MODULE_2__.normalizeCloudPresets)(styleManager.colorPalettes.palettes);\n\nvar PresetsList = function PresetsList(props) {\n  var noop = function noop() {};\n\n  var onChange = props.onChange || noop;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: 'sm-presets-list'\n  }, presets.map(function (preset) {\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(PaletteListItem, {\n      preset: preset,\n      key: preset.uid,\n      active: preset.uid === props.active,\n      onChange: onChange\n    });\n  }));\n};\n\nvar PaletteListItem = function PaletteListItem(props) {\n  var preset = props.preset,\n      active = props.active;\n\n  var noop = function noop() {};\n\n  var onChange = props.onChange || noop;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-presets-list__item\",\n    onClick: function onClick() {\n      onChange(preset);\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(PresetPreview, _extends({}, preset, {\n    active: active\n  })));\n};\n\nvar PresetPreview = function PresetPreview(props) {\n  var textColor = props.textColor,\n      stripes = props.stripes,\n      quote = props.quote,\n      image = props.image,\n      active = props.active;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-presets-preview \".concat(active ? 'sm-presets-preview--active' : ''),\n    style: {\n      backgroundImage: \"url(\".concat(image, \")\")\n    }\n  }, quote && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-presets-preview__quote\",\n    style: {\n      color: textColor\n    }\n  }, quote), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"sm-presets-preview__stripes\"\n  }, stripes.map(function (stripe, index) {\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      key: index,\n      className: \"sm-presets-preview__stripe sm-presets-preview__stripe-w\".concat(stripe.width, \" sm-presets-preview__stripe-p\").concat(stripe.pos)\n    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n      className: \"sm-presets-preview__pixel\",\n      style: {\n        color: stripe.color\n      }\n    }));\n  })));\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (PresetsList);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/palette-list/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/palette-list/utils.js":
-/*!********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/palette-list/utils.js ***!
-  \********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"normalizeCloudPresets\": function() { return /* binding */ normalizeCloudPresets; }\n/* harmony export */ });\n/* harmony import */ var _builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../builder */ \"./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js\");\n/* harmony import */ var _get_random_stripes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get-random-stripes */ \"./src/_js/customizer/colors/components/palette-list/get-random-stripes.js\");\n/* harmony import */ var _get_text_color__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./get-text-color */ \"./src/_js/customizer/colors/components/palette-list/get-text-color.js\");\nfunction ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }\n\nfunction _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\nfunction _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }\n\nfunction _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }\n\n\n\n\n\nvar normalizeCloudPresets = function normalizeCloudPresets(presets) {\n  return Object.keys(presets).map(function (key) {\n    var _preset$preview;\n\n    var preset = presets[key];\n    var colorGroups = preset.color_groups.map(function (group) {\n      var _uid = group._uid,\n          other = _objectWithoutProperties(group, [\"_uid\"]);\n\n      var sources = group.sources.map(function (source) {\n        var color = source.color,\n            _uid = source._uid,\n            other = _objectWithoutProperties(source, [\"color\", \"_uid\"]);\n\n        return _objectSpread(_objectSpread({}, other), {}, {\n          uid: _uid,\n          value: color\n        });\n      });\n      sources.sort(function (a, b) {\n        return a._priority > b._priority ? 1 : -1;\n      });\n      return _objectSpread(_objectSpread({}, other), {}, {\n        sources: sources,\n        uid: _uid\n      });\n    });\n    colorGroups.sort(function (a, b) {\n      return a._priority > b._priority ? 1 : -1;\n    });\n    var palettes = (0,_builder__WEBPACK_IMPORTED_MODULE_0__.getPalettesFromColors)(colorGroups);\n    return {\n      uid: preset.hashid,\n      config: colorGroups,\n      stripes: (0,_get_random_stripes__WEBPACK_IMPORTED_MODULE_1__.default)(palettes),\n      textColor: (0,_get_text_color__WEBPACK_IMPORTED_MODULE_2__.default)(palettes[0]),\n      image: preset === null || preset === void 0 ? void 0 : (_preset$preview = preset.preview) === null || _preset$preview === void 0 ? void 0 : _preset$preview.background_image_url,\n      quote: preset === null || preset === void 0 ? void 0 : preset.description\n    };\n  });\n};\n\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/palette-list/utils.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/preview/index.js":
-/*!***************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/preview/index.js ***!
-  \***************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! classnames */ \"./node_modules/classnames/index.js\");\n/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/preview/style.scss\");\nfunction ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }\n\nfunction _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\nvar Preview = function Preview(props) {\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(react__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-header sm-palette-1 sm-palette--shifted sm-variation-1\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-overlay__wrap\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-overlay__container\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-header-wrap\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"h1\", {\n    className: \"palette-preview-title\"\n  }, \"The color system\"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"p\", {\n    className: \"palette-preview-description\"\n  }, \"The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.\"))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(PalettePreviewList, props));\n};\n\nvar PalettePreviewList = function PalettePreviewList(props) {\n  var palettes = props.palettes;\n  var userPalettes = palettes.filter(function (palette) {\n    var id = palette.id;\n    return !(typeof id === 'string' && id.charAt(0) === '_');\n  });\n\n  if (!userPalettes.length) {\n    return null;\n  }\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(userPalettes[0].id),\n      _useState2 = _slicedToArray(_useState, 2),\n      active = _useState2[0],\n      setActive = _useState2[1];\n\n  return userPalettes.map(function (palette, index) {\n    var description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(PalettePreview, {\n      key: palette.id,\n      isActive: active === palette.id,\n      setActivePalette: setActive,\n      palette: _objectSpread({\n        description: description\n      }, palette)\n    });\n  });\n};\n\nvar PalettePreview = function PalettePreview(props) {\n  var palette = props.palette,\n      isActive = props.isActive,\n      setActivePalette = props.setActivePalette;\n  var id = palette.id,\n      colors = palette.colors,\n      textColors = palette.textColors,\n      lightColorsCount = palette.lightColorsCount,\n      sourceIndex = palette.sourceIndex;\n\n  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(sourceIndex),\n      _useState4 = _slicedToArray(_useState3, 2),\n      lastHover = _useState4[0],\n      setLastHover = _useState4[1];\n\n  var siteVariationSetting = wp.customize('sm_site_color_variation');\n\n  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(parseInt(siteVariationSetting(), 10)),\n      _useState6 = _slicedToArray(_useState5, 2),\n      siteVariation = _useState6[0],\n      setSiteVariation = _useState6[1];\n\n  var onSiteVariationChange = function onSiteVariationChange(newValue) {\n    setSiteVariation(parseInt(newValue, 10));\n  };\n\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    setLastHover(sourceIndex);\n  }, [colors]);\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    // Attach the listeners on component mount.\n    siteVariationSetting.bind(onSiteVariationChange); // Detach the listeners on component unmount.\n\n    return function () {\n      siteVariationSetting.unbind(onSiteVariationChange);\n    };\n  }, []);\n\n  var normalize = function normalize(index) {\n    return (index + siteVariation - 1 + 12) % 12;\n  };\n\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview sm-palette-\".concat(id, \" \").concat(lastHover !== false ? \"sm-variation-\".concat(lastHover + 1) : '')\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-overlay__wrap\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-overlay__container\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-set\"\n  }, colors.map(function (color, index) {\n    var variation = index + 1;\n    var showLightForeground = normalize(index) === 0;\n    var showDarkForeground = normalize(index) === 9;\n    var foregroundToShow = normalize(lastHover) >= lightColorsCount ? showLightForeground : showDarkForeground;\n    var passedProps = {\n      isSource: normalize(index) === sourceIndex,\n      showCard: isActive && index === lastHover,\n      showAccent: isActive && lastHover !== false && index === (lastHover + 6) % 12,\n      showForeground: isActive && lastHover !== false && foregroundToShow,\n      textColor: normalize(index) >= lightColorsCount ? textColors[0].value : '#FFFFFF',\n      variation: variation\n    };\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n      key: index,\n      className: \"palette-preview-swatches sm-variation-\".concat(variation),\n      onMouseEnter: function onMouseEnter() {\n        setActivePalette(id);\n        setLastHover(index);\n      }\n    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(PalettePreviewGrade, passedProps));\n  })))));\n};\n\nvar getStarVariation = function getStarVariation(variation) {\n  return variation > 10 ? variation - 2 : variation + 2;\n};\n\nvar PalettePreviewGrade = function PalettePreviewGrade(props) {\n  var isSource = props.isSource,\n      showCard = props.showCard,\n      showAccent = props.showAccent,\n      showForeground = props.showForeground,\n      textColor = props.textColor,\n      variation = props.variation;\n  var className = classnames__WEBPACK_IMPORTED_MODULE_0___default()('palette-preview-swatches__wrap', {\n    'is-source': isSource,\n    'show-card': showCard,\n    'show-accent': showAccent,\n    'show-fg': showForeground\n  });\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: className\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__wrap-surface\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__text\"\n  }, \"Surface\"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(PalettePreviewGradeCard, {\n    variation: variation\n  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__wrap-background\",\n    style: {\n      color: 'var(--sm-current-bg-color)'\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__wrap-accent\",\n    style: {\n      color: 'var(--sm-current-bg-color)'\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__source-badge sm-variation-\".concat(getStarVariation(variation))\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__text\"\n  }, \"Accent\")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__wrap-foreground\",\n    style: {\n      color: textColor\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__text\"\n  }, \"Text\")));\n};\n\nvar PalettePreviewGradeCard = function PalettePreviewGradeCard(props) {\n  var variation = props.variation;\n  var buttonVariation = (variation - 1 + 6) % 12 + 1;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__card\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__card-content\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__source-badge sm-variation-\".concat(getStarVariation(variation))\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"h2\", {\n    className: \"palette-preview-swatches__title\"\n  }, \"Text\"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__body\"\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__row\"\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__row\"\n  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"palette-preview-swatches__button sm-variation-\".concat(buttonVariation)\n  }, \"\\u2192\")));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Preview);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/preview/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/source-colors/color-picker.js":
-/*!****************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/source-colors/color-picker.js ***!
-  \****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ColorPicker\": function() { return /* binding */ ColorPicker; }\n/* harmony export */ });\n/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chroma-js */ \"chroma-js\");\n/* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var use_debounce__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! use-debounce */ \"./node_modules/use-debounce/esm/useDebouncedCallback.js\");\n/* harmony import */ var react_colorful__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-colorful */ \"./node_modules/react-colorful/dist/index.module.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../utils */ \"./src/_js/customizer/utils/use-did-update-effect.js\");\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\n\nvar ColorPicker = function ColorPicker(props) {\n  var hex = props.hex,\n      onChange = props.onChange,\n      isOpen = props.isOpen;\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(hex),\n      _useState2 = _slicedToArray(_useState, 2),\n      color = _useState2[0],\n      setColor = _useState2[1];\n\n  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(hex),\n      _useState4 = _slicedToArray(_useState3, 2),\n      hexValue = _useState4[0],\n      setHexValue = _useState4[1];\n\n  var debouncedOnChange = (0,use_debounce__WEBPACK_IMPORTED_MODULE_2__.default)(onChange, 200);\n  (0,_utils__WEBPACK_IMPORTED_MODULE_3__.default)(function () {\n    debouncedOnChange(color);\n  }, [color]);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"c-palette-builder__source-item-color \".concat(isOpen ? 'c-palette-builder__source-item-color--active' : '')\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"c-palette-builder__source-item-preview\",\n    style: {\n      color: color\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"c-palette-builder__source-item-picker\",\n    onClick: function onClick(event) {\n      event.stopPropagation();\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(react_colorful__WEBPACK_IMPORTED_MODULE_4__.HexColorPicker, {\n    color: color,\n    onChange: function onChange(newColor) {\n      setHexValue(newColor);\n      setColor(newColor);\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"input\", {\n    type: \"text\",\n    value: hexValue,\n    onChange: function onChange(e) {\n      var value = e.target.value;\n      setHexValue(value);\n\n      if (chroma_js__WEBPACK_IMPORTED_MODULE_0___default().valid(value) && chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(value).alpha() === 1) {\n        setColor(chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(value).hex());\n      }\n    }\n  })));\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/source-colors/color-picker.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/source-colors/index.js":
-/*!*********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/source-colors/index.js ***!
-  \*********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"SourceColors\": function() { return /* binding */ SourceColors; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _color_picker__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./color-picker */ \"./src/_js/customizer/colors/components/source-colors/color-picker.js\");\n/* harmony import */ var _contextual_menu__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../contextual-menu */ \"./src/_js/customizer/colors/components/contextual-menu/index.js\");\n/* harmony import */ var _utils_use_outside_click__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../utils/use-outside-click */ \"./src/_js/customizer/utils/use-outside-click.js\");\n/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../context */ \"./src/_js/customizer/colors/context.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/colors/components/source-colors/utils.js\");\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/colors/components/source-colors/style.scss\");\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\"); }\n\nfunction _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === \"string\") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === \"Object\" && o.constructor) n = o.constructor.name; if (n === \"Map\" || n === \"Set\") return Array.from(o); if (n === \"Arguments\" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }\n\nfunction _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }\n\nfunction _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== \"undefined\" && arr[Symbol.iterator] || arr[\"@@iterator\"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\n\n\n\n\n\n\n\n\nvar SourceColors = function SourceColors(props) {\n  var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_context__WEBPACK_IMPORTED_MODULE_2__.default),\n      config = _useContext.config,\n      setConfig = _useContext.setConfig;\n\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    if (!config.length) {\n      setConfig((0,_utils__WEBPACK_IMPORTED_MODULE_3__.addNewColorGroup)(config));\n      return;\n    }\n\n    if (!config.filter(function (group) {\n      return !!group.sources.length;\n    }).length) {\n      setConfig([]);\n    }\n  }, [config]);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"c-palette-builder__source-list\"\n  }, config.map(function (group, groupIndex) {\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(SourceColorsGroup, {\n      key: group.uid,\n      sources: group.sources,\n      index: groupIndex\n    });\n  }));\n};\n\nvar SourceColorsGroup = function SourceColorsGroup(props) {\n  var uid = props.uid,\n      sources = props.sources;\n  var groupIndex = props.index;\n  var style = {\n    '--sm-source-main-color': sources[0].value\n  };\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    key: uid,\n    className: \"c-palette-builder__source-group\",\n    style: style\n  }, sources.map(function (color, index) {\n    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(SourceColorControl, {\n      key: color.uid,\n      groupIndex: groupIndex,\n      index: index,\n      color: color,\n      showPicker: color.showPicker\n    });\n  }));\n};\n\nvar SourceColorControl = function SourceColorControl(props) {\n  var color = props.color,\n      index = props.index,\n      groupIndex = props.groupIndex;\n\n  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),\n      _useState2 = _slicedToArray(_useState, 2),\n      active = _useState2[0],\n      setActive = _useState2[1];\n\n  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),\n      _useState4 = _slicedToArray(_useState3, 2),\n      hover = _useState4[0],\n      setHover = _useState4[1];\n\n  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),\n      _useState6 = _slicedToArray(_useState5, 2),\n      menuIsOpen = _useState6[0],\n      setMenuIsOpen = _useState6[1];\n\n  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),\n      _useState8 = _slicedToArray(_useState7, 2),\n      editable = _useState8[0],\n      setEditable = _useState8[1];\n\n  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(),\n      _useState10 = _slicedToArray(_useState9, 2),\n      showPicker = _useState10[0],\n      setShowPicker = _useState10[1];\n\n  var _useContext2 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_context__WEBPACK_IMPORTED_MODULE_2__.default),\n      config = _useContext2.config,\n      setConfig = _useContext2.setConfig,\n      resetActivePreset = _useContext2.resetActivePreset;\n\n  var _onChange = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (color) {\n    var newConfig = (0,_utils__WEBPACK_IMPORTED_MODULE_3__.updateColor)(config, groupIndex, index, color);\n    setConfig(newConfig);\n    resetActivePreset();\n  }, [config, groupIndex, index]);\n\n  var interpolateColor = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {\n    setConfig((0,_utils__WEBPACK_IMPORTED_MODULE_3__.addNewColorToGroup)(config, groupIndex, index));\n    resetActivePreset();\n  }, [config, groupIndex, index]);\n  var addColor = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {\n    setConfig((0,_utils__WEBPACK_IMPORTED_MODULE_3__.addNewColorGroup)(config, groupIndex));\n    resetActivePreset();\n  }, [config, groupIndex]);\n  var renameColor = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {\n    setEditable(true);\n  }, []);\n  var removeColor = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {\n    setConfig((0,_utils__WEBPACK_IMPORTED_MODULE_3__.deleteColor)(config, groupIndex, index));\n    resetActivePreset();\n  }, [config, groupIndex, index]);\n  var actions = [{\n    label: 'Interpolate Color',\n    callback: interpolateColor\n  }, {\n    label: 'Add Color',\n    callback: addColor\n  }, {\n    label: 'Rename Color',\n    callback: renameColor\n  }, {\n    label: 'Remove Color',\n    callback: removeColor,\n    className: 'c-contextual-menu__list-item--danger'\n  }];\n  var inputRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n  var pickerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n  (0,_utils_use_outside_click__WEBPACK_IMPORTED_MODULE_4__.default)(pickerRef, function () {\n    setShowPicker(false);\n  }); // delay setting showPicker with one render cycle in order to show fadein animation\n\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    if (typeof showPicker === \"undefined\" && typeof props.showPicker !== \"undefined\") {\n      setShowPicker(props.showPicker);\n    }\n  }, [showPicker]);\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    setActive(hover || menuIsOpen);\n  }, [hover, menuIsOpen]);\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    if (editable) {\n      inputRef.current.focus();\n    }\n  }, [editable]);\n\n  var onLabelBlur = function onLabelBlur(e) {\n    setEditable(false);\n  };\n\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    onMouseEnter: function onMouseEnter() {\n      setHover(true);\n    },\n    onMouseLeave: function onMouseLeave() {\n      setHover(false);\n    },\n    onClick: function onClick() {\n      setShowPicker(!showPicker);\n    },\n    ref: pickerRef,\n    className: \"c-palette-builder__source-item \".concat(active ? 'c-palette-builder__source-item--active' : '')\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_color_picker__WEBPACK_IMPORTED_MODULE_5__.ColorPicker, {\n    hex: color.value,\n    onChange: function onChange(hex) {\n      _onChange({\n        value: hex\n      });\n    },\n    isOpen: showPicker\n  }), !editable && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\", {\n    className: \"c-palette-builder__source-item-label\"\n  }, color.label), editable && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"input\", {\n    type: \"text\",\n    ref: inputRef,\n    value: color.label,\n    className: \"c-palette-builder__source-item-label\",\n    onChange: function onChange(e) {\n      _onChange({\n        label: e.target.value\n      });\n    },\n    onBlur: onLabelBlur\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_contextual_menu__WEBPACK_IMPORTED_MODULE_6__.ContextualMenu, {\n    actions: actions,\n    onToggle: setMenuIsOpen,\n    onClick: function onClick(event) {\n      event.stopPropagation();\n      setShowPicker(false);\n    }\n  }));\n};\n\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/source-colors/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/source-colors/utils.js":
-/*!*********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/source-colors/utils.js ***!
-  \*********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getNewColorHex\": function() { return /* binding */ getNewColorHex; },\n/* harmony export */   \"getNewColor\": function() { return /* binding */ getNewColor; },\n/* harmony export */   \"getNewColorGroup\": function() { return /* binding */ getNewColorGroup; },\n/* harmony export */   \"addNewColorGroup\": function() { return /* binding */ addNewColorGroup; },\n/* harmony export */   \"addNewColorToGroup\": function() { return /* binding */ addNewColorToGroup; },\n/* harmony export */   \"deleteColor\": function() { return /* binding */ deleteColor; },\n/* harmony export */   \"updateColor\": function() { return /* binding */ updateColor; }\n/* harmony export */ });\nfunction _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }\n\nfunction _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }\n\nfunction ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }\n\nfunction _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\nvar deepCopy = function deepCopy(object) {\n  return JSON.parse(JSON.stringify(object));\n};\n\nvar getNewColorHex = function getNewColorHex() {\n  return '#111111';\n};\nvar getNewColor = function getNewColor() {\n  var label = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Color';\n  return {\n    uid: \"color_\".concat(new Date().getTime()),\n    showPicker: true,\n    label: label,\n    value: getNewColorHex()\n  };\n};\nvar getNewColorGroup = function getNewColorGroup() {\n  return {\n    uid: \"color_group_\".concat(new Date().getTime()),\n    sources: [getNewColor()]\n  };\n};\nvar addNewColorGroup = function addNewColorGroup(config) {\n  var groupIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;\n  var newConfig = deepCopy(config).map(function (group) {\n    return _objectSpread(_objectSpread({}, group), {}, {\n      sources: group.sources.map(function (color) {\n        var showPicker = color.showPicker,\n            otherProps = _objectWithoutProperties(color, [\"showPicker\"]);\n\n        return otherProps;\n      })\n    });\n  });\n  newConfig.splice(groupIndex + 1, 0, getNewColorGroup());\n  return newConfig;\n};\nvar addNewColorToGroup = function addNewColorToGroup(config, groupIndex, index) {\n  var newConfig = deepCopy(config);\n  newConfig[groupIndex].sources.splice(index + 1, 0, getNewColor('Interpolated Color'));\n  return newConfig;\n};\nvar deleteColor = function deleteColor(config, groupIndex, index) {\n  var newConfig = deepCopy(config);\n  newConfig[groupIndex].sources.splice(index, 1);\n\n  if (!newConfig[groupIndex].sources.length) {\n    newConfig.splice(groupIndex, 1);\n  }\n\n  return newConfig;\n};\nvar updateColor = function updateColor(config, groupIndex, index, newValue) {\n  var newConfig = deepCopy(config);\n  newConfig[groupIndex].sources[index] = Object.assign({}, newConfig[groupIndex].sources[index], newValue);\n  return newConfig;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/source-colors/utils.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/context.js":
-/*!**********************************************!*\
-  !*** ./src/_js/customizer/colors/context.js ***!
-  \**********************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\nvar ConfigContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();\n/* harmony default export */ __webpack_exports__[\"default\"] = (ConfigContext);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/context.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/index.js":
-/*!********************************************!*\
-  !*** ./src/_js/customizer/colors/index.js ***!
-  \********************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initializeColors\": function() { return /* binding */ initializeColors; }\n/* harmony export */ });\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom */ \"react-dom\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _global_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../global-service */ \"./src/_js/customizer/global-service.js\");\n/* harmony import */ var _svg_colorize_elements_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../svg/colorize-elements.svg */ \"./src/_js/customizer/svg/colorize-elements.svg\");\n/* harmony import */ var _color_palette_builder__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./color-palette-builder */ \"./src/_js/customizer/colors/color-palette-builder/index.js\");\n/* harmony import */ var _color_palettes_preview__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./color-palettes-preview */ \"./src/_js/customizer/colors/color-palettes-preview/index.js\");\n\n\n\n\n\n\n\nvar initializeColors = function initializeColors() {\n  (0,_color_palette_builder__WEBPACK_IMPORTED_MODULE_2__.initializePaletteBuilder)('sm_advanced_palette_source', 'sm_advanced_palette_output');\n  wp.customize('sm_coloration_level', function (setting) {\n    setting.bind(applyColorationValueToFields);\n  });\n  initializeColorizeElementsButton();\n  (0,_color_palettes_preview__WEBPACK_IMPORTED_MODULE_3__.default)();\n};\n\nvar ColorizeElementsButton = function ColorizeElementsButton(props) {\n  var targetSectionID = \"\".concat(styleManager.config.options_name, \"[colors_section]\");\n  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {\n    var callback = function callback(isExpanded) {\n      if (!isExpanded) {\n        var backArray = (0,_global_service__WEBPACK_IMPORTED_MODULE_4__.getBackArray)();\n\n        var _targetSectionID = backArray.pop();\n\n        if (_targetSectionID) {\n          wp.customize.section(_targetSectionID, function (targetSection) {\n            targetSection.focus();\n          });\n        }\n      }\n    };\n\n    var targetSection = wp.customize.section(targetSectionID);\n\n    if (!targetSection) {\n      return;\n    }\n\n    targetSection.expanded.bind(callback);\n    return function () {\n      targetSection.expanded.unbind(callback);\n    };\n  }, []);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-group\",\n    style: {\n      marginTop: 0\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-panel-toggle\",\n    id: \"sm-colorize-elements-button\",\n    style: {\n      borderTopWidth: 0\n    },\n    onClick: function onClick() {\n      wp.customize.section(targetSectionID, function (targetSection) {\n        (0,_global_service__WEBPACK_IMPORTED_MODULE_4__.pushToBackArray)(targetSection, 'sm_color_usage_section');\n      });\n    }\n  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-panel-toggle__icon\",\n    dangerouslySetInnerHTML: {\n      __html: \"\\n                <svg viewBox=\\\"\".concat(_svg_colorize_elements_svg__WEBPACK_IMPORTED_MODULE_5__.default.viewBox, \"\\\">\\n                  <use xlink:href=\\\"#\").concat(_svg_colorize_elements_svg__WEBPACK_IMPORTED_MODULE_5__.default.id, \"\\\" />\\n                </svg>\")\n    }\n  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(\"div\", {\n    className: \"sm-panel-toggle__label\"\n  }, \"Colorize elements one by one\")));\n};\n\nvar initializeColorizeElementsButton = function initializeColorizeElementsButton() {\n  var target = document.getElementById('customize-control-sm_coloration_level_control');\n  var button = document.createElement('li');\n  button.setAttribute('class', 'customize-control');\n  button.setAttribute('style', 'padding: 0');\n  target.insertAdjacentElement('afterend', button);\n  react_dom__WEBPACK_IMPORTED_MODULE_0___default().render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(ColorizeElementsButton, null), button);\n};\n\nvar applyColorationValueToFields = function applyColorationValueToFields(colorationLevel) {\n  var defaultColorationLevel = _global_service__WEBPACK_IMPORTED_MODULE_4__.getSettingConfig('sm_coloration_level').default;\n  var isDefaultColoration = colorationLevel === defaultColorationLevel;\n  var settings = _global_service__WEBPACK_IMPORTED_MODULE_4__.getSettings();\n  var value = parseInt(colorationLevel, 10);\n  var threshold = value < 50 ? 4 : value < 75 ? 3 : value < 100 ? 2 : 1;\n  Object.keys(settings).forEach(function (settingID) {\n    var config = (0,_global_service__WEBPACK_IMPORTED_MODULE_4__.getSettingConfig)(settingID);\n\n    if ((config === null || config === void 0 ? void 0 : config.type) === 'sm_toggle') {\n      var coloration = config.coloration;\n      wp.customize(settingID, function (setting) {\n        setting.set(isDefaultColoration ? config.default : coloration >= threshold);\n      });\n    }\n  });\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/create-reset-buttons.js":
-/*!****************************************************!*\
-  !*** ./src/_js/customizer/create-reset-buttons.js ***!
-  \****************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"createResetButtons\": function() { return /* binding */ createResetButtons; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/utils/api-set-setting-value.js\");\n\n\nvar createResetButtons = function createResetButtons() {\n  var $document = jquery__WEBPACK_IMPORTED_MODULE_0___default()(document);\n  var showResetButtons = jquery__WEBPACK_IMPORTED_MODULE_0___default()('button[data-action=\"reset_style_manager\"]').length > 0;\n\n  if (showResetButtons) {\n    createResetPanelButtons();\n    createResetSectionButtons();\n    $document.on('click', '.js-reset-panel', onResetPanel);\n    $document.on('click', '.js-reset-section', onResetSection);\n    $document.on('click', '#customize-control-reset_style_manager button', onReset);\n  }\n};\n\nfunction createResetPanelButtons() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.panel-meta').each(function (i, obj) {\n    var $this = jquery__WEBPACK_IMPORTED_MODULE_0___default()(obj);\n    var container = $this.parents('.control-panel');\n    var id = container.attr('id');\n\n    if (typeof id !== 'undefined') {\n      id = id.replace('sub-accordion-panel-', '');\n      id = id.replace('accordion-panel-', '');\n      var $buttonWrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<li class=\"customize-control customize-control-reset\"></li>');\n      var $button = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<button class=\"button js-reset-panel\" data-panel=\"' + id + '\"></button>');\n      $button.text(styleManager.l10n.panelResetButton).appendTo($buttonWrapper);\n      $this.parent().append($buttonWrapper);\n    }\n  });\n}\n\nfunction createResetSectionButtons() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.accordion-section-content').each(function (el, key) {\n    var $this = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);\n    var sectionID = $this.attr('id');\n\n    if (_.isUndefined(sectionID) || sectionID.indexOf(styleManager.config.options_name) === -1) {\n      return;\n    }\n\n    var id = sectionID.replace('sub-accordion-section-', '');\n    var $button = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<button class=\"button js-reset-section\" data-section=\"' + id + '\"></button>');\n    var $buttonWrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<li class=\"customize-control customize-control-reset\"></li>');\n    $button.text(styleManager.l10n.sectionResetButton);\n    $buttonWrapper.append($button);\n    $this.append($buttonWrapper);\n  });\n}\n\nfunction onReset(ev) {\n  ev.preventDefault();\n  var iAgree = confirm(styleManager.l10n.resetGlobalConfirmMessage);\n\n  if (!iAgree) {\n    return;\n  }\n\n  jquery__WEBPACK_IMPORTED_MODULE_0___default().each(api.settings.controls, function (key, ctrl) {\n    var settingID = key.replace('_control', '');\n    var setting = styleManager.config.settings[settingID];\n\n    if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {\n      (0,_utils__WEBPACK_IMPORTED_MODULE_1__.apiSetSettingValue)(settingID, setting.default);\n    }\n  });\n  api.previewer.save();\n}\n\nfunction onResetPanel(e) {\n  e.preventDefault();\n  var panelID = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('panel'),\n      panel = api.panel(panelID),\n      sections = panel.sections(),\n      iAgree = confirm(styleManager.l10n.resetPanelConfirmMessage);\n\n  if (!iAgree) {\n    return;\n  }\n\n  if (sections.length > 0) {\n    jquery__WEBPACK_IMPORTED_MODULE_0___default().each(sections, function () {\n      var controls = this.controls();\n\n      if (controls.length > 0) {\n        jquery__WEBPACK_IMPORTED_MODULE_0___default().each(controls, function (key, ctrl) {\n          var settingID = ctrl.id.replace('_control', ''),\n              setting = styleManager.config.settings[settingID];\n\n          if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_1__.apiSetSettingValue)(settingID, setting.default);\n          }\n        });\n      }\n    });\n  }\n}\n\nfunction onResetSection(e) {\n  e.preventDefault();\n  var sectionID = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('section'),\n      section = api.section(sectionID),\n      controls = section.controls();\n  var iAgree = confirm(styleManager.l10n.resetSectionConfirmMessage);\n\n  if (!iAgree) {\n    return;\n  }\n\n  if (controls.length > 0) {\n    jquery__WEBPACK_IMPORTED_MODULE_0___default().each(controls, function (key, ctrl) {\n      var setting_id = ctrl.id.replace('_control', ''),\n          setting = styleManager.config.settings[setting_id];\n\n      if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {\n        (0,_utils__WEBPACK_IMPORTED_MODULE_1__.apiSetSettingValue)(setting_id, setting.default);\n      }\n    });\n  }\n}\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/create-reset-buttons.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fields/color-select/index.js":
-/*!*********************************************************!*\
-  !*** ./src/_js/customizer/fields/color-select/index.js ***!
-  \*********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"handleColorSelectFields\": function() { return /* binding */ handleColorSelectFields; },\n/* harmony export */   \"convertToColorSelect\": function() { return /* binding */ convertToColorSelect; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\nvar handleColorSelectFields = function handleColorSelectFields() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-color-select').each(function (i, obj) {\n    convertToColorSelect(obj);\n  });\n};\nvar convertToColorSelect = function convertToColorSelect(element) {\n  var $select = jquery__WEBPACK_IMPORTED_MODULE_0___default()(element);\n  var $selectOptions = $select.find('option');\n  var $colorSelect = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div class=\"style-manager-color-select\">');\n  var settingID = $select.data('customize-setting-link');\n  var $optionsList = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div class=\"style-manager-color-select__option-list\">');\n  $selectOptions.each(function (i, option) {\n    var $option = jquery__WEBPACK_IMPORTED_MODULE_0___default()(option);\n    var label = $option.text();\n    var value = $option.attr('value');\n    var $colorSelectOptionLabel = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div class=\"style-manager-color-select__option-label\">');\n    var $colorSelectOption = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div class=\"style-manager-color-select__option\">');\n    $colorSelectOptionLabel.text(label).appendTo($colorSelectOption);\n    $colorSelectOption.data('value', value).appendTo($optionsList);\n    $colorSelectOption.addClass('style-manager-color-select__option--' + value);\n  });\n  $optionsList.appendTo($colorSelect);\n  var $colorSelectOptions = $colorSelect.find('.style-manager-color-select__option');\n  $colorSelectOptions.each(function (i, option) {\n    var $colorSelectOption = jquery__WEBPACK_IMPORTED_MODULE_0___default()(option);\n    var value = $colorSelectOption.data('value');\n    $colorSelectOption.on('click', function () {\n      $select.val(value).change();\n    });\n  });\n  $colorSelect.insertBefore($select);\n  $select.hide();\n\n  function updateColorSelect(newValue) {\n    var $colorSelectOption = $colorSelectOptions.filter(function (index, obj) {\n      return jquery__WEBPACK_IMPORTED_MODULE_0___default()(obj).data('value') === newValue;\n    });\n\n    if ($colorSelectOption.length) {\n      $colorSelectOptions.removeClass('style-manager-color-select__option--selected');\n      $colorSelectOption.addClass('style-manager-color-select__option--selected');\n    }\n  }\n\n  wp.customize(settingID, function (setting) {\n    updateColorSelect(setting());\n    setting.bind(updateColorSelect);\n  });\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fields/color-select/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fields/range/index.js":
-/*!**************************************************!*\
-  !*** ./src/_js/customizer/fields/range/index.js ***!
-  \**************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"handleRangeFields\": function() { return /* binding */ handleRangeFields; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\nvar handleRangeFields = function handleRangeFields() {\n  var rangeControlSelectors = [\".accordion-section-content[id*=\\\"\".concat(styleManager.config.options_name, \"\\\"]\"), \"#sub-accordion-section-sm_color_palettes_section\", \"#sub-accordion-section-sm_color_usage_section\"];\n  var rangeControlSelector = rangeControlSelectors.join(', ');\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()(rangeControlSelector).each(function (i, container) {\n    var $rangeFields = jquery__WEBPACK_IMPORTED_MODULE_0___default()(container).find('input[type=\"range\"]'); // For each range input add a number field (for preview mainly - but it can also be used for input)\n\n    $rangeFields.each(function (i, obj) {\n      var $range = jquery__WEBPACK_IMPORTED_MODULE_0___default()(obj);\n      var settingID = $range.data('customize-setting-link');\n      var $number = $range.clone();\n      $number.attr('type', 'text').attr('class', 'range-value').removeAttr('data-value_entry');\n      $number.data('source', $range);\n\n      if ($range.first().attr('id')) {\n        $number.attr('id', $range.first().attr('id') + '_number');\n      }\n\n      $number.insertAfter($range);\n      wp.customize(settingID, function (setting) {\n        setting.bind(function (newValue) {\n          $number.val(newValue);\n        });\n      }); // When clicking outside the number field or on Enter.\n\n      $number.on('blur keyup', onRangePreviewBlur);\n    });\n  });\n};\n\nfunction onRangePreviewBlur(event) {\n  var $number = jquery__WEBPACK_IMPORTED_MODULE_0___default()(event.target);\n  var $range = $number.data('source');\n\n  if ('keyup' === event.type && event.keyCode !== 13) {\n    return;\n  }\n\n  if (event.target.value === $range.val()) {\n    // Nothing to do if the values are identical.\n    return;\n  }\n\n  if (!hasValidValue($number)) {\n    $number.val($range.val());\n    shake($number);\n  } else {\n    // Do not mark this trigger as being programmatically triggered by Style Manager since it is a result of a user input.\n    $range.val($number.val()).trigger('change');\n  }\n}\n\nfunction hasValidValue($input) {\n  var min = $input.attr('min');\n  var max = $input.attr('max');\n  var value = $input.val();\n\n  if (typeof min !== 'undefined' && parseFloat(min) > parseFloat(value)) {\n    return false;\n  }\n\n  if (typeof max !== 'undefined' && parseFloat(max) < parseFloat(value)) {\n    return false;\n  }\n\n  return true;\n}\n\nfunction shake($field) {\n  $field.addClass('input-shake input-error');\n  $field.one('animationend', function () {\n    $field.removeClass('input-shake input-error');\n  });\n}\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fields/range/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fields/tabs/index.js":
-/*!*************************************************!*\
-  !*** ./src/_js/customizer/fields/tabs/index.js ***!
-  \*************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"handleTabs\": function() { return /* binding */ handleTabs; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\nvar handleTabs = function handleTabs() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.sm-tabs').each(function (i, obj) {\n    var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()(obj);\n    var $section = $wrapper.closest('.control-section');\n    var $tabs = $wrapper.children('.sm-tabs__item');\n    var targets = $tabs.map(function (i, el) {\n      var target = jquery__WEBPACK_IMPORTED_MODULE_0___default()(el).data('target');\n      return \"sm-view-\".concat(target);\n    });\n    var targetClassnames = targets.toArray().join(\" \");\n\n    function setActiveTab($active) {\n      var target = $active.data('target');\n      $tabs.removeClass('sm-tabs__item--active');\n      $active.addClass('sm-tabs__item--active');\n      $section.removeClass(targetClassnames).addClass(\"sm-view-\".concat(target));\n    }\n\n    $wrapper.on('click', '.sm-tabs__item', function (e) {\n      e.preventDefault();\n      setActiveTab(jquery__WEBPACK_IMPORTED_MODULE_0___default()(this));\n    });\n    setActiveTab($tabs.first());\n  });\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fields/tabs/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/folding-fields.js":
-/*!**********************************************!*\
-  !*** ./src/_js/customizer/folding-fields.js ***!
-  \**********************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"handleFoldingFields\": function() { return /* binding */ handleFoldingFields; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\n/**\n * This function will search for all the interdependend fields and make a bound between them.\n * So whenever a target is changed, it will take actions to the dependent fields.\n * @TODO  this is still written in a barbaric way, refactor when needed\n */\n\nvar handleFoldingFields = function handleFoldingFields() {\n  if (_.isUndefined(styleManager.config) || _.isUndefined(styleManager.config.settings)) {\n    return; // bail\n  }\n\n  (jquery__WEBPACK_IMPORTED_MODULE_0___default().fn.reactor.defaults.compliant) = function () {\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).slideDown();\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find(':disabled').attr({\n      disabled: false\n    });\n  };\n\n  (jquery__WEBPACK_IMPORTED_MODULE_0___default().fn.reactor.defaults.uncompliant) = function () {\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).slideUp();\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find(':enabled').attr({\n      disabled: true\n    });\n  };\n\n  var IS = jquery__WEBPACK_IMPORTED_MODULE_0___default().extend({}, (jquery__WEBPACK_IMPORTED_MODULE_0___default().fn.reactor.helpers));\n\n  var bindFoldingEvents = function bindFoldingEvents(parentID, field, relation) {\n    var key = null;\n\n    if (_.isString(field)) {\n      key = field;\n    } else if (!_.isUndefined(field.id)) {\n      key = field.id;\n    } else if (_.isString(field[0])) {\n      key = field[0];\n    } else {\n      return; // no key, no fun\n    }\n\n    var value = 1,\n        // by default we use 1 the most used value for checkboxes or inputs\n    between = [0, 1]; // can only be `show` or `hide`\n\n    var target_key = styleManager.config.options_name + '[' + key + ']';\n    var target_type = styleManager.config.settings[target_key].type; // we support the usual syntax like a config array like `array( 'id' => $id, 'value' => $value, 'compare' => $compare )`\n    // but we also support a non-associative array like `array( $id, $value, $compare )`\n\n    if (!_.isUndefined(field.value)) {\n      value = field.value;\n    } else if (!_.isUndefined(field[1]) && !_.isString(field[1])) {\n      value = field[1];\n    }\n\n    if (!_.isUndefined(field.between)) {\n      between = field.between;\n    }\n    /**\n     * Now for each target we have, we will bind a change event to hide or show the dependent fields\n     */\n\n\n    var target_selector = '[data-customize-setting-link=\"' + styleManager.config.options_name + '[' + key + ']\"]';\n\n    switch (target_type) {\n      case 'checkbox':\n        jquery__WEBPACK_IMPORTED_MODULE_0___default()(parentID).reactIf(target_selector, function () {\n          return jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).is(':checked') == value;\n        });\n        break;\n\n      case 'radio':\n      case 'sm_radio':\n      case 'sm_switch':\n      case 'radio_image':\n      case 'radio_html':\n        // in case of an array of values we use the ( val in array) condition\n        if (_.isObject(value)) {\n          value = _.toArray(value);\n          jquery__WEBPACK_IMPORTED_MODULE_0___default()(parentID).reactIf(target_selector, function () {\n            return value.indexOf(jquery__WEBPACK_IMPORTED_MODULE_0___default()(target_selector + ':checked').val()) !== -1;\n          });\n        } else {\n          // in any other case we use a simple == comparison\n          jquery__WEBPACK_IMPORTED_MODULE_0___default()(parentID).reactIf(target_selector, function () {\n            return jquery__WEBPACK_IMPORTED_MODULE_0___default()(target_selector + ':checked').val() == value;\n          });\n        }\n\n        break;\n\n      case 'range':\n        var x = IS.Between(between[0], between[1]);\n        jquery__WEBPACK_IMPORTED_MODULE_0___default()(parentID).reactIf(target_selector, x);\n        break;\n\n      default:\n        // in case of an array of values we use the ( val in array) condition\n        if (_.isObject(value)) {\n          value = _.toArray(value);\n          jquery__WEBPACK_IMPORTED_MODULE_0___default()(parentID).reactIf(target_selector, function () {\n            return value.indexOf(jquery__WEBPACK_IMPORTED_MODULE_0___default()(target_selector).val()) !== -1;\n          });\n        } else {\n          // in any other case we use a simple == comparison\n          jquery__WEBPACK_IMPORTED_MODULE_0___default()(parentID).reactIf(target_selector, function () {\n            return jquery__WEBPACK_IMPORTED_MODULE_0___default()(target_selector).val() == value;\n          });\n        }\n\n        break;\n    }\n\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()(target_selector).trigger('change', ['style-manager']);\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()('.reactor').trigger('change.reactor'); // triggers all events on load\n  };\n\n  jquery__WEBPACK_IMPORTED_MODULE_0___default().each(styleManager.config.settings, function (id, field) {\n    /**\n     * Here we have the id of the fields. but we know for sure that we just need his parent selector\n     * So we just create it\n     */\n    var parentID = id.replace('[', '-');\n    parentID = parentID.replace(']', '');\n    parentID = '#customize-control-' + parentID + '_control'; // get only the fields that have a 'show_if' property\n\n    if (field.hasOwnProperty('show_if')) {\n      var relation = 'AND';\n\n      if (!_.isUndefined(field.show_if.relation)) {\n        relation = field.show_if.relation; // remove the relation property, we need the config to be array based only\n\n        delete field.show_if.relation;\n      }\n      /**\n       * The 'show_if' can be a simple array with one target like: [ id, value, comparison, action ]\n       * Or it could be an array of multiple targets and we need to process both cases\n       */\n\n\n      if (!_.isUndefined(field.show_if.id)) {\n        bindFoldingEvents(parentID, field.show_if, relation);\n      } else if (_.isObject(field.show_if)) {\n        jquery__WEBPACK_IMPORTED_MODULE_0___default().each(field.show_if, function (i, j) {\n          bindFoldingEvents(parentID, j, relation);\n        });\n      }\n    }\n  });\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/folding-fields.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/font-palettes/index.js":
-/*!***************************************************!*\
-  !*** ./src/_js/customizer/font-palettes/index.js ***!
-  \***************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initializeFontPalettes\": function() { return /* binding */ initializeFontPalettes; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\nvar initializeFontPalettes = function initializeFontPalettes() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-font-palette').each(function (i, obj) {\n    var $paletteSet = jquery__WEBPACK_IMPORTED_MODULE_0___default()(obj);\n    var $labels = $paletteSet.find('label');\n    $labels.on('click', function (event) {\n      var $label = jquery__WEBPACK_IMPORTED_MODULE_0___default()(event.target);\n      var forID = $label.attr('for');\n      var $input = jquery__WEBPACK_IMPORTED_MODULE_0___default()(\"#\".concat(forID));\n      var fontsLogic = $input.data('fonts_logic');\n      showAdvancedFontPaletteControls();\n      applyFontPalette(fontsLogic);\n    });\n  }); // Handle the case when there is no selected font palette (like on a fresh installation without any demo data import).\n  // In this case we want to hide the advanced tab.\n\n  wp.customize('sm_font_palette', function (setting) {\n    if (!setting()) {\n      hideAdvancedFontPaletteControls();\n    }\n  });\n};\n\nvar applyFontPalette = function applyFontPalette(fontsLogic) {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default().each(fontsLogic, function (settingID, config) {\n    wp.customize(settingID, function (setting) {\n      setting.set(config);\n    });\n  });\n};\n\nvar advancedTabSelector = '#sub-accordion-section-sm_font_palettes_section .sm-tabs__item[data-target=\"advanced\"]';\n\nvar hideAdvancedFontPaletteControls = function hideAdvancedFontPaletteControls() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()(advancedTabSelector).css('visibility', 'hidden');\n};\n\nvar showAdvancedFontPaletteControls = function showAdvancedFontPaletteControls() {\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()(advancedTabSelector).css('visibility', 'visible');\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/font-palettes/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/index.js":
-/*!*******************************************!*\
-  !*** ./src/_js/customizer/fonts/index.js ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initializeFonts\": function() { return /* binding */ initializeFonts; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../utils */ \"./src/_js/utils.js\");\n/* harmony import */ var _global_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../global-service */ \"./src/_js/customizer/global-service.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/handle-font-popup-toggle.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/init-subfield.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/get-font-details.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/update-font-head-title.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/update-variant-field.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/self-update-value.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/index.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/fonts-service.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/load-font-value.js\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./utils */ \"./src/_js/customizer/fonts/utils/callback-filter.js\");\n\n\n\n\n\nvar wrapperSelector = '.font-options__wrapper';\nvar fontVariantSelector = '.style-manager_font_weight';\nvar initializeFonts = function initializeFonts() {\n  var $fontFields = jquery__WEBPACK_IMPORTED_MODULE_0___default()(wrapperSelector);\n  $fontFields.each(function (i, obj) {\n    var $fontField = jquery__WEBPACK_IMPORTED_MODULE_0___default()(obj);\n    initializeFontFamilyField($fontField);\n    initializeSubfields($fontField);\n  });\n  (0,_utils__WEBPACK_IMPORTED_MODULE_1__.handleFontPopupToggle)();\n  reloadConnectedFields();\n};\n\nvar initializeFontFamilyField = function initializeFontFamilyField($fontField) {\n  var $fontFamilyField = $fontField.find('.style-manager_font_family');\n  var familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText; // Add the Google Fonts opts to each control\n\n  addGoogleFontsToFontFamilyField($fontFamilyField); // Initialize the select2 field for the font family\n\n  $fontFamilyField.select2({\n    placeholder: familyPlaceholderText\n  });\n  $fontFamilyField.on('change', onFontFamilyChange);\n  bindFontFamilySettingChange($fontFamilyField);\n};\n\nvar initializeSubfields = function initializeSubfields($fontField) {\n  var $variant = $fontField.find(fontVariantSelector);\n  var $select = $fontField.find('select').not('select[class*=\\' select2\\'],select[class^=\\'select2\\']');\n  var $range = $fontField.find('input[type=\"range\"]'); // Initialize the select2 field for the font variant\n\n  (0,_utils__WEBPACK_IMPORTED_MODULE_2__.initSubfield)($variant, true); // Initialize all the regular selects in the font subfields\n\n  (0,_utils__WEBPACK_IMPORTED_MODULE_2__.initSubfield)($select, false); // Initialize the all the range fields in the font subfields\n\n  (0,_utils__WEBPACK_IMPORTED_MODULE_2__.initSubfield)($range, false);\n};\n\nvar addGoogleFontsToFontFamilyField = function addGoogleFontsToFontFamilyField($fontFamilyField) {\n  var googleFontsOptions = wp.customize.settings['google_fonts_opts'];\n  var $googleOptionsPlaceholder = $fontFamilyField.find('.google-fonts-opts-placeholder').first();\n\n  if (typeof googleFontsOptions !== 'undefined' && $googleOptionsPlaceholder.length) {\n    // Replace the placeholder with the HTML for the Google fonts select options.\n    $googleOptionsPlaceholder.replaceWith(googleFontsOptions); // The active font family might be a Google font so we need to set the current value after we've added the options.\n\n    var activeFontFamily = $fontFamilyField.data('active_font_family');\n\n    if (typeof activeFontFamily !== 'undefined') {\n      $fontFamilyField.val(activeFontFamily);\n    }\n  }\n};\n\nvar onFontFamilyChange = function onFontFamilyChange(event) {\n  var newFontFamily = event.target.value;\n  var $target = jquery__WEBPACK_IMPORTED_MODULE_0___default()(event.target);\n  var $wrapper = $target.closest(wrapperSelector); // Get the new font details\n\n  var newFontDetails = (0,_utils__WEBPACK_IMPORTED_MODULE_3__.getFontDetails)(newFontFamily); // Update the font field head title (with the new font family name).\n\n  (0,_utils__WEBPACK_IMPORTED_MODULE_4__.updateFontHeadTitle)(newFontDetails, $wrapper); // Update the variant subfield with the new options given by the selected font family.\n\n  (0,_utils__WEBPACK_IMPORTED_MODULE_5__.updateVariantField)(newFontDetails, $wrapper);\n\n  if (typeof who !== 'undefined' && who === 'style-manager') {// The change was triggered programmatically by Style Manager.\n    // No need to self-update the value.\n  } else {\n    // Mark this input as touched by the user.\n    jquery__WEBPACK_IMPORTED_MODULE_0___default()(event.target).data('touched', true); // Serialize subfield values and refresh the fonts in the preview window.\n\n    (0,_utils__WEBPACK_IMPORTED_MODULE_6__.selfUpdateValue)($wrapper, (0,_utils__WEBPACK_IMPORTED_MODULE_7__.getSettingID)($target));\n  }\n};\n\nvar bindFontFamilySettingChange = function bindFontFamilySettingChange($fontFamilyField) {\n  var $wrapper = $fontFamilyField.closest(wrapperSelector);\n  var settingID = (0,_utils__WEBPACK_IMPORTED_MODULE_7__.getSettingID)($fontFamilyField);\n  wp.customize(settingID, function (setting) {\n    setting.bind(function (newValue, oldValue) {\n      // this is a costly operation\n      if (!_utils__WEBPACK_IMPORTED_MODULE_8__.isUpdating(settingID)) {\n        (0,_utils__WEBPACK_IMPORTED_MODULE_9__.loadFontValue)($wrapper, newValue, settingID);\n      }\n    });\n  });\n};\n\nvar reloadConnectedFields = (0,_utils__WEBPACK_IMPORTED_MODULE_10__.debounce)(function () {\n  var settingIDs = styleManager.fontPalettes.masterSettingIds;\n  _global_service__WEBPACK_IMPORTED_MODULE_11__.unbindConnectedFields(settingIDs);\n  settingIDs.forEach(function (settingID) {\n    wp.customize(settingID, function (parentSetting) {\n      (0,_global_service__WEBPACK_IMPORTED_MODULE_11__.setCallback)(settingID, function (newValue) {\n        var settingConfig = (0,_global_service__WEBPACK_IMPORTED_MODULE_11__.getSetting)(settingID);\n        var connectedFields = settingConfig.connected_fields || {};\n        Object.keys(connectedFields).forEach(function (key) {\n          var connectedFieldData = connectedFields[key];\n          var connectedSettingID = connectedFieldData.setting_id;\n          var callbackFilter = (0,_utils__WEBPACK_IMPORTED_MODULE_12__.getCallbackFilter)(connectedFieldData);\n          wp.customize(connectedSettingID, function (connectedSetting) {\n            connectedSetting.set(callbackFilter(newValue));\n          });\n        });\n      });\n      parentSetting.bind((0,_global_service__WEBPACK_IMPORTED_MODULE_11__.getCallback)(settingID));\n    });\n  });\n}, 30);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/callback-filter.js":
-/*!***********************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/callback-filter.js ***!
-  \***********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getCallbackFilter\": function() { return /* binding */ getCallbackFilter; }\n/* harmony export */ });\n/* harmony import */ var _standardize_numerical_value__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./standardize-numerical-value */ \"./src/_js/customizer/fonts/utils/standardize-numerical-value.js\");\n/* harmony import */ var _round__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./round */ \"./src/_js/customizer/fonts/utils/round.js\");\n\n\nvar getCallbackFilter = function getCallbackFilter(connectedFieldData) {\n  return function (newValue, oldValue) {\n    /* ======================\n     * Process the font logic to get the value that should be applied to the connected (font) fields.\n     *\n     * The font logic is already in the new value - @see setFieldFontsLogicConfig()\n     */\n    var newFontData = {};\n    var fontsLogic = newValue;\n\n    if (typeof fontsLogic.reset !== 'undefined') {\n      var settingID = connectedFieldData.setting_id;\n      var defaultValue = styleManager.config.settings[settingID].default;\n\n      if (!_.isUndefined(setting) && !_.isEmpty(defaultValue)) {\n        newFontData['font_family'] = defaultValue['font_family'];\n        newFontData['font_size'] = defaultValue['font_size'];\n        newFontData['line_height'] = defaultValue['line_height'];\n        newFontData['letter_spacing'] = defaultValue['letter_spacing'];\n        newFontData['text_transform'] = defaultValue['text_transform'];\n        newFontData['font_variant'] = defaultValue['font_variant'];\n      }\n    }\n    /* ===========\n     * We need to determine the 6 subfields values to be able to determine the value of the font field.\n     */\n    // The font family is straight forward as it comes directly from the parent field font logic configuration.\n\n\n    if (typeof fontsLogic.font_family !== 'undefined') {\n      newFontData['font_family'] = fontsLogic.font_family;\n    }\n\n    if (_.isEmpty(newFontData['font_family'])) {\n      // If we don't have a font family, we really can't do much.\n      return;\n    }\n\n    if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {\n      newFontData['font_size'] = (0,_standardize_numerical_value__WEBPACK_IMPORTED_MODULE_0__.standardizeNumericalValue)(connectedFieldData.font_size); // Next, we what to apply the overall font size multiplier.\n\n      if (!isNaN(newFontData['font_size'].value)) {\n        // By default we use 1.\n        var overallFontSizeMultiplier = 1.0;\n\n        if (typeof fontsLogic.font_size_multiplier !== 'undefined') {\n          // Make sure it is a positive float.\n          overallFontSizeMultiplier = parseFloat(fontsLogic.font_size_multiplier); // We reject negative or 0 values.\n\n          if (overallFontSizeMultiplier <= 0) {\n            overallFontSizeMultiplier = 1.0;\n          }\n        }\n\n        newFontData['font_size'].value = (0,_round__WEBPACK_IMPORTED_MODULE_1__.round)(parseFloat(newFontData['font_size'].value) * overallFontSizeMultiplier, styleManager.fonts.floatPrecision);\n      } // The font variant, letter spacing and text transform all come together from the font styles (intervals).\n      // We just need to find the one that best matches the connected field given font size (if given).\n      // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.\n\n\n      if (typeof fontsLogic.font_styles_intervals !== 'undefined' && _.isArray(fontsLogic.font_styles_intervals) && fontsLogic.font_styles_intervals.length > 0) {\n        var idx = 0;\n\n        while (idx < fontsLogic.font_styles_intervals.length - 1 && typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' && fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {\n          idx++;\n        } // We will apply what we've got.\n\n\n        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_variant)) {\n          newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_variant;\n        }\n\n        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {\n          newFontData['letter_spacing'] = (0,_standardize_numerical_value__WEBPACK_IMPORTED_MODULE_0__.standardizeNumericalValue)(fontsLogic.font_styles_intervals[idx].letter_spacing);\n        }\n\n        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {\n          newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform;\n        } // Next, we what to apply the interval font size multiplier.\n\n\n        if (!isNaN(newFontData['font_size'].value)) {\n          // By default we use 1.\n          var fontSizeMultiplier = 1.0;\n\n          if (typeof fontsLogic.font_styles_intervals[idx].font_size_multiplier !== 'undefined') {\n            // Make sure it is a positive float.\n            fontSizeMultiplier = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_multiplier); // We reject negative or 0 values.\n\n            if (fontSizeMultiplier <= 0) {\n              fontSizeMultiplier = 1.0;\n            }\n          }\n\n          newFontData['font_size'].value = (0,_round__WEBPACK_IMPORTED_MODULE_1__.round)(parseFloat(newFontData['font_size'].value) * fontSizeMultiplier, styleManager.fonts.floatPrecision);\n        }\n      } // The line height is determined by getting the value of the polynomial function determined by points.\n\n\n      if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {\n        var result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {\n          precision: styleManager.fonts.floatPrecision\n        });\n        var lineHeight = result.predict(newFontData['font_size'].value)[1];\n        newFontData['line_height'] = (0,_standardize_numerical_value__WEBPACK_IMPORTED_MODULE_0__.standardizeNumericalValue)(lineHeight);\n      }\n    }\n\n    return newFontData;\n  };\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/callback-filter.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/convert-font-variant.js":
-/*!****************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/convert-font-variant.js ***!
-  \****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"convertFontVariantToFVD\": function() { return /* binding */ convertFontVariantToFVD; }\n/* harmony export */ });\n/**\n * Will convert an array of CSS like variants into their FVD equivalents. Web Font Loader expects this format.\n * @link https://github.com/typekit/fvd\n */\nvar convertFontVariantToFVD = function convertFontVariantToFVD(variant) {\n  variant = String(variant);\n  var fontStyle = 'n'; // normal\n\n  if (-1 !== variant.indexOf('italic')) {\n    fontStyle = 'i';\n    variant = variant.replace('italic', '');\n  } else if (-1 !== variant.indexOf('oblique')) {\n    fontStyle = 'o';\n    variant = variant.replace('oblique', '');\n  }\n\n  var fontWeight; //  The equivalence:\n  //\n  //\t\t\t1: 100\n  //\t\t\t2: 200\n  //\t\t\t3: 300\n  //\t\t\t4: 400 (default, also recognized as 'normal')\n  //\t\t\t5: 500\n  //\t\t\t6: 600\n  //\t\t\t7: 700 (also recognized as 'bold')\n  //\t\t\t8: 800\n  //\t\t\t9: 900\n\n  switch (variant) {\n    case '100':\n      fontWeight = '1';\n      break;\n\n    case '200':\n      fontWeight = '2';\n      break;\n\n    case '300':\n      fontWeight = '3';\n      break;\n\n    case '500':\n      fontWeight = '5';\n      break;\n\n    case '600':\n      fontWeight = '6';\n      break;\n\n    case '700':\n    case 'bold':\n      fontWeight = '7';\n      break;\n\n    case '800':\n      fontWeight = '8';\n      break;\n\n    case '900':\n      fontWeight = '9';\n      break;\n\n    default:\n      fontWeight = '4';\n      break;\n  }\n\n  return fontStyle + fontWeight;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/convert-font-variant.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/determine-font-type.js":
-/*!***************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/determine-font-type.js ***!
-  \***************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"determineFontType\": function() { return /* binding */ determineFontType; }\n/* harmony export */ });\nvar determineFontType = function determineFontType(fontFamily) {\n  // The default is a standard font (aka no special loading or processing).\n  var fontType = 'system_font'; // We will follow a stack in the following order: cloud fonts, theme fonts, Google fonts, standard fonts.\n\n  if (typeof styleManager.fonts.cloud_fonts[fontFamily] !== 'undefined') {\n    fontType = 'cloud_font';\n  } else if (typeof styleManager.fonts.theme_fonts[fontFamily] !== 'undefined') {\n    fontType = 'theme_font';\n  } else if (typeof styleManager.fonts.google_fonts[fontFamily] !== 'undefined') {\n    fontType = 'google_font';\n  }\n\n  return fontType;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/determine-font-type.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/fonts-service.js":
-/*!*********************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/fonts-service.js ***!
-  \*********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"isLoading\": function() { return /* binding */ isLoading; },\n/* harmony export */   \"isUpdating\": function() { return /* binding */ isUpdating; },\n/* harmony export */   \"setLoading\": function() { return /* binding */ setLoading; },\n/* harmony export */   \"setUpdating\": function() { return /* binding */ setUpdating; }\n/* harmony export */ });\nvar updating = {};\nvar loading = {};\nvar isLoading = function isLoading(settingID) {\n  return !!updating[settingID];\n};\nvar isUpdating = function isUpdating(settingID) {\n  return !!loading[settingID];\n};\nvar setLoading = function setLoading(settingID, value) {\n  loading[settingID] = value;\n};\nvar setUpdating = function setUpdating(settingID, value) {\n  updating[settingID] = value;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/fonts-service.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/get-font-details.js":
-/*!************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/get-font-details.js ***!
-  \************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getFontDetails\": function() { return /* binding */ getFontDetails; }\n/* harmony export */ });\n/* harmony import */ var _determine_font_type__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./determine-font-type */ \"./src/_js/customizer/fonts/utils/determine-font-type.js\");\n\nvar getFontDetails = function getFontDetails(fontFamily) {\n  var fontType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;\n\n  if (false === fontType) {\n    // We will determine the font type based on font family.\n    fontType = (0,_determine_font_type__WEBPACK_IMPORTED_MODULE_0__.determineFontType)(fontFamily);\n  }\n\n  switch (fontType) {\n    case 'theme_font':\n      return styleManager.fonts.theme_fonts[fontFamily];\n      break;\n\n    case 'cloud_font':\n      return styleManager.fonts.cloud_fonts[fontFamily];\n      break;\n\n    case 'google_font':\n      return styleManager.fonts.google_fonts[fontFamily];\n      break;\n\n    case 'system_font':\n      if (typeof styleManager.fonts.system_fonts[fontFamily] !== 'undefined') {\n        return styleManager.fonts.system_fonts[fontFamily];\n      }\n\n      break;\n\n    default:\n  }\n\n  return false;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/get-font-details.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/handle-font-popup-toggle.js":
-/*!********************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/handle-font-popup-toggle.js ***!
-  \********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"handleFontPopupToggle\": function() { return /* binding */ handleFontPopupToggle; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\nvar handleFontPopupToggle = function handleFontPopupToggle() {\n  var $allFontCheckboxes = jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-font-option-toggle'); // Close all other font fields popups when opening a font field popup.\n\n  $allFontCheckboxes.on('click', function (event) {\n    $allFontCheckboxes.not(event.target).prop('checked', false);\n  }); // Make sure that all fonts popups are closed when backing away from a panel or section.\n  // @todo This doesn't catch backing with ESC key. For that we should hook on Customizer section and panel events ('collapsed').\n\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('#customize-controls .customize-panel-back, #customize-controls .customize-section-back').on('click', function () {\n    $allFontCheckboxes.prop('checked', false);\n  });\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/handle-font-popup-toggle.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/index.js":
-/*!*************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/index.js ***!
-  \*************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getCallbackFilter\": function() { return /* reexport safe */ _callback_filter__WEBPACK_IMPORTED_MODULE_0__.getCallbackFilter; },\n/* harmony export */   \"convertFontVariantToFVD\": function() { return /* reexport safe */ _convert_font_variant__WEBPACK_IMPORTED_MODULE_1__.convertFontVariantToFVD; },\n/* harmony export */   \"determineFontType\": function() { return /* reexport safe */ _determine_font_type__WEBPACK_IMPORTED_MODULE_2__.determineFontType; },\n/* harmony export */   \"getFontDetails\": function() { return /* reexport safe */ _get_font_details__WEBPACK_IMPORTED_MODULE_3__.getFontDetails; },\n/* harmony export */   \"handleFontPopupToggle\": function() { return /* reexport safe */ _handle_font_popup_toggle__WEBPACK_IMPORTED_MODULE_4__.handleFontPopupToggle; },\n/* harmony export */   \"initSubfield\": function() { return /* reexport safe */ _init_subfield__WEBPACK_IMPORTED_MODULE_5__.initSubfield; },\n/* harmony export */   \"loadFontValue\": function() { return /* reexport safe */ _load_font_value__WEBPACK_IMPORTED_MODULE_6__.loadFontValue; },\n/* harmony export */   \"selfUpdateValue\": function() { return /* reexport safe */ _self_update_value__WEBPACK_IMPORTED_MODULE_7__.selfUpdateValue; },\n/* harmony export */   \"standardizeNumericalValue\": function() { return /* reexport safe */ _standardize_numerical_value__WEBPACK_IMPORTED_MODULE_8__.standardizeNumericalValue; },\n/* harmony export */   \"updateFontHeadTitle\": function() { return /* reexport safe */ _update_font_head_title__WEBPACK_IMPORTED_MODULE_9__.updateFontHeadTitle; },\n/* harmony export */   \"updateVariantField\": function() { return /* reexport safe */ _update_variant_field__WEBPACK_IMPORTED_MODULE_10__.updateVariantField; },\n/* harmony export */   \"fontsService\": function() { return /* reexport module object */ _fonts_service__WEBPACK_IMPORTED_MODULE_11__; },\n/* harmony export */   \"getSettingID\": function() { return /* binding */ getSettingID; },\n/* harmony export */   \"getWrapper\": function() { return /* binding */ getWrapper; }\n/* harmony export */ });\n/* harmony import */ var _callback_filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./callback-filter */ \"./src/_js/customizer/fonts/utils/callback-filter.js\");\n/* harmony import */ var _convert_font_variant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./convert-font-variant */ \"./src/_js/customizer/fonts/utils/convert-font-variant.js\");\n/* harmony import */ var _determine_font_type__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./determine-font-type */ \"./src/_js/customizer/fonts/utils/determine-font-type.js\");\n/* harmony import */ var _get_font_details__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./get-font-details */ \"./src/_js/customizer/fonts/utils/get-font-details.js\");\n/* harmony import */ var _handle_font_popup_toggle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./handle-font-popup-toggle */ \"./src/_js/customizer/fonts/utils/handle-font-popup-toggle.js\");\n/* harmony import */ var _init_subfield__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./init-subfield */ \"./src/_js/customizer/fonts/utils/init-subfield.js\");\n/* harmony import */ var _load_font_value__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./load-font-value */ \"./src/_js/customizer/fonts/utils/load-font-value.js\");\n/* harmony import */ var _self_update_value__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./self-update-value */ \"./src/_js/customizer/fonts/utils/self-update-value.js\");\n/* harmony import */ var _standardize_numerical_value__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./standardize-numerical-value */ \"./src/_js/customizer/fonts/utils/standardize-numerical-value.js\");\n/* harmony import */ var _update_font_head_title__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./update-font-head-title */ \"./src/_js/customizer/fonts/utils/update-font-head-title.js\");\n/* harmony import */ var _update_variant_field__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./update-variant-field */ \"./src/_js/customizer/fonts/utils/update-variant-field.js\");\n/* harmony import */ var _fonts_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./fonts-service */ \"./src/_js/customizer/fonts/utils/fonts-service.js\");\n\n\n\n\n\n\n\n\n\n\n\n\n\nvar wrapperSelector = '.font-options__wrapper';\nvar valueHolderSelector = '.style-manager_font_values';\nvar getSettingID = function getSettingID($element) {\n  return getWrapper($element).find(valueHolderSelector).data('customize-setting-link');\n};\nvar getWrapper = function getWrapper($element) {\n  return $element.closest(wrapperSelector);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/init-subfield.js":
-/*!*********************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/init-subfield.js ***!
-  \*********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"initSubfield\": function() { return /* binding */ initSubfield; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index */ \"./src/_js/customizer/fonts/utils/index.js\");\n/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index */ \"./src/_js/customizer/fonts/utils/self-update-value.js\");\n\n\nvar initSubfield = function initSubfield($subField) {\n  var select2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;\n  // Mark these as not touched by the user.\n  $subField.data('touched', false);\n  $subField.on('input change', onSubfieldChange); // If we've been instructed, initialize a select2.\n\n  if (true === select2) {\n    $subField.select2();\n  }\n};\n\nvar onSubfieldChange = function onSubfieldChange(event, who) {\n  var $subField = jquery__WEBPACK_IMPORTED_MODULE_0___default()(event.target); // The change was triggered programmatically by Style Manager.\n  // No need to self-update the value.\n\n  if ('style-manager' === who) {\n    return;\n  }\n\n  var wrapper = (0,_index__WEBPACK_IMPORTED_MODULE_1__.getWrapper)($subField);\n  var settingID = (0,_index__WEBPACK_IMPORTED_MODULE_1__.getSettingID)($subField); // Mark this input as touched by the user.\n\n  $subField.data('touched', true); // Gather subfield values and trigger refresh of the fonts in the preview window.\n\n  (0,_index__WEBPACK_IMPORTED_MODULE_2__.selfUpdateValue)(wrapper, settingID);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/init-subfield.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/load-font-value.js":
-/*!***********************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/load-font-value.js ***!
-  \***********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"loadFontValue\": function() { return /* binding */ loadFontValue; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index */ \"./src/_js/customizer/fonts/utils/fonts-service.js\");\n/* harmony import */ var _round__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./round */ \"./src/_js/customizer/fonts/utils/round.js\");\n/* harmony import */ var _standardize_numerical_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./standardize-numerical-value */ \"./src/_js/customizer/fonts/utils/standardize-numerical-value.js\");\n\n\n\n\n/**\n * This function is a reverse of selfUpdateValue(), initializing the entire font field controls\n * based on the setting value.\n */\n\nvar loadFontValue = function loadFontValue(wrapper, value, settingID) {\n  // If we are already loading this setting value and haven't finished, there is no point in starting again.\n  if (_index__WEBPACK_IMPORTED_MODULE_1__.isLoading(settingID)) {\n    return;\n  } // Mark the fact that we are loading the field value\n\n\n  _index__WEBPACK_IMPORTED_MODULE_1__.setLoading(settingID, true);\n  var optionsList = jquery__WEBPACK_IMPORTED_MODULE_0___default()(wrapper).find('.font-options__options-list'),\n      inputs = optionsList.find('[data-value_entry]');\n  inputs.each(function (key, input) {\n    var $input = jquery__WEBPACK_IMPORTED_MODULE_0___default()(input);\n    var valueEntry = $input.data('value_entry'); // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements\n\n    if (typeof valueEntry === 'undefined' || valueEntry === '' || typeof value[valueEntry] === 'undefined') {\n      return;\n    } // We will do this only for numerical sub-fields.\n\n\n    if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {\n      var subfieldValue = (0,_standardize_numerical_value__WEBPACK_IMPORTED_MODULE_2__.standardizeNumericalValue)(value[valueEntry], input); // Make sure that the unit and value_unit attributes are in place.\n\n      if (subfieldValue.unit !== '') {\n        $input.data('value_unit', subfieldValue.unit);\n\n        if (_.isEmpty($input.attr('unit'))) {\n          $input.attr('unit', subfieldValue.unit);\n        }\n      } // If the field unit and value unit differ, we have some conversion to do.\n      // We will convert the received value to the appropriate unit declared by the input.\n      // We will use a guessed base size of 16px. Not an exact conversion, but it will have to do.\n\n\n      var baseSize = 16;\n      var subfieldUnit = $input.attr('unit').trim().toLowerCase();\n      var subfieldValueUnit = $input.data('value_unit').trim().toLowerCase(); // The comparison is intentionally loose.\n\n      if (subfieldUnit != subfieldValueUnit) {\n        if (_.includes(['em', 'rem'], subfieldValueUnit) && 'px' === subfieldUnit) {\n          // We will have to multiply the value.\n          subfieldValue.value = (0,_round__WEBPACK_IMPORTED_MODULE_3__.round)(subfieldValue.value * baseSize, styleManager.fonts.floatPrecision);\n        } else if (_.includes(['em', 'rem'], subfieldUnit) && 'px' === subfieldValueUnit) {\n          // We will have to divide the value.\n          subfieldValue.value = (0,_round__WEBPACK_IMPORTED_MODULE_3__.round)(subfieldValue.value / baseSize, styleManager.fonts.floatPrecision);\n        }\n      } // If this field has a min/max attribute we need to make sure that those attributes allow for the value we are trying to impose.\n\n\n      if ($input.attr('min') && $input.attr('min') > subfieldValue.value) {\n        $input.attr('min', subfieldValue.value);\n      }\n\n      if ($input.attr('max') && $input.attr('max') < subfieldValue.value) {\n        $input.attr('max', subfieldValue.value);\n      }\n\n      $input.val(subfieldValue.value);\n    } else {\n      $input.val(value[valueEntry]);\n    } // Mark this input as not touched by the user.\n\n\n    $input.data('touched', false);\n    $input.trigger('change', ['style-manager']);\n  }); // Finished with the field value loading.\n\n  _index__WEBPACK_IMPORTED_MODULE_1__.setLoading(settingID, false);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/load-font-value.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/round.js":
-/*!*************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/round.js ***!
-  \*************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"round\": function() { return /* binding */ round; }\n/* harmony export */ });\nvar round = function round(number, precision) {\n  var factor = Math.pow(10, precision);\n  return Math.round(number * factor) / factor;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/round.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/self-update-value.js":
-/*!*************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/self-update-value.js ***!
-  \*************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"selfUpdateValue\": function() { return /* binding */ selfUpdateValue; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index */ \"./src/_js/customizer/fonts/utils/fonts-service.js\");\n/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index */ \"./src/_js/customizer/fonts/utils/standardize-numerical-value.js\");\n/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./index */ \"./src/_js/customizer/fonts/utils/get-font-details.js\");\n\n\n/**\n * Gather the value for our entire font field and save it in the setting.\n */\n\nvar selfUpdateValue = function selfUpdateValue(wrapper, settingID) {\n  // If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops\n  // This call might have come from a subfield detecting the change thus triggering a further selfUpdateValue()\n  // If we are loading this setting value and haven't finished,\n  // there is no point in updating it as this would cause infinite loops.\n  if (_index__WEBPACK_IMPORTED_MODULE_1__.isUpdating(settingID) || _index__WEBPACK_IMPORTED_MODULE_1__.isLoading(settingID)) {\n    return;\n  } // Mark the fact that we are self-updating the field value\n\n\n  _index__WEBPACK_IMPORTED_MODULE_1__.setUpdating(settingID, true);\n  var optionsList = wrapper.find('.font-options__options-list');\n  var inputs = optionsList.find('[data-value_entry]');\n  var newFontData = {};\n  wp.customize(settingID, function (setting) {\n    newFontData = jquery__WEBPACK_IMPORTED_MODULE_0___default().extend(true, {}, setting());\n    inputs.each(function (key, input) {\n      var $input = jquery__WEBPACK_IMPORTED_MODULE_0___default()(input);\n      var valueEntry = $input.data('value_entry');\n      var value = $input.val(); // We only pick up subfields values that have been touched by the user, that are enabled (visible) or values that are missing in the oldValue.\n\n      if (_.isUndefined(valueEntry) || $input.data('disabled') || !$input.data('touched') && !_.isUndefined(newFontData[valueEntry])) {\n        return;\n      }\n\n      if ('font_family' === valueEntry) {\n        // Get the src of the selected option.\n        var src = jquery__WEBPACK_IMPORTED_MODULE_0___default()(input.options[input.selectedIndex]).data('src');\n\n        if (src) {\n          newFontData['src'] = src;\n        } else {\n          delete newFontData['src'];\n        }\n      }\n\n      if (!_.isUndefined(value) && !_.isNull(value) && value !== '') {\n        if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {\n          // Standardize the value.\n          value = (0,_index__WEBPACK_IMPORTED_MODULE_2__.standardizeNumericalValue)(value, input, false);\n        }\n\n        newFontData[valueEntry] = value;\n      } else {\n        delete newFontData[valueEntry];\n      }\n    }); // We don't need to store font variants or subsets list in the value\n    // since we will get those from the global font details.\n\n    delete newFontData['variants'];\n    delete newFontData['subsets']; // We need to make sure that we don't \"use\" any variants not supported by the new font (values passed over from the old value).\n    // Get the new font details\n\n    var newFontDetails = (0,_index__WEBPACK_IMPORTED_MODULE_3__.getFontDetails)(newFontData['font_family']); // Check the font variant\n\n    if (typeof newFontData['font_variant'] !== 'undefined' && typeof newFontDetails.variants !== 'undefined' && Object.keys(newFontDetails.variants).length > 0) {\n      // Make sure that the font_variant is a string, not a number.\n      newFontData['font_variant'] = String(newFontData['font_variant']);\n\n      if (!_.includes(newFontDetails.variants, newFontData['font_variant'])) {\n        // The new font doesn't have this variant. Nor should the value.\n        delete newFontData['font_variant'];\n      }\n    } else {\n      // The new font has no variants. Nor should the value.\n      delete newFontData['font_variant'];\n    } // Update the Customizer setting value.\n\n\n    setting.set(newFontData);\n  }); // Finished with the field value self-updating.\n\n  _index__WEBPACK_IMPORTED_MODULE_1__.setUpdating(settingID, false);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/self-update-value.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/standardize-numerical-value.js":
-/*!***********************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/standardize-numerical-value.js ***!
-  \***********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"standardizeNumericalValue\": function() { return /* binding */ standardizeNumericalValue; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\n/**\n * Given a value we will standardize it to an array with 'value' and 'unit'.\n *\n * This is a mirror logic of the server-side one from Utils\\Fonts::standardizeNumericalValue()\n *\n * @param value\n * @param input Optional. The input this value was extracted from\n * @param valueFirst Optional. Whether to give higher priority to value related data, or to input related one.\n */\n\nvar standardizeNumericalValue = function standardizeNumericalValue(value) {\n  var input = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;\n  var valueFirst = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;\n  var standardValue = {\n    value: false,\n    unit: false\n  };\n\n  if (_.includes(['', 'false', false], value)) {\n    return standardValue;\n  }\n\n  if (!isNaN(value)) {\n    standardValue.value = value;\n  } else if (typeof value.value !== 'undefined') {\n    standardValue.value = value.value;\n\n    if (typeof value.unit !== 'undefined') {\n      standardValue.unit = value.unit;\n    }\n  } else if (typeof value[0] !== 'undefined') {\n    standardValue.value = value[0];\n\n    if (typeof value[1] !== 'undefined') {\n      standardValue.unit = value[1];\n    }\n  } else if (typeof value === 'string') {\n    // We will get everything in front that is a valid part of a number (float including).\n    var matches = value.match(/^([\\d.\\-+]+)(.+)/i);\n\n    if (matches !== null && typeof matches[1] !== 'undefined') {\n      standardValue.value = matches[1];\n\n      if (!_.isEmpty(matches[2])) {\n        standardValue.unit = matches[2];\n      }\n    } else {\n      // If we could not extract anything useful we will trust the developer and leave it like that.\n      standardValue.value = value;\n    }\n  }\n\n  if (false !== input && (false === standardValue.unit || _.isEmpty(standardValue.unit))) {\n    // If we are given an input, we will attempt to extract the unit from its attributes.\n    var fallbackInputUnit = '';\n    var $input = jquery__WEBPACK_IMPORTED_MODULE_0___default()(input);\n\n    if (valueFirst) {\n      if (!_.isEmpty($input.data('value_unit'))) {\n        fallbackInputUnit = $input.data('value_unit');\n      } else if (!_.isEmpty($input.attr('unit'))) {\n        fallbackInputUnit = $input.attr('unit');\n      }\n    } else {\n      if (!_.isEmpty($input.attr('unit'))) {\n        fallbackInputUnit = $input.attr('unit');\n      } else if (!_.isEmpty($input.data('value_unit'))) {\n        fallbackInputUnit = $input.data('value_unit');\n      }\n    }\n\n    standardValue.unit = fallbackInputUnit;\n  } // Make sure that if we have a numerical value, it is a float.\n\n\n  if (!isNaN(standardValue.value)) {\n    standardValue.value = parseFloat(standardValue.value);\n  }\n\n  return standardValue;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/standardize-numerical-value.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/update-font-head-title.js":
-/*!******************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/update-font-head-title.js ***!
-  \******************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"updateFontHeadTitle\": function() { return /* binding */ updateFontHeadTitle; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\n/**\n * Update the title of the font field (the field head) with the new font family name.\n *\n * @param newFontDetails\n * @param wrapper\n */\n\nvar updateFontHeadTitle = function updateFontHeadTitle(newFontDetails, wrapper) {\n  var fontTitleElement = wrapper.find('.font-options__head .font-options__font-title');\n  var fontFamilyDisplay = newFontDetails.family;\n\n  if (typeof newFontDetails.family_display === 'string' && newFontDetails.family_display.length) {\n    fontFamilyDisplay = newFontDetails.family_display;\n  }\n\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()(fontTitleElement).html(fontFamilyDisplay);\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/update-font-head-title.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/fonts/utils/update-variant-field.js":
-/*!****************************************************************!*\
-  !*** ./src/_js/customizer/fonts/utils/update-variant-field.js ***!
-  \****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"updateVariantField\": function() { return /* binding */ updateVariantField; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n\nvar fontVariantSelector = '.style-manager_font_weight';\n/**\n * This function updates the data in font weight selector from the given <option> element\n *\n * @param newFontDetails\n * @param wrapper\n */\n\nvar updateVariantField = function updateVariantField(newFontDetails, wrapper) {\n  var variants = typeof newFontDetails.variants !== 'undefined' ? newFontDetails.variants : [],\n      fontVariantInput = wrapper.find(fontVariantSelector),\n      selectedVariant = fontVariantInput.val() ? fontVariantInput.val() : '',\n      newVariants = []; // We clear everything about this subfield.\n\n  fontVariantInput.val(null).empty();\n\n  if (fontVariantInput.hasClass(\"select2-hidden-accessible\")) {\n    fontVariantInput.select2('destroy');\n  } // Mark this input as not touched by the user.\n\n\n  fontVariantInput.data('touched', false);\n\n  if (typeof variants === 'undefined' || Object.keys(variants).length < 2) {\n    fontVariantInput.parent().hide();\n    fontVariantInput.parent().prev('label').hide(); // Mark this input as disabled.\n\n    fontVariantInput.data('disabled', true);\n    return;\n  }\n\n  var variantAutoText = styleManager.l10n.fonts.variantAutoText; // Initialize the options with an empty one.\n\n  newVariants.push({\n    'id': '',\n    'text': variantAutoText\n  }); // we need to turn the data array into a specific form like [{id:\"id\", text:\"Text\"}]\n\n  jquery__WEBPACK_IMPORTED_MODULE_0___default().each(variants, function (index, variant) {\n    var newVariant = {\n      'id': variant,\n      // This is the option value.\n      'text': variant\n    }; // Leave the comparison loose.\n\n    if (selectedVariant == variant) {\n      newVariant.selected = true;\n    }\n\n    newVariants.push(newVariant);\n  }); // This is a costly operation especially when font palettes are changed and multiple font fields are updated\n\n  requestIdleCallback(function () {\n    // Only reinitialize the select2.\n    // No need to rebind on change or on input since those are still bound to the original HTML element.\n    fontVariantInput.select2({\n      data: newVariants\n    });\n    fontVariantInput.parent().show();\n    fontVariantInput.parent().prev('label').show(); // Mark this input as enabled.\n\n    fontVariantInput.data('disabled', false);\n  });\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/fonts/utils/update-variant-field.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/global-service.js":
-/*!**********************************************!*\
-  !*** ./src/_js/customizer/global-service.js ***!
-  \**********************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"loadSettings\": function() { return /* binding */ loadSettings; },\n/* harmony export */   \"getSettings\": function() { return /* binding */ getSettings; },\n/* harmony export */   \"setSettings\": function() { return /* binding */ setSettings; },\n/* harmony export */   \"getSetting\": function() { return /* binding */ getSetting; },\n/* harmony export */   \"getSettingConfig\": function() { return /* binding */ getSettingConfig; },\n/* harmony export */   \"setSetting\": function() { return /* binding */ setSetting; },\n/* harmony export */   \"getCallback\": function() { return /* binding */ getCallback; },\n/* harmony export */   \"setCallback\": function() { return /* binding */ setCallback; },\n/* harmony export */   \"getCallbacks\": function() { return /* binding */ getCallbacks; },\n/* harmony export */   \"deleteCallbacks\": function() { return /* binding */ deleteCallbacks; },\n/* harmony export */   \"getBackArray\": function() { return /* binding */ getBackArray; },\n/* harmony export */   \"addToBackArray\": function() { return /* binding */ addToBackArray; },\n/* harmony export */   \"setBackArray\": function() { return /* binding */ setBackArray; },\n/* harmony export */   \"pushToBackArray\": function() { return /* binding */ pushToBackArray; },\n/* harmony export */   \"popFromBackArray\": function() { return /* binding */ popFromBackArray; },\n/* harmony export */   \"bindConnectedFields\": function() { return /* binding */ bindConnectedFields; },\n/* harmony export */   \"unbindConnectedFields\": function() { return /* binding */ unbindConnectedFields; }\n/* harmony export */ });\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ \"lodash\");\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);\n\nvar callbacks = {};\nvar settings = {};\nvar overrideCustomizerBack = [];\nvar loadSettings = function loadSettings() {\n  settings = JSON.parse(JSON.stringify(wp.customize.settings.settings));\n};\nvar getSettings = function getSettings() {\n  return settings;\n};\nvar setSettings = function setSettings(newSettings) {\n  settings = newSettings;\n};\nvar getSetting = function getSetting(settingID) {\n  return settings[settingID];\n};\nvar getSettingConfig = function getSettingConfig(settingID) {\n  return styleManager.config.settings[settingID];\n};\nvar setSetting = function setSetting(settingID, value) {\n  settings[settingID] = value;\n};\nvar getCallback = function getCallback(settingID) {\n  return callbacks[settingID];\n};\nvar setCallback = function setCallback(settingID, callback) {\n  callbacks[settingID] = callback;\n};\nvar getCallbacks = function getCallbacks() {\n  return callbacks;\n};\nvar deleteCallbacks = function deleteCallbacks(settingIDs) {\n  settingIDs.forEach(function (settingID) {\n    delete callbacks[settingID];\n  });\n};\nvar getBackArray = function getBackArray() {\n  return overrideCustomizerBack;\n};\nvar addToBackArray = function addToBackArray(section) {\n  overrideCustomizerBack.push(section);\n};\nvar setBackArray = function setBackArray(newArray) {\n  overrideCustomizerBack = newArray.slice();\n};\nvar pushToBackArray = function pushToBackArray(targetSection, section) {\n  var backArray = getBackArray();\n  window.document.body.classList.add('remove-customizer-transitions');\n  setBackArray([]);\n  targetSection.focus();\n  setBackArray(backArray);\n  addToBackArray(section);\n};\nvar popFromBackArray = function popFromBackArray() {\n  var backArray = getBackArray();\n  var targetSectionID = backArray.pop();\n\n  if (targetSectionID) {\n    wp.customize.section(targetSectionID, function (targetSection) {\n      targetSection.focus();\n\n      if (!backArray.length) {\n        setTimeout(function () {\n          window.document.body.classList.remove('remove-customizer-transitions');\n        }, 100);\n      }\n    });\n  }\n};\nvar bindConnectedFields = function bindConnectedFields(settingIDs) {\n  var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : noop;\n  settingIDs.forEach(function (settingID) {\n    wp.customize(settingID, function (parentSetting) {\n      setCallback(settingID, function (newValue) {\n        var settingConfig = getSetting(settingID);\n        var connectedFields = settingConfig.connected_fields || {};\n        Object.keys(connectedFields).map(function (key) {\n          return connectedFields[key].setting_id;\n        }).forEach(function (connectedSettingID) {\n          wp.customize(connectedSettingID, function (connectedSetting) {\n            connectedSetting.set(filter(newValue));\n          });\n        });\n      });\n      parentSetting.bind(getCallback(settingID));\n    });\n  });\n};\nvar unbindConnectedFields = function unbindConnectedFields(settingIDs) {\n  var globalCallbacks = lodash__WEBPACK_IMPORTED_MODULE_0___default().pick(getCallbacks(), settingIDs);\n\n  lodash__WEBPACK_IMPORTED_MODULE_0___default().each(globalCallbacks, function (callback, settingID) {\n    wp.customize(settingID, function (setting) {\n      setting.unbind(callback);\n    });\n  });\n\n  deleteCallbacks(settingIDs);\n};\n\nvar noop = function noop(x) {\n  return x;\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/global-service.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/index.js":
-/*!*************************************!*\
-  !*** ./src/_js/customizer/index.js ***!
-  \*************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getFontDetails\": function() { return /* reexport safe */ _fonts_utils__WEBPACK_IMPORTED_MODULE_11__.getFontDetails; },\n/* harmony export */   \"determineFontType\": function() { return /* reexport safe */ _fonts_utils__WEBPACK_IMPORTED_MODULE_12__.determineFontType; },\n/* harmony export */   \"convertFontVariantToFVD\": function() { return /* reexport safe */ _fonts_utils__WEBPACK_IMPORTED_MODULE_13__.convertFontVariantToFVD; },\n/* harmony export */   \"getCSSFromPalettes\": function() { return /* reexport safe */ _colors_components_builder__WEBPACK_IMPORTED_MODULE_14__.getCSSFromPalettes; },\n/* harmony export */   \"resizer\": function() { return /* reexport module object */ _resizer__WEBPACK_IMPORTED_MODULE_15__; }\n/* harmony export */ });\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.scss */ \"./src/_js/customizer/style.scss\");\n/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./colors */ \"./src/_js/customizer/colors/index.js\");\n/* harmony import */ var _fonts__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./fonts */ \"./src/_js/customizer/fonts/index.js\");\n/* harmony import */ var _font_palettes__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./font-palettes */ \"./src/_js/customizer/font-palettes/index.js\");\n/* harmony import */ var _global_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./global-service */ \"./src/_js/customizer/global-service.js\");\n/* harmony import */ var _resizer__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./resizer */ \"./src/_js/customizer/resizer/index.js\");\n/* harmony import */ var _fields_color_select__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./fields/color-select */ \"./src/_js/customizer/fields/color-select/index.js\");\n/* harmony import */ var _fields_range__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./fields/range */ \"./src/_js/customizer/fields/range/index.js\");\n/* harmony import */ var _fields_tabs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./fields/tabs */ \"./src/_js/customizer/fields/tabs/index.js\");\n/* harmony import */ var _folding_fields__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./folding-fields */ \"./src/_js/customizer/folding-fields.js\");\n/* harmony import */ var _create_reset_buttons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./create-reset-buttons */ \"./src/_js/customizer/create-reset-buttons.js\");\n/* harmony import */ var _fonts_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./fonts/utils */ \"./src/_js/customizer/fonts/utils/get-font-details.js\");\n/* harmony import */ var _fonts_utils__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./fonts/utils */ \"./src/_js/customizer/fonts/utils/determine-font-type.js\");\n/* harmony import */ var _fonts_utils__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./fonts/utils */ \"./src/_js/customizer/fonts/utils/convert-font-variant.js\");\n/* harmony import */ var _colors_components_builder__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./colors/components/builder */ \"./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js\");\n\n\n\n\n\n\n\n\n\n\n\n\nwp.customize.bind('ready', function () {\n  _global_service__WEBPACK_IMPORTED_MODULE_2__.loadSettings();\n  var settings = _global_service__WEBPACK_IMPORTED_MODULE_2__.getSettings();\n  var settingIDs = Object.keys(settings);\n  _global_service__WEBPACK_IMPORTED_MODULE_2__.bindConnectedFields(settingIDs);\n  (0,_create_reset_buttons__WEBPACK_IMPORTED_MODULE_3__.createResetButtons)();\n  (0,_fields_range__WEBPACK_IMPORTED_MODULE_4__.handleRangeFields)();\n  (0,_fields_color_select__WEBPACK_IMPORTED_MODULE_5__.handleColorSelectFields)();\n  (0,_fields_tabs__WEBPACK_IMPORTED_MODULE_6__.handleTabs)(); // @todo check reason for this timeout\n\n  setTimeout(function () {\n    (0,_folding_fields__WEBPACK_IMPORTED_MODULE_7__.handleFoldingFields)();\n  }, 1000); // Initialize simple select2 fields.\n\n  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.style-manager_select2').select2();\n  (0,_colors__WEBPACK_IMPORTED_MODULE_8__.initializeColors)();\n  (0,_fonts__WEBPACK_IMPORTED_MODULE_9__.initializeFonts)();\n  (0,_font_palettes__WEBPACK_IMPORTED_MODULE_10__.initializeFontPalettes)();\n}); // expose API on sm.customizer global object\n\n\n\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/resizer/index.js":
-/*!*********************************************!*\
-  !*** ./src/_js/customizer/resizer/index.js ***!
-  \*********************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"setOffset\": function() { return /* binding */ setOffset; },\n/* harmony export */   \"resize\": function() { return /* binding */ resize; }\n/* harmony export */ });\nvar defaultOffset = {\n  top: 0,\n  right: 0,\n  bottom: 0,\n  left: 0\n};\nvar offset = defaultOffset;\nwp.customize.bind('ready', function () {\n  setOffset({\n    top: 10,\n    right: 10,\n    bottom: 10,\n    left: 10\n  });\n  resize();\n  window.addEventListener('resize', resize);\n  wp.customize.previewedDevice.bind(resize);\n  wp.customize.previewer.bind('synced', function () {\n    window.requestAnimationFrame(resize);\n  });\n  var collapseSidebar = document.querySelector('.collapse-sidebar');\n\n  if (!collapseSidebar) {\n    return;\n  }\n\n  collapseSidebar.addEventListener('click', function () {\n    setTimeout(resize, 300);\n  });\n});\nvar setOffset = function setOffset(newOffset) {\n  offset = Object.assign({}, newOffset);\n};\nvar resize = function resize() {\n  var preview = document.querySelector('.wp-full-overlay');\n\n  if (!preview) {\n    return;\n  }\n\n  var iframe = preview.querySelector('iframe');\n  var previewedDevice = wp.customize.previewedDevice.get();\n\n  if (!iframe) {\n    return;\n  } // remove CSS properties that may have been previously added\n\n\n  iframe.style.removeProperty('width');\n  iframe.style.removeProperty('height');\n  iframe.style.removeProperty('transform-origin');\n  iframe.style.removeProperty('transform');\n  iframe.style.removeProperty('margin-top');\n  iframe.style.removeProperty('margin-left'); // scaling of the site preview should be done only in desktop preview mode\n\n  if (previewedDevice !== 'desktop') {\n    return;\n  }\n\n  var windowWidth = window.innerWidth;\n  var windowHeight = window.innerHeight;\n  var previewWidth = preview.offsetWidth;\n  var previewHeight = preview.offsetHeight; // for an accurate preview at resolutions where media queries may intervene\n  // increase the width of the preview and use CSS transforms to scale it back down\n\n  var shouldScale = previewWidth > 720 && previewWidth < 1100;\n  var initialHeight = previewHeight;\n  var finalHeight = previewHeight - offset.top - offset.bottom;\n  var initialWidth = shouldScale ? windowWidth : previewWidth;\n  var finalWidth = previewWidth - offset.left - offset.right;\n  var scaleX = initialWidth / finalWidth;\n  var scaleY = initialHeight / finalHeight;\n  var scale = Math.max(scaleX, scaleY);\n  iframe.style.width = \"\".concat(finalWidth * scale, \"px\");\n  iframe.style.height = \"\".concat(finalHeight * scale, \"px\");\n  iframe.style.transformOrigin = \"left top\";\n  iframe.style.transform = \"scale( \".concat(1 / scale, \" )\");\n  iframe.style.marginTop = \"\".concat(offset.top, \"px\");\n  iframe.style.marginLeft = \"\".concat(offset.left, \"px\");\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/resizer/index.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/utils/api-set-setting-value.js":
-/*!***********************************************************!*\
-  !*** ./src/_js/customizer/utils/api-set-setting-value.js ***!
-  \***********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"apiSetSettingValue\": function() { return /* binding */ apiSetSettingValue; }\n/* harmony export */ });\n/**\n * Set a setting value.\n *\n * Mostly used for resetting settings (via the reset buttons) but also for the preset (legacy) field.\n *\n * @param settingID\n * @param value\n */\nvar apiSetSettingValue = function apiSetSettingValue(settingID, value) {\n  var setting = api(settingID),\n      field = $('[data-customize-setting-link=\"' + settingID + '\"]'),\n      fieldClass = $(field).parent().attr('class');\n\n  if (!_.isUndefined(fieldClass) && fieldClass === 'font-options__wrapper') {\n    // if the value is a simple string it must be the font family\n    if (_.isString(value)) {\n      setting.set({\n        'font_family': value\n      });\n    } else if (_.isObject(value)) {\n      var standardValue = {}; // We will process each font property and update it\n\n      _.each(value, function (val, key) {\n        // We need to map the keys to the data attributes we are using - I know :(\n        var mappedKey = key;\n\n        switch (key) {\n          case 'font-family':\n            mappedKey = 'font_family';\n            break;\n\n          case 'font-size':\n            mappedKey = 'font_size';\n            break;\n\n          case 'font-weight':\n            mappedKey = 'font_variant';\n            break;\n\n          case 'letter-spacing':\n            mappedKey = 'letter_spacing';\n            break;\n\n          case 'text-transform':\n            mappedKey = 'text_transform';\n            break;\n\n          default:\n            break;\n        }\n\n        standardValue[mappedKey] = val;\n      });\n\n      setting.set(standardValue);\n    }\n  } else {\n    setting.set(value);\n  }\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/utils/api-set-setting-value.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/utils/use-customize-setting-callback.js":
-/*!********************************************************************!*\
-  !*** ./src/_js/customizer/utils/use-customize-setting-callback.js ***!
-  \********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\n\nvar useCustomizeSettingCallback = function useCustomizeSettingCallback(settingID, callback) {\n  if (typeof callback !== \"function\") {\n    return;\n  }\n\n  wp.customize(settingID, function (setting) {\n    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n      setting.bind(callback);\n      return function () {\n        setting.unbind(callback);\n      };\n    }, []);\n  });\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (useCustomizeSettingCallback);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/utils/use-customize-setting-callback.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/utils/use-did-update-effect.js":
-/*!***********************************************************!*\
-  !*** ./src/_js/customizer/utils/use-did-update-effect.js ***!
-  \***********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\n\nvar useDidUpdateEffect = function useDidUpdateEffect(fn, inputs) {\n  var didMountRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    if (didMountRef.current) {\n      fn();\n    } else {\n      didMountRef.current = true;\n    }\n  }, inputs);\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (useDidUpdateEffect);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/utils/use-did-update-effect.js?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/utils/use-outside-click.js":
-/*!*******************************************************!*\
-  !*** ./src/_js/customizer/utils/use-outside-click.js ***!
-  \*******************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\n/**\n * Hook that alerts clicks outside of the passed ref\n */\n\nfunction useOutsideClick(ref, callback) {\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n    /**\n     * Alert if clicked on outside of element\n     */\n    function handleClickOutside(event) {\n      if (ref.current && !ref.current.contains(event.target)) {\n        callback();\n      }\n    } // Bind the event listener\n\n\n    document.addEventListener(\"mousedown\", handleClickOutside);\n    return function () {\n      // Unbind the event listener on clean up\n      document.removeEventListener(\"mousedown\", handleClickOutside);\n    };\n  }, [ref]);\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (useOutsideClick);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/utils/use-outside-click.js?");
-
-/***/ }),
-
-/***/ "./src/_js/utils.js":
-/*!**************************!*\
-  !*** ./src/_js/utils.js ***!
-  \**************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"debounce\": function() { return /* binding */ debounce; }\n/* harmony export */ });\n// Returns a function, that, as long as it continues to be invoked, will not\n// be triggered. The function will be called after it stops being called for\n// N milliseconds. If `immediate` is passed, trigger the function on the\n// leading edge, instead of the trailing.\nvar debounce = function debounce(func, wait, immediate) {\n  var timeout;\n  return function () {\n    var context = this,\n        args = arguments;\n\n    var later = function later() {\n      timeout = null;\n\n      if (!immediate) {\n        func.apply(context, args);\n      }\n    };\n\n    var callNow = immediate && !timeout;\n    clearTimeout(timeout);\n    timeout = setTimeout(later, wait);\n\n    if (callNow) {\n      func.apply(context, args);\n    }\n  };\n};\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/utils.js?");
-
-/***/ }),
-
-/***/ "./node_modules/classnames/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/classnames/index.js ***!
-  \******************************************/
+/***/ 184:
 /***/ (function(module, exports) {
 
-eval("var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!\n  Copyright (c) 2018 Jed Watson.\n  Licensed under the MIT License (MIT), see\n  http://jedwatson.github.io/classnames\n*/\n/* global define */\n\n(function () {\n\t'use strict';\n\n\tvar hasOwn = {}.hasOwnProperty;\n\n\tfunction classNames() {\n\t\tvar classes = [];\n\n\t\tfor (var i = 0; i < arguments.length; i++) {\n\t\t\tvar arg = arguments[i];\n\t\t\tif (!arg) continue;\n\n\t\t\tvar argType = typeof arg;\n\n\t\t\tif (argType === 'string' || argType === 'number') {\n\t\t\t\tclasses.push(arg);\n\t\t\t} else if (Array.isArray(arg)) {\n\t\t\t\tif (arg.length) {\n\t\t\t\t\tvar inner = classNames.apply(null, arg);\n\t\t\t\t\tif (inner) {\n\t\t\t\t\t\tclasses.push(inner);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t} else if (argType === 'object') {\n\t\t\t\tif (arg.toString === Object.prototype.toString) {\n\t\t\t\t\tfor (var key in arg) {\n\t\t\t\t\t\tif (hasOwn.call(arg, key) && arg[key]) {\n\t\t\t\t\t\t\tclasses.push(key);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t} else {\n\t\t\t\t\tclasses.push(arg.toString());\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\treturn classes.join(' ');\n\t}\n\n\tif ( true && module.exports) {\n\t\tclassNames.default = classNames;\n\t\tmodule.exports = classNames;\n\t} else if (true) {\n\t\t// register as 'classnames', consistent with npm package name\n\t\t!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {\n\t\t\treturn classNames;\n\t\t}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),\n\t\t__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));\n\t} else {}\n}());\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./node_modules/classnames/index.js?");
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+  Copyright (c) 2018 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames() {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				if (arg.length) {
+					var inner = classNames.apply(null, arg);
+					if (inner) {
+						classes.push(inner);
+					}
+				}
+			} else if (argType === 'object') {
+				if (arg.toString === Object.prototype.toString) {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				} else {
+					classes.push(arg.toString());
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if ( true && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+}());
+
 
 /***/ }),
 
-/***/ "./node_modules/hsluv/hsluv.js":
-/*!*************************************!*\
-  !*** ./node_modules/hsluv/hsluv.js ***!
-  \*************************************/
+/***/ 119:
 /***/ (function(module) {
 
-eval("// Generated by Haxe 3.4.4\nvar hsluv = hsluv || {};\nhsluv.Geometry = function() { };\nhsluv.Geometry.intersectLineLine = function(a,b) {\n\tvar x = (a.intercept - b.intercept) / (b.slope - a.slope);\n\tvar y = a.slope * x + a.intercept;\n\treturn { x : x, y : y};\n};\nhsluv.Geometry.distanceFromOrigin = function(point) {\n\treturn Math.sqrt(Math.pow(point.x,2) + Math.pow(point.y,2));\n};\nhsluv.Geometry.distanceLineFromOrigin = function(line) {\n\treturn Math.abs(line.intercept) / Math.sqrt(Math.pow(line.slope,2) + 1);\n};\nhsluv.Geometry.perpendicularThroughPoint = function(line,point) {\n\tvar slope = -1 / line.slope;\n\tvar intercept = point.y - slope * point.x;\n\treturn { slope : slope, intercept : intercept};\n};\nhsluv.Geometry.angleFromOrigin = function(point) {\n\treturn Math.atan2(point.y,point.x);\n};\nhsluv.Geometry.normalizeAngle = function(angle) {\n\tvar m = 2 * Math.PI;\n\treturn (angle % m + m) % m;\n};\nhsluv.Geometry.lengthOfRayUntilIntersect = function(theta,line) {\n\treturn line.intercept / (Math.sin(theta) - line.slope * Math.cos(theta));\n};\nhsluv.Hsluv = function() { };\nhsluv.Hsluv.getBounds = function(L) {\n\tvar result = [];\n\tvar sub1 = Math.pow(L + 16,3) / 1560896;\n\tvar sub2 = sub1 > hsluv.Hsluv.epsilon ? sub1 : L / hsluv.Hsluv.kappa;\n\tvar _g = 0;\n\twhile(_g < 3) {\n\t\tvar c = _g++;\n\t\tvar m1 = hsluv.Hsluv.m[c][0];\n\t\tvar m2 = hsluv.Hsluv.m[c][1];\n\t\tvar m3 = hsluv.Hsluv.m[c][2];\n\t\tvar _g1 = 0;\n\t\twhile(_g1 < 2) {\n\t\t\tvar t = _g1++;\n\t\t\tvar top1 = (284517 * m1 - 94839 * m3) * sub2;\n\t\t\tvar top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;\n\t\t\tvar bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;\n\t\t\tresult.push({ slope : top1 / bottom, intercept : top2 / bottom});\n\t\t}\n\t}\n\treturn result;\n};\nhsluv.Hsluv.maxSafeChromaForL = function(L) {\n\tvar bounds = hsluv.Hsluv.getBounds(L);\n\tvar min = Infinity;\n\tvar _g = 0;\n\twhile(_g < bounds.length) {\n\t\tvar bound = bounds[_g];\n\t\t++_g;\n\t\tvar length = hsluv.Geometry.distanceLineFromOrigin(bound);\n\t\tmin = Math.min(min,length);\n\t}\n\treturn min;\n};\nhsluv.Hsluv.maxChromaForLH = function(L,H) {\n\tvar hrad = H / 360 * Math.PI * 2;\n\tvar bounds = hsluv.Hsluv.getBounds(L);\n\tvar min = Infinity;\n\tvar _g = 0;\n\twhile(_g < bounds.length) {\n\t\tvar bound = bounds[_g];\n\t\t++_g;\n\t\tvar length = hsluv.Geometry.lengthOfRayUntilIntersect(hrad,bound);\n\t\tif(length >= 0) {\n\t\t\tmin = Math.min(min,length);\n\t\t}\n\t}\n\treturn min;\n};\nhsluv.Hsluv.dotProduct = function(a,b) {\n\tvar sum = 0;\n\tvar _g1 = 0;\n\tvar _g = a.length;\n\twhile(_g1 < _g) {\n\t\tvar i = _g1++;\n\t\tsum += a[i] * b[i];\n\t}\n\treturn sum;\n};\nhsluv.Hsluv.fromLinear = function(c) {\n\tif(c <= 0.0031308) {\n\t\treturn 12.92 * c;\n\t} else {\n\t\treturn 1.055 * Math.pow(c,0.416666666666666685) - 0.055;\n\t}\n};\nhsluv.Hsluv.toLinear = function(c) {\n\tif(c > 0.04045) {\n\t\treturn Math.pow((c + 0.055) / 1.055,2.4);\n\t} else {\n\t\treturn c / 12.92;\n\t}\n};\nhsluv.Hsluv.xyzToRgb = function(tuple) {\n\treturn [hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[0],tuple)),hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[1],tuple)),hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[2],tuple))];\n};\nhsluv.Hsluv.rgbToXyz = function(tuple) {\n\tvar rgbl = [hsluv.Hsluv.toLinear(tuple[0]),hsluv.Hsluv.toLinear(tuple[1]),hsluv.Hsluv.toLinear(tuple[2])];\n\treturn [hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[0],rgbl),hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[1],rgbl),hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[2],rgbl)];\n};\nhsluv.Hsluv.yToL = function(Y) {\n\tif(Y <= hsluv.Hsluv.epsilon) {\n\t\treturn Y / hsluv.Hsluv.refY * hsluv.Hsluv.kappa;\n\t} else {\n\t\treturn 116 * Math.pow(Y / hsluv.Hsluv.refY,0.333333333333333315) - 16;\n\t}\n};\nhsluv.Hsluv.lToY = function(L) {\n\tif(L <= 8) {\n\t\treturn hsluv.Hsluv.refY * L / hsluv.Hsluv.kappa;\n\t} else {\n\t\treturn hsluv.Hsluv.refY * Math.pow((L + 16) / 116,3);\n\t}\n};\nhsluv.Hsluv.xyzToLuv = function(tuple) {\n\tvar X = tuple[0];\n\tvar Y = tuple[1];\n\tvar Z = tuple[2];\n\tvar divider = X + 15 * Y + 3 * Z;\n\tvar varU = 4 * X;\n\tvar varV = 9 * Y;\n\tif(divider != 0) {\n\t\tvarU /= divider;\n\t\tvarV /= divider;\n\t} else {\n\t\tvarU = NaN;\n\t\tvarV = NaN;\n\t}\n\tvar L = hsluv.Hsluv.yToL(Y);\n\tif(L == 0) {\n\t\treturn [0,0,0];\n\t}\n\tvar U = 13 * L * (varU - hsluv.Hsluv.refU);\n\tvar V = 13 * L * (varV - hsluv.Hsluv.refV);\n\treturn [L,U,V];\n};\nhsluv.Hsluv.luvToXyz = function(tuple) {\n\tvar L = tuple[0];\n\tvar U = tuple[1];\n\tvar V = tuple[2];\n\tif(L == 0) {\n\t\treturn [0,0,0];\n\t}\n\tvar varU = U / (13 * L) + hsluv.Hsluv.refU;\n\tvar varV = V / (13 * L) + hsluv.Hsluv.refV;\n\tvar Y = hsluv.Hsluv.lToY(L);\n\tvar X = 0 - 9 * Y * varU / ((varU - 4) * varV - varU * varV);\n\tvar Z = (9 * Y - 15 * varV * Y - varV * X) / (3 * varV);\n\treturn [X,Y,Z];\n};\nhsluv.Hsluv.luvToLch = function(tuple) {\n\tvar L = tuple[0];\n\tvar U = tuple[1];\n\tvar V = tuple[2];\n\tvar C = Math.sqrt(U * U + V * V);\n\tvar H;\n\tif(C < 0.00000001) {\n\t\tH = 0;\n\t} else {\n\t\tvar Hrad = Math.atan2(V,U);\n\t\tH = Hrad * 180.0 / Math.PI;\n\t\tif(H < 0) {\n\t\t\tH = 360 + H;\n\t\t}\n\t}\n\treturn [L,C,H];\n};\nhsluv.Hsluv.lchToLuv = function(tuple) {\n\tvar L = tuple[0];\n\tvar C = tuple[1];\n\tvar H = tuple[2];\n\tvar Hrad = H / 360.0 * 2 * Math.PI;\n\tvar U = Math.cos(Hrad) * C;\n\tvar V = Math.sin(Hrad) * C;\n\treturn [L,U,V];\n};\nhsluv.Hsluv.hsluvToLch = function(tuple) {\n\tvar H = tuple[0];\n\tvar S = tuple[1];\n\tvar L = tuple[2];\n\tif(L > 99.9999999) {\n\t\treturn [100,0,H];\n\t}\n\tif(L < 0.00000001) {\n\t\treturn [0,0,H];\n\t}\n\tvar max = hsluv.Hsluv.maxChromaForLH(L,H);\n\tvar C = max / 100 * S;\n\treturn [L,C,H];\n};\nhsluv.Hsluv.lchToHsluv = function(tuple) {\n\tvar L = tuple[0];\n\tvar C = tuple[1];\n\tvar H = tuple[2];\n\tif(L > 99.9999999) {\n\t\treturn [H,0,100];\n\t}\n\tif(L < 0.00000001) {\n\t\treturn [H,0,0];\n\t}\n\tvar max = hsluv.Hsluv.maxChromaForLH(L,H);\n\tvar S = C / max * 100;\n\treturn [H,S,L];\n};\nhsluv.Hsluv.hpluvToLch = function(tuple) {\n\tvar H = tuple[0];\n\tvar S = tuple[1];\n\tvar L = tuple[2];\n\tif(L > 99.9999999) {\n\t\treturn [100,0,H];\n\t}\n\tif(L < 0.00000001) {\n\t\treturn [0,0,H];\n\t}\n\tvar max = hsluv.Hsluv.maxSafeChromaForL(L);\n\tvar C = max / 100 * S;\n\treturn [L,C,H];\n};\nhsluv.Hsluv.lchToHpluv = function(tuple) {\n\tvar L = tuple[0];\n\tvar C = tuple[1];\n\tvar H = tuple[2];\n\tif(L > 99.9999999) {\n\t\treturn [H,0,100];\n\t}\n\tif(L < 0.00000001) {\n\t\treturn [H,0,0];\n\t}\n\tvar max = hsluv.Hsluv.maxSafeChromaForL(L);\n\tvar S = C / max * 100;\n\treturn [H,S,L];\n};\nhsluv.Hsluv.rgbToHex = function(tuple) {\n\tvar h = \"#\";\n\tvar _g = 0;\n\twhile(_g < 3) {\n\t\tvar i = _g++;\n\t\tvar chan = tuple[i];\n\t\tvar c = Math.round(chan * 255);\n\t\tvar digit2 = c % 16;\n\t\tvar digit1 = (c - digit2) / 16 | 0;\n\t\th += hsluv.Hsluv.hexChars.charAt(digit1) + hsluv.Hsluv.hexChars.charAt(digit2);\n\t}\n\treturn h;\n};\nhsluv.Hsluv.hexToRgb = function(hex) {\n\thex = hex.toLowerCase();\n\tvar ret = [];\n\tvar _g = 0;\n\twhile(_g < 3) {\n\t\tvar i = _g++;\n\t\tvar digit1 = hsluv.Hsluv.hexChars.indexOf(hex.charAt(i * 2 + 1));\n\t\tvar digit2 = hsluv.Hsluv.hexChars.indexOf(hex.charAt(i * 2 + 2));\n\t\tvar n = digit1 * 16 + digit2;\n\t\tret.push(n / 255.0);\n\t}\n\treturn ret;\n};\nhsluv.Hsluv.lchToRgb = function(tuple) {\n\treturn hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz(hsluv.Hsluv.lchToLuv(tuple)));\n};\nhsluv.Hsluv.rgbToLch = function(tuple) {\n\treturn hsluv.Hsluv.luvToLch(hsluv.Hsluv.xyzToLuv(hsluv.Hsluv.rgbToXyz(tuple)));\n};\nhsluv.Hsluv.hsluvToRgb = function(tuple) {\n\treturn hsluv.Hsluv.lchToRgb(hsluv.Hsluv.hsluvToLch(tuple));\n};\nhsluv.Hsluv.rgbToHsluv = function(tuple) {\n\treturn hsluv.Hsluv.lchToHsluv(hsluv.Hsluv.rgbToLch(tuple));\n};\nhsluv.Hsluv.hpluvToRgb = function(tuple) {\n\treturn hsluv.Hsluv.lchToRgb(hsluv.Hsluv.hpluvToLch(tuple));\n};\nhsluv.Hsluv.rgbToHpluv = function(tuple) {\n\treturn hsluv.Hsluv.lchToHpluv(hsluv.Hsluv.rgbToLch(tuple));\n};\nhsluv.Hsluv.hsluvToHex = function(tuple) {\n\treturn hsluv.Hsluv.rgbToHex(hsluv.Hsluv.hsluvToRgb(tuple));\n};\nhsluv.Hsluv.hpluvToHex = function(tuple) {\n\treturn hsluv.Hsluv.rgbToHex(hsluv.Hsluv.hpluvToRgb(tuple));\n};\nhsluv.Hsluv.hexToHsluv = function(s) {\n\treturn hsluv.Hsluv.rgbToHsluv(hsluv.Hsluv.hexToRgb(s));\n};\nhsluv.Hsluv.hexToHpluv = function(s) {\n\treturn hsluv.Hsluv.rgbToHpluv(hsluv.Hsluv.hexToRgb(s));\n};\nhsluv.Hsluv.m = [[3.240969941904521,-1.537383177570093,-0.498610760293],[-0.96924363628087,1.87596750150772,0.041555057407175],[0.055630079696993,-0.20397695888897,1.056971514242878]];\nhsluv.Hsluv.minv = [[0.41239079926595,0.35758433938387,0.18048078840183],[0.21263900587151,0.71516867876775,0.072192315360733],[0.019330818715591,0.11919477979462,0.95053215224966]];\nhsluv.Hsluv.refY = 1.0;\nhsluv.Hsluv.refU = 0.19783000664283;\nhsluv.Hsluv.refV = 0.46831999493879;\nhsluv.Hsluv.kappa = 903.2962962;\nhsluv.Hsluv.epsilon = 0.0088564516;\nhsluv.Hsluv.hexChars = \"0123456789abcdef\";\nvar root = {\n    \"hsluvToRgb\": hsluv.Hsluv.hsluvToRgb,\n    \"rgbToHsluv\": hsluv.Hsluv.rgbToHsluv,\n    \"hpluvToRgb\": hsluv.Hsluv.hpluvToRgb,\n    \"rgbToHpluv\": hsluv.Hsluv.rgbToHpluv,\n    \"hsluvToHex\": hsluv.Hsluv.hsluvToHex,\n    \"hexToHsluv\": hsluv.Hsluv.hexToHsluv,\n    \"hpluvToHex\": hsluv.Hsluv.hpluvToHex,\n    \"hexToHpluv\": hsluv.Hsluv.hexToHpluv,\n    \"lchToHpluv\": hsluv.Hsluv.lchToHpluv,\n    \"hpluvToLch\": hsluv.Hsluv.hpluvToLch,\n    \"lchToHsluv\": hsluv.Hsluv.lchToHsluv,\n    \"hsluvToLch\": hsluv.Hsluv.hsluvToLch,\n    \"lchToLuv\": hsluv.Hsluv.lchToLuv,\n    \"luvToLch\": hsluv.Hsluv.luvToLch,\n    \"xyzToLuv\": hsluv.Hsluv.xyzToLuv,\n    \"luvToXyz\": hsluv.Hsluv.luvToXyz,\n    \"xyzToRgb\": hsluv.Hsluv.xyzToRgb,\n    \"rgbToXyz\": hsluv.Hsluv.rgbToXyz,\n    \"lchToRgb\": hsluv.Hsluv.lchToRgb,\n    \"rgbToLch\": hsluv.Hsluv.rgbToLch\n};\n\nmodule.exports = root;\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./node_modules/hsluv/hsluv.js?");
+// Generated by Haxe 3.4.4
+var hsluv = hsluv || {};
+hsluv.Geometry = function() { };
+hsluv.Geometry.intersectLineLine = function(a,b) {
+	var x = (a.intercept - b.intercept) / (b.slope - a.slope);
+	var y = a.slope * x + a.intercept;
+	return { x : x, y : y};
+};
+hsluv.Geometry.distanceFromOrigin = function(point) {
+	return Math.sqrt(Math.pow(point.x,2) + Math.pow(point.y,2));
+};
+hsluv.Geometry.distanceLineFromOrigin = function(line) {
+	return Math.abs(line.intercept) / Math.sqrt(Math.pow(line.slope,2) + 1);
+};
+hsluv.Geometry.perpendicularThroughPoint = function(line,point) {
+	var slope = -1 / line.slope;
+	var intercept = point.y - slope * point.x;
+	return { slope : slope, intercept : intercept};
+};
+hsluv.Geometry.angleFromOrigin = function(point) {
+	return Math.atan2(point.y,point.x);
+};
+hsluv.Geometry.normalizeAngle = function(angle) {
+	var m = 2 * Math.PI;
+	return (angle % m + m) % m;
+};
+hsluv.Geometry.lengthOfRayUntilIntersect = function(theta,line) {
+	return line.intercept / (Math.sin(theta) - line.slope * Math.cos(theta));
+};
+hsluv.Hsluv = function() { };
+hsluv.Hsluv.getBounds = function(L) {
+	var result = [];
+	var sub1 = Math.pow(L + 16,3) / 1560896;
+	var sub2 = sub1 > hsluv.Hsluv.epsilon ? sub1 : L / hsluv.Hsluv.kappa;
+	var _g = 0;
+	while(_g < 3) {
+		var c = _g++;
+		var m1 = hsluv.Hsluv.m[c][0];
+		var m2 = hsluv.Hsluv.m[c][1];
+		var m3 = hsluv.Hsluv.m[c][2];
+		var _g1 = 0;
+		while(_g1 < 2) {
+			var t = _g1++;
+			var top1 = (284517 * m1 - 94839 * m3) * sub2;
+			var top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
+			var bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
+			result.push({ slope : top1 / bottom, intercept : top2 / bottom});
+		}
+	}
+	return result;
+};
+hsluv.Hsluv.maxSafeChromaForL = function(L) {
+	var bounds = hsluv.Hsluv.getBounds(L);
+	var min = Infinity;
+	var _g = 0;
+	while(_g < bounds.length) {
+		var bound = bounds[_g];
+		++_g;
+		var length = hsluv.Geometry.distanceLineFromOrigin(bound);
+		min = Math.min(min,length);
+	}
+	return min;
+};
+hsluv.Hsluv.maxChromaForLH = function(L,H) {
+	var hrad = H / 360 * Math.PI * 2;
+	var bounds = hsluv.Hsluv.getBounds(L);
+	var min = Infinity;
+	var _g = 0;
+	while(_g < bounds.length) {
+		var bound = bounds[_g];
+		++_g;
+		var length = hsluv.Geometry.lengthOfRayUntilIntersect(hrad,bound);
+		if(length >= 0) {
+			min = Math.min(min,length);
+		}
+	}
+	return min;
+};
+hsluv.Hsluv.dotProduct = function(a,b) {
+	var sum = 0;
+	var _g1 = 0;
+	var _g = a.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		sum += a[i] * b[i];
+	}
+	return sum;
+};
+hsluv.Hsluv.fromLinear = function(c) {
+	if(c <= 0.0031308) {
+		return 12.92 * c;
+	} else {
+		return 1.055 * Math.pow(c,0.416666666666666685) - 0.055;
+	}
+};
+hsluv.Hsluv.toLinear = function(c) {
+	if(c > 0.04045) {
+		return Math.pow((c + 0.055) / 1.055,2.4);
+	} else {
+		return c / 12.92;
+	}
+};
+hsluv.Hsluv.xyzToRgb = function(tuple) {
+	return [hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[0],tuple)),hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[1],tuple)),hsluv.Hsluv.fromLinear(hsluv.Hsluv.dotProduct(hsluv.Hsluv.m[2],tuple))];
+};
+hsluv.Hsluv.rgbToXyz = function(tuple) {
+	var rgbl = [hsluv.Hsluv.toLinear(tuple[0]),hsluv.Hsluv.toLinear(tuple[1]),hsluv.Hsluv.toLinear(tuple[2])];
+	return [hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[0],rgbl),hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[1],rgbl),hsluv.Hsluv.dotProduct(hsluv.Hsluv.minv[2],rgbl)];
+};
+hsluv.Hsluv.yToL = function(Y) {
+	if(Y <= hsluv.Hsluv.epsilon) {
+		return Y / hsluv.Hsluv.refY * hsluv.Hsluv.kappa;
+	} else {
+		return 116 * Math.pow(Y / hsluv.Hsluv.refY,0.333333333333333315) - 16;
+	}
+};
+hsluv.Hsluv.lToY = function(L) {
+	if(L <= 8) {
+		return hsluv.Hsluv.refY * L / hsluv.Hsluv.kappa;
+	} else {
+		return hsluv.Hsluv.refY * Math.pow((L + 16) / 116,3);
+	}
+};
+hsluv.Hsluv.xyzToLuv = function(tuple) {
+	var X = tuple[0];
+	var Y = tuple[1];
+	var Z = tuple[2];
+	var divider = X + 15 * Y + 3 * Z;
+	var varU = 4 * X;
+	var varV = 9 * Y;
+	if(divider != 0) {
+		varU /= divider;
+		varV /= divider;
+	} else {
+		varU = NaN;
+		varV = NaN;
+	}
+	var L = hsluv.Hsluv.yToL(Y);
+	if(L == 0) {
+		return [0,0,0];
+	}
+	var U = 13 * L * (varU - hsluv.Hsluv.refU);
+	var V = 13 * L * (varV - hsluv.Hsluv.refV);
+	return [L,U,V];
+};
+hsluv.Hsluv.luvToXyz = function(tuple) {
+	var L = tuple[0];
+	var U = tuple[1];
+	var V = tuple[2];
+	if(L == 0) {
+		return [0,0,0];
+	}
+	var varU = U / (13 * L) + hsluv.Hsluv.refU;
+	var varV = V / (13 * L) + hsluv.Hsluv.refV;
+	var Y = hsluv.Hsluv.lToY(L);
+	var X = 0 - 9 * Y * varU / ((varU - 4) * varV - varU * varV);
+	var Z = (9 * Y - 15 * varV * Y - varV * X) / (3 * varV);
+	return [X,Y,Z];
+};
+hsluv.Hsluv.luvToLch = function(tuple) {
+	var L = tuple[0];
+	var U = tuple[1];
+	var V = tuple[2];
+	var C = Math.sqrt(U * U + V * V);
+	var H;
+	if(C < 0.00000001) {
+		H = 0;
+	} else {
+		var Hrad = Math.atan2(V,U);
+		H = Hrad * 180.0 / Math.PI;
+		if(H < 0) {
+			H = 360 + H;
+		}
+	}
+	return [L,C,H];
+};
+hsluv.Hsluv.lchToLuv = function(tuple) {
+	var L = tuple[0];
+	var C = tuple[1];
+	var H = tuple[2];
+	var Hrad = H / 360.0 * 2 * Math.PI;
+	var U = Math.cos(Hrad) * C;
+	var V = Math.sin(Hrad) * C;
+	return [L,U,V];
+};
+hsluv.Hsluv.hsluvToLch = function(tuple) {
+	var H = tuple[0];
+	var S = tuple[1];
+	var L = tuple[2];
+	if(L > 99.9999999) {
+		return [100,0,H];
+	}
+	if(L < 0.00000001) {
+		return [0,0,H];
+	}
+	var max = hsluv.Hsluv.maxChromaForLH(L,H);
+	var C = max / 100 * S;
+	return [L,C,H];
+};
+hsluv.Hsluv.lchToHsluv = function(tuple) {
+	var L = tuple[0];
+	var C = tuple[1];
+	var H = tuple[2];
+	if(L > 99.9999999) {
+		return [H,0,100];
+	}
+	if(L < 0.00000001) {
+		return [H,0,0];
+	}
+	var max = hsluv.Hsluv.maxChromaForLH(L,H);
+	var S = C / max * 100;
+	return [H,S,L];
+};
+hsluv.Hsluv.hpluvToLch = function(tuple) {
+	var H = tuple[0];
+	var S = tuple[1];
+	var L = tuple[2];
+	if(L > 99.9999999) {
+		return [100,0,H];
+	}
+	if(L < 0.00000001) {
+		return [0,0,H];
+	}
+	var max = hsluv.Hsluv.maxSafeChromaForL(L);
+	var C = max / 100 * S;
+	return [L,C,H];
+};
+hsluv.Hsluv.lchToHpluv = function(tuple) {
+	var L = tuple[0];
+	var C = tuple[1];
+	var H = tuple[2];
+	if(L > 99.9999999) {
+		return [H,0,100];
+	}
+	if(L < 0.00000001) {
+		return [H,0,0];
+	}
+	var max = hsluv.Hsluv.maxSafeChromaForL(L);
+	var S = C / max * 100;
+	return [H,S,L];
+};
+hsluv.Hsluv.rgbToHex = function(tuple) {
+	var h = "#";
+	var _g = 0;
+	while(_g < 3) {
+		var i = _g++;
+		var chan = tuple[i];
+		var c = Math.round(chan * 255);
+		var digit2 = c % 16;
+		var digit1 = (c - digit2) / 16 | 0;
+		h += hsluv.Hsluv.hexChars.charAt(digit1) + hsluv.Hsluv.hexChars.charAt(digit2);
+	}
+	return h;
+};
+hsluv.Hsluv.hexToRgb = function(hex) {
+	hex = hex.toLowerCase();
+	var ret = [];
+	var _g = 0;
+	while(_g < 3) {
+		var i = _g++;
+		var digit1 = hsluv.Hsluv.hexChars.indexOf(hex.charAt(i * 2 + 1));
+		var digit2 = hsluv.Hsluv.hexChars.indexOf(hex.charAt(i * 2 + 2));
+		var n = digit1 * 16 + digit2;
+		ret.push(n / 255.0);
+	}
+	return ret;
+};
+hsluv.Hsluv.lchToRgb = function(tuple) {
+	return hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz(hsluv.Hsluv.lchToLuv(tuple)));
+};
+hsluv.Hsluv.rgbToLch = function(tuple) {
+	return hsluv.Hsluv.luvToLch(hsluv.Hsluv.xyzToLuv(hsluv.Hsluv.rgbToXyz(tuple)));
+};
+hsluv.Hsluv.hsluvToRgb = function(tuple) {
+	return hsluv.Hsluv.lchToRgb(hsluv.Hsluv.hsluvToLch(tuple));
+};
+hsluv.Hsluv.rgbToHsluv = function(tuple) {
+	return hsluv.Hsluv.lchToHsluv(hsluv.Hsluv.rgbToLch(tuple));
+};
+hsluv.Hsluv.hpluvToRgb = function(tuple) {
+	return hsluv.Hsluv.lchToRgb(hsluv.Hsluv.hpluvToLch(tuple));
+};
+hsluv.Hsluv.rgbToHpluv = function(tuple) {
+	return hsluv.Hsluv.lchToHpluv(hsluv.Hsluv.rgbToLch(tuple));
+};
+hsluv.Hsluv.hsluvToHex = function(tuple) {
+	return hsluv.Hsluv.rgbToHex(hsluv.Hsluv.hsluvToRgb(tuple));
+};
+hsluv.Hsluv.hpluvToHex = function(tuple) {
+	return hsluv.Hsluv.rgbToHex(hsluv.Hsluv.hpluvToRgb(tuple));
+};
+hsluv.Hsluv.hexToHsluv = function(s) {
+	return hsluv.Hsluv.rgbToHsluv(hsluv.Hsluv.hexToRgb(s));
+};
+hsluv.Hsluv.hexToHpluv = function(s) {
+	return hsluv.Hsluv.rgbToHpluv(hsluv.Hsluv.hexToRgb(s));
+};
+hsluv.Hsluv.m = [[3.240969941904521,-1.537383177570093,-0.498610760293],[-0.96924363628087,1.87596750150772,0.041555057407175],[0.055630079696993,-0.20397695888897,1.056971514242878]];
+hsluv.Hsluv.minv = [[0.41239079926595,0.35758433938387,0.18048078840183],[0.21263900587151,0.71516867876775,0.072192315360733],[0.019330818715591,0.11919477979462,0.95053215224966]];
+hsluv.Hsluv.refY = 1.0;
+hsluv.Hsluv.refU = 0.19783000664283;
+hsluv.Hsluv.refV = 0.46831999493879;
+hsluv.Hsluv.kappa = 903.2962962;
+hsluv.Hsluv.epsilon = 0.0088564516;
+hsluv.Hsluv.hexChars = "0123456789abcdef";
+var root = {
+    "hsluvToRgb": hsluv.Hsluv.hsluvToRgb,
+    "rgbToHsluv": hsluv.Hsluv.rgbToHsluv,
+    "hpluvToRgb": hsluv.Hsluv.hpluvToRgb,
+    "rgbToHpluv": hsluv.Hsluv.rgbToHpluv,
+    "hsluvToHex": hsluv.Hsluv.hsluvToHex,
+    "hexToHsluv": hsluv.Hsluv.hexToHsluv,
+    "hpluvToHex": hsluv.Hsluv.hpluvToHex,
+    "hexToHpluv": hsluv.Hsluv.hexToHpluv,
+    "lchToHpluv": hsluv.Hsluv.lchToHpluv,
+    "hpluvToLch": hsluv.Hsluv.hpluvToLch,
+    "lchToHsluv": hsluv.Hsluv.lchToHsluv,
+    "hsluvToLch": hsluv.Hsluv.hsluvToLch,
+    "lchToLuv": hsluv.Hsluv.lchToLuv,
+    "luvToLch": hsluv.Hsluv.luvToLch,
+    "xyzToLuv": hsluv.Hsluv.xyzToLuv,
+    "luvToXyz": hsluv.Hsluv.luvToXyz,
+    "xyzToRgb": hsluv.Hsluv.xyzToRgb,
+    "rgbToXyz": hsluv.Hsluv.rgbToXyz,
+    "lchToRgb": hsluv.Hsluv.lchToRgb,
+    "rgbToLch": hsluv.Hsluv.rgbToLch
+};
+
+module.exports = root;
+
 
 /***/ }),
 
-/***/ "./src/_js/customizer/colors/color-palettes-preview/style.scss":
-/*!*********************************************************************!*\
-  !*** ./src/_js/customizer/colors/color-palettes-preview/style.scss ***!
-  \*********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/color-palettes-preview/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/accordion/style.scss":
-/*!*******************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/accordion/style.scss ***!
-  \*******************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/accordion/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/contextual-menu/style.scss":
-/*!*************************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/contextual-menu/style.scss ***!
-  \*************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/contextual-menu/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/dropzone/style.scss":
-/*!******************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/dropzone/style.scss ***!
-  \******************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/dropzone/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/overlay/style.scss":
-/*!*****************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/overlay/style.scss ***!
-  \*****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/overlay/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/palette-list/style.scss":
-/*!**********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/palette-list/style.scss ***!
-  \**********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/palette-list/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/preview/style.scss":
-/*!*****************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/preview/style.scss ***!
-  \*****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/preview/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/colors/components/source-colors/style.scss":
-/*!***********************************************************************!*\
-  !*** ./src/_js/customizer/colors/components/source-colors/style.scss ***!
-  \***********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/source-colors/style.scss?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/style.scss":
-/*!***************************************!*\
-  !*** ./src/_js/customizer/style.scss ***!
-  \***************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/style.scss?");
-
-/***/ }),
-
-/***/ "./node_modules/react-colorful/dist/index.module.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/react-colorful/dist/index.module.js ***!
-  \**********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"HexColorInput\": function() { return /* binding */ Ee; },\n/* harmony export */   \"HexColorPicker\": function() { return /* binding */ $; },\n/* harmony export */   \"HslColorPicker\": function() { return /* binding */ W; },\n/* harmony export */   \"HslStringColorPicker\": function() { return /* binding */ ee; },\n/* harmony export */   \"HslaColorPicker\": function() { return /* binding */ J; },\n/* harmony export */   \"HslaStringColorPicker\": function() { return /* binding */ U; },\n/* harmony export */   \"HsvColorPicker\": function() { return /* binding */ le; },\n/* harmony export */   \"HsvStringColorPicker\": function() { return /* binding */ ce; },\n/* harmony export */   \"HsvaColorPicker\": function() { return /* binding */ te; },\n/* harmony export */   \"HsvaStringColorPicker\": function() { return /* binding */ ne; },\n/* harmony export */   \"RgbColorPicker\": function() { return /* binding */ he; },\n/* harmony export */   \"RgbStringColorPicker\": function() { return /* binding */ ge; },\n/* harmony export */   \"RgbaColorPicker\": function() { return /* binding */ se; },\n/* harmony export */   \"RgbaStringColorPicker\": function() { return /* binding */ ve; },\n/* harmony export */   \"setNonce\": function() { return /* binding */ S; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\nfunction l(){return(l=Object.assign||function(e){for(var r=1;r<arguments.length;r++){var t=arguments[r];for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o])}return e}).apply(this,arguments)}function u(e,r){if(null==e)return{};var t,o,n={},a=Object.keys(e);for(o=0;o<a.length;o++)r.indexOf(t=a[o])>=0||(n[t]=e[t]);return n}var c=\"undefined\"!=typeof window?react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect:react__WEBPACK_IMPORTED_MODULE_0__.useEffect;function i(e){var r=(0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(e);return (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function(){r.current=e}),(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){return r.current&&r.current(e)},[])}var s,f=function(e,r,t){return void 0===r&&(r=0),void 0===t&&(t=1),e>t?t:e<r?r:e},v=function(e){return\"touches\"in e},d=function(e,r){var t=e.getBoundingClientRect(),o=v(r)?r.touches[0]:r;return{left:f((o.pageX-(t.left+window.pageXOffset))/t.width),top:f((o.pageY-(t.top+window.pageYOffset))/t.height)}},h=react__WEBPACK_IMPORTED_MODULE_0___default().memo(function(r){var t=r.onMove,s=r.onKey,f=u(r,[\"onMove\",\"onKey\"]),h=(0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null),m=(0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(!1),g=(0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(!1),p=g[0],b=g[1],_=i(t),C=i(s),E=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){e.preventDefault(),(v(e)?e.touches.length>0:e.buttons>0)&&h.current?_(d(h.current,e)):b(!1)},[_]),x=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){var r=e.nativeEvent;r.preventDefault(),function(e){return!(m.current&&!v(e)||(m.current||(m.current=v(e)),0))}(r)&&(_(d(h.current,r)),b(!0))},[_]),H=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){var r=e.which||e.keyCode;r<37||r>40||(e.preventDefault(),C({left:39===r?.05:37===r?-.05:0,top:40===r?.05:38===r?-.05:0}))},[C]),N=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(){return b(!1)},[]),w=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){var r=e?window.addEventListener:window.removeEventListener;r(m.current?\"touchmove\":\"mousemove\",E),r(m.current?\"touchend\":\"mouseup\",N)},[E,N]);return c(function(){return w(p),function(){p&&w(!1)}},[p,w]),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",l({},f,{className:\"react-colorful__interactive\",ref:h,onTouchStart:x,onMouseDown:x,onKeyDown:H,tabIndex:0,role:\"slider\"}))}),m=function(e){return e.filter(Boolean).join(\" \")},g=function(r){var t=r.color,o=r.left,n=r.top,a=void 0===n?.5:n,l=m([\"react-colorful__pointer\",r.className]);return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",{className:l,style:{top:100*a+\"%\",left:100*o+\"%\"}},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",{className:\"react-colorful__pointer-fill\",style:{backgroundColor:t}}))},p=function(e,r,t){return void 0===r&&(r=0),void 0===t&&(t=Math.pow(10,r)),Math.round(t*e)/t},b=function(e){return\"#\"===e[0]&&(e=e.substr(1)),e.length<6?{r:parseInt(e[0]+e[0],16),g:parseInt(e[1]+e[1],16),b:parseInt(e[2]+e[2],16),a:1}:{r:parseInt(e.substr(0,2),16),g:parseInt(e.substr(2,2),16),b:parseInt(e.substr(4,2),16),a:1}},_=function(e){var r=/hsla?\\((\\d+\\.?\\d*),\\s*(\\d+\\.?\\d*)%?,\\s*(\\d+\\.?\\d*)%?,?\\s*(\\d+\\.?\\d*)?\\)/.exec(e);return r?E({h:Number(r[1]),s:Number(r[2]),l:Number(r[3]),a:void 0===r[4]?1:Number(r[4])}):{h:0,s:0,v:0,a:1}},C=_,E=function(e){var r=e.s,t=e.l;return{h:e.h,s:(r*=(t<50?t:100-t)/100)>0?2*r/(t+r)*100:0,v:t+r,a:e.a}},x=function(e){var r=e.s,t=e.v,o=e.a,n=(200-r)*t/100;return{h:p(e.h),s:p(n>0&&n<200?r*t/100/(n<=100?n:200-n)*100:0),l:p(n/2),a:p(o,2)}},H=function(e){var r=x(e);return\"hsl(\"+r.h+\", \"+r.s+\"%, \"+r.l+\"%)\"},N=function(e){var r=x(e);return\"hsla(\"+r.h+\", \"+r.s+\"%, \"+r.l+\"%, \"+r.a+\")\"},w=function(e){var r=e.h,t=e.s,o=e.v,n=e.a;r=r/360*6,t/=100,o/=100;var a=Math.floor(r),l=o*(1-t),u=o*(1-(r-a)*t),c=o*(1-(1-r+a)*t),i=a%6;return{r:p(255*[o,u,l,l,c,o][i]),g:p(255*[c,o,o,u,l,l][i]),b:p(255*[l,l,c,o,o,u][i]),a:p(n,2)}},M=function(e){var r=/hsva?\\((\\d+\\.?\\d*),\\s*(\\d+\\.?\\d*)%?,\\s*(\\d+\\.?\\d*)%?,?\\s*(\\d+\\.?\\d*)?\\)/.exec(e);return r?j({h:Number(r[1]),s:Number(r[2]),v:Number(r[3]),a:void 0===r[4]?1:Number(r[4])}):{h:0,s:0,v:0,a:1}},y=M,q=function(e){var r=/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+),?\\s*(\\d+\\.?\\d*)?\\)/.exec(e);return r?I({r:Number(r[1]),g:Number(r[2]),b:Number(r[3]),a:void 0===r[4]?1:Number(r[4])}):{h:0,s:0,v:0,a:1}},k=q,O=function(e){var r=e.toString(16);return r.length<2?\"0\"+r:r},I=function(e){var r=e.r,t=e.g,o=e.b,n=e.a,a=Math.max(r,t,o),l=a-Math.min(r,t,o),u=l?a===r?(t-o)/l:a===t?2+(o-r)/l:4+(r-t)/l:0;return{h:p(60*(u<0?u+6:u)),s:p(a?l/a*100:0),v:p(a/255*100),a:n}},j=function(e){return{h:p(e.h),s:p(e.s),v:p(e.v),a:p(e.a,2)}},z=react__WEBPACK_IMPORTED_MODULE_0___default().memo(function(r){var t=r.hue,o=r.onChange,n=m([\"react-colorful__hue\",r.className]);return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",{className:n},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(h,{onMove:function(e){o({h:360*e.left})},onKey:function(e){o({h:f(t+360*e.left,0,360)})},\"aria-label\":\"Hue\",\"aria-valuetext\":p(t)},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(g,{className:\"react-colorful__hue-pointer\",left:t/360,color:H({h:t,s:100,v:100,a:1})})))}),B=react__WEBPACK_IMPORTED_MODULE_0___default().memo(function(r){var t=r.hsva,o=r.onChange,n={backgroundColor:H({h:t.h,s:100,v:100,a:1})};return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",{className:\"react-colorful__saturation\",style:n},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(h,{onMove:function(e){o({s:100*e.left,v:100-100*e.top})},onKey:function(e){o({s:f(t.s+100*e.left,0,100),v:f(t.v-100*e.top,0,100)})},\"aria-label\":\"Color\",\"aria-valuetext\":\"Saturation \"+p(t.s)+\"%, Brightness \"+p(t.v)+\"%\"},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(g,{className:\"react-colorful__saturation-pointer\",top:1-t.v/100,left:t.s/100,color:H(t)})))}),K=function(e,r){if(e===r)return!0;for(var t in e)if(e[t]!==r[t])return!1;return!0},A=function(e,r){return e.replace(/\\s/g,\"\")===r.replace(/\\s/g,\"\")};function D(e,r,l){var u=i(l),c=(0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(function(){return e.toHsva(r)}),s=c[0],f=c[1],v=(0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)({color:r,hsva:s});(0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function(){if(!e.equal(r,v.current.color)){var t=e.toHsva(r);v.current={hsva:t,color:r},f(t)}},[r,e]),(0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function(){var r;K(s,v.current.hsva)||e.equal(r=e.fromHsva(s),v.current.color)||(v.current={hsva:s,color:r},u(r))},[s,e,u]);var d=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){f(function(r){return Object.assign({},r,e)})},[]);return[s,d]}var L,F=function(){return s||( true?__webpack_require__.nc:0)},S=function(e){s=e},T=function(){c(function(){if(\"undefined\"!=typeof document&&!L){(L=document.createElement(\"style\")).innerHTML='.react-colorful{position:relative;display:flex;flex-direction:column;width:200px;height:200px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.react-colorful__saturation{position:relative;flex-grow:1;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(0deg,#000,transparent),linear-gradient(90deg,#fff,hsla(0,0%,100%,0))}.react-colorful__alpha-gradient,.react-colorful__pointer-fill{content:\"\";position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;border-radius:inherit}.react-colorful__alpha-gradient,.react-colorful__saturation{box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.react-colorful__alpha,.react-colorful__hue{position:relative;height:24px}.react-colorful__hue{background:linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)}.react-colorful__last-control{border-radius:0 0 8px 8px}.react-colorful__interactive{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;outline:none;touch-action:none}.react-colorful__pointer{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}.react-colorful__interactive:focus .react-colorful__pointer{transform:translate(-50%,-50%) scale(1.1)}.react-colorful__alpha,.react-colorful__alpha-pointer{background-color:#fff;background-image:url(\\'data:image/svg+xml;charset=utf-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill-opacity=\".05\"><path d=\"M8 0h8v8H8zM0 8h8v8H0z\"/></svg>\\')}.react-colorful__saturation-pointer{z-index:3}.react-colorful__hue-pointer{z-index:2}';var e=F();e&&L.setAttribute(\"nonce\",e),document.head.appendChild(L)}},[])},X=function(r){var t=r.className,o=r.colorModel,n=r.color,a=void 0===n?o.defaultColor:n,c=r.onChange,i=u(r,[\"className\",\"colorModel\",\"color\",\"onChange\"]);T();var s=D(o,a,c),f=s[0],v=s[1],d=m([\"react-colorful\",t]);return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",l({},i,{className:d}),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(B,{hsva:f,onChange:v}),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(z,{hue:f.h,onChange:v,className:\"react-colorful__last-control\"}))},Y={defaultColor:\"000\",toHsva:function(e){return I(b(e))},fromHsva:function(e){return t=(r=w(e)).g,o=r.b,\"#\"+O(r.r)+O(t)+O(o);var r,t,o},equal:function(e,r){return e.toLowerCase()===r.toLowerCase()||K(b(e),b(r))}},$=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:Y}))},P=function(r){var t=r.className,o=r.hsva,n=r.onChange,a={backgroundImage:\"linear-gradient(90deg, \"+N(Object.assign({},o,{a:0}))+\", \"+N(Object.assign({},o,{a:1}))+\")\"},l=m([\"react-colorful__alpha\",t]);return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",{className:l},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",{className:\"react-colorful__alpha-gradient\",style:a}),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(h,{onMove:function(e){n({a:e.left})},onKey:function(e){n({a:f(o.a+e.left)})},\"aria-label\":\"Alpha\",\"aria-valuetext\":p(100*o.a)+\"%\"},react__WEBPACK_IMPORTED_MODULE_0___default().createElement(g,{className:\"react-colorful__alpha-pointer\",left:o.a,color:N(o)})))},R=function(r){var t=r.className,o=r.colorModel,n=r.color,a=void 0===n?o.defaultColor:n,c=r.onChange,i=u(r,[\"className\",\"colorModel\",\"color\",\"onChange\"]);T();var s=D(o,a,c),f=s[0],v=s[1],d=m([\"react-colorful\",t]);return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"div\",l({},i,{className:d}),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(B,{hsva:f,onChange:v}),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(z,{hue:f.h,onChange:v}),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(P,{hsva:f,onChange:v,className:\"react-colorful__last-control\"}))},G={defaultColor:{h:0,s:0,l:0,a:1},toHsva:E,fromHsva:x,equal:K},J=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(R,l({},r,{colorModel:G}))},Q={defaultColor:\"hsla(0, 0%, 0%, 1)\",toHsva:_,fromHsva:N,equal:A},U=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(R,l({},r,{colorModel:Q}))},V={defaultColor:{h:0,s:0,l:0},toHsva:function(e){return E({h:e.h,s:e.s,l:e.l,a:1})},fromHsva:function(e){return{h:(r=x(e)).h,s:r.s,l:r.l};var r},equal:K},W=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:V}))},Z={defaultColor:\"hsl(0, 0%, 0%)\",toHsva:C,fromHsva:H,equal:A},ee=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:Z}))},re={defaultColor:{h:0,s:0,v:0,a:1},toHsva:function(e){return e},fromHsva:j,equal:K},te=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(R,l({},r,{colorModel:re}))},oe={defaultColor:\"hsva(0, 0%, 0%, 1)\",toHsva:M,fromHsva:function(e){var r=j(e);return\"hsva(\"+r.h+\", \"+r.s+\"%, \"+r.v+\"%, \"+r.a+\")\"},equal:A},ne=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(R,l({},r,{colorModel:oe}))},ae={defaultColor:{h:0,s:0,v:0},toHsva:function(e){return{h:e.h,s:e.s,v:e.v,a:1}},fromHsva:function(e){var r=j(e);return{h:r.h,s:r.s,v:r.v}},equal:K},le=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:ae}))},ue={defaultColor:\"hsv(0, 0%, 0%)\",toHsva:y,fromHsva:function(e){var r=j(e);return\"hsv(\"+r.h+\", \"+r.s+\"%, \"+r.v+\"%)\"},equal:A},ce=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:ue}))},ie={defaultColor:{r:0,g:0,b:0,a:1},toHsva:I,fromHsva:w,equal:K},se=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(R,l({},r,{colorModel:ie}))},fe={defaultColor:\"rgba(0, 0, 0, 1)\",toHsva:q,fromHsva:function(e){var r=w(e);return\"rgba(\"+r.r+\", \"+r.g+\", \"+r.b+\", \"+r.a+\")\"},equal:A},ve=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(R,l({},r,{colorModel:fe}))},de={defaultColor:{r:0,g:0,b:0},toHsva:function(e){return I({r:e.r,g:e.g,b:e.b,a:1})},fromHsva:function(e){return{r:(r=w(e)).r,g:r.g,b:r.b};var r},equal:K},he=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:de}))},me={defaultColor:\"rgb(0, 0, 0)\",toHsva:k,fromHsva:function(e){var r=w(e);return\"rgb(\"+r.r+\", \"+r.g+\", \"+r.b+\")\"},equal:A},ge=function(r){return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(X,l({},r,{colorModel:me}))},pe=/^#?[0-9A-F]{3}$/i,be=/^#?[0-9A-F]{6}$/i,_e=function(e){return be.test(e)||pe.test(e)},Ce=function(e){return e.replace(/([^0-9A-F]+)/gi,\"\").substr(0,6)},Ee=function(r){var n=r.color,c=void 0===n?\"\":n,s=r.onChange,f=r.onBlur,v=u(r,[\"color\",\"onChange\",\"onBlur\"]),d=(0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(function(){return Ce(c)}),h=d[0],m=d[1],g=i(s),p=i(f),b=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){var r=Ce(e.target.value);m(r),_e(r)&&g(\"#\"+r)},[g]),_=(0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function(e){_e(e.target.value)||m(Ce(c)),p(e)},[c,p]);return (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function(){m(Ce(c))},[c]),react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"input\",l({},v,{value:h,spellCheck:\"false\",onChange:b,onBlur:_}))};\n//# sourceMappingURL=index.module.js.map\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./node_modules/react-colorful/dist/index.module.js?");
-
-/***/ }),
-
-/***/ "./node_modules/svg-baker-runtime/browser-symbol.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/svg-baker-runtime/browser-symbol.js ***!
-  \**********************************************************/
+/***/ 854:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-eval("(function (global, factory) {\n\t true ? module.exports = factory() :\n\t0;\n}(this, (function () { 'use strict';\n\nvar SpriteSymbol = function SpriteSymbol(ref) {\n  var id = ref.id;\n  var viewBox = ref.viewBox;\n  var content = ref.content;\n\n  this.id = id;\n  this.viewBox = viewBox;\n  this.content = content;\n};\n\n/**\n * @return {string}\n */\nSpriteSymbol.prototype.stringify = function stringify () {\n  return this.content;\n};\n\n/**\n * @return {string}\n */\nSpriteSymbol.prototype.toString = function toString () {\n  return this.stringify();\n};\n\nSpriteSymbol.prototype.destroy = function destroy () {\n    var this$1 = this;\n\n  ['id', 'viewBox', 'content'].forEach(function (prop) { return delete this$1[prop]; });\n};\n\n/**\n * @param {string} content\n * @return {Element}\n */\nvar parse = function (content) {\n  var hasImportNode = !!document.importNode;\n  var doc = new DOMParser().parseFromString(content, 'image/svg+xml').documentElement;\n\n  /**\n   * Fix for browser which are throwing WrongDocumentError\n   * if you insert an element which is not part of the document\n   * @see http://stackoverflow.com/a/7986519/4624403\n   */\n  if (hasImportNode) {\n    return document.importNode(doc, true);\n  }\n\n  return doc;\n};\n\nvar commonjsGlobal = typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};\n\n\n\n\n\nfunction createCommonjsModule(fn, module) {\n\treturn module = { exports: {} }, fn(module, module.exports), module.exports;\n}\n\nvar deepmerge = createCommonjsModule(function (module, exports) {\n(function (root, factory) {\n    if (false) {} else {\n        module.exports = factory();\n    }\n}(commonjsGlobal, function () {\n\nfunction isMergeableObject(val) {\n    var nonNullObject = val && typeof val === 'object';\n\n    return nonNullObject\n        && Object.prototype.toString.call(val) !== '[object RegExp]'\n        && Object.prototype.toString.call(val) !== '[object Date]'\n}\n\nfunction emptyTarget(val) {\n    return Array.isArray(val) ? [] : {}\n}\n\nfunction cloneIfNecessary(value, optionsArgument) {\n    var clone = optionsArgument && optionsArgument.clone === true;\n    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value\n}\n\nfunction defaultArrayMerge(target, source, optionsArgument) {\n    var destination = target.slice();\n    source.forEach(function(e, i) {\n        if (typeof destination[i] === 'undefined') {\n            destination[i] = cloneIfNecessary(e, optionsArgument);\n        } else if (isMergeableObject(e)) {\n            destination[i] = deepmerge(target[i], e, optionsArgument);\n        } else if (target.indexOf(e) === -1) {\n            destination.push(cloneIfNecessary(e, optionsArgument));\n        }\n    });\n    return destination\n}\n\nfunction mergeObject(target, source, optionsArgument) {\n    var destination = {};\n    if (isMergeableObject(target)) {\n        Object.keys(target).forEach(function (key) {\n            destination[key] = cloneIfNecessary(target[key], optionsArgument);\n        });\n    }\n    Object.keys(source).forEach(function (key) {\n        if (!isMergeableObject(source[key]) || !target[key]) {\n            destination[key] = cloneIfNecessary(source[key], optionsArgument);\n        } else {\n            destination[key] = deepmerge(target[key], source[key], optionsArgument);\n        }\n    });\n    return destination\n}\n\nfunction deepmerge(target, source, optionsArgument) {\n    var array = Array.isArray(source);\n    var options = optionsArgument || { arrayMerge: defaultArrayMerge };\n    var arrayMerge = options.arrayMerge || defaultArrayMerge;\n\n    if (array) {\n        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)\n    } else {\n        return mergeObject(target, source, optionsArgument)\n    }\n}\n\ndeepmerge.all = function deepmergeAll(array, optionsArgument) {\n    if (!Array.isArray(array) || array.length < 2) {\n        throw new Error('first argument should be an array with at least two elements')\n    }\n\n    // we are sure there are at least 2 values, so it is safe to have no initial value\n    return array.reduce(function(prev, next) {\n        return deepmerge(prev, next, optionsArgument)\n    })\n};\n\nreturn deepmerge\n\n}));\n});\n\nvar namespaces_1 = createCommonjsModule(function (module, exports) {\nvar namespaces = {\n  svg: {\n    name: 'xmlns',\n    uri: 'http://www.w3.org/2000/svg'\n  },\n  xlink: {\n    name: 'xmlns:xlink',\n    uri: 'http://www.w3.org/1999/xlink'\n  }\n};\n\nexports.default = namespaces;\nmodule.exports = exports.default;\n});\n\n/**\n * @param {Object} attrs\n * @return {string}\n */\nvar objectToAttrsString = function (attrs) {\n  return Object.keys(attrs).map(function (attr) {\n    var value = attrs[attr].toString().replace(/\"/g, '&quot;');\n    return (attr + \"=\\\"\" + value + \"\\\"\");\n  }).join(' ');\n};\n\nvar svg = namespaces_1.svg;\nvar xlink = namespaces_1.xlink;\n\nvar defaultAttrs = {};\ndefaultAttrs[svg.name] = svg.uri;\ndefaultAttrs[xlink.name] = xlink.uri;\n\n/**\n * @param {string} [content]\n * @param {Object} [attributes]\n * @return {string}\n */\nvar wrapInSvgString = function (content, attributes) {\n  if ( content === void 0 ) content = '';\n\n  var attrs = deepmerge(defaultAttrs, attributes || {});\n  var attrsRendered = objectToAttrsString(attrs);\n  return (\"<svg \" + attrsRendered + \">\" + content + \"</svg>\");\n};\n\nvar BrowserSpriteSymbol = (function (SpriteSymbol$$1) {\n  function BrowserSpriteSymbol () {\n    SpriteSymbol$$1.apply(this, arguments);\n  }\n\n  if ( SpriteSymbol$$1 ) BrowserSpriteSymbol.__proto__ = SpriteSymbol$$1;\n  BrowserSpriteSymbol.prototype = Object.create( SpriteSymbol$$1 && SpriteSymbol$$1.prototype );\n  BrowserSpriteSymbol.prototype.constructor = BrowserSpriteSymbol;\n\n  var prototypeAccessors = { isMounted: {} };\n\n  prototypeAccessors.isMounted.get = function () {\n    return !!this.node;\n  };\n\n  /**\n   * @param {Element} node\n   * @return {BrowserSpriteSymbol}\n   */\n  BrowserSpriteSymbol.createFromExistingNode = function createFromExistingNode (node) {\n    return new BrowserSpriteSymbol({\n      id: node.getAttribute('id'),\n      viewBox: node.getAttribute('viewBox'),\n      content: node.outerHTML\n    });\n  };\n\n  BrowserSpriteSymbol.prototype.destroy = function destroy () {\n    if (this.isMounted) {\n      this.unmount();\n    }\n    SpriteSymbol$$1.prototype.destroy.call(this);\n  };\n\n  /**\n   * @param {Element|string} target\n   * @return {Element}\n   */\n  BrowserSpriteSymbol.prototype.mount = function mount (target) {\n    if (this.isMounted) {\n      return this.node;\n    }\n\n    var mountTarget = typeof target === 'string' ? document.querySelector(target) : target;\n    var node = this.render();\n    this.node = node;\n\n    mountTarget.appendChild(node);\n\n    return node;\n  };\n\n  /**\n   * @return {Element}\n   */\n  BrowserSpriteSymbol.prototype.render = function render () {\n    var content = this.stringify();\n    return parse(wrapInSvgString(content)).childNodes[0];\n  };\n\n  BrowserSpriteSymbol.prototype.unmount = function unmount () {\n    this.node.parentNode.removeChild(this.node);\n  };\n\n  Object.defineProperties( BrowserSpriteSymbol.prototype, prototypeAccessors );\n\n  return BrowserSpriteSymbol;\n}(SpriteSymbol));\n\nreturn BrowserSpriteSymbol;\n\n})));\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./node_modules/svg-baker-runtime/browser-symbol.js?");
+(function (global, factory) {
+	 true ? module.exports = factory() :
+	0;
+}(this, (function () { 'use strict';
+
+var SpriteSymbol = function SpriteSymbol(ref) {
+  var id = ref.id;
+  var viewBox = ref.viewBox;
+  var content = ref.content;
+
+  this.id = id;
+  this.viewBox = viewBox;
+  this.content = content;
+};
+
+/**
+ * @return {string}
+ */
+SpriteSymbol.prototype.stringify = function stringify () {
+  return this.content;
+};
+
+/**
+ * @return {string}
+ */
+SpriteSymbol.prototype.toString = function toString () {
+  return this.stringify();
+};
+
+SpriteSymbol.prototype.destroy = function destroy () {
+    var this$1 = this;
+
+  ['id', 'viewBox', 'content'].forEach(function (prop) { return delete this$1[prop]; });
+};
+
+/**
+ * @param {string} content
+ * @return {Element}
+ */
+var parse = function (content) {
+  var hasImportNode = !!document.importNode;
+  var doc = new DOMParser().parseFromString(content, 'image/svg+xml').documentElement;
+
+  /**
+   * Fix for browser which are throwing WrongDocumentError
+   * if you insert an element which is not part of the document
+   * @see http://stackoverflow.com/a/7986519/4624403
+   */
+  if (hasImportNode) {
+    return document.importNode(doc, true);
+  }
+
+  return doc;
+};
+
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};
+
+
+
+
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var deepmerge = createCommonjsModule(function (module, exports) {
+(function (root, factory) {
+    if (false) {} else {
+        module.exports = factory();
+    }
+}(commonjsGlobal, function () {
+
+function isMergeableObject(val) {
+    var nonNullObject = val && typeof val === 'object';
+
+    return nonNullObject
+        && Object.prototype.toString.call(val) !== '[object RegExp]'
+        && Object.prototype.toString.call(val) !== '[object Date]'
+}
+
+function emptyTarget(val) {
+    return Array.isArray(val) ? [] : {}
+}
+
+function cloneIfNecessary(value, optionsArgument) {
+    var clone = optionsArgument && optionsArgument.clone === true;
+    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value
+}
+
+function defaultArrayMerge(target, source, optionsArgument) {
+    var destination = target.slice();
+    source.forEach(function(e, i) {
+        if (typeof destination[i] === 'undefined') {
+            destination[i] = cloneIfNecessary(e, optionsArgument);
+        } else if (isMergeableObject(e)) {
+            destination[i] = deepmerge(target[i], e, optionsArgument);
+        } else if (target.indexOf(e) === -1) {
+            destination.push(cloneIfNecessary(e, optionsArgument));
+        }
+    });
+    return destination
+}
+
+function mergeObject(target, source, optionsArgument) {
+    var destination = {};
+    if (isMergeableObject(target)) {
+        Object.keys(target).forEach(function (key) {
+            destination[key] = cloneIfNecessary(target[key], optionsArgument);
+        });
+    }
+    Object.keys(source).forEach(function (key) {
+        if (!isMergeableObject(source[key]) || !target[key]) {
+            destination[key] = cloneIfNecessary(source[key], optionsArgument);
+        } else {
+            destination[key] = deepmerge(target[key], source[key], optionsArgument);
+        }
+    });
+    return destination
+}
+
+function deepmerge(target, source, optionsArgument) {
+    var array = Array.isArray(source);
+    var options = optionsArgument || { arrayMerge: defaultArrayMerge };
+    var arrayMerge = options.arrayMerge || defaultArrayMerge;
+
+    if (array) {
+        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)
+    } else {
+        return mergeObject(target, source, optionsArgument)
+    }
+}
+
+deepmerge.all = function deepmergeAll(array, optionsArgument) {
+    if (!Array.isArray(array) || array.length < 2) {
+        throw new Error('first argument should be an array with at least two elements')
+    }
+
+    // we are sure there are at least 2 values, so it is safe to have no initial value
+    return array.reduce(function(prev, next) {
+        return deepmerge(prev, next, optionsArgument)
+    })
+};
+
+return deepmerge
+
+}));
+});
+
+var namespaces_1 = createCommonjsModule(function (module, exports) {
+var namespaces = {
+  svg: {
+    name: 'xmlns',
+    uri: 'http://www.w3.org/2000/svg'
+  },
+  xlink: {
+    name: 'xmlns:xlink',
+    uri: 'http://www.w3.org/1999/xlink'
+  }
+};
+
+exports.default = namespaces;
+module.exports = exports.default;
+});
+
+/**
+ * @param {Object} attrs
+ * @return {string}
+ */
+var objectToAttrsString = function (attrs) {
+  return Object.keys(attrs).map(function (attr) {
+    var value = attrs[attr].toString().replace(/"/g, '&quot;');
+    return (attr + "=\"" + value + "\"");
+  }).join(' ');
+};
+
+var svg = namespaces_1.svg;
+var xlink = namespaces_1.xlink;
+
+var defaultAttrs = {};
+defaultAttrs[svg.name] = svg.uri;
+defaultAttrs[xlink.name] = xlink.uri;
+
+/**
+ * @param {string} [content]
+ * @param {Object} [attributes]
+ * @return {string}
+ */
+var wrapInSvgString = function (content, attributes) {
+  if ( content === void 0 ) content = '';
+
+  var attrs = deepmerge(defaultAttrs, attributes || {});
+  var attrsRendered = objectToAttrsString(attrs);
+  return ("<svg " + attrsRendered + ">" + content + "</svg>");
+};
+
+var BrowserSpriteSymbol = (function (SpriteSymbol$$1) {
+  function BrowserSpriteSymbol () {
+    SpriteSymbol$$1.apply(this, arguments);
+  }
+
+  if ( SpriteSymbol$$1 ) BrowserSpriteSymbol.__proto__ = SpriteSymbol$$1;
+  BrowserSpriteSymbol.prototype = Object.create( SpriteSymbol$$1 && SpriteSymbol$$1.prototype );
+  BrowserSpriteSymbol.prototype.constructor = BrowserSpriteSymbol;
+
+  var prototypeAccessors = { isMounted: {} };
+
+  prototypeAccessors.isMounted.get = function () {
+    return !!this.node;
+  };
+
+  /**
+   * @param {Element} node
+   * @return {BrowserSpriteSymbol}
+   */
+  BrowserSpriteSymbol.createFromExistingNode = function createFromExistingNode (node) {
+    return new BrowserSpriteSymbol({
+      id: node.getAttribute('id'),
+      viewBox: node.getAttribute('viewBox'),
+      content: node.outerHTML
+    });
+  };
+
+  BrowserSpriteSymbol.prototype.destroy = function destroy () {
+    if (this.isMounted) {
+      this.unmount();
+    }
+    SpriteSymbol$$1.prototype.destroy.call(this);
+  };
+
+  /**
+   * @param {Element|string} target
+   * @return {Element}
+   */
+  BrowserSpriteSymbol.prototype.mount = function mount (target) {
+    if (this.isMounted) {
+      return this.node;
+    }
+
+    var mountTarget = typeof target === 'string' ? document.querySelector(target) : target;
+    var node = this.render();
+    this.node = node;
+
+    mountTarget.appendChild(node);
+
+    return node;
+  };
+
+  /**
+   * @return {Element}
+   */
+  BrowserSpriteSymbol.prototype.render = function render () {
+    var content = this.stringify();
+    return parse(wrapInSvgString(content)).childNodes[0];
+  };
+
+  BrowserSpriteSymbol.prototype.unmount = function unmount () {
+    this.node.parentNode.removeChild(this.node);
+  };
+
+  Object.defineProperties( BrowserSpriteSymbol.prototype, prototypeAccessors );
+
+  return BrowserSpriteSymbol;
+}(SpriteSymbol));
+
+return BrowserSpriteSymbol;
+
+})));
+
 
 /***/ }),
 
-/***/ "./src/_js/customizer/svg/colorize-elements.svg":
-/*!******************************************************!*\
-  !*** ./src/_js/customizer/svg/colorize-elements.svg ***!
-  \******************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/svg-baker-runtime/browser-symbol.js */ \"./node_modules/svg-baker-runtime/browser-symbol.js\");\n/* harmony import */ var _node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/svg-sprite-loader/runtime/browser-sprite.build.js */ \"./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js\");\n/* harmony import */ var _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1__);\n\n\nvar symbol = new (_node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0___default())({\n  \"id\": \"colorize-elements\",\n  \"use\": \"colorize-elements-usage\",\n  \"viewBox\": \"0 0 24 24\",\n  \"content\": \"<symbol viewBox=\\\"0 0 24 24\\\" fill=\\\"none\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\" id=\\\"colorize-elements\\\">\\n<path d=\\\"M16.66 4.51945L19.49 7.34945L16.66 10.1795L13.83 7.34945L16.66 4.51945ZM9 4.99945V8.99945H5V4.99945H9ZM19 14.9995V18.9995H15V14.9995H19ZM9 14.9995V18.9995H5V14.9995H9ZM16.66 1.68945L11 7.33945L16.66 12.9995L22.32 7.33945L16.66 1.68945ZM11 2.99945H3V10.9995H11V2.99945ZM21 12.9995H13V20.9995H21V12.9995ZM11 12.9995H3V20.9995H11V12.9995Z\\\" fill=\\\"#2F384C\\\" />\\n</symbol>\"\n});\nvar result = _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1___default().add(symbol);\n/* harmony default export */ __webpack_exports__[\"default\"] = (symbol);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/svg/colorize-elements.svg?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/svg/customize-colors-usage.svg":
-/*!***********************************************************!*\
-  !*** ./src/_js/customizer/svg/customize-colors-usage.svg ***!
-  \***********************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/svg-baker-runtime/browser-symbol.js */ \"./node_modules/svg-baker-runtime/browser-symbol.js\");\n/* harmony import */ var _node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/svg-sprite-loader/runtime/browser-sprite.build.js */ \"./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js\");\n/* harmony import */ var _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1__);\n\n\nvar symbol = new (_node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0___default())({\n  \"id\": \"customize-colors-usage\",\n  \"use\": \"customize-colors-usage-usage\",\n  \"viewBox\": \"0 0 24 24\",\n  \"content\": \"<symbol viewBox=\\\"0 0 24 24\\\" fill=\\\"none\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\" id=\\\"customize-colors-usage\\\">\\n<path d=\\\"M16.56 8.94L7.62 0L6.21 1.41L8.59 3.79L3.44 8.94C2.85 9.53 2.85 10.48 3.44 11.06L8.94 16.56C9.23 16.85 9.62 17 10 17C10.38 17 10.77 16.85 11.06 16.56L16.56 11.06C17.15 10.48 17.15 9.53 16.56 8.94ZM5.21 10L10 5.21L14.79 10H5.21ZM19 11.5C19 11.5 17 13.67 17 15C17 16.1 17.9 17 19 17C20.1 17 21 16.1 21 15C21 13.67 19 11.5 19 11.5ZM2 20H22V24H2V20Z\\\" fill=\\\"#2F384C\\\" />\\n</symbol>\"\n});\nvar result = _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1___default().add(symbol);\n/* harmony default export */ __webpack_exports__[\"default\"] = (symbol);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/svg/customize-colors-usage.svg?");
-
-/***/ }),
-
-/***/ "./src/_js/customizer/svg/upload.svg":
-/*!*******************************************!*\
-  !*** ./src/_js/customizer/svg/upload.svg ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/svg-baker-runtime/browser-symbol.js */ \"./node_modules/svg-baker-runtime/browser-symbol.js\");\n/* harmony import */ var _node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/svg-sprite-loader/runtime/browser-sprite.build.js */ \"./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js\");\n/* harmony import */ var _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1__);\n\n\nvar symbol = new (_node_modules_svg_baker_runtime_browser_symbol_js__WEBPACK_IMPORTED_MODULE_0___default())({\n  \"id\": \"upload\",\n  \"use\": \"upload-usage\",\n  \"viewBox\": \"0 0 32 41\",\n  \"content\": \"<symbol viewBox=\\\"0 0 32 41\\\" fill=\\\"none\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\" id=\\\"upload\\\">\\n<path d=\\\"M20 0.869141H0V40.8691H32V12.8691L20 0.869141ZM18 26.8691V34.8691H14V26.8691H8L16.02 18.8691L24 26.8691H18ZM18 14.8691V3.86914L29 14.8691H18Z\\\" fill=\\\"#0F376A\\\" />\\n</symbol>\"\n});\nvar result = _node_modules_svg_sprite_loader_runtime_browser_sprite_build_js__WEBPACK_IMPORTED_MODULE_1___default().add(symbol);\n/* harmony default export */ __webpack_exports__[\"default\"] = (symbol);\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/svg/upload.svg?");
-
-/***/ }),
-
-/***/ "./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js":
-/*!************************************************************************!*\
-  !*** ./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js ***!
-  \************************************************************************/
+/***/ 348:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-eval("(function (global, factory) {\n\t true ? module.exports = factory() :\n\t0;\n}(this, (function () { 'use strict';\n\nvar commonjsGlobal = typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};\n\n\n\n\n\nfunction createCommonjsModule(fn, module) {\n\treturn module = { exports: {} }, fn(module, module.exports), module.exports;\n}\n\nvar deepmerge = createCommonjsModule(function (module, exports) {\n(function (root, factory) {\n    if (false) {} else {\n        module.exports = factory();\n    }\n}(commonjsGlobal, function () {\n\nfunction isMergeableObject(val) {\n    var nonNullObject = val && typeof val === 'object';\n\n    return nonNullObject\n        && Object.prototype.toString.call(val) !== '[object RegExp]'\n        && Object.prototype.toString.call(val) !== '[object Date]'\n}\n\nfunction emptyTarget(val) {\n    return Array.isArray(val) ? [] : {}\n}\n\nfunction cloneIfNecessary(value, optionsArgument) {\n    var clone = optionsArgument && optionsArgument.clone === true;\n    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value\n}\n\nfunction defaultArrayMerge(target, source, optionsArgument) {\n    var destination = target.slice();\n    source.forEach(function(e, i) {\n        if (typeof destination[i] === 'undefined') {\n            destination[i] = cloneIfNecessary(e, optionsArgument);\n        } else if (isMergeableObject(e)) {\n            destination[i] = deepmerge(target[i], e, optionsArgument);\n        } else if (target.indexOf(e) === -1) {\n            destination.push(cloneIfNecessary(e, optionsArgument));\n        }\n    });\n    return destination\n}\n\nfunction mergeObject(target, source, optionsArgument) {\n    var destination = {};\n    if (isMergeableObject(target)) {\n        Object.keys(target).forEach(function (key) {\n            destination[key] = cloneIfNecessary(target[key], optionsArgument);\n        });\n    }\n    Object.keys(source).forEach(function (key) {\n        if (!isMergeableObject(source[key]) || !target[key]) {\n            destination[key] = cloneIfNecessary(source[key], optionsArgument);\n        } else {\n            destination[key] = deepmerge(target[key], source[key], optionsArgument);\n        }\n    });\n    return destination\n}\n\nfunction deepmerge(target, source, optionsArgument) {\n    var array = Array.isArray(source);\n    var options = optionsArgument || { arrayMerge: defaultArrayMerge };\n    var arrayMerge = options.arrayMerge || defaultArrayMerge;\n\n    if (array) {\n        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)\n    } else {\n        return mergeObject(target, source, optionsArgument)\n    }\n}\n\ndeepmerge.all = function deepmergeAll(array, optionsArgument) {\n    if (!Array.isArray(array) || array.length < 2) {\n        throw new Error('first argument should be an array with at least two elements')\n    }\n\n    // we are sure there are at least 2 values, so it is safe to have no initial value\n    return array.reduce(function(prev, next) {\n        return deepmerge(prev, next, optionsArgument)\n    })\n};\n\nreturn deepmerge\n\n}));\n});\n\n//      \n// An event handler can take an optional event argument\n// and should not return a value\n                                          \n// An array of all currently registered event handlers for a type\n                                            \n// A map of event types and their corresponding event handlers.\n                        \n                                   \n  \n\n/** Mitt: Tiny (~200b) functional event emitter / pubsub.\n *  @name mitt\n *  @returns {Mitt}\n */\nfunction mitt(all                 ) {\n\tall = all || Object.create(null);\n\n\treturn {\n\t\t/**\n\t\t * Register an event handler for the given type.\n\t\t *\n\t\t * @param  {String} type\tType of event to listen for, or `\"*\"` for all events\n\t\t * @param  {Function} handler Function to call in response to given event\n\t\t * @memberOf mitt\n\t\t */\n\t\ton: function on(type        , handler              ) {\n\t\t\t(all[type] || (all[type] = [])).push(handler);\n\t\t},\n\n\t\t/**\n\t\t * Remove an event handler for the given type.\n\t\t *\n\t\t * @param  {String} type\tType of event to unregister `handler` from, or `\"*\"`\n\t\t * @param  {Function} handler Handler function to remove\n\t\t * @memberOf mitt\n\t\t */\n\t\toff: function off(type        , handler              ) {\n\t\t\tif (all[type]) {\n\t\t\t\tall[type].splice(all[type].indexOf(handler) >>> 0, 1);\n\t\t\t}\n\t\t},\n\n\t\t/**\n\t\t * Invoke all handlers for the given type.\n\t\t * If present, `\"*\"` handlers are invoked after type-matched handlers.\n\t\t *\n\t\t * @param {String} type  The event type to invoke\n\t\t * @param {Any} [evt]  Any value (object is recommended and powerful), passed to each handler\n\t\t * @memberof mitt\n\t\t */\n\t\temit: function emit(type        , evt     ) {\n\t\t\t(all[type] || []).map(function (handler) { handler(evt); });\n\t\t\t(all['*'] || []).map(function (handler) { handler(type, evt); });\n\t\t}\n\t};\n}\n\nvar namespaces_1 = createCommonjsModule(function (module, exports) {\nvar namespaces = {\n  svg: {\n    name: 'xmlns',\n    uri: 'http://www.w3.org/2000/svg'\n  },\n  xlink: {\n    name: 'xmlns:xlink',\n    uri: 'http://www.w3.org/1999/xlink'\n  }\n};\n\nexports.default = namespaces;\nmodule.exports = exports.default;\n});\n\n/**\n * @param {Object} attrs\n * @return {string}\n */\nvar objectToAttrsString = function (attrs) {\n  return Object.keys(attrs).map(function (attr) {\n    var value = attrs[attr].toString().replace(/\"/g, '&quot;');\n    return (attr + \"=\\\"\" + value + \"\\\"\");\n  }).join(' ');\n};\n\nvar svg = namespaces_1.svg;\nvar xlink = namespaces_1.xlink;\n\nvar defaultAttrs = {};\ndefaultAttrs[svg.name] = svg.uri;\ndefaultAttrs[xlink.name] = xlink.uri;\n\n/**\n * @param {string} [content]\n * @param {Object} [attributes]\n * @return {string}\n */\nvar wrapInSvgString = function (content, attributes) {\n  if ( content === void 0 ) content = '';\n\n  var attrs = deepmerge(defaultAttrs, attributes || {});\n  var attrsRendered = objectToAttrsString(attrs);\n  return (\"<svg \" + attrsRendered + \">\" + content + \"</svg>\");\n};\n\nvar svg$1 = namespaces_1.svg;\nvar xlink$1 = namespaces_1.xlink;\n\nvar defaultConfig = {\n  attrs: ( obj = {\n    style: ['position: absolute', 'width: 0', 'height: 0'].join('; '),\n    'aria-hidden': 'true'\n  }, obj[svg$1.name] = svg$1.uri, obj[xlink$1.name] = xlink$1.uri, obj )\n};\nvar obj;\n\nvar Sprite = function Sprite(config) {\n  this.config = deepmerge(defaultConfig, config || {});\n  this.symbols = [];\n};\n\n/**\n * Add new symbol. If symbol with the same id exists it will be replaced.\n * @param {SpriteSymbol} symbol\n * @return {boolean} `true` - symbol was added, `false` - replaced\n */\nSprite.prototype.add = function add (symbol) {\n  var ref = this;\n    var symbols = ref.symbols;\n  var existing = this.find(symbol.id);\n\n  if (existing) {\n    symbols[symbols.indexOf(existing)] = symbol;\n    return false;\n  }\n\n  symbols.push(symbol);\n  return true;\n};\n\n/**\n * Remove symbol & destroy it\n * @param {string} id\n * @return {boolean} `true` - symbol was found & successfully destroyed, `false` - otherwise\n */\nSprite.prototype.remove = function remove (id) {\n  var ref = this;\n    var symbols = ref.symbols;\n  var symbol = this.find(id);\n\n  if (symbol) {\n    symbols.splice(symbols.indexOf(symbol), 1);\n    symbol.destroy();\n    return true;\n  }\n\n  return false;\n};\n\n/**\n * @param {string} id\n * @return {SpriteSymbol|null}\n */\nSprite.prototype.find = function find (id) {\n  return this.symbols.filter(function (s) { return s.id === id; })[0] || null;\n};\n\n/**\n * @param {string} id\n * @return {boolean}\n */\nSprite.prototype.has = function has (id) {\n  return this.find(id) !== null;\n};\n\n/**\n * @return {string}\n */\nSprite.prototype.stringify = function stringify () {\n  var ref = this.config;\n    var attrs = ref.attrs;\n  var stringifiedSymbols = this.symbols.map(function (s) { return s.stringify(); }).join('');\n  return wrapInSvgString(stringifiedSymbols, attrs);\n};\n\n/**\n * @return {string}\n */\nSprite.prototype.toString = function toString () {\n  return this.stringify();\n};\n\nSprite.prototype.destroy = function destroy () {\n  this.symbols.forEach(function (s) { return s.destroy(); });\n};\n\nvar SpriteSymbol = function SpriteSymbol(ref) {\n  var id = ref.id;\n  var viewBox = ref.viewBox;\n  var content = ref.content;\n\n  this.id = id;\n  this.viewBox = viewBox;\n  this.content = content;\n};\n\n/**\n * @return {string}\n */\nSpriteSymbol.prototype.stringify = function stringify () {\n  return this.content;\n};\n\n/**\n * @return {string}\n */\nSpriteSymbol.prototype.toString = function toString () {\n  return this.stringify();\n};\n\nSpriteSymbol.prototype.destroy = function destroy () {\n    var this$1 = this;\n\n  ['id', 'viewBox', 'content'].forEach(function (prop) { return delete this$1[prop]; });\n};\n\n/**\n * @param {string} content\n * @return {Element}\n */\nvar parse = function (content) {\n  var hasImportNode = !!document.importNode;\n  var doc = new DOMParser().parseFromString(content, 'image/svg+xml').documentElement;\n\n  /**\n   * Fix for browser which are throwing WrongDocumentError\n   * if you insert an element which is not part of the document\n   * @see http://stackoverflow.com/a/7986519/4624403\n   */\n  if (hasImportNode) {\n    return document.importNode(doc, true);\n  }\n\n  return doc;\n};\n\nvar BrowserSpriteSymbol = (function (SpriteSymbol$$1) {\n  function BrowserSpriteSymbol () {\n    SpriteSymbol$$1.apply(this, arguments);\n  }\n\n  if ( SpriteSymbol$$1 ) BrowserSpriteSymbol.__proto__ = SpriteSymbol$$1;\n  BrowserSpriteSymbol.prototype = Object.create( SpriteSymbol$$1 && SpriteSymbol$$1.prototype );\n  BrowserSpriteSymbol.prototype.constructor = BrowserSpriteSymbol;\n\n  var prototypeAccessors = { isMounted: {} };\n\n  prototypeAccessors.isMounted.get = function () {\n    return !!this.node;\n  };\n\n  /**\n   * @param {Element} node\n   * @return {BrowserSpriteSymbol}\n   */\n  BrowserSpriteSymbol.createFromExistingNode = function createFromExistingNode (node) {\n    return new BrowserSpriteSymbol({\n      id: node.getAttribute('id'),\n      viewBox: node.getAttribute('viewBox'),\n      content: node.outerHTML\n    });\n  };\n\n  BrowserSpriteSymbol.prototype.destroy = function destroy () {\n    if (this.isMounted) {\n      this.unmount();\n    }\n    SpriteSymbol$$1.prototype.destroy.call(this);\n  };\n\n  /**\n   * @param {Element|string} target\n   * @return {Element}\n   */\n  BrowserSpriteSymbol.prototype.mount = function mount (target) {\n    if (this.isMounted) {\n      return this.node;\n    }\n\n    var mountTarget = typeof target === 'string' ? document.querySelector(target) : target;\n    var node = this.render();\n    this.node = node;\n\n    mountTarget.appendChild(node);\n\n    return node;\n  };\n\n  /**\n   * @return {Element}\n   */\n  BrowserSpriteSymbol.prototype.render = function render () {\n    var content = this.stringify();\n    return parse(wrapInSvgString(content)).childNodes[0];\n  };\n\n  BrowserSpriteSymbol.prototype.unmount = function unmount () {\n    this.node.parentNode.removeChild(this.node);\n  };\n\n  Object.defineProperties( BrowserSpriteSymbol.prototype, prototypeAccessors );\n\n  return BrowserSpriteSymbol;\n}(SpriteSymbol));\n\nvar defaultConfig$1 = {\n  /**\n   * Should following options be automatically configured:\n   * - `syncUrlsWithBaseTag`\n   * - `locationChangeAngularEmitter`\n   * - `moveGradientsOutsideSymbol`\n   * @type {boolean}\n   */\n  autoConfigure: true,\n\n  /**\n   * Default mounting selector\n   * @type {string}\n   */\n  mountTo: 'body',\n\n  /**\n   * Fix disappearing SVG elements when <base href> exists.\n   * Executes when sprite mounted.\n   * @see http://stackoverflow.com/a/18265336/796152\n   * @see https://github.com/everdimension/angular-svg-base-fix\n   * @see https://github.com/angular/angular.js/issues/8934#issuecomment-56568466\n   * @type {boolean}\n   */\n  syncUrlsWithBaseTag: false,\n\n  /**\n   * Should sprite listen custom location change event\n   * @type {boolean}\n   */\n  listenLocationChangeEvent: true,\n\n  /**\n   * Custom window event name which should be emitted to update sprite urls\n   * @type {string}\n   */\n  locationChangeEvent: 'locationChange',\n\n  /**\n   * Emit location change event in Angular automatically\n   * @type {boolean}\n   */\n  locationChangeAngularEmitter: false,\n\n  /**\n   * Selector to find symbols usages when updating sprite urls\n   * @type {string}\n   */\n  usagesToUpdate: 'use[*|href]',\n\n  /**\n   * Fix Firefox bug when gradients and patterns don't work if they are within a symbol.\n   * Executes when sprite is rendered, but not mounted.\n   * @see https://bugzilla.mozilla.org/show_bug.cgi?id=306674\n   * @see https://bugzilla.mozilla.org/show_bug.cgi?id=353575\n   * @see https://bugzilla.mozilla.org/show_bug.cgi?id=1235364\n   * @type {boolean}\n   */\n  moveGradientsOutsideSymbol: false\n};\n\n/**\n * @param {*} arrayLike\n * @return {Array}\n */\nvar arrayFrom = function (arrayLike) {\n  return Array.prototype.slice.call(arrayLike, 0);\n};\n\nvar browser = {\n  isChrome: function () { return /chrome/i.test(navigator.userAgent); },\n  isFirefox: function () { return /firefox/i.test(navigator.userAgent); },\n\n  // https://msdn.microsoft.com/en-us/library/ms537503(v=vs.85).aspx\n  isIE: function () { return /msie/i.test(navigator.userAgent) || /trident/i.test(navigator.userAgent); },\n  isEdge: function () { return /edge/i.test(navigator.userAgent); }\n};\n\n/**\n * @param {string} name\n * @param {*} data\n */\nvar dispatchEvent = function (name, data) {\n  var event = document.createEvent('CustomEvent');\n  event.initCustomEvent(name, false, false, data);\n  window.dispatchEvent(event);\n};\n\n/**\n * IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.\n * This trick will trigger IE to read and use any existing SVG <style> tags.\n * @see https://github.com/iconic/SVGInjector/issues/23\n * @see https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10898469/\n *\n * @param {Element} node DOM Element to search <style> tags in\n * @return {Array<HTMLStyleElement>}\n */\nvar evalStylesIEWorkaround = function (node) {\n  var updatedNodes = [];\n\n  arrayFrom(node.querySelectorAll('style'))\n    .forEach(function (style) {\n      style.textContent += '';\n      updatedNodes.push(style);\n    });\n\n  return updatedNodes;\n};\n\n/**\n * @param {string} [url] If not provided - current URL will be used\n * @return {string}\n */\nvar getUrlWithoutFragment = function (url) {\n  return (url || window.location.href).split('#')[0];\n};\n\n/* global angular */\n/**\n * @param {string} eventName\n */\nvar locationChangeAngularEmitter = function (eventName) {\n  angular.module('ng').run(['$rootScope', function ($rootScope) {\n    $rootScope.$on('$locationChangeSuccess', function (e, newUrl, oldUrl) {\n      dispatchEvent(eventName, { oldUrl: oldUrl, newUrl: newUrl });\n    });\n  }]);\n};\n\nvar defaultSelector = 'linearGradient, radialGradient, pattern, mask, clipPath';\n\n/**\n * @param {Element} svg\n * @param {string} [selector]\n * @return {Element}\n */\nvar moveGradientsOutsideSymbol = function (svg, selector) {\n  if ( selector === void 0 ) selector = defaultSelector;\n\n  arrayFrom(svg.querySelectorAll('symbol')).forEach(function (symbol) {\n    arrayFrom(symbol.querySelectorAll(selector)).forEach(function (node) {\n      symbol.parentNode.insertBefore(node, symbol);\n    });\n  });\n  return svg;\n};\n\n/**\n * @param {NodeList} nodes\n * @param {Function} [matcher]\n * @return {Attr[]}\n */\nfunction selectAttributes(nodes, matcher) {\n  var attrs = arrayFrom(nodes).reduce(function (acc, node) {\n    if (!node.attributes) {\n      return acc;\n    }\n\n    var arrayfied = arrayFrom(node.attributes);\n    var matched = matcher ? arrayfied.filter(matcher) : arrayfied;\n    return acc.concat(matched);\n  }, []);\n\n  return attrs;\n}\n\n/**\n * @param {NodeList|Node} nodes\n * @param {boolean} [clone=true]\n * @return {string}\n */\n\nvar xLinkNS = namespaces_1.xlink.uri;\nvar xLinkAttrName = 'xlink:href';\n\n// eslint-disable-next-line no-useless-escape\nvar specialUrlCharsPattern = /[{}|\\\\\\^\\[\\]`\"<>]/g;\n\nfunction encoder(url) {\n  return url.replace(specialUrlCharsPattern, function (match) {\n    return (\"%\" + (match[0].charCodeAt(0).toString(16).toUpperCase()));\n  });\n}\n\nfunction escapeRegExp(str) {\n  return str.replace(/[.*+?^${}()|[\\]\\\\]/g, \"\\\\$&\"); // $& means the whole matched string\n}\n\n/**\n * @param {NodeList} nodes\n * @param {string} startsWith\n * @param {string} replaceWith\n * @return {NodeList}\n */\nfunction updateReferences(nodes, startsWith, replaceWith) {\n  arrayFrom(nodes).forEach(function (node) {\n    var href = node.getAttribute(xLinkAttrName);\n    if (href && href.indexOf(startsWith) === 0) {\n      var newUrl = href.replace(startsWith, replaceWith);\n      node.setAttributeNS(xLinkNS, xLinkAttrName, newUrl);\n    }\n  });\n\n  return nodes;\n}\n\n/**\n * List of SVG attributes to update url() target in them\n */\nvar attList = [\n  'clipPath',\n  'colorProfile',\n  'src',\n  'cursor',\n  'fill',\n  'filter',\n  'marker',\n  'markerStart',\n  'markerMid',\n  'markerEnd',\n  'mask',\n  'stroke',\n  'style'\n];\n\nvar attSelector = attList.map(function (attr) { return (\"[\" + attr + \"]\"); }).join(',');\n\n/**\n * Update URLs in svg image (like `fill=\"url(...)\"`) and update referencing elements\n * @param {Element} svg\n * @param {NodeList} references\n * @param {string|RegExp} startsWith\n * @param {string} replaceWith\n * @return {void}\n *\n * @example\n * const sprite = document.querySelector('svg.sprite');\n * const usages = document.querySelectorAll('use');\n * updateUrls(sprite, usages, '#', 'prefix#');\n */\nvar updateUrls = function (svg, references, startsWith, replaceWith) {\n  var startsWithEncoded = encoder(startsWith);\n  var replaceWithEncoded = encoder(replaceWith);\n\n  var nodes = svg.querySelectorAll(attSelector);\n  var attrs = selectAttributes(nodes, function (ref) {\n    var localName = ref.localName;\n    var value = ref.value;\n\n    return attList.indexOf(localName) !== -1 && value.indexOf((\"url(\" + startsWithEncoded)) !== -1;\n  });\n\n  attrs.forEach(function (attr) { return attr.value = attr.value.replace(new RegExp(escapeRegExp(startsWithEncoded), 'g'), replaceWithEncoded); });\n  updateReferences(references, startsWithEncoded, replaceWithEncoded);\n};\n\n/**\n * Internal emitter events\n * @enum\n * @private\n */\nvar Events = {\n  MOUNT: 'mount',\n  SYMBOL_MOUNT: 'symbol_mount'\n};\n\nvar BrowserSprite = (function (Sprite$$1) {\n  function BrowserSprite(cfg) {\n    var this$1 = this;\n    if ( cfg === void 0 ) cfg = {};\n\n    Sprite$$1.call(this, deepmerge(defaultConfig$1, cfg));\n\n    var emitter = mitt();\n    this._emitter = emitter;\n    this.node = null;\n\n    var ref = this;\n    var config = ref.config;\n\n    if (config.autoConfigure) {\n      this._autoConfigure(cfg);\n    }\n\n    if (config.syncUrlsWithBaseTag) {\n      var baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');\n      emitter.on(Events.MOUNT, function () { return this$1.updateUrls('#', baseUrl); });\n    }\n\n    var handleLocationChange = this._handleLocationChange.bind(this);\n    this._handleLocationChange = handleLocationChange;\n\n    // Provide way to update sprite urls externally via dispatching custom window event\n    if (config.listenLocationChangeEvent) {\n      window.addEventListener(config.locationChangeEvent, handleLocationChange);\n    }\n\n    // Emit location change event in Angular automatically\n    if (config.locationChangeAngularEmitter) {\n      locationChangeAngularEmitter(config.locationChangeEvent);\n    }\n\n    // After sprite mounted\n    emitter.on(Events.MOUNT, function (spriteNode) {\n      if (config.moveGradientsOutsideSymbol) {\n        moveGradientsOutsideSymbol(spriteNode);\n      }\n    });\n\n    // After symbol mounted into sprite\n    emitter.on(Events.SYMBOL_MOUNT, function (symbolNode) {\n      if (config.moveGradientsOutsideSymbol) {\n        moveGradientsOutsideSymbol(symbolNode.parentNode);\n      }\n\n      if (browser.isIE() || browser.isEdge()) {\n        evalStylesIEWorkaround(symbolNode);\n      }\n    });\n  }\n\n  if ( Sprite$$1 ) BrowserSprite.__proto__ = Sprite$$1;\n  BrowserSprite.prototype = Object.create( Sprite$$1 && Sprite$$1.prototype );\n  BrowserSprite.prototype.constructor = BrowserSprite;\n\n  var prototypeAccessors = { isMounted: {} };\n\n  /**\n   * @return {boolean}\n   */\n  prototypeAccessors.isMounted.get = function () {\n    return !!this.node;\n  };\n\n  /**\n   * Automatically configure following options\n   * - `syncUrlsWithBaseTag`\n   * - `locationChangeAngularEmitter`\n   * - `moveGradientsOutsideSymbol`\n   * @param {Object} cfg\n   * @private\n   */\n  BrowserSprite.prototype._autoConfigure = function _autoConfigure (cfg) {\n    var ref = this;\n    var config = ref.config;\n\n    if (typeof cfg.syncUrlsWithBaseTag === 'undefined') {\n      config.syncUrlsWithBaseTag = typeof document.getElementsByTagName('base')[0] !== 'undefined';\n    }\n\n    if (typeof cfg.locationChangeAngularEmitter === 'undefined') {\n        config.locationChangeAngularEmitter = typeof window.angular !== 'undefined';\n    }\n\n    if (typeof cfg.moveGradientsOutsideSymbol === 'undefined') {\n      config.moveGradientsOutsideSymbol = browser.isFirefox();\n    }\n  };\n\n  /**\n   * @param {Event} event\n   * @param {Object} event.detail\n   * @param {string} event.detail.oldUrl\n   * @param {string} event.detail.newUrl\n   * @private\n   */\n  BrowserSprite.prototype._handleLocationChange = function _handleLocationChange (event) {\n    var ref = event.detail;\n    var oldUrl = ref.oldUrl;\n    var newUrl = ref.newUrl;\n    this.updateUrls(oldUrl, newUrl);\n  };\n\n  /**\n   * Add new symbol. If symbol with the same id exists it will be replaced.\n   * If sprite already mounted - `symbol.mount(sprite.node)` will be called.\n   * @fires Events#SYMBOL_MOUNT\n   * @param {BrowserSpriteSymbol} symbol\n   * @return {boolean} `true` - symbol was added, `false` - replaced\n   */\n  BrowserSprite.prototype.add = function add (symbol) {\n    var sprite = this;\n    var isNewSymbol = Sprite$$1.prototype.add.call(this, symbol);\n\n    if (this.isMounted && isNewSymbol) {\n      symbol.mount(sprite.node);\n      this._emitter.emit(Events.SYMBOL_MOUNT, symbol.node);\n    }\n\n    return isNewSymbol;\n  };\n\n  /**\n   * Attach to existing DOM node\n   * @param {string|Element} target\n   * @return {Element|null} attached DOM Element. null if node to attach not found.\n   */\n  BrowserSprite.prototype.attach = function attach (target) {\n    var this$1 = this;\n\n    var sprite = this;\n\n    if (sprite.isMounted) {\n      return sprite.node;\n    }\n\n    /** @type Element */\n    var node = typeof target === 'string' ? document.querySelector(target) : target;\n    sprite.node = node;\n\n    // Already added symbols needs to be mounted\n    this.symbols.forEach(function (symbol) {\n      symbol.mount(sprite.node);\n      this$1._emitter.emit(Events.SYMBOL_MOUNT, symbol.node);\n    });\n\n    // Create symbols from existing DOM nodes, add and mount them\n    arrayFrom(node.querySelectorAll('symbol'))\n      .forEach(function (symbolNode) {\n        var symbol = BrowserSpriteSymbol.createFromExistingNode(symbolNode);\n        symbol.node = symbolNode; // hack to prevent symbol mounting to sprite when adding\n        sprite.add(symbol);\n      });\n\n    this._emitter.emit(Events.MOUNT, node);\n\n    return node;\n  };\n\n  BrowserSprite.prototype.destroy = function destroy () {\n    var ref = this;\n    var config = ref.config;\n    var symbols = ref.symbols;\n    var _emitter = ref._emitter;\n\n    symbols.forEach(function (s) { return s.destroy(); });\n\n    _emitter.off('*');\n    window.removeEventListener(config.locationChangeEvent, this._handleLocationChange);\n\n    if (this.isMounted) {\n      this.unmount();\n    }\n  };\n\n  /**\n   * @fires Events#MOUNT\n   * @param {string|Element} [target]\n   * @param {boolean} [prepend=false]\n   * @return {Element|null} rendered sprite node. null if mount node not found.\n   */\n  BrowserSprite.prototype.mount = function mount (target, prepend) {\n    if ( target === void 0 ) target = this.config.mountTo;\n    if ( prepend === void 0 ) prepend = false;\n\n    var sprite = this;\n\n    if (sprite.isMounted) {\n      return sprite.node;\n    }\n\n    var mountNode = typeof target === 'string' ? document.querySelector(target) : target;\n    var node = sprite.render();\n    this.node = node;\n\n    if (prepend && mountNode.childNodes[0]) {\n      mountNode.insertBefore(node, mountNode.childNodes[0]);\n    } else {\n      mountNode.appendChild(node);\n    }\n\n    this._emitter.emit(Events.MOUNT, node);\n\n    return node;\n  };\n\n  /**\n   * @return {Element}\n   */\n  BrowserSprite.prototype.render = function render () {\n    return parse(this.stringify());\n  };\n\n  /**\n   * Detach sprite from the DOM\n   */\n  BrowserSprite.prototype.unmount = function unmount () {\n    this.node.parentNode.removeChild(this.node);\n  };\n\n  /**\n   * Update URLs in sprite and usage elements\n   * @param {string} oldUrl\n   * @param {string} newUrl\n   * @return {boolean} `true` - URLs was updated, `false` - sprite is not mounted\n   */\n  BrowserSprite.prototype.updateUrls = function updateUrls$1 (oldUrl, newUrl) {\n    if (!this.isMounted) {\n      return false;\n    }\n\n    var usages = document.querySelectorAll(this.config.usagesToUpdate);\n\n    updateUrls(\n      this.node,\n      usages,\n      ((getUrlWithoutFragment(oldUrl)) + \"#\"),\n      ((getUrlWithoutFragment(newUrl)) + \"#\")\n    );\n\n    return true;\n  };\n\n  Object.defineProperties( BrowserSprite.prototype, prototypeAccessors );\n\n  return BrowserSprite;\n}(Sprite));\n\nvar ready$1 = createCommonjsModule(function (module) {\n/*!\n  * domready (c) Dustin Diaz 2014 - License MIT\n  */\n!function (name, definition) {\n\n  { module.exports = definition(); }\n\n}('domready', function () {\n\n  var fns = [], listener\n    , doc = document\n    , hack = doc.documentElement.doScroll\n    , domContentLoaded = 'DOMContentLoaded'\n    , loaded = (hack ? /^loaded|^c/ : /^loaded|^i|^c/).test(doc.readyState);\n\n\n  if (!loaded)\n  { doc.addEventListener(domContentLoaded, listener = function () {\n    doc.removeEventListener(domContentLoaded, listener);\n    loaded = 1;\n    while (listener = fns.shift()) { listener(); }\n  }); }\n\n  return function (fn) {\n    loaded ? setTimeout(fn, 0) : fns.push(fn);\n  }\n\n});\n});\n\nvar spriteNodeId = '__SVG_SPRITE_NODE__';\nvar spriteGlobalVarName = '__SVG_SPRITE__';\nvar isSpriteExists = !!window[spriteGlobalVarName];\n\n// eslint-disable-next-line import/no-mutable-exports\nvar sprite;\n\nif (isSpriteExists) {\n  sprite = window[spriteGlobalVarName];\n} else {\n  sprite = new BrowserSprite({\n    attrs: {\n      id: spriteNodeId,\n      'aria-hidden': 'true'\n    }\n  });\n  window[spriteGlobalVarName] = sprite;\n}\n\nvar loadSprite = function () {\n  /**\n   * Check for page already contains sprite node\n   * If found - attach to and reuse it's content\n   * If not - render and mount the new sprite\n   */\n  var existing = document.getElementById(spriteNodeId);\n\n  if (existing) {\n    sprite.attach(existing);\n  } else {\n    sprite.mount(document.body, true);\n  }\n};\n\nif (document.body) {\n  loadSprite();\n} else {\n  ready$1(loadSprite);\n}\n\nvar sprite$1 = sprite;\n\nreturn sprite$1;\n\n})));\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js?");
+(function (global, factory) {
+	 true ? module.exports = factory() :
+	0;
+}(this, (function () { 'use strict';
 
-/***/ }),
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};
 
-/***/ "./node_modules/use-debounce/esm/useDebouncedCallback.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/use-debounce/esm/useDebouncedCallback.js ***!
-  \***************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": function() { return /* binding */ useDebouncedCallback; }\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\n/**\n * Creates a debounced function that delays invoking `func` until after `wait`\n * milliseconds have elapsed since the last time the debounced function was\n * invoked, or until the next browser frame is drawn. The debounced function\n * comes with a `cancel` method to cancel delayed `func` invocations and a\n * `flush` method to immediately invoke them. Provide `options` to indicate\n * whether `func` should be invoked on the leading and/or trailing edge of the\n * `wait` timeout. The `func` is invoked with the last arguments provided to the\n * debounced function. Subsequent calls to the debounced function return the\n * result of the last `func` invocation.\n *\n * **Note:** If `leading` and `trailing` options are `true`, `func` is\n * invoked on the trailing edge of the timeout only if the debounced function\n * is invoked more than once during the `wait` timeout.\n *\n * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred\n * until the next tick, similar to `setTimeout` with a timeout of `0`.\n *\n * If `wait` is omitted in an environment with `requestAnimationFrame`, `func`\n * invocation will be deferred until the next frame is drawn (typically about\n * 16ms).\n *\n * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)\n * for details over the differences between `debounce` and `throttle`.\n *\n * @category Function\n * @param {Function} func The function to debounce.\n * @param {number} [wait=0]\n *  The number of milliseconds to delay; if omitted, `requestAnimationFrame` is\n *  used (if available, otherwise it will be setTimeout(...,0)).\n * @param {Object} [options={}] The options object.\n *  Specify invoking on the leading edge of the timeout.\n * @param {boolean} [options.leading=false]\n *  The maximum time `func` is allowed to be delayed before it's invoked.\n * @param {number} [options.maxWait]\n *  Specify invoking on the trailing edge of the timeout.\n * @param {boolean} [options.trailing=true]\n * @returns {Function} Returns the new debounced function.\n * @example\n *\n * // Avoid costly calculations while the window size is in flux.\n * const resizeHandler = useDebouncedCallback(calculateLayout, 150);\n * window.addEventListener('resize', resizeHandler)\n *\n * // Invoke `sendMail` when clicked, debouncing subsequent calls.\n * const clickHandler = useDebouncedCallback(sendMail, 300, {\n *   leading: true,\n *   trailing: false,\n * })\n * <button onClick={clickHandler}>click me</button>\n *\n * // Ensure `batchLog` is invoked once after 1 second of debounced calls.\n * const debounced = useDebouncedCallback(batchLog, 250, { 'maxWait': 1000 })\n * const source = new EventSource('/stream')\n * source.addEventListener('message', debounced)\n *\n * // Cancel the trailing debounced invocation.\n * window.addEventListener('popstate', debounced.cancel)\n *\n * // Check for pending invocations.\n * const status = debounced.pending() ? \"Pending...\" : \"Ready\"\n */\nfunction useDebouncedCallback(func, wait, options) {\n    var _this = this;\n    var lastCallTime = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n    var lastInvokeTime = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(0);\n    var timerId = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);\n    var lastArgs = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)([]);\n    var lastThis = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();\n    var result = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();\n    var funcRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(func);\n    var mounted = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(true);\n    funcRef.current = func;\n    // Bypass `requestAnimationFrame` by explicitly setting `wait=0`.\n    var useRAF = !wait && wait !== 0 && typeof window !== 'undefined';\n    if (typeof func !== 'function') {\n        throw new TypeError('Expected a function');\n    }\n    wait = +wait || 0;\n    options = options || {};\n    var leading = !!options.leading;\n    var trailing = 'trailing' in options ? !!options.trailing : true; // `true` by default\n    var maxing = 'maxWait' in options;\n    var maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : null;\n    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {\n        mounted.current = true;\n        return function () {\n            mounted.current = false;\n        };\n    }, []);\n    // You may have a question, why we have so many code under the useMemo definition.\n    //\n    // This was made as we want to escape from useCallback hell and\n    // not to initialize a number of functions each time useDebouncedCallback is called.\n    //\n    // It means that we have less garbage for our GC calls which improves performance.\n    // Also, it makes this library smaller.\n    //\n    // And the last reason, that the code without lots of useCallback with deps is easier to read.\n    // You have only one place for that.\n    var debounced = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {\n        var invokeFunc = function (time) {\n            var args = lastArgs.current;\n            var thisArg = lastThis.current;\n            lastArgs.current = lastThis.current = null;\n            lastInvokeTime.current = time;\n            return (result.current = funcRef.current.apply(thisArg, args));\n        };\n        var startTimer = function (pendingFunc, wait) {\n            if (useRAF)\n                cancelAnimationFrame(timerId.current);\n            timerId.current = useRAF ? requestAnimationFrame(pendingFunc) : setTimeout(pendingFunc, wait);\n        };\n        var shouldInvoke = function (time) {\n            if (!mounted.current)\n                return false;\n            var timeSinceLastCall = time - lastCallTime.current;\n            var timeSinceLastInvoke = time - lastInvokeTime.current;\n            // Either this is the first call, activity has stopped and we're at the\n            // trailing edge, the system time has gone backwards and we're treating\n            // it as the trailing edge, or we've hit the `maxWait` limit.\n            return (!lastCallTime.current ||\n                timeSinceLastCall >= wait ||\n                timeSinceLastCall < 0 ||\n                (maxing && timeSinceLastInvoke >= maxWait));\n        };\n        var trailingEdge = function (time) {\n            timerId.current = null;\n            // Only invoke if we have `lastArgs` which means `func` has been\n            // debounced at least once.\n            if (trailing && lastArgs.current) {\n                return invokeFunc(time);\n            }\n            lastArgs.current = lastThis.current = null;\n            return result.current;\n        };\n        var timerExpired = function () {\n            var time = Date.now();\n            if (shouldInvoke(time)) {\n                return trailingEdge(time);\n            }\n            // https://github.com/xnimorz/use-debounce/issues/97\n            if (!mounted.current) {\n                return;\n            }\n            // Remaining wait calculation\n            var timeSinceLastCall = time - lastCallTime.current;\n            var timeSinceLastInvoke = time - lastInvokeTime.current;\n            var timeWaiting = wait - timeSinceLastCall;\n            var remainingWait = maxing ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke) : timeWaiting;\n            // Restart the timer\n            startTimer(timerExpired, remainingWait);\n        };\n        var func = function () {\n            var args = [];\n            for (var _i = 0; _i < arguments.length; _i++) {\n                args[_i] = arguments[_i];\n            }\n            var time = Date.now();\n            var isInvoking = shouldInvoke(time);\n            lastArgs.current = args;\n            lastThis.current = _this;\n            lastCallTime.current = time;\n            if (isInvoking) {\n                if (!timerId.current && mounted.current) {\n                    // Reset any `maxWait` timer.\n                    lastInvokeTime.current = lastCallTime.current;\n                    // Start the timer for the trailing edge.\n                    startTimer(timerExpired, wait);\n                    // Invoke the leading edge.\n                    return leading ? invokeFunc(lastCallTime.current) : result.current;\n                }\n                if (maxing) {\n                    // Handle invocations in a tight loop.\n                    startTimer(timerExpired, wait);\n                    return invokeFunc(lastCallTime.current);\n                }\n            }\n            if (!timerId.current) {\n                startTimer(timerExpired, wait);\n            }\n            return result.current;\n        };\n        func.cancel = function () {\n            if (timerId.current) {\n                useRAF ? cancelAnimationFrame(timerId.current) : clearTimeout(timerId.current);\n            }\n            lastInvokeTime.current = 0;\n            lastArgs.current = lastCallTime.current = lastThis.current = timerId.current = null;\n        };\n        func.isPending = function () {\n            return !!timerId.current;\n        };\n        func.flush = function () {\n            return !timerId.current ? result.current : trailingEdge(Date.now());\n        };\n        return func;\n    }, [leading, maxing, wait, maxWait, trailing, useRAF]);\n    return debounced;\n}\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./node_modules/use-debounce/esm/useDebouncedCallback.js?");
 
-/***/ }),
 
-/***/ "./node_modules/worker-loader/dist/cjs.js!./src/_js/customizer/colors/components/dropzone/worker.js":
-/*!**********************************************************************************************************!*\
-  !*** ./node_modules/worker-loader/dist/cjs.js!./src/_js/customizer/colors/components/dropzone/worker.js ***!
-  \**********************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": function() { return /* binding */ Worker_fn; }\n/* harmony export */ });\nfunction Worker_fn() {\n  return new Worker(__webpack_require__.p + \"worker.js\");\n}\n\n\n//# sourceURL=webpack://sm.%5Bname%5D/./src/_js/customizer/colors/components/dropzone/worker.js?./node_modules/worker-loader/dist/cjs.js");
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
 
-/***/ }),
+var deepmerge = createCommonjsModule(function (module, exports) {
+(function (root, factory) {
+    if (false) {} else {
+        module.exports = factory();
+    }
+}(commonjsGlobal, function () {
 
-/***/ "react":
-/*!************************!*\
-  !*** external "React" ***!
-  \************************/
-/***/ (function(module) {
+function isMergeableObject(val) {
+    var nonNullObject = val && typeof val === 'object';
 
-"use strict";
-module.exports = window["React"];
+    return nonNullObject
+        && Object.prototype.toString.call(val) !== '[object RegExp]'
+        && Object.prototype.toString.call(val) !== '[object Date]'
+}
 
-/***/ }),
+function emptyTarget(val) {
+    return Array.isArray(val) ? [] : {}
+}
 
-/***/ "react-dom":
-/*!***************************!*\
-  !*** external "ReactDOM" ***!
-  \***************************/
-/***/ (function(module) {
+function cloneIfNecessary(value, optionsArgument) {
+    var clone = optionsArgument && optionsArgument.clone === true;
+    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value
+}
 
-"use strict";
-module.exports = window["ReactDOM"];
+function defaultArrayMerge(target, source, optionsArgument) {
+    var destination = target.slice();
+    source.forEach(function(e, i) {
+        if (typeof destination[i] === 'undefined') {
+            destination[i] = cloneIfNecessary(e, optionsArgument);
+        } else if (isMergeableObject(e)) {
+            destination[i] = deepmerge(target[i], e, optionsArgument);
+        } else if (target.indexOf(e) === -1) {
+            destination.push(cloneIfNecessary(e, optionsArgument));
+        }
+    });
+    return destination
+}
 
-/***/ }),
+function mergeObject(target, source, optionsArgument) {
+    var destination = {};
+    if (isMergeableObject(target)) {
+        Object.keys(target).forEach(function (key) {
+            destination[key] = cloneIfNecessary(target[key], optionsArgument);
+        });
+    }
+    Object.keys(source).forEach(function (key) {
+        if (!isMergeableObject(source[key]) || !target[key]) {
+            destination[key] = cloneIfNecessary(source[key], optionsArgument);
+        } else {
+            destination[key] = deepmerge(target[key], source[key], optionsArgument);
+        }
+    });
+    return destination
+}
 
-/***/ "chroma-js":
-/*!*************************!*\
-  !*** external "chroma" ***!
-  \*************************/
-/***/ (function(module) {
+function deepmerge(target, source, optionsArgument) {
+    var array = Array.isArray(source);
+    var options = optionsArgument || { arrayMerge: defaultArrayMerge };
+    var arrayMerge = options.arrayMerge || defaultArrayMerge;
 
-"use strict";
-module.exports = window["chroma"];
+    if (array) {
+        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)
+    } else {
+        return mergeObject(target, source, optionsArgument)
+    }
+}
 
-/***/ }),
+deepmerge.all = function deepmergeAll(array, optionsArgument) {
+    if (!Array.isArray(array) || array.length < 2) {
+        throw new Error('first argument should be an array with at least two elements')
+    }
 
-/***/ "jquery":
-/*!*************************!*\
-  !*** external "jQuery" ***!
-  \*************************/
-/***/ (function(module) {
+    // we are sure there are at least 2 values, so it is safe to have no initial value
+    return array.reduce(function(prev, next) {
+        return deepmerge(prev, next, optionsArgument)
+    })
+};
 
-"use strict";
-module.exports = window["jQuery"];
+return deepmerge
 
-/***/ }),
+}));
+});
 
-/***/ "lodash":
-/*!*************************!*\
-  !*** external "lodash" ***!
-  \*************************/
-/***/ (function(module) {
+//      
+// An event handler can take an optional event argument
+// and should not return a value
+                                          
+// An array of all currently registered event handlers for a type
+                                            
+// A map of event types and their corresponding event handlers.
+                        
+                                   
+  
 
-"use strict";
-module.exports = window["lodash"];
+/** Mitt: Tiny (~200b) functional event emitter / pubsub.
+ *  @name mitt
+ *  @returns {Mitt}
+ */
+function mitt(all                 ) {
+	all = all || Object.create(null);
+
+	return {
+		/**
+		 * Register an event handler for the given type.
+		 *
+		 * @param  {String} type	Type of event to listen for, or `"*"` for all events
+		 * @param  {Function} handler Function to call in response to given event
+		 * @memberOf mitt
+		 */
+		on: function on(type        , handler              ) {
+			(all[type] || (all[type] = [])).push(handler);
+		},
+
+		/**
+		 * Remove an event handler for the given type.
+		 *
+		 * @param  {String} type	Type of event to unregister `handler` from, or `"*"`
+		 * @param  {Function} handler Handler function to remove
+		 * @memberOf mitt
+		 */
+		off: function off(type        , handler              ) {
+			if (all[type]) {
+				all[type].splice(all[type].indexOf(handler) >>> 0, 1);
+			}
+		},
+
+		/**
+		 * Invoke all handlers for the given type.
+		 * If present, `"*"` handlers are invoked after type-matched handlers.
+		 *
+		 * @param {String} type  The event type to invoke
+		 * @param {Any} [evt]  Any value (object is recommended and powerful), passed to each handler
+		 * @memberof mitt
+		 */
+		emit: function emit(type        , evt     ) {
+			(all[type] || []).map(function (handler) { handler(evt); });
+			(all['*'] || []).map(function (handler) { handler(type, evt); });
+		}
+	};
+}
+
+var namespaces_1 = createCommonjsModule(function (module, exports) {
+var namespaces = {
+  svg: {
+    name: 'xmlns',
+    uri: 'http://www.w3.org/2000/svg'
+  },
+  xlink: {
+    name: 'xmlns:xlink',
+    uri: 'http://www.w3.org/1999/xlink'
+  }
+};
+
+exports.default = namespaces;
+module.exports = exports.default;
+});
+
+/**
+ * @param {Object} attrs
+ * @return {string}
+ */
+var objectToAttrsString = function (attrs) {
+  return Object.keys(attrs).map(function (attr) {
+    var value = attrs[attr].toString().replace(/"/g, '&quot;');
+    return (attr + "=\"" + value + "\"");
+  }).join(' ');
+};
+
+var svg = namespaces_1.svg;
+var xlink = namespaces_1.xlink;
+
+var defaultAttrs = {};
+defaultAttrs[svg.name] = svg.uri;
+defaultAttrs[xlink.name] = xlink.uri;
+
+/**
+ * @param {string} [content]
+ * @param {Object} [attributes]
+ * @return {string}
+ */
+var wrapInSvgString = function (content, attributes) {
+  if ( content === void 0 ) content = '';
+
+  var attrs = deepmerge(defaultAttrs, attributes || {});
+  var attrsRendered = objectToAttrsString(attrs);
+  return ("<svg " + attrsRendered + ">" + content + "</svg>");
+};
+
+var svg$1 = namespaces_1.svg;
+var xlink$1 = namespaces_1.xlink;
+
+var defaultConfig = {
+  attrs: ( obj = {
+    style: ['position: absolute', 'width: 0', 'height: 0'].join('; '),
+    'aria-hidden': 'true'
+  }, obj[svg$1.name] = svg$1.uri, obj[xlink$1.name] = xlink$1.uri, obj )
+};
+var obj;
+
+var Sprite = function Sprite(config) {
+  this.config = deepmerge(defaultConfig, config || {});
+  this.symbols = [];
+};
+
+/**
+ * Add new symbol. If symbol with the same id exists it will be replaced.
+ * @param {SpriteSymbol} symbol
+ * @return {boolean} `true` - symbol was added, `false` - replaced
+ */
+Sprite.prototype.add = function add (symbol) {
+  var ref = this;
+    var symbols = ref.symbols;
+  var existing = this.find(symbol.id);
+
+  if (existing) {
+    symbols[symbols.indexOf(existing)] = symbol;
+    return false;
+  }
+
+  symbols.push(symbol);
+  return true;
+};
+
+/**
+ * Remove symbol & destroy it
+ * @param {string} id
+ * @return {boolean} `true` - symbol was found & successfully destroyed, `false` - otherwise
+ */
+Sprite.prototype.remove = function remove (id) {
+  var ref = this;
+    var symbols = ref.symbols;
+  var symbol = this.find(id);
+
+  if (symbol) {
+    symbols.splice(symbols.indexOf(symbol), 1);
+    symbol.destroy();
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * @param {string} id
+ * @return {SpriteSymbol|null}
+ */
+Sprite.prototype.find = function find (id) {
+  return this.symbols.filter(function (s) { return s.id === id; })[0] || null;
+};
+
+/**
+ * @param {string} id
+ * @return {boolean}
+ */
+Sprite.prototype.has = function has (id) {
+  return this.find(id) !== null;
+};
+
+/**
+ * @return {string}
+ */
+Sprite.prototype.stringify = function stringify () {
+  var ref = this.config;
+    var attrs = ref.attrs;
+  var stringifiedSymbols = this.symbols.map(function (s) { return s.stringify(); }).join('');
+  return wrapInSvgString(stringifiedSymbols, attrs);
+};
+
+/**
+ * @return {string}
+ */
+Sprite.prototype.toString = function toString () {
+  return this.stringify();
+};
+
+Sprite.prototype.destroy = function destroy () {
+  this.symbols.forEach(function (s) { return s.destroy(); });
+};
+
+var SpriteSymbol = function SpriteSymbol(ref) {
+  var id = ref.id;
+  var viewBox = ref.viewBox;
+  var content = ref.content;
+
+  this.id = id;
+  this.viewBox = viewBox;
+  this.content = content;
+};
+
+/**
+ * @return {string}
+ */
+SpriteSymbol.prototype.stringify = function stringify () {
+  return this.content;
+};
+
+/**
+ * @return {string}
+ */
+SpriteSymbol.prototype.toString = function toString () {
+  return this.stringify();
+};
+
+SpriteSymbol.prototype.destroy = function destroy () {
+    var this$1 = this;
+
+  ['id', 'viewBox', 'content'].forEach(function (prop) { return delete this$1[prop]; });
+};
+
+/**
+ * @param {string} content
+ * @return {Element}
+ */
+var parse = function (content) {
+  var hasImportNode = !!document.importNode;
+  var doc = new DOMParser().parseFromString(content, 'image/svg+xml').documentElement;
+
+  /**
+   * Fix for browser which are throwing WrongDocumentError
+   * if you insert an element which is not part of the document
+   * @see http://stackoverflow.com/a/7986519/4624403
+   */
+  if (hasImportNode) {
+    return document.importNode(doc, true);
+  }
+
+  return doc;
+};
+
+var BrowserSpriteSymbol = (function (SpriteSymbol$$1) {
+  function BrowserSpriteSymbol () {
+    SpriteSymbol$$1.apply(this, arguments);
+  }
+
+  if ( SpriteSymbol$$1 ) BrowserSpriteSymbol.__proto__ = SpriteSymbol$$1;
+  BrowserSpriteSymbol.prototype = Object.create( SpriteSymbol$$1 && SpriteSymbol$$1.prototype );
+  BrowserSpriteSymbol.prototype.constructor = BrowserSpriteSymbol;
+
+  var prototypeAccessors = { isMounted: {} };
+
+  prototypeAccessors.isMounted.get = function () {
+    return !!this.node;
+  };
+
+  /**
+   * @param {Element} node
+   * @return {BrowserSpriteSymbol}
+   */
+  BrowserSpriteSymbol.createFromExistingNode = function createFromExistingNode (node) {
+    return new BrowserSpriteSymbol({
+      id: node.getAttribute('id'),
+      viewBox: node.getAttribute('viewBox'),
+      content: node.outerHTML
+    });
+  };
+
+  BrowserSpriteSymbol.prototype.destroy = function destroy () {
+    if (this.isMounted) {
+      this.unmount();
+    }
+    SpriteSymbol$$1.prototype.destroy.call(this);
+  };
+
+  /**
+   * @param {Element|string} target
+   * @return {Element}
+   */
+  BrowserSpriteSymbol.prototype.mount = function mount (target) {
+    if (this.isMounted) {
+      return this.node;
+    }
+
+    var mountTarget = typeof target === 'string' ? document.querySelector(target) : target;
+    var node = this.render();
+    this.node = node;
+
+    mountTarget.appendChild(node);
+
+    return node;
+  };
+
+  /**
+   * @return {Element}
+   */
+  BrowserSpriteSymbol.prototype.render = function render () {
+    var content = this.stringify();
+    return parse(wrapInSvgString(content)).childNodes[0];
+  };
+
+  BrowserSpriteSymbol.prototype.unmount = function unmount () {
+    this.node.parentNode.removeChild(this.node);
+  };
+
+  Object.defineProperties( BrowserSpriteSymbol.prototype, prototypeAccessors );
+
+  return BrowserSpriteSymbol;
+}(SpriteSymbol));
+
+var defaultConfig$1 = {
+  /**
+   * Should following options be automatically configured:
+   * - `syncUrlsWithBaseTag`
+   * - `locationChangeAngularEmitter`
+   * - `moveGradientsOutsideSymbol`
+   * @type {boolean}
+   */
+  autoConfigure: true,
+
+  /**
+   * Default mounting selector
+   * @type {string}
+   */
+  mountTo: 'body',
+
+  /**
+   * Fix disappearing SVG elements when <base href> exists.
+   * Executes when sprite mounted.
+   * @see http://stackoverflow.com/a/18265336/796152
+   * @see https://github.com/everdimension/angular-svg-base-fix
+   * @see https://github.com/angular/angular.js/issues/8934#issuecomment-56568466
+   * @type {boolean}
+   */
+  syncUrlsWithBaseTag: false,
+
+  /**
+   * Should sprite listen custom location change event
+   * @type {boolean}
+   */
+  listenLocationChangeEvent: true,
+
+  /**
+   * Custom window event name which should be emitted to update sprite urls
+   * @type {string}
+   */
+  locationChangeEvent: 'locationChange',
+
+  /**
+   * Emit location change event in Angular automatically
+   * @type {boolean}
+   */
+  locationChangeAngularEmitter: false,
+
+  /**
+   * Selector to find symbols usages when updating sprite urls
+   * @type {string}
+   */
+  usagesToUpdate: 'use[*|href]',
+
+  /**
+   * Fix Firefox bug when gradients and patterns don't work if they are within a symbol.
+   * Executes when sprite is rendered, but not mounted.
+   * @see https://bugzilla.mozilla.org/show_bug.cgi?id=306674
+   * @see https://bugzilla.mozilla.org/show_bug.cgi?id=353575
+   * @see https://bugzilla.mozilla.org/show_bug.cgi?id=1235364
+   * @type {boolean}
+   */
+  moveGradientsOutsideSymbol: false
+};
+
+/**
+ * @param {*} arrayLike
+ * @return {Array}
+ */
+var arrayFrom = function (arrayLike) {
+  return Array.prototype.slice.call(arrayLike, 0);
+};
+
+var browser = {
+  isChrome: function () { return /chrome/i.test(navigator.userAgent); },
+  isFirefox: function () { return /firefox/i.test(navigator.userAgent); },
+
+  // https://msdn.microsoft.com/en-us/library/ms537503(v=vs.85).aspx
+  isIE: function () { return /msie/i.test(navigator.userAgent) || /trident/i.test(navigator.userAgent); },
+  isEdge: function () { return /edge/i.test(navigator.userAgent); }
+};
+
+/**
+ * @param {string} name
+ * @param {*} data
+ */
+var dispatchEvent = function (name, data) {
+  var event = document.createEvent('CustomEvent');
+  event.initCustomEvent(name, false, false, data);
+  window.dispatchEvent(event);
+};
+
+/**
+ * IE doesn't evaluate <style> tags in SVGs that are dynamically added to the page.
+ * This trick will trigger IE to read and use any existing SVG <style> tags.
+ * @see https://github.com/iconic/SVGInjector/issues/23
+ * @see https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10898469/
+ *
+ * @param {Element} node DOM Element to search <style> tags in
+ * @return {Array<HTMLStyleElement>}
+ */
+var evalStylesIEWorkaround = function (node) {
+  var updatedNodes = [];
+
+  arrayFrom(node.querySelectorAll('style'))
+    .forEach(function (style) {
+      style.textContent += '';
+      updatedNodes.push(style);
+    });
+
+  return updatedNodes;
+};
+
+/**
+ * @param {string} [url] If not provided - current URL will be used
+ * @return {string}
+ */
+var getUrlWithoutFragment = function (url) {
+  return (url || window.location.href).split('#')[0];
+};
+
+/* global angular */
+/**
+ * @param {string} eventName
+ */
+var locationChangeAngularEmitter = function (eventName) {
+  angular.module('ng').run(['$rootScope', function ($rootScope) {
+    $rootScope.$on('$locationChangeSuccess', function (e, newUrl, oldUrl) {
+      dispatchEvent(eventName, { oldUrl: oldUrl, newUrl: newUrl });
+    });
+  }]);
+};
+
+var defaultSelector = 'linearGradient, radialGradient, pattern, mask, clipPath';
+
+/**
+ * @param {Element} svg
+ * @param {string} [selector]
+ * @return {Element}
+ */
+var moveGradientsOutsideSymbol = function (svg, selector) {
+  if ( selector === void 0 ) selector = defaultSelector;
+
+  arrayFrom(svg.querySelectorAll('symbol')).forEach(function (symbol) {
+    arrayFrom(symbol.querySelectorAll(selector)).forEach(function (node) {
+      symbol.parentNode.insertBefore(node, symbol);
+    });
+  });
+  return svg;
+};
+
+/**
+ * @param {NodeList} nodes
+ * @param {Function} [matcher]
+ * @return {Attr[]}
+ */
+function selectAttributes(nodes, matcher) {
+  var attrs = arrayFrom(nodes).reduce(function (acc, node) {
+    if (!node.attributes) {
+      return acc;
+    }
+
+    var arrayfied = arrayFrom(node.attributes);
+    var matched = matcher ? arrayfied.filter(matcher) : arrayfied;
+    return acc.concat(matched);
+  }, []);
+
+  return attrs;
+}
+
+/**
+ * @param {NodeList|Node} nodes
+ * @param {boolean} [clone=true]
+ * @return {string}
+ */
+
+var xLinkNS = namespaces_1.xlink.uri;
+var xLinkAttrName = 'xlink:href';
+
+// eslint-disable-next-line no-useless-escape
+var specialUrlCharsPattern = /[{}|\\\^\[\]`"<>]/g;
+
+function encoder(url) {
+  return url.replace(specialUrlCharsPattern, function (match) {
+    return ("%" + (match[0].charCodeAt(0).toString(16).toUpperCase()));
+  });
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+/**
+ * @param {NodeList} nodes
+ * @param {string} startsWith
+ * @param {string} replaceWith
+ * @return {NodeList}
+ */
+function updateReferences(nodes, startsWith, replaceWith) {
+  arrayFrom(nodes).forEach(function (node) {
+    var href = node.getAttribute(xLinkAttrName);
+    if (href && href.indexOf(startsWith) === 0) {
+      var newUrl = href.replace(startsWith, replaceWith);
+      node.setAttributeNS(xLinkNS, xLinkAttrName, newUrl);
+    }
+  });
+
+  return nodes;
+}
+
+/**
+ * List of SVG attributes to update url() target in them
+ */
+var attList = [
+  'clipPath',
+  'colorProfile',
+  'src',
+  'cursor',
+  'fill',
+  'filter',
+  'marker',
+  'markerStart',
+  'markerMid',
+  'markerEnd',
+  'mask',
+  'stroke',
+  'style'
+];
+
+var attSelector = attList.map(function (attr) { return ("[" + attr + "]"); }).join(',');
+
+/**
+ * Update URLs in svg image (like `fill="url(...)"`) and update referencing elements
+ * @param {Element} svg
+ * @param {NodeList} references
+ * @param {string|RegExp} startsWith
+ * @param {string} replaceWith
+ * @return {void}
+ *
+ * @example
+ * const sprite = document.querySelector('svg.sprite');
+ * const usages = document.querySelectorAll('use');
+ * updateUrls(sprite, usages, '#', 'prefix#');
+ */
+var updateUrls = function (svg, references, startsWith, replaceWith) {
+  var startsWithEncoded = encoder(startsWith);
+  var replaceWithEncoded = encoder(replaceWith);
+
+  var nodes = svg.querySelectorAll(attSelector);
+  var attrs = selectAttributes(nodes, function (ref) {
+    var localName = ref.localName;
+    var value = ref.value;
+
+    return attList.indexOf(localName) !== -1 && value.indexOf(("url(" + startsWithEncoded)) !== -1;
+  });
+
+  attrs.forEach(function (attr) { return attr.value = attr.value.replace(new RegExp(escapeRegExp(startsWithEncoded), 'g'), replaceWithEncoded); });
+  updateReferences(references, startsWithEncoded, replaceWithEncoded);
+};
+
+/**
+ * Internal emitter events
+ * @enum
+ * @private
+ */
+var Events = {
+  MOUNT: 'mount',
+  SYMBOL_MOUNT: 'symbol_mount'
+};
+
+var BrowserSprite = (function (Sprite$$1) {
+  function BrowserSprite(cfg) {
+    var this$1 = this;
+    if ( cfg === void 0 ) cfg = {};
+
+    Sprite$$1.call(this, deepmerge(defaultConfig$1, cfg));
+
+    var emitter = mitt();
+    this._emitter = emitter;
+    this.node = null;
+
+    var ref = this;
+    var config = ref.config;
+
+    if (config.autoConfigure) {
+      this._autoConfigure(cfg);
+    }
+
+    if (config.syncUrlsWithBaseTag) {
+      var baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
+      emitter.on(Events.MOUNT, function () { return this$1.updateUrls('#', baseUrl); });
+    }
+
+    var handleLocationChange = this._handleLocationChange.bind(this);
+    this._handleLocationChange = handleLocationChange;
+
+    // Provide way to update sprite urls externally via dispatching custom window event
+    if (config.listenLocationChangeEvent) {
+      window.addEventListener(config.locationChangeEvent, handleLocationChange);
+    }
+
+    // Emit location change event in Angular automatically
+    if (config.locationChangeAngularEmitter) {
+      locationChangeAngularEmitter(config.locationChangeEvent);
+    }
+
+    // After sprite mounted
+    emitter.on(Events.MOUNT, function (spriteNode) {
+      if (config.moveGradientsOutsideSymbol) {
+        moveGradientsOutsideSymbol(spriteNode);
+      }
+    });
+
+    // After symbol mounted into sprite
+    emitter.on(Events.SYMBOL_MOUNT, function (symbolNode) {
+      if (config.moveGradientsOutsideSymbol) {
+        moveGradientsOutsideSymbol(symbolNode.parentNode);
+      }
+
+      if (browser.isIE() || browser.isEdge()) {
+        evalStylesIEWorkaround(symbolNode);
+      }
+    });
+  }
+
+  if ( Sprite$$1 ) BrowserSprite.__proto__ = Sprite$$1;
+  BrowserSprite.prototype = Object.create( Sprite$$1 && Sprite$$1.prototype );
+  BrowserSprite.prototype.constructor = BrowserSprite;
+
+  var prototypeAccessors = { isMounted: {} };
+
+  /**
+   * @return {boolean}
+   */
+  prototypeAccessors.isMounted.get = function () {
+    return !!this.node;
+  };
+
+  /**
+   * Automatically configure following options
+   * - `syncUrlsWithBaseTag`
+   * - `locationChangeAngularEmitter`
+   * - `moveGradientsOutsideSymbol`
+   * @param {Object} cfg
+   * @private
+   */
+  BrowserSprite.prototype._autoConfigure = function _autoConfigure (cfg) {
+    var ref = this;
+    var config = ref.config;
+
+    if (typeof cfg.syncUrlsWithBaseTag === 'undefined') {
+      config.syncUrlsWithBaseTag = typeof document.getElementsByTagName('base')[0] !== 'undefined';
+    }
+
+    if (typeof cfg.locationChangeAngularEmitter === 'undefined') {
+        config.locationChangeAngularEmitter = typeof window.angular !== 'undefined';
+    }
+
+    if (typeof cfg.moveGradientsOutsideSymbol === 'undefined') {
+      config.moveGradientsOutsideSymbol = browser.isFirefox();
+    }
+  };
+
+  /**
+   * @param {Event} event
+   * @param {Object} event.detail
+   * @param {string} event.detail.oldUrl
+   * @param {string} event.detail.newUrl
+   * @private
+   */
+  BrowserSprite.prototype._handleLocationChange = function _handleLocationChange (event) {
+    var ref = event.detail;
+    var oldUrl = ref.oldUrl;
+    var newUrl = ref.newUrl;
+    this.updateUrls(oldUrl, newUrl);
+  };
+
+  /**
+   * Add new symbol. If symbol with the same id exists it will be replaced.
+   * If sprite already mounted - `symbol.mount(sprite.node)` will be called.
+   * @fires Events#SYMBOL_MOUNT
+   * @param {BrowserSpriteSymbol} symbol
+   * @return {boolean} `true` - symbol was added, `false` - replaced
+   */
+  BrowserSprite.prototype.add = function add (symbol) {
+    var sprite = this;
+    var isNewSymbol = Sprite$$1.prototype.add.call(this, symbol);
+
+    if (this.isMounted && isNewSymbol) {
+      symbol.mount(sprite.node);
+      this._emitter.emit(Events.SYMBOL_MOUNT, symbol.node);
+    }
+
+    return isNewSymbol;
+  };
+
+  /**
+   * Attach to existing DOM node
+   * @param {string|Element} target
+   * @return {Element|null} attached DOM Element. null if node to attach not found.
+   */
+  BrowserSprite.prototype.attach = function attach (target) {
+    var this$1 = this;
+
+    var sprite = this;
+
+    if (sprite.isMounted) {
+      return sprite.node;
+    }
+
+    /** @type Element */
+    var node = typeof target === 'string' ? document.querySelector(target) : target;
+    sprite.node = node;
+
+    // Already added symbols needs to be mounted
+    this.symbols.forEach(function (symbol) {
+      symbol.mount(sprite.node);
+      this$1._emitter.emit(Events.SYMBOL_MOUNT, symbol.node);
+    });
+
+    // Create symbols from existing DOM nodes, add and mount them
+    arrayFrom(node.querySelectorAll('symbol'))
+      .forEach(function (symbolNode) {
+        var symbol = BrowserSpriteSymbol.createFromExistingNode(symbolNode);
+        symbol.node = symbolNode; // hack to prevent symbol mounting to sprite when adding
+        sprite.add(symbol);
+      });
+
+    this._emitter.emit(Events.MOUNT, node);
+
+    return node;
+  };
+
+  BrowserSprite.prototype.destroy = function destroy () {
+    var ref = this;
+    var config = ref.config;
+    var symbols = ref.symbols;
+    var _emitter = ref._emitter;
+
+    symbols.forEach(function (s) { return s.destroy(); });
+
+    _emitter.off('*');
+    window.removeEventListener(config.locationChangeEvent, this._handleLocationChange);
+
+    if (this.isMounted) {
+      this.unmount();
+    }
+  };
+
+  /**
+   * @fires Events#MOUNT
+   * @param {string|Element} [target]
+   * @param {boolean} [prepend=false]
+   * @return {Element|null} rendered sprite node. null if mount node not found.
+   */
+  BrowserSprite.prototype.mount = function mount (target, prepend) {
+    if ( target === void 0 ) target = this.config.mountTo;
+    if ( prepend === void 0 ) prepend = false;
+
+    var sprite = this;
+
+    if (sprite.isMounted) {
+      return sprite.node;
+    }
+
+    var mountNode = typeof target === 'string' ? document.querySelector(target) : target;
+    var node = sprite.render();
+    this.node = node;
+
+    if (prepend && mountNode.childNodes[0]) {
+      mountNode.insertBefore(node, mountNode.childNodes[0]);
+    } else {
+      mountNode.appendChild(node);
+    }
+
+    this._emitter.emit(Events.MOUNT, node);
+
+    return node;
+  };
+
+  /**
+   * @return {Element}
+   */
+  BrowserSprite.prototype.render = function render () {
+    return parse(this.stringify());
+  };
+
+  /**
+   * Detach sprite from the DOM
+   */
+  BrowserSprite.prototype.unmount = function unmount () {
+    this.node.parentNode.removeChild(this.node);
+  };
+
+  /**
+   * Update URLs in sprite and usage elements
+   * @param {string} oldUrl
+   * @param {string} newUrl
+   * @return {boolean} `true` - URLs was updated, `false` - sprite is not mounted
+   */
+  BrowserSprite.prototype.updateUrls = function updateUrls$1 (oldUrl, newUrl) {
+    if (!this.isMounted) {
+      return false;
+    }
+
+    var usages = document.querySelectorAll(this.config.usagesToUpdate);
+
+    updateUrls(
+      this.node,
+      usages,
+      ((getUrlWithoutFragment(oldUrl)) + "#"),
+      ((getUrlWithoutFragment(newUrl)) + "#")
+    );
+
+    return true;
+  };
+
+  Object.defineProperties( BrowserSprite.prototype, prototypeAccessors );
+
+  return BrowserSprite;
+}(Sprite));
+
+var ready$1 = createCommonjsModule(function (module) {
+/*!
+  * domready (c) Dustin Diaz 2014 - License MIT
+  */
+!function (name, definition) {
+
+  { module.exports = definition(); }
+
+}('domready', function () {
+
+  var fns = [], listener
+    , doc = document
+    , hack = doc.documentElement.doScroll
+    , domContentLoaded = 'DOMContentLoaded'
+    , loaded = (hack ? /^loaded|^c/ : /^loaded|^i|^c/).test(doc.readyState);
+
+
+  if (!loaded)
+  { doc.addEventListener(domContentLoaded, listener = function () {
+    doc.removeEventListener(domContentLoaded, listener);
+    loaded = 1;
+    while (listener = fns.shift()) { listener(); }
+  }); }
+
+  return function (fn) {
+    loaded ? setTimeout(fn, 0) : fns.push(fn);
+  }
+
+});
+});
+
+var spriteNodeId = '__SVG_SPRITE_NODE__';
+var spriteGlobalVarName = '__SVG_SPRITE__';
+var isSpriteExists = !!window[spriteGlobalVarName];
+
+// eslint-disable-next-line import/no-mutable-exports
+var sprite;
+
+if (isSpriteExists) {
+  sprite = window[spriteGlobalVarName];
+} else {
+  sprite = new BrowserSprite({
+    attrs: {
+      id: spriteNodeId,
+      'aria-hidden': 'true'
+    }
+  });
+  window[spriteGlobalVarName] = sprite;
+}
+
+var loadSprite = function () {
+  /**
+   * Check for page already contains sprite node
+   * If found - attach to and reuse it's content
+   * If not - render and mount the new sprite
+   */
+  var existing = document.getElementById(spriteNodeId);
+
+  if (existing) {
+    sprite.attach(existing);
+  } else {
+    sprite.mount(document.body, true);
+  }
+};
+
+if (document.body) {
+  loadSprite();
+} else {
+  ready$1(loadSprite);
+}
+
+var sprite$1 = sprite;
+
+return sprite$1;
+
+})));
+
 
 /***/ })
 
@@ -919,12 +1789,3905 @@ module.exports = window["lodash"];
 /******/ 	}();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/_js/customizer/index.js");
-/******/ 	(window.sm = window.sm || {}).customizer = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+!function() {
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "convertFontVariantToFVD": function() { return /* reexport */ convertFontVariantToFVD; },
+  "determineFontType": function() { return /* reexport */ determineFontType; },
+  "getCSSFromPalettes": function() { return /* reexport */ getCSSFromPalettes; },
+  "getFontDetails": function() { return /* reexport */ getFontDetails; },
+  "resizer": function() { return /* reexport */ resizer_namespaceObject; }
+});
+
+// NAMESPACE OBJECT: ./src/_js/customizer/resizer/index.js
+var resizer_namespaceObject = {};
+__webpack_require__.r(resizer_namespaceObject);
+__webpack_require__.d(resizer_namespaceObject, {
+  "resize": function() { return resize; },
+  "setOffset": function() { return setOffset; }
+});
+
+;// CONCATENATED MODULE: external "jQuery"
+var external_jQuery_namespaceObject = window["jQuery"];
+var external_jQuery_default = /*#__PURE__*/__webpack_require__.n(external_jQuery_namespaceObject);
+;// CONCATENATED MODULE: ./src/_js/customizer/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: external "ReactDOM"
+var external_ReactDOM_namespaceObject = window["ReactDOM"];
+var external_ReactDOM_default = /*#__PURE__*/__webpack_require__.n(external_ReactDOM_namespaceObject);
+;// CONCATENATED MODULE: external "React"
+var external_React_namespaceObject = window["React"];
+var external_React_default = /*#__PURE__*/__webpack_require__.n(external_React_namespaceObject);
+;// CONCATENATED MODULE: external "lodash"
+var external_lodash_namespaceObject = window["lodash"];
+var external_lodash_default = /*#__PURE__*/__webpack_require__.n(external_lodash_namespaceObject);
+;// CONCATENATED MODULE: ./src/_js/customizer/global-service.js
+
+var callbacks = {};
+var settings = {};
+var overrideCustomizerBack = [];
+var loadSettings = function loadSettings() {
+  settings = JSON.parse(JSON.stringify(wp.customize.settings.settings));
+};
+var getSettings = function getSettings() {
+  return settings;
+};
+var setSettings = function setSettings(newSettings) {
+  settings = newSettings;
+};
+var getSetting = function getSetting(settingID) {
+  return settings[settingID];
+};
+var getSettingConfig = function getSettingConfig(settingID) {
+  return styleManager.config.settings[settingID];
+};
+var setSetting = function setSetting(settingID, value) {
+  settings[settingID] = value;
+};
+var getCallback = function getCallback(settingID) {
+  return callbacks[settingID];
+};
+var setCallback = function setCallback(settingID, callback) {
+  callbacks[settingID] = callback;
+};
+var getCallbacks = function getCallbacks() {
+  return callbacks;
+};
+var deleteCallbacks = function deleteCallbacks(settingIDs) {
+  settingIDs.forEach(function (settingID) {
+    delete callbacks[settingID];
+  });
+};
+var getBackArray = function getBackArray() {
+  return overrideCustomizerBack;
+};
+var addToBackArray = function addToBackArray(section) {
+  overrideCustomizerBack.push(section);
+};
+var setBackArray = function setBackArray(newArray) {
+  overrideCustomizerBack = newArray.slice();
+};
+var pushToBackArray = function pushToBackArray(targetSection, section) {
+  var backArray = getBackArray();
+  window.document.body.classList.add('remove-customizer-transitions');
+  setBackArray([]);
+  targetSection.focus();
+  setBackArray(backArray);
+  addToBackArray(section);
+};
+var popFromBackArray = function popFromBackArray() {
+  var backArray = getBackArray();
+  var targetSectionID = backArray.pop();
+
+  if (targetSectionID) {
+    wp.customize.section(targetSectionID, function (targetSection) {
+      targetSection.focus();
+
+      if (!backArray.length) {
+        setTimeout(function () {
+          window.document.body.classList.remove('remove-customizer-transitions');
+        }, 100);
+      }
+    });
+  }
+};
+var bindConnectedFields = function bindConnectedFields(settingIDs) {
+  var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : noop;
+  settingIDs.forEach(function (settingID) {
+    wp.customize(settingID, function (parentSetting) {
+      setCallback(settingID, function (newValue) {
+        var settingConfig = getSetting(settingID);
+        var connectedFields = settingConfig.connected_fields || {};
+        Object.keys(connectedFields).map(function (key) {
+          return connectedFields[key].setting_id;
+        }).forEach(function (connectedSettingID) {
+          wp.customize(connectedSettingID, function (connectedSetting) {
+            connectedSetting.set(filter(newValue));
+          });
+        });
+      });
+      parentSetting.bind(getCallback(settingID));
+    });
+  });
+};
+var unbindConnectedFields = function unbindConnectedFields(settingIDs) {
+  var globalCallbacks = external_lodash_default().pick(getCallbacks(), settingIDs);
+
+  external_lodash_default().each(globalCallbacks, function (callback, settingID) {
+    wp.customize(settingID, function (setting) {
+      setting.unbind(callback);
+    });
+  });
+
+  deleteCallbacks(settingIDs);
+};
+
+var noop = function noop(x) {
+  return x;
+};
+// EXTERNAL MODULE: ./node_modules/svg-baker-runtime/browser-symbol.js
+var browser_symbol = __webpack_require__(854);
+var browser_symbol_default = /*#__PURE__*/__webpack_require__.n(browser_symbol);
+// EXTERNAL MODULE: ./node_modules/svg-sprite-loader/runtime/browser-sprite.build.js
+var browser_sprite_build = __webpack_require__(348);
+var browser_sprite_build_default = /*#__PURE__*/__webpack_require__.n(browser_sprite_build);
+;// CONCATENATED MODULE: ./src/_js/customizer/svg/colorize-elements.svg
+
+
+var symbol = new (browser_symbol_default())({
+  "id": "colorize-elements",
+  "use": "colorize-elements-usage",
+  "viewBox": "0 0 24 24",
+  "content": "<symbol viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" id=\"colorize-elements\">\n<path d=\"M16.66 4.51945L19.49 7.34945L16.66 10.1795L13.83 7.34945L16.66 4.51945ZM9 4.99945V8.99945H5V4.99945H9ZM19 14.9995V18.9995H15V14.9995H19ZM9 14.9995V18.9995H5V14.9995H9ZM16.66 1.68945L11 7.33945L16.66 12.9995L22.32 7.33945L16.66 1.68945ZM11 2.99945H3V10.9995H11V2.99945ZM21 12.9995H13V20.9995H21V12.9995ZM11 12.9995H3V20.9995H11V12.9995Z\" fill=\"#2F384C\" />\n</symbol>"
+});
+var result = browser_sprite_build_default().add(symbol);
+/* harmony default export */ var colorize_elements = (symbol);
+;// CONCATENATED MODULE: ./src/_js/customizer/utils/use-customize-setting-callback.js
+
+
+var useCustomizeSettingCallback = function useCustomizeSettingCallback(settingID, callback) {
+  if (typeof callback !== "function") {
+    return;
+  }
+
+  wp.customize(settingID, function (setting) {
+    (0,external_React_namespaceObject.useEffect)(function () {
+      setting.bind(callback);
+      return function () {
+        setting.unbind(callback);
+      };
+    }, []);
+  });
+};
+
+/* harmony default export */ var use_customize_setting_callback = (useCustomizeSettingCallback);
+;// CONCATENATED MODULE: external "chroma"
+var external_chroma_namespaceObject = window["chroma"];
+var external_chroma_default = /*#__PURE__*/__webpack_require__.n(external_chroma_namespaceObject);
+;// CONCATENATED MODULE: ./node_modules/use-debounce/esm/useDebouncedCallback.js
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked, or until the next browser frame is drawn. The debounced function
+ * comes with a `cancel` method to cancel delayed `func` invocations and a
+ * `flush` method to immediately invoke them. Provide `options` to indicate
+ * whether `func` should be invoked on the leading and/or trailing edge of the
+ * `wait` timeout. The `func` is invoked with the last arguments provided to the
+ * debounced function. Subsequent calls to the debounced function return the
+ * result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the debounced function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * If `wait` is omitted in an environment with `requestAnimationFrame`, `func`
+ * invocation will be deferred until the next frame is drawn (typically about
+ * 16ms).
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `debounce` and `throttle`.
+ *
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0]
+ *  The number of milliseconds to delay; if omitted, `requestAnimationFrame` is
+ *  used (if available, otherwise it will be setTimeout(...,0)).
+ * @param {Object} [options={}] The options object.
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {boolean} [options.leading=false]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {number} [options.maxWait]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @param {boolean} [options.trailing=true]
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * const resizeHandler = useDebouncedCallback(calculateLayout, 150);
+ * window.addEventListener('resize', resizeHandler)
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * const clickHandler = useDebouncedCallback(sendMail, 300, {
+ *   leading: true,
+ *   trailing: false,
+ * })
+ * <button onClick={clickHandler}>click me</button>
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * const debounced = useDebouncedCallback(batchLog, 250, { 'maxWait': 1000 })
+ * const source = new EventSource('/stream')
+ * source.addEventListener('message', debounced)
+ *
+ * // Cancel the trailing debounced invocation.
+ * window.addEventListener('popstate', debounced.cancel)
+ *
+ * // Check for pending invocations.
+ * const status = debounced.pending() ? "Pending..." : "Ready"
+ */
+function useDebouncedCallback(func, wait, options) {
+    var _this = this;
+    var lastCallTime = (0,external_React_namespaceObject.useRef)(null);
+    var lastInvokeTime = (0,external_React_namespaceObject.useRef)(0);
+    var timerId = (0,external_React_namespaceObject.useRef)(null);
+    var lastArgs = (0,external_React_namespaceObject.useRef)([]);
+    var lastThis = (0,external_React_namespaceObject.useRef)();
+    var result = (0,external_React_namespaceObject.useRef)();
+    var funcRef = (0,external_React_namespaceObject.useRef)(func);
+    var mounted = (0,external_React_namespaceObject.useRef)(true);
+    funcRef.current = func;
+    // Bypass `requestAnimationFrame` by explicitly setting `wait=0`.
+    var useRAF = !wait && wait !== 0 && typeof window !== 'undefined';
+    if (typeof func !== 'function') {
+        throw new TypeError('Expected a function');
+    }
+    wait = +wait || 0;
+    options = options || {};
+    var leading = !!options.leading;
+    var trailing = 'trailing' in options ? !!options.trailing : true; // `true` by default
+    var maxing = 'maxWait' in options;
+    var maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : null;
+    (0,external_React_namespaceObject.useEffect)(function () {
+        mounted.current = true;
+        return function () {
+            mounted.current = false;
+        };
+    }, []);
+    // You may have a question, why we have so many code under the useMemo definition.
+    //
+    // This was made as we want to escape from useCallback hell and
+    // not to initialize a number of functions each time useDebouncedCallback is called.
+    //
+    // It means that we have less garbage for our GC calls which improves performance.
+    // Also, it makes this library smaller.
+    //
+    // And the last reason, that the code without lots of useCallback with deps is easier to read.
+    // You have only one place for that.
+    var debounced = (0,external_React_namespaceObject.useMemo)(function () {
+        var invokeFunc = function (time) {
+            var args = lastArgs.current;
+            var thisArg = lastThis.current;
+            lastArgs.current = lastThis.current = null;
+            lastInvokeTime.current = time;
+            return (result.current = funcRef.current.apply(thisArg, args));
+        };
+        var startTimer = function (pendingFunc, wait) {
+            if (useRAF)
+                cancelAnimationFrame(timerId.current);
+            timerId.current = useRAF ? requestAnimationFrame(pendingFunc) : setTimeout(pendingFunc, wait);
+        };
+        var shouldInvoke = function (time) {
+            if (!mounted.current)
+                return false;
+            var timeSinceLastCall = time - lastCallTime.current;
+            var timeSinceLastInvoke = time - lastInvokeTime.current;
+            // Either this is the first call, activity has stopped and we're at the
+            // trailing edge, the system time has gone backwards and we're treating
+            // it as the trailing edge, or we've hit the `maxWait` limit.
+            return (!lastCallTime.current ||
+                timeSinceLastCall >= wait ||
+                timeSinceLastCall < 0 ||
+                (maxing && timeSinceLastInvoke >= maxWait));
+        };
+        var trailingEdge = function (time) {
+            timerId.current = null;
+            // Only invoke if we have `lastArgs` which means `func` has been
+            // debounced at least once.
+            if (trailing && lastArgs.current) {
+                return invokeFunc(time);
+            }
+            lastArgs.current = lastThis.current = null;
+            return result.current;
+        };
+        var timerExpired = function () {
+            var time = Date.now();
+            if (shouldInvoke(time)) {
+                return trailingEdge(time);
+            }
+            // https://github.com/xnimorz/use-debounce/issues/97
+            if (!mounted.current) {
+                return;
+            }
+            // Remaining wait calculation
+            var timeSinceLastCall = time - lastCallTime.current;
+            var timeSinceLastInvoke = time - lastInvokeTime.current;
+            var timeWaiting = wait - timeSinceLastCall;
+            var remainingWait = maxing ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke) : timeWaiting;
+            // Restart the timer
+            startTimer(timerExpired, remainingWait);
+        };
+        var func = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var time = Date.now();
+            var isInvoking = shouldInvoke(time);
+            lastArgs.current = args;
+            lastThis.current = _this;
+            lastCallTime.current = time;
+            if (isInvoking) {
+                if (!timerId.current && mounted.current) {
+                    // Reset any `maxWait` timer.
+                    lastInvokeTime.current = lastCallTime.current;
+                    // Start the timer for the trailing edge.
+                    startTimer(timerExpired, wait);
+                    // Invoke the leading edge.
+                    return leading ? invokeFunc(lastCallTime.current) : result.current;
+                }
+                if (maxing) {
+                    // Handle invocations in a tight loop.
+                    startTimer(timerExpired, wait);
+                    return invokeFunc(lastCallTime.current);
+                }
+            }
+            if (!timerId.current) {
+                startTimer(timerExpired, wait);
+            }
+            return result.current;
+        };
+        func.cancel = function () {
+            if (timerId.current) {
+                useRAF ? cancelAnimationFrame(timerId.current) : clearTimeout(timerId.current);
+            }
+            lastInvokeTime.current = 0;
+            lastArgs.current = lastCallTime.current = lastThis.current = timerId.current = null;
+        };
+        func.isPending = function () {
+            return !!timerId.current;
+        };
+        func.flush = function () {
+            return !timerId.current ? result.current : trailingEdge(Date.now());
+        };
+        return func;
+    }, [leading, maxing, wait, maxWait, trailing, useRAF]);
+    return debounced;
+}
+
+;// CONCATENATED MODULE: ./node_modules/react-colorful/dist/index.module.js
+function l(){return(l=Object.assign||function(e){for(var r=1;r<arguments.length;r++){var t=arguments[r];for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o])}return e}).apply(this,arguments)}function u(e,r){if(null==e)return{};var t,o,n={},a=Object.keys(e);for(o=0;o<a.length;o++)r.indexOf(t=a[o])>=0||(n[t]=e[t]);return n}var c="undefined"!=typeof window?external_React_namespaceObject.useLayoutEffect:external_React_namespaceObject.useEffect;function i(e){var r=(0,external_React_namespaceObject.useRef)(e);return (0,external_React_namespaceObject.useEffect)(function(){r.current=e}),(0,external_React_namespaceObject.useCallback)(function(e){return r.current&&r.current(e)},[])}var s,f=function(e,r,t){return void 0===r&&(r=0),void 0===t&&(t=1),e>t?t:e<r?r:e},v=function(e){return"touches"in e},d=function(e,r){var t=e.getBoundingClientRect(),o=v(r)?r.touches[0]:r;return{left:f((o.pageX-(t.left+window.pageXOffset))/t.width),top:f((o.pageY-(t.top+window.pageYOffset))/t.height)}},h=external_React_default().memo(function(r){var t=r.onMove,s=r.onKey,f=u(r,["onMove","onKey"]),h=(0,external_React_namespaceObject.useRef)(null),m=(0,external_React_namespaceObject.useRef)(!1),g=(0,external_React_namespaceObject.useState)(!1),p=g[0],b=g[1],_=i(t),C=i(s),E=(0,external_React_namespaceObject.useCallback)(function(e){e.preventDefault(),(v(e)?e.touches.length>0:e.buttons>0)&&h.current?_(d(h.current,e)):b(!1)},[_]),x=(0,external_React_namespaceObject.useCallback)(function(e){var r=e.nativeEvent;r.preventDefault(),function(e){return!(m.current&&!v(e)||(m.current||(m.current=v(e)),0))}(r)&&(_(d(h.current,r)),b(!0))},[_]),H=(0,external_React_namespaceObject.useCallback)(function(e){var r=e.which||e.keyCode;r<37||r>40||(e.preventDefault(),C({left:39===r?.05:37===r?-.05:0,top:40===r?.05:38===r?-.05:0}))},[C]),N=(0,external_React_namespaceObject.useCallback)(function(){return b(!1)},[]),w=(0,external_React_namespaceObject.useCallback)(function(e){var r=e?window.addEventListener:window.removeEventListener;r(m.current?"touchmove":"mousemove",E),r(m.current?"touchend":"mouseup",N)},[E,N]);return c(function(){return w(p),function(){p&&w(!1)}},[p,w]),external_React_default().createElement("div",l({},f,{className:"react-colorful__interactive",ref:h,onTouchStart:x,onMouseDown:x,onKeyDown:H,tabIndex:0,role:"slider"}))}),m=function(e){return e.filter(Boolean).join(" ")},g=function(r){var t=r.color,o=r.left,n=r.top,a=void 0===n?.5:n,l=m(["react-colorful__pointer",r.className]);return external_React_default().createElement("div",{className:l,style:{top:100*a+"%",left:100*o+"%"}},external_React_default().createElement("div",{className:"react-colorful__pointer-fill",style:{backgroundColor:t}}))},p=function(e,r,t){return void 0===r&&(r=0),void 0===t&&(t=Math.pow(10,r)),Math.round(t*e)/t},b=function(e){return"#"===e[0]&&(e=e.substr(1)),e.length<6?{r:parseInt(e[0]+e[0],16),g:parseInt(e[1]+e[1],16),b:parseInt(e[2]+e[2],16),a:1}:{r:parseInt(e.substr(0,2),16),g:parseInt(e.substr(2,2),16),b:parseInt(e.substr(4,2),16),a:1}},index_module_=function(e){var r=/hsla?\((\d+\.?\d*),\s*(\d+\.?\d*)%?,\s*(\d+\.?\d*)%?,?\s*(\d+\.?\d*)?\)/.exec(e);return r?E({h:Number(r[1]),s:Number(r[2]),l:Number(r[3]),a:void 0===r[4]?1:Number(r[4])}):{h:0,s:0,v:0,a:1}},C=index_module_,E=function(e){var r=e.s,t=e.l;return{h:e.h,s:(r*=(t<50?t:100-t)/100)>0?2*r/(t+r)*100:0,v:t+r,a:e.a}},x=function(e){var r=e.s,t=e.v,o=e.a,n=(200-r)*t/100;return{h:p(e.h),s:p(n>0&&n<200?r*t/100/(n<=100?n:200-n)*100:0),l:p(n/2),a:p(o,2)}},H=function(e){var r=x(e);return"hsl("+r.h+", "+r.s+"%, "+r.l+"%)"},N=function(e){var r=x(e);return"hsla("+r.h+", "+r.s+"%, "+r.l+"%, "+r.a+")"},w=function(e){var r=e.h,t=e.s,o=e.v,n=e.a;r=r/360*6,t/=100,o/=100;var a=Math.floor(r),l=o*(1-t),u=o*(1-(r-a)*t),c=o*(1-(1-r+a)*t),i=a%6;return{r:p(255*[o,u,l,l,c,o][i]),g:p(255*[c,o,o,u,l,l][i]),b:p(255*[l,l,c,o,o,u][i]),a:p(n,2)}},M=function(e){var r=/hsva?\((\d+\.?\d*),\s*(\d+\.?\d*)%?,\s*(\d+\.?\d*)%?,?\s*(\d+\.?\d*)?\)/.exec(e);return r?j({h:Number(r[1]),s:Number(r[2]),v:Number(r[3]),a:void 0===r[4]?1:Number(r[4])}):{h:0,s:0,v:0,a:1}},y=M,q=function(e){var r=/rgba?\((\d+),\s*(\d+),\s*(\d+),?\s*(\d+\.?\d*)?\)/.exec(e);return r?I({r:Number(r[1]),g:Number(r[2]),b:Number(r[3]),a:void 0===r[4]?1:Number(r[4])}):{h:0,s:0,v:0,a:1}},k=q,O=function(e){var r=e.toString(16);return r.length<2?"0"+r:r},I=function(e){var r=e.r,t=e.g,o=e.b,n=e.a,a=Math.max(r,t,o),l=a-Math.min(r,t,o),u=l?a===r?(t-o)/l:a===t?2+(o-r)/l:4+(r-t)/l:0;return{h:p(60*(u<0?u+6:u)),s:p(a?l/a*100:0),v:p(a/255*100),a:n}},j=function(e){return{h:p(e.h),s:p(e.s),v:p(e.v),a:p(e.a,2)}},z=external_React_default().memo(function(r){var t=r.hue,o=r.onChange,n=m(["react-colorful__hue",r.className]);return external_React_default().createElement("div",{className:n},external_React_default().createElement(h,{onMove:function(e){o({h:360*e.left})},onKey:function(e){o({h:f(t+360*e.left,0,360)})},"aria-label":"Hue","aria-valuetext":p(t)},external_React_default().createElement(g,{className:"react-colorful__hue-pointer",left:t/360,color:H({h:t,s:100,v:100,a:1})})))}),B=external_React_default().memo(function(r){var t=r.hsva,o=r.onChange,n={backgroundColor:H({h:t.h,s:100,v:100,a:1})};return external_React_default().createElement("div",{className:"react-colorful__saturation",style:n},external_React_default().createElement(h,{onMove:function(e){o({s:100*e.left,v:100-100*e.top})},onKey:function(e){o({s:f(t.s+100*e.left,0,100),v:f(t.v-100*e.top,0,100)})},"aria-label":"Color","aria-valuetext":"Saturation "+p(t.s)+"%, Brightness "+p(t.v)+"%"},external_React_default().createElement(g,{className:"react-colorful__saturation-pointer",top:1-t.v/100,left:t.s/100,color:H(t)})))}),K=function(e,r){if(e===r)return!0;for(var t in e)if(e[t]!==r[t])return!1;return!0},A=function(e,r){return e.replace(/\s/g,"")===r.replace(/\s/g,"")};function D(e,r,l){var u=i(l),c=(0,external_React_namespaceObject.useState)(function(){return e.toHsva(r)}),s=c[0],f=c[1],v=(0,external_React_namespaceObject.useRef)({color:r,hsva:s});(0,external_React_namespaceObject.useEffect)(function(){if(!e.equal(r,v.current.color)){var t=e.toHsva(r);v.current={hsva:t,color:r},f(t)}},[r,e]),(0,external_React_namespaceObject.useEffect)(function(){var r;K(s,v.current.hsva)||e.equal(r=e.fromHsva(s),v.current.color)||(v.current={hsva:s,color:r},u(r))},[s,e,u]);var d=(0,external_React_namespaceObject.useCallback)(function(e){f(function(r){return Object.assign({},r,e)})},[]);return[s,d]}var L,F=function(){return s||( true?__webpack_require__.nc:0)},S=function(e){s=e},T=function(){c(function(){if("undefined"!=typeof document&&!L){(L=document.createElement("style")).innerHTML='.react-colorful{position:relative;display:flex;flex-direction:column;width:200px;height:200px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.react-colorful__saturation{position:relative;flex-grow:1;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(0deg,#000,transparent),linear-gradient(90deg,#fff,hsla(0,0%,100%,0))}.react-colorful__alpha-gradient,.react-colorful__pointer-fill{content:"";position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;border-radius:inherit}.react-colorful__alpha-gradient,.react-colorful__saturation{box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.react-colorful__alpha,.react-colorful__hue{position:relative;height:24px}.react-colorful__hue{background:linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)}.react-colorful__last-control{border-radius:0 0 8px 8px}.react-colorful__interactive{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;outline:none;touch-action:none}.react-colorful__pointer{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}.react-colorful__interactive:focus .react-colorful__pointer{transform:translate(-50%,-50%) scale(1.1)}.react-colorful__alpha,.react-colorful__alpha-pointer{background-color:#fff;background-image:url(\'data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill-opacity=".05"><path d="M8 0h8v8H8zM0 8h8v8H0z"/></svg>\')}.react-colorful__saturation-pointer{z-index:3}.react-colorful__hue-pointer{z-index:2}';var e=F();e&&L.setAttribute("nonce",e),document.head.appendChild(L)}},[])},X=function(r){var t=r.className,o=r.colorModel,n=r.color,a=void 0===n?o.defaultColor:n,c=r.onChange,i=u(r,["className","colorModel","color","onChange"]);T();var s=D(o,a,c),f=s[0],v=s[1],d=m(["react-colorful",t]);return external_React_default().createElement("div",l({},i,{className:d}),external_React_default().createElement(B,{hsva:f,onChange:v}),external_React_default().createElement(z,{hue:f.h,onChange:v,className:"react-colorful__last-control"}))},Y={defaultColor:"000",toHsva:function(e){return I(b(e))},fromHsva:function(e){return t=(r=w(e)).g,o=r.b,"#"+O(r.r)+O(t)+O(o);var r,t,o},equal:function(e,r){return e.toLowerCase()===r.toLowerCase()||K(b(e),b(r))}},index_module_$=function(r){return external_React_default().createElement(X,l({},r,{colorModel:Y}))},P=function(r){var t=r.className,o=r.hsva,n=r.onChange,a={backgroundImage:"linear-gradient(90deg, "+N(Object.assign({},o,{a:0}))+", "+N(Object.assign({},o,{a:1}))+")"},l=m(["react-colorful__alpha",t]);return e.createElement("div",{className:l},e.createElement("div",{className:"react-colorful__alpha-gradient",style:a}),e.createElement(h,{onMove:function(e){n({a:e.left})},onKey:function(e){n({a:f(o.a+e.left)})},"aria-label":"Alpha","aria-valuetext":p(100*o.a)+"%"},e.createElement(g,{className:"react-colorful__alpha-pointer",left:o.a,color:N(o)})))},R=function(r){var t=r.className,o=r.colorModel,n=r.color,a=void 0===n?o.defaultColor:n,c=r.onChange,i=u(r,["className","colorModel","color","onChange"]);T();var s=D(o,a,c),f=s[0],v=s[1],d=m(["react-colorful",t]);return e.createElement("div",l({},i,{className:d}),e.createElement(B,{hsva:f,onChange:v}),e.createElement(z,{hue:f.h,onChange:v}),e.createElement(P,{hsva:f,onChange:v,className:"react-colorful__last-control"}))},G={defaultColor:{h:0,s:0,l:0,a:1},toHsva:E,fromHsva:x,equal:K},J=function(r){return e.createElement(R,l({},r,{colorModel:G}))},Q={defaultColor:"hsla(0, 0%, 0%, 1)",toHsva:index_module_,fromHsva:N,equal:A},U=function(r){return e.createElement(R,l({},r,{colorModel:Q}))},V={defaultColor:{h:0,s:0,l:0},toHsva:function(e){return E({h:e.h,s:e.s,l:e.l,a:1})},fromHsva:function(e){return{h:(r=x(e)).h,s:r.s,l:r.l};var r},equal:K},W=function(r){return e.createElement(X,l({},r,{colorModel:V}))},Z={defaultColor:"hsl(0, 0%, 0%)",toHsva:C,fromHsva:H,equal:A},ee=function(r){return e.createElement(X,l({},r,{colorModel:Z}))},re={defaultColor:{h:0,s:0,v:0,a:1},toHsva:function(e){return e},fromHsva:j,equal:K},te=function(r){return e.createElement(R,l({},r,{colorModel:re}))},oe={defaultColor:"hsva(0, 0%, 0%, 1)",toHsva:M,fromHsva:function(e){var r=j(e);return"hsva("+r.h+", "+r.s+"%, "+r.v+"%, "+r.a+")"},equal:A},ne=function(r){return e.createElement(R,l({},r,{colorModel:oe}))},ae={defaultColor:{h:0,s:0,v:0},toHsva:function(e){return{h:e.h,s:e.s,v:e.v,a:1}},fromHsva:function(e){var r=j(e);return{h:r.h,s:r.s,v:r.v}},equal:K},le=function(r){return e.createElement(X,l({},r,{colorModel:ae}))},ue={defaultColor:"hsv(0, 0%, 0%)",toHsva:y,fromHsva:function(e){var r=j(e);return"hsv("+r.h+", "+r.s+"%, "+r.v+"%)"},equal:A},ce=function(r){return e.createElement(X,l({},r,{colorModel:ue}))},ie={defaultColor:{r:0,g:0,b:0,a:1},toHsva:I,fromHsva:w,equal:K},se=function(r){return e.createElement(R,l({},r,{colorModel:ie}))},fe={defaultColor:"rgba(0, 0, 0, 1)",toHsva:q,fromHsva:function(e){var r=w(e);return"rgba("+r.r+", "+r.g+", "+r.b+", "+r.a+")"},equal:A},ve=function(r){return e.createElement(R,l({},r,{colorModel:fe}))},de={defaultColor:{r:0,g:0,b:0},toHsva:function(e){return I({r:e.r,g:e.g,b:e.b,a:1})},fromHsva:function(e){return{r:(r=w(e)).r,g:r.g,b:r.b};var r},equal:K},he=function(r){return e.createElement(X,l({},r,{colorModel:de}))},me={defaultColor:"rgb(0, 0, 0)",toHsva:k,fromHsva:function(e){var r=w(e);return"rgb("+r.r+", "+r.g+", "+r.b+")"},equal:A},ge=function(r){return e.createElement(X,l({},r,{colorModel:me}))},pe=/^#?[0-9A-F]{3}$/i,be=/^#?[0-9A-F]{6}$/i,_e=function(e){return be.test(e)||pe.test(e)},Ce=function(e){return e.replace(/([^0-9A-F]+)/gi,"").substr(0,6)},Ee=function(r){var n=r.color,c=void 0===n?"":n,s=r.onChange,f=r.onBlur,v=u(r,["color","onChange","onBlur"]),d=a(function(){return Ce(c)}),h=d[0],m=d[1],g=i(s),p=i(f),b=o(function(e){var r=Ce(e.target.value);m(r),_e(r)&&g("#"+r)},[g]),_=o(function(e){_e(e.target.value)||m(Ce(c)),p(e)},[c,p]);return t(function(){m(Ce(c))},[c]),e.createElement("input",l({},v,{value:h,spellCheck:"false",onChange:b,onBlur:_}))};
+//# sourceMappingURL=index.module.js.map
+
+;// CONCATENATED MODULE: ./src/_js/customizer/utils/use-did-update-effect.js
+
+
+var useDidUpdateEffect = function useDidUpdateEffect(fn, inputs) {
+  var didMountRef = (0,external_React_namespaceObject.useRef)(false);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    if (didMountRef.current) {
+      fn();
+    } else {
+      didMountRef.current = true;
+    }
+  }, inputs);
+};
+
+/* harmony default export */ var use_did_update_effect = (useDidUpdateEffect);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/source-colors/color-picker.js
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+var ColorPicker = function ColorPicker(props) {
+  var hex = props.hex,
+      onChange = props.onChange,
+      isOpen = props.isOpen;
+
+  var _useState = (0,external_React_namespaceObject.useState)(hex),
+      _useState2 = _slicedToArray(_useState, 2),
+      color = _useState2[0],
+      setColor = _useState2[1];
+
+  var _useState3 = (0,external_React_namespaceObject.useState)(hex),
+      _useState4 = _slicedToArray(_useState3, 2),
+      hexValue = _useState4[0],
+      setHexValue = _useState4[1];
+
+  var debouncedOnChange = useDebouncedCallback(onChange, 200);
+  use_did_update_effect(function () {
+    debouncedOnChange(color);
+  }, [color]);
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "c-palette-builder__source-item-color ".concat(isOpen ? 'c-palette-builder__source-item-color--active' : '')
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "c-palette-builder__source-item-preview",
+    style: {
+      color: color
+    }
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "c-palette-builder__source-item-picker",
+    onClick: function onClick(event) {
+      event.stopPropagation();
+    }
+  }, /*#__PURE__*/external_React_default().createElement(index_module_$, {
+    color: color,
+    onChange: function onChange(newColor) {
+      setHexValue(newColor);
+      setColor(newColor);
+    }
+  }), /*#__PURE__*/external_React_default().createElement("input", {
+    type: "text",
+    value: hexValue,
+    onChange: function onChange(e) {
+      var value = e.target.value;
+      setHexValue(value);
+
+      if (external_chroma_default().valid(value) && external_chroma_default()(value).alpha() === 1) {
+        setColor(external_chroma_default()(value).hex());
+      }
+    }
+  })));
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/contextual-menu/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/utils/use-outside-click.js
+
+/**
+ * Hook that alerts clicks outside of the passed ref
+ */
+
+function useOutsideClick(ref, callback) {
+  (0,external_React_namespaceObject.useEffect)(function () {
+    /**
+     * Alert if clicked on outside of element
+     */
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    } // Bind the event listener
+
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return function () {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
+
+/* harmony default export */ var use_outside_click = (useOutsideClick);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/contextual-menu/index.js
+function contextual_menu_slicedToArray(arr, i) { return contextual_menu_arrayWithHoles(arr) || contextual_menu_iterableToArrayLimit(arr, i) || contextual_menu_unsupportedIterableToArray(arr, i) || contextual_menu_nonIterableRest(); }
+
+function contextual_menu_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function contextual_menu_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return contextual_menu_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return contextual_menu_arrayLikeToArray(o, minLen); }
+
+function contextual_menu_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function contextual_menu_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function contextual_menu_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+var ContextualMenu = function ContextualMenu(props) {
+  var actions = props.actions;
+
+  var _useState = (0,external_React_namespaceObject.useState)(false),
+      _useState2 = contextual_menu_slicedToArray(_useState, 2),
+      isOpen = _useState2[0],
+      setIsOpen = _useState2[1];
+
+  var onToggle = typeof props.onToggle === 'function' ? props.onToggle : function (isOpen) {};
+  var onClick = typeof props.onClick === 'function' ? props.onClick : function (event) {
+    event.stopPropagation();
+  };
+  (0,external_React_namespaceObject.useEffect)(function () {
+    onToggle(isOpen);
+  }, [isOpen]);
+  var ref = (0,external_React_namespaceObject.useRef)(null);
+  use_outside_click(ref, function () {
+    setIsOpen(false);
+  });
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    onClick: onClick,
+    ref: ref,
+    className: "c-contextual-menu c-contextual-menu--".concat(isOpen ? 'visible' : 'hidden')
+  }, /*#__PURE__*/external_React_default().createElement("button", {
+    className: "c-contextual-menu__toggle",
+    onClick: function onClick(e) {
+      e.preventDefault();
+      setIsOpen(!isOpen);
+    }
+  }, /*#__PURE__*/external_React_default().createElement("span", null, "Toggle Menu")), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "c-contextual-menu__list"
+  }, actions.map(function (_ref, index) {
+    var label = _ref.label,
+        callback = _ref.callback,
+        className = _ref.className;
+
+    var onClick = function onClick(e) {
+      e.preventDefault();
+      setIsOpen(false);
+      callback();
+    };
+
+    return /*#__PURE__*/external_React_default().createElement("div", {
+      key: index,
+      className: "c-contextual-menu__list-item ".concat(className),
+      onClick: onClick
+    }, label);
+  })));
+};
+
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/context.js
+
+var ConfigContext = /*#__PURE__*/(0,external_React_namespaceObject.createContext)();
+/* harmony default export */ var context = (ConfigContext);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/source-colors/utils.js
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var deepCopy = function deepCopy(object) {
+  return JSON.parse(JSON.stringify(object));
+};
+
+var getNewColorHex = function getNewColorHex() {
+  return '#111111';
+};
+var getNewColor = function getNewColor() {
+  var label = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Color';
+  return {
+    uid: "color_".concat(new Date().getTime()),
+    showPicker: true,
+    label: label,
+    value: getNewColorHex()
+  };
+};
+var getNewColorGroup = function getNewColorGroup() {
+  return {
+    uid: "color_group_".concat(new Date().getTime()),
+    sources: [getNewColor()]
+  };
+};
+var addNewColorGroup = function addNewColorGroup(config) {
+  var groupIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var newConfig = deepCopy(config).map(function (group) {
+    return _objectSpread(_objectSpread({}, group), {}, {
+      sources: group.sources.map(function (color) {
+        var showPicker = color.showPicker,
+            otherProps = _objectWithoutProperties(color, ["showPicker"]);
+
+        return otherProps;
+      })
+    });
+  });
+  newConfig.splice(groupIndex + 1, 0, getNewColorGroup());
+  return newConfig;
+};
+var addNewColorToGroup = function addNewColorToGroup(config, groupIndex, index) {
+  var newConfig = deepCopy(config);
+  newConfig[groupIndex].sources.splice(index + 1, 0, getNewColor('Interpolated Color'));
+  return newConfig;
+};
+var deleteColor = function deleteColor(config, groupIndex, index) {
+  var newConfig = deepCopy(config);
+  newConfig[groupIndex].sources.splice(index, 1);
+
+  if (!newConfig[groupIndex].sources.length) {
+    newConfig.splice(groupIndex, 1);
+  }
+
+  return newConfig;
+};
+var updateColor = function updateColor(config, groupIndex, index, newValue) {
+  var newConfig = deepCopy(config);
+  newConfig[groupIndex].sources[index] = Object.assign({}, newConfig[groupIndex].sources[index], newValue);
+  return newConfig;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/source-colors/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/source-colors/index.js
+function source_colors_slicedToArray(arr, i) { return source_colors_arrayWithHoles(arr) || source_colors_iterableToArrayLimit(arr, i) || source_colors_unsupportedIterableToArray(arr, i) || source_colors_nonIterableRest(); }
+
+function source_colors_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function source_colors_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return source_colors_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return source_colors_arrayLikeToArray(o, minLen); }
+
+function source_colors_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function source_colors_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function source_colors_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+
+
+var SourceColors = function SourceColors(props) {
+  var _useContext = (0,external_React_namespaceObject.useContext)(context),
+      config = _useContext.config,
+      setConfig = _useContext.setConfig;
+
+  (0,external_React_namespaceObject.useEffect)(function () {
+    if (!config.length) {
+      setConfig(addNewColorGroup(config));
+      return;
+    }
+
+    if (!config.filter(function (group) {
+      return !!group.sources.length;
+    }).length) {
+      setConfig([]);
+    }
+  }, [config]);
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "c-palette-builder__source-list"
+  }, config.map(function (group, groupIndex) {
+    return /*#__PURE__*/external_React_default().createElement(SourceColorsGroup, {
+      key: group.uid,
+      sources: group.sources,
+      index: groupIndex
+    });
+  }));
+};
+
+var SourceColorsGroup = function SourceColorsGroup(props) {
+  var uid = props.uid,
+      sources = props.sources;
+  var groupIndex = props.index;
+  var style = {
+    '--sm-source-main-color': sources[0].value
+  };
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    key: uid,
+    className: "c-palette-builder__source-group",
+    style: style
+  }, sources.map(function (color, index) {
+    return /*#__PURE__*/external_React_default().createElement(SourceColorControl, {
+      key: color.uid,
+      groupIndex: groupIndex,
+      index: index,
+      color: color,
+      showPicker: color.showPicker
+    });
+  }));
+};
+
+var SourceColorControl = function SourceColorControl(props) {
+  var color = props.color,
+      index = props.index,
+      groupIndex = props.groupIndex;
+
+  var _useState = (0,external_React_namespaceObject.useState)(false),
+      _useState2 = source_colors_slicedToArray(_useState, 2),
+      active = _useState2[0],
+      setActive = _useState2[1];
+
+  var _useState3 = (0,external_React_namespaceObject.useState)(false),
+      _useState4 = source_colors_slicedToArray(_useState3, 2),
+      hover = _useState4[0],
+      setHover = _useState4[1];
+
+  var _useState5 = (0,external_React_namespaceObject.useState)(false),
+      _useState6 = source_colors_slicedToArray(_useState5, 2),
+      menuIsOpen = _useState6[0],
+      setMenuIsOpen = _useState6[1];
+
+  var _useState7 = (0,external_React_namespaceObject.useState)(false),
+      _useState8 = source_colors_slicedToArray(_useState7, 2),
+      editable = _useState8[0],
+      setEditable = _useState8[1];
+
+  var _useState9 = (0,external_React_namespaceObject.useState)(),
+      _useState10 = source_colors_slicedToArray(_useState9, 2),
+      showPicker = _useState10[0],
+      setShowPicker = _useState10[1];
+
+  var _useContext2 = (0,external_React_namespaceObject.useContext)(context),
+      config = _useContext2.config,
+      setConfig = _useContext2.setConfig,
+      resetActivePreset = _useContext2.resetActivePreset;
+
+  var _onChange = (0,external_React_namespaceObject.useCallback)(function (color) {
+    var newConfig = updateColor(config, groupIndex, index, color);
+    setConfig(newConfig);
+    resetActivePreset();
+  }, [config, groupIndex, index]);
+
+  var interpolateColor = (0,external_React_namespaceObject.useCallback)(function () {
+    setConfig(addNewColorToGroup(config, groupIndex, index));
+    resetActivePreset();
+  }, [config, groupIndex, index]);
+  var addColor = (0,external_React_namespaceObject.useCallback)(function () {
+    setConfig(addNewColorGroup(config, groupIndex));
+    resetActivePreset();
+  }, [config, groupIndex]);
+  var renameColor = (0,external_React_namespaceObject.useCallback)(function () {
+    setEditable(true);
+  }, []);
+  var removeColor = (0,external_React_namespaceObject.useCallback)(function () {
+    setConfig(deleteColor(config, groupIndex, index));
+    resetActivePreset();
+  }, [config, groupIndex, index]);
+  var actions = [{
+    label: 'Interpolate Color',
+    callback: interpolateColor
+  }, {
+    label: 'Add Color',
+    callback: addColor
+  }, {
+    label: 'Rename Color',
+    callback: renameColor
+  }, {
+    label: 'Remove Color',
+    callback: removeColor,
+    className: 'c-contextual-menu__list-item--danger'
+  }];
+  var inputRef = (0,external_React_namespaceObject.useRef)(null);
+  var pickerRef = (0,external_React_namespaceObject.useRef)(null);
+  use_outside_click(pickerRef, function () {
+    setShowPicker(false);
+  }); // delay setting showPicker with one render cycle in order to show fadein animation
+
+  (0,external_React_namespaceObject.useEffect)(function () {
+    if (typeof showPicker === "undefined" && typeof props.showPicker !== "undefined") {
+      setShowPicker(props.showPicker);
+    }
+  }, [showPicker]);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    setActive(hover || menuIsOpen);
+  }, [hover, menuIsOpen]);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    if (editable) {
+      inputRef.current.focus();
+    }
+  }, [editable]);
+
+  var onLabelBlur = function onLabelBlur(e) {
+    setEditable(false);
+  };
+
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    onMouseEnter: function onMouseEnter() {
+      setHover(true);
+    },
+    onMouseLeave: function onMouseLeave() {
+      setHover(false);
+    },
+    onClick: function onClick() {
+      setShowPicker(!showPicker);
+    },
+    ref: pickerRef,
+    className: "c-palette-builder__source-item ".concat(active ? 'c-palette-builder__source-item--active' : '')
+  }, /*#__PURE__*/external_React_default().createElement(ColorPicker, {
+    hex: color.value,
+    onChange: function onChange(hex) {
+      _onChange({
+        value: hex
+      });
+    },
+    isOpen: showPicker
+  }), !editable && /*#__PURE__*/external_React_default().createElement("div", {
+    className: "c-palette-builder__source-item-label"
+  }, color.label), editable && /*#__PURE__*/external_React_default().createElement("input", {
+    type: "text",
+    ref: inputRef,
+    value: color.label,
+    className: "c-palette-builder__source-item-label",
+    onChange: function onChange(e) {
+      _onChange({
+        label: e.target.value
+      });
+    },
+    onBlur: onLabelBlur
+  }), /*#__PURE__*/external_React_default().createElement(ContextualMenu, {
+    actions: actions,
+    onToggle: setMenuIsOpen,
+    onClick: function onClick(event) {
+      event.stopPropagation();
+      setShowPicker(false);
+    }
+  }));
+};
+
+
+// EXTERNAL MODULE: ./node_modules/hsluv/hsluv.js
+var hsluv = __webpack_require__(119);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/builder/utils/contrast-array.js
+var optimalContrastArray = Array.from(Array(12)).map(function (x, i) {
+  return Math.pow(21, i / 11);
+}); //	https://medium.com/envoy-design/designing-an-accessible-color-scheme-again-fd35cfa9d796
+
+var contrastRangesArray = [[1, 1], [1.07, 1.17], [1.21, 1.31], [1.5, 1.91], [2.1, 2.63], [3, 3.5], [4.51, 4.67], [6, 7], [8.75, 10.5], [11.67, 15], [16.15, 19.1], [21, 21]]; // powers of 21 ^ 1/10 but with small adjustments for the lighter colors
+
+var myOptimalContrastArray = [1, 1.07, // 1.32
+1.25, // 1.74
+1.8, // 2.29
+2.63, // 3.03
+3.99, 5.26, 6.94, 9.15, 12.07, // fg1
+15.92, // fg2
+19 // almost black (21)
+];
+var myOptimalContrastArray2 = (/* unused pure expression or super */ null && ([1, // 21 ^ 0
+1.079, // 21 ^ 0.025
+1.35588, // 21 ^ 0.1
+1.83841, // 21 ^ 0.2
+2.49267, // 21 ^ 0.3
+3.37977, // 21 ^ 0.4
+4.58257, // 21 ^ 0.5
+6.21343, // 21 ^ 0.6
+8.42468, // 21 ^ 0.7
+11.42287, // 21 ^ 0.8
+15.48807, // 21 ^ 0.9
+19.4609 // 21 ^ 0.975
+//  21, // 21 ^ 1
+]));
+var mathematicArray = (/* unused pure expression or super */ null && ([1, 1.1, 1.25, 1.5275, 2.3332, 3, // AA
+4.5825, // AA
+7, // AAA
+9, 13.7475, 16.8, 19 //  21,
+]));
+var minContrastArray = contrastRangesArray.map(function (x) {
+  return x[0];
+});
+var maxContrastArray = contrastRangesArray.map(function (x) {
+  return x[1];
+});
+/* harmony default export */ var contrast_array = (myOptimalContrastArray);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/builder/utils/get-palettes-from-colors.js
+function get_palettes_from_colors_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function get_palettes_from_colors_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { get_palettes_from_colors_ownKeys(Object(source), true).forEach(function (key) { get_palettes_from_colors_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { get_palettes_from_colors_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function get_palettes_from_colors_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+var getPalettesFromColors = function getPalettesFromColors(colorGroups) {
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+    correctLightness: true,
+    useSources: true,
+    mode: 'lch',
+    bezierInterpolation: false
+  };
+  var functionalColors = getFunctionalColors(colorGroups);
+  var palettes = colorGroups.map(mapColorToPalette(attributes));
+  var functionalPalettes = functionalColors.map(mapColorToPalette(attributes));
+  var allPalettes = palettes.concat(functionalPalettes);
+  return mapSanitizePalettes(allPalettes, attributes);
+};
+
+var get_palettes_from_colors_noop = function noop(palette) {
+  return palette;
+};
+
+var mapSanitizePalettes = function mapSanitizePalettes(colors) {
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return colors.map(mapCorrectLightness(attributes)).map(mapUpdateProps).map(mapUseSource(attributes)).map(mapAddSourceIndex(attributes)).map(mapAddTextColors);
+};
+
+var mapAddTextColors = function mapAddTextColors(palette) {
+  palette.textColors = palette.colors.slice(9, 11).map(function (color, index) {
+    return get_palettes_from_colors_objectSpread(get_palettes_from_colors_objectSpread({}, color), {}, {
+      value: getTextColor(color.value, 9 + index)
+    });
+  });
+  return palette;
+};
+
+var mapAddSourceIndex = function mapAddSourceIndex(attributes) {
+  return function (palette, index, palettes) {
+    var source = palette.source,
+        colors = palette.colors;
+    var sourceIndex = getSourceIndex(palette); // falback sourceIndex when the source isn't used in the palette
+
+    if (!sourceIndex > -1) {
+      sourceIndex = getBestPositionInPalette(source[0], colors.map(function (color) {
+        return color.value;
+      }), attributes);
+    }
+
+    return get_palettes_from_colors_objectSpread({
+      sourceIndex: sourceIndex
+    }, palette);
+  };
+};
+
+var mapColorToPalette = function mapColorToPalette(attributes) {
+  return function (groupObject, index) {
+    var colorObjects = groupObject.sources;
+    var sources = colorObjects.map(function (colorObj) {
+      return colorObj.value;
+    });
+    var colors = createAutoPalette(sources, attributes);
+    var _colorObjects$ = colorObjects[0],
+        label = _colorObjects$.label,
+        id = _colorObjects$.id;
+    return {
+      id: id || index + 1,
+      lightColorsCount: 5,
+      label: label,
+      source: sources,
+      colors: colors
+    };
+  };
+};
+
+var mapCorrectLightness = function mapCorrectLightness(_ref) {
+  var correctLightness = _ref.correctLightness,
+      mode = _ref.mode;
+
+  if (!correctLightness) {
+    return get_palettes_from_colors_noop;
+  }
+
+  return function (palette) {
+    palette.colors = palette.colors.map(function (color, index) {
+      var luminance = contrastToLuminance(contrast_array[index]);
+      return external_chroma_default()(color).luminance(luminance, 'rgb').hex();
+    });
+    return palette;
+  };
+};
+
+var mapUpdateProps = function mapUpdateProps(palette) {
+  palette.colors = palette.colors.map(function (color, index) {
+    return Object.assign({}, {
+      value: color
+    });
+  });
+  return palette;
+};
+
+var mapUseSource = function mapUseSource(attributes) {
+  var useSources = attributes.useSources;
+
+  if (!useSources) {
+    return get_palettes_from_colors_noop;
+  }
+
+  return function (palette) {
+    var source = palette.source;
+    var position = getBestPositionInPalette(source[0], palette.colors.map(function (color) {
+      return color.value;
+    }), attributes);
+    palette.colors.splice(position, 1, {
+      value: source[0],
+      isSource: true
+    });
+    return palette;
+  };
+};
+
+var getSourceIndex = function getSourceIndex(palette) {
+  return palette.colors.findIndex(function (color) {
+    return color.value === palette.source;
+  });
+};
+
+var getBestPositionInPalette = function getBestPositionInPalette(color, colors, attributes, byColorDistance) {
+  var min = Number.MAX_SAFE_INTEGER;
+  var pos = -1;
+
+  for (var i = 0; i < colors.length - 1; i++) {
+    var distance = void 0;
+
+    if (!!byColorDistance) {
+      distance = external_chroma_default().distance(colors[i], color, 'rgb');
+    } else {
+      distance = Math.abs(external_chroma_default()(colors[i]).luminance() - external_chroma_default()(color).luminance());
+    }
+
+    if (distance < min) {
+      min = distance;
+      pos = i;
+    }
+  }
+
+  var firstDarkPos = Math.ceil(colors.length / 2); // if we want to preserve contrast we should do this
+
+  if (attributes !== null && attributes !== void 0 && attributes.correctLightness) {
+    if (external_chroma_default().contrast(color, 'white') > Math.sqrt(21)) {
+      pos = Math.max(firstDarkPos, pos);
+    } else {
+      pos = Math.min(firstDarkPos - 1, pos);
+    }
+  }
+
+  return pos;
+};
+
+var getTextColor = function getTextColor(hex, position) {
+  var luminance = contrastToLuminance(contrast_array[position]);
+  var hpluv = (0,hsluv.hexToHpluv)(hex);
+  var h = Math.min(Math.max(hpluv[0], 0), 360);
+  var p = Math.min(Math.max(hpluv[1], 0), 100);
+  var l = Math.min(Math.max(hpluv[2], 0), 100);
+  var rgb = (0,hsluv.hpluvToRgb)([h, p, l]).map(function (x) {
+    return x * 255;
+  });
+  return external_chroma_default()(rgb).luminance(luminance).hex();
+};
+
+var contrastToLuminance = function contrastToLuminance(contrast) {
+  return 1.05 / contrast - 0.05;
+};
+
+var createAutoPalette = function createAutoPalette(colors) {
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var mode = attributes.mode,
+      bezierInterpolation = attributes.bezierInterpolation;
+  var newColors = colors.slice();
+  newColors.splice(0, 0, '#FFFFFF');
+  newColors.push('#000000');
+  newColors.sort(function (c1, c2) {
+    return external_chroma_default()(c1).luminance() > external_chroma_default()(c2).luminance() ? -1 : 1;
+  });
+
+  if (!!bezierInterpolation) {
+    return external_chroma_default().bezier(newColors).scale().mode(mode).correctLightness().colors(12);
+  } else {
+    return external_chroma_default().scale(newColors).mode(mode).correctLightness().colors(12);
+  }
+};
+
+var blend = function blend(functionalColor, brandColor) {
+  var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+  var l1 = external_chroma_default()(functionalColor).get('hsl.s');
+  var l2 = external_chroma_default()(brandColor).get('hsl.s');
+  var l3 = l1 * (1 - 0.8 * ratio) + l2 * 0.8 * ratio;
+  return external_chroma_default()(functionalColor).mix(brandColor, 0.1 * ratio).set('hsl.s', l3).hex();
+};
+
+var getFunctionalColors = function getFunctionalColors(colorGroups) {
+  var _colorGroups$, _colorGroups$$sources;
+
+  if (!(colorGroups !== null && colorGroups !== void 0 && colorGroups.length) || !((_colorGroups$ = colorGroups[0]) !== null && _colorGroups$ !== void 0 && (_colorGroups$$sources = _colorGroups$.sources) !== null && _colorGroups$$sources !== void 0 && _colorGroups$$sources.length)) {
+    return [];
+  }
+
+  var color = colorGroups[0].sources[0].value;
+  var blue = blend('#2E72D2', color);
+  var red = blend('#D82C0D', color);
+  var yellow = blend('#FFCC00', color, 0.5);
+  var green = blend('#00703c', color, 0.75);
+  return [{
+    sources: [{
+      value: blue,
+      label: 'Info',
+      id: '_info'
+    }]
+  }, {
+    sources: [{
+      value: red,
+      label: 'Error',
+      id: '_error'
+    }]
+  }, {
+    sources: [{
+      value: yellow,
+      label: 'Warning',
+      id: '_warning'
+    }]
+  }, {
+    sources: [{
+      value: green,
+      label: 'Success',
+      id: '_success'
+    }]
+  }];
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/palette-list/get-random-stripes.js
+var getRandomBetween = function getRandomBetween(min, max) {
+  var random = Math.max(0, Math.random() - Number.MIN_VALUE);
+  return Math.floor(random * (max - min + 1) + min);
+};
+
+var getRandomStripes = function getRandomStripes(palettes) {
+  var widths = [1, 1, 2, 2, 4];
+
+  if (!palettes.length) {
+    return [];
+  }
+
+  var stripes = Array.from(Array(5).keys()).map(function (idx) {
+    var stripe = document.createElement('div');
+    var widthPos = getRandomBetween(0, widths.length - 1);
+    var width = widths[widthPos];
+    widths.splice(widthPos, 1);
+    return {
+      index: idx,
+      element: stripe,
+      width: width
+    };
+  });
+  stripes.sort(function (a, b) {
+    return a.width > b.width ? -1 : 1;
+  });
+  var segments = [Array.from(Array(10).keys())];
+  stripes.forEach(function (stripe) {
+    var segmentsIndexes = Array.from(Array(segments.length).keys());
+    var availSegmentsIndexes = segmentsIndexes.filter(function (index) {
+      return segments[index].length >= stripe.width;
+    });
+    var segmentRandom = getRandomBetween(0, availSegmentsIndexes.length - 1);
+    var segmentIndex = availSegmentsIndexes[segmentRandom];
+    var thisSegment = segments[segmentIndex];
+    var positionRandom = getRandomBetween(0, thisSegment.length - stripe.width);
+    var position = thisSegment[positionRandom];
+    segments.splice(segmentIndex, 1, thisSegment.slice(0, positionRandom), thisSegment.slice(positionRandom + stripe.width, thisSegment.length));
+    stripe.pos = position;
+  });
+  var sourceColors = [];
+  var otherColors = [];
+  palettes.forEach(function (palette) {
+    var id = palette.id + '';
+    var sourceIndex = palette.sourceIndex;
+
+    if (id.charAt(0) === '_') {
+      return;
+    }
+
+    sourceColors.push(palette.colors[sourceIndex].value);
+    var remainingColors = palette.colors.slice().map(function (color) {
+      return color.value;
+    });
+    remainingColors.splice(sourceIndex, 1);
+    otherColors = otherColors.concat(remainingColors);
+  }); // Randomize order of generated colors
+
+  otherColors.sort(function () {
+    return Math.random() > 0.5 ? -1 : 1;
+  }); // merge sources and other colors
+
+  var colors = sourceColors.concat(otherColors).slice(0, 5);
+  stripes.sort(function (a, b) {
+    return a.width > b.width ? -1 : 1;
+  });
+  stripes.forEach(function (stripe, index) {
+    stripe.color = colors[index];
+  });
+  stripes.sort(function (a, b) {
+    return a.index > b.index ? -1 : 1;
+  });
+  return stripes;
+};
+
+/* harmony default export */ var get_random_stripes = (getRandomStripes);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/palette-list/get-text-color.js
+var get_text_color_getTextColor = function getTextColor(palette) {
+  var lightColorsCount = palette.lightColorsCount,
+      sourceIndex = palette.sourceIndex,
+      textColors = palette.textColors;
+  return sourceIndex > lightColorsCount ? '#FFFFFF' : textColors[0].value;
+};
+
+/* harmony default export */ var get_text_color = (get_text_color_getTextColor);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/palette-list/utils.js
+function utils_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function utils_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { utils_ownKeys(Object(source), true).forEach(function (key) { utils_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { utils_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function utils_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function utils_objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = utils_objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function utils_objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+
+
+
+
+var normalizeCloudPresets = function normalizeCloudPresets(presets) {
+  return Object.keys(presets).map(function (key) {
+    var _preset$preview;
+
+    var preset = presets[key];
+    var colorGroups = preset.color_groups.map(function (group) {
+      var _uid = group._uid,
+          other = utils_objectWithoutProperties(group, ["_uid"]);
+
+      var sources = group.sources.map(function (source) {
+        var color = source.color,
+            _uid = source._uid,
+            other = utils_objectWithoutProperties(source, ["color", "_uid"]);
+
+        return utils_objectSpread(utils_objectSpread({}, other), {}, {
+          uid: _uid,
+          value: color
+        });
+      });
+      sources.sort(function (a, b) {
+        return a._priority > b._priority ? 1 : -1;
+      });
+      return utils_objectSpread(utils_objectSpread({}, other), {}, {
+        sources: sources,
+        uid: _uid
+      });
+    });
+    colorGroups.sort(function (a, b) {
+      return a._priority > b._priority ? 1 : -1;
+    });
+    var palettes = getPalettesFromColors(colorGroups);
+    return {
+      uid: preset.hashid,
+      config: colorGroups,
+      stripes: get_random_stripes(palettes),
+      textColor: get_text_color(palettes[0]),
+      image: preset === null || preset === void 0 ? void 0 : (_preset$preview = preset.preview) === null || _preset$preview === void 0 ? void 0 : _preset$preview.background_image_url,
+      quote: preset === null || preset === void 0 ? void 0 : preset.description
+    };
+  });
+};
+
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/palette-list/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/palette-list/index.js
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+
+
+
+var presets = normalizeCloudPresets(styleManager.colorPalettes.palettes);
+
+var PresetsList = function PresetsList(props) {
+  var noop = function noop() {};
+
+  var onChange = props.onChange || noop;
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: 'sm-presets-list'
+  }, presets.map(function (preset) {
+    return /*#__PURE__*/external_React_default().createElement(PaletteListItem, {
+      preset: preset,
+      key: preset.uid,
+      active: preset.uid === props.active,
+      onChange: onChange
+    });
+  }));
+};
+
+var PaletteListItem = function PaletteListItem(props) {
+  var preset = props.preset,
+      active = props.active;
+
+  var noop = function noop() {};
+
+  var onChange = props.onChange || noop;
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-presets-list__item",
+    onClick: function onClick() {
+      onChange(preset);
+    }
+  }, /*#__PURE__*/external_React_default().createElement(PresetPreview, _extends({}, preset, {
+    active: active
+  })));
+};
+
+var PresetPreview = function PresetPreview(props) {
+  var textColor = props.textColor,
+      stripes = props.stripes,
+      quote = props.quote,
+      image = props.image,
+      active = props.active;
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-presets-preview ".concat(active ? 'sm-presets-preview--active' : ''),
+    style: {
+      backgroundImage: "url(".concat(image, ")")
+    }
+  }, quote && /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-presets-preview__quote",
+    style: {
+      color: textColor
+    }
+  }, quote), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-presets-preview__stripes"
+  }, stripes.map(function (stripe, index) {
+    return /*#__PURE__*/external_React_default().createElement("div", {
+      key: index,
+      className: "sm-presets-preview__stripe sm-presets-preview__stripe-w".concat(stripe.width, " sm-presets-preview__stripe-p").concat(stripe.pos)
+    }, /*#__PURE__*/external_React_default().createElement("div", {
+      className: "sm-presets-preview__pixel",
+      style: {
+        color: stripe.color
+      }
+    }));
+  })));
+};
+/* harmony default export */ var palette_list = (PresetsList);
+;// CONCATENATED MODULE: ./src/_js/customizer/svg/upload.svg
+
+
+var upload_symbol = new (browser_symbol_default())({
+  "id": "upload",
+  "use": "upload-usage",
+  "viewBox": "0 0 32 41",
+  "content": "<symbol viewBox=\"0 0 32 41\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" id=\"upload\">\n<path d=\"M20 0.869141H0V40.8691H32V12.8691L20 0.869141ZM18 26.8691V34.8691H14V26.8691H8L16.02 18.8691L24 26.8691H18ZM18 14.8691V3.86914L29 14.8691H18Z\" fill=\"#0F376A\" />\n</symbol>"
+});
+var upload_result = browser_sprite_build_default().add(upload_symbol);
+/* harmony default export */ var upload = (upload_symbol);
+;// CONCATENATED MODULE: ./node_modules/worker-loader/dist/cjs.js!./src/_js/customizer/colors/components/dropzone/worker.js
+function Worker_fn() {
+  return new Worker(__webpack_require__.p + "worker.js");
+}
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/dropzone/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/dropzone/index.js
+function dropzone_slicedToArray(arr, i) { return dropzone_arrayWithHoles(arr) || dropzone_iterableToArrayLimit(arr, i) || dropzone_unsupportedIterableToArray(arr, i) || dropzone_nonIterableRest(); }
+
+function dropzone_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function dropzone_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return dropzone_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return dropzone_arrayLikeToArray(o, minLen); }
+
+function dropzone_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function dropzone_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function dropzone_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+
+
+
+var myWorker = new Worker_fn();
+
+var canInterpolate = function canInterpolate(color1, color2) {
+  var luminance1 = external_chroma_default()(color1).luminance();
+  var luminance2 = external_chroma_default()(color2).luminance();
+  return Math.abs(luminance1 - luminance2) > 0.3;
+};
+
+var maybeInterpolateColors = function maybeInterpolateColors(colors) {
+  if (colors.length >= 3 && canInterpolate(colors[0], colors[1]) && canInterpolate(colors[0], colors[2]) && canInterpolate(colors[1], colors[2])) {
+    return [colors];
+  }
+
+  if (colors.length >= 2 && canInterpolate(colors[0], colors[1])) {
+    return [[colors[0], colors[1]], [colors[2]]];
+  }
+
+  if (colors.length >= 3 && canInterpolate(colors[0], colors[2])) {
+    return [[colors[0], colors[2]], [colors[1]]];
+  }
+
+  if (colors.length >= 3 && canInterpolate(colors[0], colors[2])) {
+    return [[colors[0]], [colors[1], colors[2]]];
+  }
+
+  return [[colors[0]], [colors[1]], [colors[2]]];
+};
+
+var DropZone = function DropZone() {
+  var _useContext = (0,external_React_namespaceObject.useContext)(context),
+      setConfig = _useContext.setConfig;
+
+  var _useState = (0,external_React_namespaceObject.useState)(null),
+      _useState2 = dropzone_slicedToArray(_useState, 2),
+      files = _useState2[0],
+      setFiles = _useState2[1];
+
+  var _useState3 = (0,external_React_namespaceObject.useState)([]),
+      _useState4 = dropzone_slicedToArray(_useState3, 2),
+      stripes = _useState4[0],
+      setStripes = _useState4[1];
+
+  var imgSourceRef = (0,external_React_namespaceObject.useRef)(null);
+  var imgPreviewRef = (0,external_React_namespaceObject.useRef)(null);
+  var canvasRef = (0,external_React_namespaceObject.useRef)(null);
+  var previewRef = (0,external_React_namespaceObject.useRef)(null);
+
+  var dragOver = function dragOver(e) {
+    e.preventDefault();
+  };
+
+  var dragEnter = function dragEnter(e) {
+    e.preventDefault();
+  };
+
+  var dragLeave = function dragLeave(e) {
+    e.preventDefault();
+  };
+
+  var fileDrop = function fileDrop(e) {
+    e.preventDefault();
+    var files = e.dataTransfer.files;
+    setFiles(files);
+  };
+
+  (0,external_React_namespaceObject.useEffect)(function () {
+    myWorker.onmessage = function (event) {
+      var order = ["primary", "secondary", "tertiary", "quinary", "senary", "septenary", "octonary", "nonary", "denary"];
+      var type = event.data.type;
+
+      if ('palette' === type) {
+        var groups = maybeInterpolateColors(event.data.colors);
+        var config = groups.map(function (colors, groupIndex) {
+          var label = "Brand ".concat(order[groupIndex]);
+
+          if (groupIndex === 0) {
+            label = label.charAt(0).toUpperCase() + label.slice(1);
+          }
+
+          var time = new Date().getTime();
+          return {
+            uid: "color_group_".concat(time).concat(groupIndex),
+            sources: colors.map(function (color, colorIndex) {
+              if (colorIndex !== 0) {
+                label = 'Interpolated Color';
+              }
+
+              return {
+                uid: "color_".concat(time).concat(groupIndex).concat(colorIndex),
+                label: label,
+                value: external_chroma_default()(color).hex()
+              };
+            })
+          };
+        });
+        setConfig(config);
+        var preset = {};
+        preset.palettes = getPalettesFromColors(config);
+        setStripes(get_random_stripes(preset));
+      }
+    };
+
+    return function () {
+      delete myWorker.onmessage;
+    };
+  }, []);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    var imgSource = imgSourceRef.current;
+    var imgPreview = imgPreviewRef.current; // FileReader support
+
+    if (FileReader && files && files.length) {
+      var fr = new FileReader();
+
+      fr.onload = function () {
+        imgSource.src = fr.result;
+        imgPreview.src = fr.result;
+      };
+
+      fr.readAsDataURL(files[0]);
+    }
+  }, [files]);
+
+  var onImageLoad = function onImageLoad() {
+    var imgSource = imgSourceRef.current;
+    var canvas = canvasRef.current;
+    var context = canvas.getContext('2d');
+    canvas.width = Math.min(imgSource.width, 100);
+    canvas.height = canvas.width * imgSource.height / imgSource.width;
+    context.drawImage(imgSource, 0, 0, canvas.width, canvas.height);
+    var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    myWorker.postMessage({
+      type: 'image',
+      imageData: imageData,
+      width: canvas.width,
+      height: canvas.height
+    });
+  };
+
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "customize-control-description"
+  }, "Extract colors from an image and generate a color palette for your design system."), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-container",
+    onDragOver: dragOver,
+    onDragEnter: dragEnter,
+    onDragLeave: dragLeave,
+    onDrop: fileDrop
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-placeholder"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-info"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-info-icon",
+    dangerouslySetInnerHTML: {
+      __html: "\n                <svg viewBox=\"".concat(upload.viewBox, "\">\n                  <use xlink:href=\"#").concat(upload.id, "\" />\n                </svg>")
+    }
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-info-title"
+  }, "Drag and drop your image"), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-info-text"
+  }, "or ", /*#__PURE__*/external_React_default().createElement("span", {
+    className: "dropzone-info-anchor"
+  }, "select a file"), " from your computer"))), /*#__PURE__*/external_React_default().createElement(PresetPreview, {
+    stripes: stripes
+  }), /*#__PURE__*/external_React_default().createElement("img", {
+    alt: "Preview",
+    className: "dropzone-image-preview",
+    ref: imgPreviewRef
+  })), /*#__PURE__*/external_React_default().createElement("img", {
+    alt: "Source",
+    className: "dropzone-image-source",
+    ref: imgSourceRef,
+    onLoad: onImageLoad
+  }), /*#__PURE__*/external_React_default().createElement("canvas", {
+    className: "dropzone-canvas",
+    ref: canvasRef
+  }));
+};
+
+/* harmony default export */ var dropzone = (DropZone);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/accordion/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/accordion/index.js
+function accordion_slicedToArray(arr, i) { return accordion_arrayWithHoles(arr) || accordion_iterableToArrayLimit(arr, i) || accordion_unsupportedIterableToArray(arr, i) || accordion_nonIterableRest(); }
+
+function accordion_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function accordion_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return accordion_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return accordion_arrayLikeToArray(o, minLen); }
+
+function accordion_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function accordion_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function accordion_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+var Accordion = function Accordion(props) {
+  var sections = external_React_default().Children.toArray(props.children).filter(function (child) {
+    return child.type === AccordionSection;
+  });
+  var open = sections.findIndex(function (section) {
+    var _section$props;
+
+    return !!(section !== null && section !== void 0 && (_section$props = section.props) !== null && _section$props !== void 0 && _section$props.open);
+  });
+
+  var _useState = (0,external_React_namespaceObject.useState)(open),
+      _useState2 = accordion_slicedToArray(_useState, 2),
+      active = _useState2[0],
+      setActive = _useState2[1];
+
+  return sections.map(function (section, index) {
+    var _section$props2 = section.props,
+        title = _section$props2.title,
+        children = _section$props2.children;
+    return /*#__PURE__*/external_React_default().createElement("div", {
+      className: "sm-blinds sm-blinds--".concat(active === index ? 'open' : 'closed')
+    }, /*#__PURE__*/external_React_default().createElement("div", {
+      className: "sm-blinds__header",
+      onClick: function onClick() {
+        setActive(active !== index ? index : null);
+      }
+    }, /*#__PURE__*/external_React_default().createElement("div", {
+      className: "sm-blinds__title"
+    }, title), /*#__PURE__*/external_React_default().createElement("div", {
+      className: "sm-blinds__toggle"
+    })), /*#__PURE__*/external_React_default().createElement("div", {
+      className: "sm-blinds__body"
+    }, children));
+  });
+};
+
+var AccordionSection = function AccordionSection(props) {
+  return null;
+};
+
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/builder/utils/index.js
+
+
+var getColorsFromInputValue = function getColorsFromInputValue(value) {
+  var colors;
+
+  try {
+    colors = JSON.parse(value);
+  } catch (e) {
+    colors = [];
+  }
+
+  return colors;
+};
+var getValueFromColors = function getValueFromColors(colors) {
+  return JSON.stringify(colors);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/builder/utils/get-css-from-palettes.js
+var getCSSFromPalettes = function getCSSFromPalettes(palettesArray) {
+  var variation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var palettes = palettesArray.slice();
+
+  if (!palettes.length) {
+    return '';
+  } // the old implementation generates 3 fallback palettes and
+  // we need to overwrite all 3 of them when the user starts building a new palette
+  // @todo this is necessary only in the Customizer preview
+
+
+  while (palettes.length < 3) {
+    palettes.push(palettes[0]);
+  }
+
+  return palettes.reduce(function (palettesAcc, palette, paletteIndex, palettes) {
+    var id = palette.id,
+        sourceIndex = palette.sourceIndex;
+    return "\n      ".concat(palettesAcc, "\n      \n      html {\n        ").concat(getInitialColorVaraibles(palette), "\n        ").concat(getVariablesCSS(palette, variation - 1), "\n        ").concat(getVariablesCSS(palette, sourceIndex, false, true), "\n      } \n      \n      .is-dark {\n        ").concat(getVariablesCSS(palette, variation - 1, true), "\n        ").concat(getVariablesCSS(palette, sourceIndex, true, true), "\n      }\n    ");
+  }, '');
+};
+
+var getVariablesCSS = function getVariablesCSS(palette) {
+  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var isDark = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var isShifted = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+  var colors = palette.colors;
+  var count = colors.length;
+  return colors.reduce(function (colorsAcc, color, index) {
+    var oldColorIndex = (index + offset) % count;
+
+    if (isDark) {
+      if (oldColorIndex < count / 2) {
+        oldColorIndex = 11 - oldColorIndex;
+      } else {
+        return colorsAcc;
+      }
+    }
+
+    return "".concat(colorsAcc, "\n      ").concat(getColorVariables(palette, index, oldColorIndex, isShifted), "\n    ");
+  }, '');
+};
+
+var getInitialColorVaraibles = function getInitialColorVaraibles(palette) {
+  var colors = palette.colors,
+      textColors = palette.textColors,
+      id = palette.id;
+  var prefix = '--sm-color-palette-';
+  var accentColors = colors.reduce(function (colorsAcc, color, index) {
+    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-color-").concat(index + 1, ": ").concat(color.value, ";\n    ");
+  }, '');
+  var darkColors = textColors.reduce(function (colorsAcc, color, index) {
+    return "".concat(colorsAcc, "\n      ").concat(prefix).concat(id, "-text-color-").concat(index + 1, ": ").concat(color.value, ";\n    ");
+  }, '');
+  return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
+};
+
+var getColorVariables = function getColorVariables(palette, newColorIndex, oldColorIndex, isShifted) {
+  var colors = palette.colors,
+      id = palette.id,
+      lightColorsCount = palette.lightColorsCount;
+  var count = colors.length;
+  var accentColorIndex = (oldColorIndex + count / 2) % count;
+  var prefix = '--sm-color-palette-';
+  var suffix = isShifted ? '-shifted' : '';
+  var newIndex = parseInt(newColorIndex, 10) + 1;
+  var accentColors = "\n    ".concat(prefix).concat(id, "-bg-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-").concat(oldColorIndex + 1, ");\n    ").concat(prefix).concat(id, "-accent-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-").concat(accentColorIndex + 1, ");\n  ");
+  var darkColors = '';
+
+  if (oldColorIndex < lightColorsCount) {
+    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-text-color-1);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-text-color-2);\n    ");
+  } else {
+    darkColors = "\n      ".concat(prefix).concat(id, "-fg1-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-1);\n      ").concat(prefix).concat(id, "-fg2-color-").concat(newIndex).concat(suffix, ": var(").concat(prefix).concat(id, "-color-1);\n    ");
+  }
+
+  return "\n    ".concat(accentColors, "\n    ").concat(darkColors, "\n  ");
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/svg/customize-colors-usage.svg
+
+
+var customize_colors_usage_symbol = new (browser_symbol_default())({
+  "id": "customize-colors-usage",
+  "use": "customize-colors-usage-usage",
+  "viewBox": "0 0 24 24",
+  "content": "<symbol viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" id=\"customize-colors-usage\">\n<path d=\"M16.56 8.94L7.62 0L6.21 1.41L8.59 3.79L3.44 8.94C2.85 9.53 2.85 10.48 3.44 11.06L8.94 16.56C9.23 16.85 9.62 17 10 17C10.38 17 10.77 16.85 11.06 16.56L16.56 11.06C17.15 10.48 17.15 9.53 16.56 8.94ZM5.21 10L10 5.21L14.79 10H5.21ZM19 11.5C19 11.5 17 13.67 17 15C17 16.1 17.9 17 19 17C20.1 17 21 16.1 21 15C21 13.67 19 11.5 19 11.5ZM2 20H22V24H2V20Z\" fill=\"#2F384C\" />\n</symbol>"
+});
+var customize_colors_usage_result = browser_sprite_build_default().add(customize_colors_usage_symbol);
+/* harmony default export */ var customize_colors_usage = (customize_colors_usage_symbol);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/builder/index.js
+function builder_slicedToArray(arr, i) { return builder_arrayWithHoles(arr) || builder_iterableToArrayLimit(arr, i) || builder_unsupportedIterableToArray(arr, i) || builder_nonIterableRest(); }
+
+function builder_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function builder_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return builder_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return builder_arrayLikeToArray(o, minLen); }
+
+function builder_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function builder_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function builder_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Builder = function Builder(props) {
+  var sourceSettingID = props.sourceSettingID,
+      outputSettingID = props.outputSettingID;
+  var sourceSetting = wp.customize(sourceSettingID);
+
+  var _useState = (0,external_React_namespaceObject.useState)(getColorsFromInputValue(sourceSetting())),
+      _useState2 = builder_slicedToArray(_useState, 2),
+      config = _useState2[0],
+      setConfig = _useState2[1];
+
+  var _useState3 = (0,external_React_namespaceObject.useState)(''),
+      _useState4 = builder_slicedToArray(_useState3, 2),
+      CSSOutput = _useState4[0],
+      setCSSOutput = _useState4[1];
+
+  var activePresetSetting = wp.customize('sm_color_palette_in_use');
+  var activePresetValue = activePresetSetting ? activePresetSetting() : null;
+
+  var _useState5 = (0,external_React_namespaceObject.useState)(activePresetValue),
+      _useState6 = builder_slicedToArray(_useState5, 2),
+      activePreset = _useState6[0],
+      setActivePreset = _useState6[1];
+
+  var resetActivePreset = (0,external_React_namespaceObject.useCallback)(function () {
+    setActivePreset(null);
+  }, []);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    wp.customize('sm_color_palette_in_use', function (setting) {
+      setting.set(activePreset);
+    });
+    wp.customize('sm_is_custom_color_palette', function (setting) {
+      setting.set(activePreset === null);
+    });
+  }, [activePreset]);
+
+  var updateSource = function updateSource(newValue) {
+    wp.customize(sourceSettingID, function (setting) {
+      setting.set(getValueFromColors(newValue));
+    });
+  };
+
+  var onSourceChange = function onSourceChange(newValue) {
+    var newConfig = getColorsFromInputValue(newValue);
+    var newPalettes = getPalettesFromColors(newConfig);
+    setConfig(getColorsFromInputValue(newValue));
+    wp.customize(outputSettingID, function (setting) {
+      setting.set(JSON.stringify(newPalettes));
+    });
+  };
+
+  var onOutputChange = function onOutputChange(value) {
+    var palettes = JSON.parse(value);
+    wp.customize('sm_site_color_variation', function (setting) {
+      var variation = setting();
+      setCSSOutput(getCSSFromPalettes(palettes, variation));
+    });
+  };
+
+  var onSiteVariationChange = function onSiteVariationChange(newVariation) {
+    wp.customize(outputSettingID, function (setting) {
+      var output = setting();
+      var palettes = JSON.parse(output);
+      setCSSOutput(getCSSFromPalettes(palettes, newVariation));
+    });
+  };
+
+  use_customize_setting_callback(sourceSettingID, onSourceChange);
+  use_customize_setting_callback(outputSettingID, onOutputChange);
+  use_customize_setting_callback('sm_site_color_variation', onSiteVariationChange);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    var callback = function callback(isExpanded) {
+      if (!isExpanded) {
+        popFromBackArray();
+      }
+    };
+
+    var sourceSection = wp.customize.section('sm_color_usage_section');
+
+    if (!sourceSection) {
+      return;
+    }
+
+    sourceSection.expanded.bind(callback);
+    return function () {
+      sourceSection.expanded.unbind(callback);
+    };
+  }, []);
+  return /*#__PURE__*/external_React_default().createElement(context.Provider, {
+    value: {
+      config: config,
+      setConfig: updateSource,
+      resetActivePreset: resetActivePreset
+    }
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-group"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-panel-toggle",
+    onClick: function onClick() {
+      wp.customize.section('sm_color_usage_section', function (colorUsageSection) {
+        pushToBackArray(colorUsageSection, 'sm_color_palettes_section');
+      });
+    }
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-panel-toggle__icon",
+    dangerouslySetInnerHTML: {
+      __html: "\n                <svg viewBox=\"".concat(customize_colors_usage.viewBox, "\">\n                  <use xlink:href=\"#").concat(customize_colors_usage.id, "\" />\n                </svg>")
+    }
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-panel-toggle__label"
+  }, "Customize colors usage"))), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-group"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-group__body"
+  }, /*#__PURE__*/external_React_default().createElement(Control, {
+    label: 'Brand Colors'
+  }, /*#__PURE__*/external_React_default().createElement(SourceColors, {
+    sourceSetting: sourceSetting,
+    onChange: function onChange() {
+      setActivePreset(null);
+    }
+  }), /*#__PURE__*/external_React_default().createElement("style", null, CSSOutput)))), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-group"
+  }, /*#__PURE__*/external_React_default().createElement(Accordion, null, /*#__PURE__*/external_React_default().createElement(AccordionSection, {
+    title: 'Explore colors',
+    open: true
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "customize-control-description"
+  }, "Curated color presets to help you lay the foundations of the color system and make it easy to get started."), /*#__PURE__*/external_React_default().createElement(palette_list, {
+    active: activePreset,
+    onChange: function onChange(preset) {
+      updateSource(preset.config);
+      setActivePreset(preset.uid);
+    }
+  })), /*#__PURE__*/external_React_default().createElement(AccordionSection, {
+    title: 'Extract from Image'
+  }, /*#__PURE__*/external_React_default().createElement(dropzone, null)))));
+};
+
+var Control = function Control(props) {
+  var label = props.label,
+      children = props.children;
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-control"
+  }, label && /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-control__header"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-control__label"
+  }, label)), children && /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-control__body"
+  }, children));
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/color-palette-builder/index.js
+
+
+
+var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID, outputSettingID) {
+  var containerID = "customize-control-".concat(sourceSettingID, "_control");
+  var container = document.getElementById(containerID);
+  var target = document.createElement('DIV');
+
+  if (typeof container === "undefined") {
+    return;
+  }
+
+  container.children.forEach(function (child) {
+    child.style.display = 'none';
+  });
+  container.insertBefore(target, container.firstChild);
+  external_ReactDOM_default().render( /*#__PURE__*/external_React_default().createElement(Builder, {
+    sourceSettingID: sourceSettingID,
+    outputSettingID: outputSettingID
+  }), target);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/color-palettes-preview/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/overlay/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/overlay/index.js
+
+
+
+var Overlay = function Overlay(props) {
+  var show = props.show;
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-overlay sm-overlay--".concat(show ? 'visible' : 'hidden')
+  }, props.children);
+};
+
+/* harmony default export */ var overlay = (Overlay);
+// EXTERNAL MODULE: ./node_modules/classnames/index.js
+var classnames = __webpack_require__(184);
+var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/preview/style.scss
+// extracted by mini-css-extract-plugin
+
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/components/preview/index.js
+function preview_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function preview_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { preview_ownKeys(Object(source), true).forEach(function (key) { preview_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { preview_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function preview_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function preview_slicedToArray(arr, i) { return preview_arrayWithHoles(arr) || preview_iterableToArrayLimit(arr, i) || preview_unsupportedIterableToArray(arr, i) || preview_nonIterableRest(); }
+
+function preview_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function preview_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return preview_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return preview_arrayLikeToArray(o, minLen); }
+
+function preview_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function preview_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function preview_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+var Preview = function Preview(props) {
+  return /*#__PURE__*/external_React_default().createElement(external_React_namespaceObject.Fragment, null, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-header sm-palette-1 sm-palette--shifted sm-variation-1"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-overlay__wrap"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-overlay__container"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-header-wrap"
+  }, /*#__PURE__*/external_React_default().createElement("h1", {
+    className: "palette-preview-title"
+  }, "The color system"), /*#__PURE__*/external_React_default().createElement("p", {
+    className: "palette-preview-description"
+  }, "The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks."))))), /*#__PURE__*/external_React_default().createElement(PalettePreviewList, props));
+};
+
+var PalettePreviewList = function PalettePreviewList(props) {
+  var palettes = props.palettes;
+  var userPalettes = palettes.filter(function (palette) {
+    var id = palette.id;
+    return !(typeof id === 'string' && id.charAt(0) === '_');
+  });
+
+  if (!userPalettes.length) {
+    return null;
+  }
+
+  var _useState = (0,external_React_namespaceObject.useState)(userPalettes[0].id),
+      _useState2 = preview_slicedToArray(_useState, 2),
+      active = _useState2[0],
+      setActive = _useState2[1];
+
+  return userPalettes.map(function (palette, index) {
+    var description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';
+    return /*#__PURE__*/external_React_default().createElement(PalettePreview, {
+      key: palette.id,
+      isActive: active === palette.id,
+      setActivePalette: setActive,
+      palette: preview_objectSpread({
+        description: description
+      }, palette)
+    });
+  });
+};
+
+var PalettePreview = function PalettePreview(props) {
+  var palette = props.palette,
+      isActive = props.isActive,
+      setActivePalette = props.setActivePalette;
+  var id = palette.id,
+      colors = palette.colors,
+      textColors = palette.textColors,
+      lightColorsCount = palette.lightColorsCount,
+      sourceIndex = palette.sourceIndex;
+
+  var _useState3 = (0,external_React_namespaceObject.useState)(sourceIndex),
+      _useState4 = preview_slicedToArray(_useState3, 2),
+      lastHover = _useState4[0],
+      setLastHover = _useState4[1];
+
+  var siteVariationSetting = wp.customize('sm_site_color_variation');
+
+  var _useState5 = (0,external_React_namespaceObject.useState)(parseInt(siteVariationSetting(), 10)),
+      _useState6 = preview_slicedToArray(_useState5, 2),
+      siteVariation = _useState6[0],
+      setSiteVariation = _useState6[1];
+
+  var onSiteVariationChange = function onSiteVariationChange(newValue) {
+    setSiteVariation(parseInt(newValue, 10));
+  };
+
+  (0,external_React_namespaceObject.useEffect)(function () {
+    setLastHover(sourceIndex);
+  }, [colors]);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    // Attach the listeners on component mount.
+    siteVariationSetting.bind(onSiteVariationChange); // Detach the listeners on component unmount.
+
+    return function () {
+      siteVariationSetting.unbind(onSiteVariationChange);
+    };
+  }, []);
+
+  var normalize = function normalize(index) {
+    return (index + siteVariation - 1 + 12) % 12;
+  };
+
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview sm-palette-".concat(id, " ").concat(lastHover !== false ? "sm-variation-".concat(lastHover + 1) : '')
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-overlay__wrap"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-overlay__container"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-set"
+  }, colors.map(function (color, index) {
+    var variation = index + 1;
+    var showLightForeground = normalize(index) === 0;
+    var showDarkForeground = normalize(index) === 9;
+    var foregroundToShow = normalize(lastHover) >= lightColorsCount ? showLightForeground : showDarkForeground;
+    var passedProps = {
+      isSource: normalize(index) === sourceIndex,
+      showCard: isActive && index === lastHover,
+      showAccent: isActive && lastHover !== false && index === (lastHover + 6) % 12,
+      showForeground: isActive && lastHover !== false && foregroundToShow,
+      textColor: normalize(index) >= lightColorsCount ? textColors[0].value : '#FFFFFF',
+      variation: variation
+    };
+    return /*#__PURE__*/external_React_default().createElement("div", {
+      key: index,
+      className: "palette-preview-swatches sm-variation-".concat(variation),
+      onMouseEnter: function onMouseEnter() {
+        setActivePalette(id);
+        setLastHover(index);
+      }
+    }, /*#__PURE__*/external_React_default().createElement(PalettePreviewGrade, passedProps));
+  })))));
+};
+
+var getStarVariation = function getStarVariation(variation) {
+  return variation > 10 ? variation - 2 : variation + 2;
+};
+
+var PalettePreviewGrade = function PalettePreviewGrade(props) {
+  var isSource = props.isSource,
+      showCard = props.showCard,
+      showAccent = props.showAccent,
+      showForeground = props.showForeground,
+      textColor = props.textColor,
+      variation = props.variation;
+  var className = classnames_default()('palette-preview-swatches__wrap', {
+    'is-source': isSource,
+    'show-card': showCard,
+    'show-accent': showAccent,
+    'show-fg': showForeground
+  });
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: className
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__wrap-surface"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__text"
+  }, "Surface"), /*#__PURE__*/external_React_default().createElement(PalettePreviewGradeCard, {
+    variation: variation
+  })), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__wrap-background",
+    style: {
+      color: 'var(--sm-current-bg-color)'
+    }
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__wrap-accent",
+    style: {
+      color: 'var(--sm-current-bg-color)'
+    }
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__source-badge sm-variation-".concat(getStarVariation(variation))
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__text"
+  }, "Accent")), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__wrap-foreground",
+    style: {
+      color: textColor
+    }
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__text"
+  }, "Text")));
+};
+
+var PalettePreviewGradeCard = function PalettePreviewGradeCard(props) {
+  var variation = props.variation;
+  var buttonVariation = (variation - 1 + 6) % 12 + 1;
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__card"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__card-content"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__source-badge sm-variation-".concat(getStarVariation(variation))
+  }), /*#__PURE__*/external_React_default().createElement("h2", {
+    className: "palette-preview-swatches__title"
+  }, "Text"), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__body"
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__row"
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__row"
+  })), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "palette-preview-swatches__button sm-variation-".concat(buttonVariation)
+  }, "\u2192")));
+};
+
+/* harmony default export */ var preview = (Preview);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/color-palettes-preview/index.js
+function color_palettes_preview_slicedToArray(arr, i) { return color_palettes_preview_arrayWithHoles(arr) || color_palettes_preview_iterableToArrayLimit(arr, i) || color_palettes_preview_unsupportedIterableToArray(arr, i) || color_palettes_preview_nonIterableRest(); }
+
+function color_palettes_preview_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function color_palettes_preview_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return color_palettes_preview_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return color_palettes_preview_arrayLikeToArray(o, minLen); }
+
+function color_palettes_preview_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function color_palettes_preview_iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function color_palettes_preview_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+var PreviewTabs = function PreviewTabs(props) {
+  var _useState = (0,external_React_namespaceObject.useState)('site'),
+      _useState2 = color_palettes_preview_slicedToArray(_useState, 2),
+      active = _useState2[0],
+      setActive = _useState2[1];
+
+  var previewdDevice = wp.customize.previewedDevice.get();
+
+  var _useState3 = (0,external_React_namespaceObject.useState)(previewdDevice === 'desktop'),
+      _useState4 = color_palettes_preview_slicedToArray(_useState3, 2),
+      visible = _useState4[0],
+      setVisible = _useState4[1];
+
+  var previewRef = (0,external_React_namespaceObject.useRef)();
+  var previewHeaderRef = (0,external_React_namespaceObject.useRef)();
+  var setting = wp.customize('sm_advanced_palette_output');
+  var tabs = [{
+    id: 'site',
+    label: 'Live site'
+  }, {
+    id: 'colors',
+    label: 'Color system',
+    callback: function callback() {
+      wp.customize.section('sm_color_palettes_section', function (section) {
+        section.focus();
+      });
+    }
+  }];
+  wp.customize.section('sm_color_palettes_section', function (section) {
+    (0,external_React_namespaceObject.useEffect)(function () {
+      var callback = function callback(expanded) {
+        if (expanded) {
+          setActive('colors');
+        }
+      };
+
+      section.expanded.bind(callback);
+      return function () {
+        section.expanded.unbind(callback);
+      };
+    });
+  });
+  (0,external_React_namespaceObject.useEffect)(function () {
+    var _window, _window$sm, _window$sm$customizer;
+
+    var previewResizer = (_window = window) === null || _window === void 0 ? void 0 : (_window$sm = _window.sm) === null || _window$sm === void 0 ? void 0 : (_window$sm$customizer = _window$sm.customizer) === null || _window$sm$customizer === void 0 ? void 0 : _window$sm$customizer.resizer;
+
+    if (!previewResizer) {
+      return;
+    }
+
+    var top = previewHeaderRef.current.offsetHeight;
+    var style = getComputedStyle(previewRef.current, null);
+    var left = parseFloat(style.left.replace("px", ""));
+    var right = parseFloat(style.right.replace("px", ""));
+    previewResizer.setOffset({
+      top: top,
+      right: right,
+      bottom: 0,
+      left: left
+    });
+    previewResizer.resize();
+  }, []);
+  (0,external_React_namespaceObject.useEffect)(function () {
+    var callback = function callback(previewdDevice) {
+      setVisible(previewdDevice === 'desktop');
+    };
+
+    wp.customize.previewedDevice.bind(callback);
+    return function () {
+      wp.customize.previewedDevice.unbind(callback);
+    };
+  }, []);
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-preview ".concat(visible ? 'sm-preview--visible' : ''),
+    ref: previewRef
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-preview__header",
+    ref: previewHeaderRef
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-preview__tabs"
+  }, tabs.map(function (tab) {
+    var isActive = active === tab.id;
+
+    var noop = function noop() {};
+
+    var callback = typeof tab.callback === 'function' ? tab.callback : noop;
+    return /*#__PURE__*/external_React_default().createElement("div", {
+      key: tab.id,
+      className: "sm-preview__tab ".concat(isActive ? 'sm-preview__tab--active' : ''),
+      onClick: function onClick() {
+        setActive(tab.id);
+        callback();
+      }
+    }, tab.label);
+  }))), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-preview__content"
+  }, /*#__PURE__*/external_React_default().createElement(ColorsOverlay, {
+    show: active === 'colors',
+    setting: setting
+  })));
+};
+
+var initializePreview = function initializePreview() {
+  wp.customize.bind('ready', function () {
+    wp.customize.panel('style_manager_panel', function (smPanel) {
+      wp.customize.section('sm_color_palettes_section', function (smColorsSection) {
+        wp.customize.previewer.bind('ready', function () {
+          var iframe = document.querySelector('#customize-preview iframe');
+
+          if (!iframe) {
+            return;
+          }
+
+          var smPreviewTabs = document.createElement('div');
+          iframe.insertAdjacentElement('beforebegin', smPreviewTabs);
+          external_ReactDOM_default().render( /*#__PURE__*/external_React_default().createElement(PreviewTabs, {
+            smPanel: smPanel
+          }), smPreviewTabs);
+        });
+      });
+    });
+  });
+};
+
+var ColorsOverlay = function ColorsOverlay(props) {
+  var setting = props.setting,
+      show = props.show;
+
+  var _useState5 = (0,external_React_namespaceObject.useState)(JSON.parse(setting())),
+      _useState6 = color_palettes_preview_slicedToArray(_useState5, 2),
+      palettes = _useState6[0],
+      setPalettes = _useState6[1];
+
+  var changeListener = function changeListener(newValue) {
+    setPalettes(JSON.parse(newValue));
+  };
+
+  (0,external_React_namespaceObject.useEffect)(function () {
+    // Attach the listeners on component mount.
+    setting.bind(changeListener); // Detach the listeners on component unmount.
+
+    return function () {
+      setting.unbind(changeListener);
+    };
+  }, []);
+  return /*#__PURE__*/external_React_default().createElement(overlay, {
+    show: show
+  }, /*#__PURE__*/external_React_default().createElement(preview, {
+    palettes: palettes
+  }));
+};
+
+/* harmony default export */ var color_palettes_preview = (initializePreview);
+;// CONCATENATED MODULE: ./src/_js/customizer/colors/index.js
+
+
+
+
+
+
+
+var initializeColors = function initializeColors() {
+  initializePaletteBuilder('sm_advanced_palette_source', 'sm_advanced_palette_output');
+  wp.customize('sm_coloration_level', function (setting) {
+    setting.bind(applyColorationValueToFields);
+  });
+  initializeColorizeElementsButton();
+  color_palettes_preview();
+};
+
+var ColorizeElementsButton = function ColorizeElementsButton(props) {
+  var targetSectionID = "".concat(styleManager.config.options_name, "[colors_section]");
+  (0,external_React_namespaceObject.useEffect)(function () {
+    var callback = function callback(isExpanded) {
+      if (!isExpanded) {
+        var backArray = getBackArray();
+
+        var _targetSectionID = backArray.pop();
+
+        if (_targetSectionID) {
+          wp.customize.section(_targetSectionID, function (targetSection) {
+            targetSection.focus();
+          });
+        }
+      }
+    };
+
+    var targetSection = wp.customize.section(targetSectionID);
+
+    if (!targetSection) {
+      return;
+    }
+
+    targetSection.expanded.bind(callback);
+    return function () {
+      targetSection.expanded.unbind(callback);
+    };
+  }, []);
+  return /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-group",
+    style: {
+      marginTop: 0
+    }
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-panel-toggle",
+    id: "sm-colorize-elements-button",
+    style: {
+      borderTopWidth: 0
+    },
+    onClick: function onClick() {
+      wp.customize.section(targetSectionID, function (targetSection) {
+        pushToBackArray(targetSection, 'sm_color_usage_section');
+      });
+    }
+  }, /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-panel-toggle__icon",
+    dangerouslySetInnerHTML: {
+      __html: "\n                <svg viewBox=\"".concat(colorize_elements.viewBox, "\">\n                  <use xlink:href=\"#").concat(colorize_elements.id, "\" />\n                </svg>")
+    }
+  }), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "sm-panel-toggle__label"
+  }, "Colorize elements one by one")));
+};
+
+var initializeColorizeElementsButton = function initializeColorizeElementsButton() {
+  var target = document.getElementById('customize-control-sm_coloration_level_control');
+  var button = document.createElement('li');
+  button.setAttribute('class', 'customize-control');
+  button.setAttribute('style', 'padding: 0');
+  target.insertAdjacentElement('afterend', button);
+  external_ReactDOM_default().render( /*#__PURE__*/external_React_default().createElement(ColorizeElementsButton, null), button);
+};
+
+var applyColorationValueToFields = function applyColorationValueToFields(colorationLevel) {
+  var defaultColorationLevel = getSettingConfig('sm_coloration_level').default;
+  var isDefaultColoration = colorationLevel === defaultColorationLevel;
+  var settings = getSettings();
+  var value = parseInt(colorationLevel, 10);
+  var threshold = value < 50 ? 4 : value < 75 ? 3 : value < 100 ? 2 : 1;
+  Object.keys(settings).forEach(function (settingID) {
+    var config = getSettingConfig(settingID);
+
+    if ((config === null || config === void 0 ? void 0 : config.type) === 'sm_toggle') {
+      var coloration = config.coloration;
+      wp.customize(settingID, function (setting) {
+        setting.set(isDefaultColoration ? config.default : coloration >= threshold);
+      });
+    }
+  });
+};
+;// CONCATENATED MODULE: ./src/_js/utils.js
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+var debounce = function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+        args = arguments;
+
+    var later = function later() {
+      timeout = null;
+
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+var wrapperSelector = '.font-options__wrapper';
+var valueHolderSelector = '.style-manager_font_values';
+var getSettingID = function getSettingID($element) {
+  return getWrapper($element).find(valueHolderSelector).data('customize-setting-link');
+};
+var getWrapper = function getWrapper($element) {
+  return $element.closest(wrapperSelector);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/handle-font-popup-toggle.js
+
+var handleFontPopupToggle = function handleFontPopupToggle() {
+  var $allFontCheckboxes = external_jQuery_default()('.js-font-option-toggle'); // Close all other font fields popups when opening a font field popup.
+
+  $allFontCheckboxes.on('click', function (event) {
+    $allFontCheckboxes.not(event.target).prop('checked', false);
+  }); // Make sure that all fonts popups are closed when backing away from a panel or section.
+  // @todo This doesn't catch backing with ESC key. For that we should hook on Customizer section and panel events ('collapsed').
+
+  external_jQuery_default()('#customize-controls .customize-panel-back, #customize-controls .customize-section-back').on('click', function () {
+    $allFontCheckboxes.prop('checked', false);
+  });
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/fonts-service.js
+var updating = {};
+var loading = {};
+var isLoading = function isLoading(settingID) {
+  return !!updating[settingID];
+};
+var isUpdating = function isUpdating(settingID) {
+  return !!loading[settingID];
+};
+var setLoading = function setLoading(settingID, value) {
+  loading[settingID] = value;
+};
+var setUpdating = function setUpdating(settingID, value) {
+  updating[settingID] = value;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/standardize-numerical-value.js
+
+/**
+ * Given a value we will standardize it to an array with 'value' and 'unit'.
+ *
+ * This is a mirror logic of the server-side one from Utils\Fonts::standardizeNumericalValue()
+ *
+ * @param value
+ * @param input Optional. The input this value was extracted from
+ * @param valueFirst Optional. Whether to give higher priority to value related data, or to input related one.
+ */
+
+var standardizeNumericalValue = function standardizeNumericalValue(value) {
+  var input = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var valueFirst = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  var standardValue = {
+    value: false,
+    unit: false
+  };
+
+  if (_.includes(['', 'false', false], value)) {
+    return standardValue;
+  }
+
+  if (!isNaN(value)) {
+    standardValue.value = value;
+  } else if (typeof value.value !== 'undefined') {
+    standardValue.value = value.value;
+
+    if (typeof value.unit !== 'undefined') {
+      standardValue.unit = value.unit;
+    }
+  } else if (typeof value[0] !== 'undefined') {
+    standardValue.value = value[0];
+
+    if (typeof value[1] !== 'undefined') {
+      standardValue.unit = value[1];
+    }
+  } else if (typeof value === 'string') {
+    // We will get everything in front that is a valid part of a number (float including).
+    var matches = value.match(/^([\d.\-+]+)(.+)/i);
+
+    if (matches !== null && typeof matches[1] !== 'undefined') {
+      standardValue.value = matches[1];
+
+      if (!_.isEmpty(matches[2])) {
+        standardValue.unit = matches[2];
+      }
+    } else {
+      // If we could not extract anything useful we will trust the developer and leave it like that.
+      standardValue.value = value;
+    }
+  }
+
+  if (false !== input && (false === standardValue.unit || _.isEmpty(standardValue.unit))) {
+    // If we are given an input, we will attempt to extract the unit from its attributes.
+    var fallbackInputUnit = '';
+    var $input = external_jQuery_default()(input);
+
+    if (valueFirst) {
+      if (!_.isEmpty($input.data('value_unit'))) {
+        fallbackInputUnit = $input.data('value_unit');
+      } else if (!_.isEmpty($input.attr('unit'))) {
+        fallbackInputUnit = $input.attr('unit');
+      }
+    } else {
+      if (!_.isEmpty($input.attr('unit'))) {
+        fallbackInputUnit = $input.attr('unit');
+      } else if (!_.isEmpty($input.data('value_unit'))) {
+        fallbackInputUnit = $input.data('value_unit');
+      }
+    }
+
+    standardValue.unit = fallbackInputUnit;
+  } // Make sure that if we have a numerical value, it is a float.
+
+
+  if (!isNaN(standardValue.value)) {
+    standardValue.value = parseFloat(standardValue.value);
+  }
+
+  return standardValue;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/determine-font-type.js
+var determineFontType = function determineFontType(fontFamily) {
+  // The default is a standard font (aka no special loading or processing).
+  var fontType = 'system_font'; // We will follow a stack in the following order: third-party fonts, cloud fonts, theme fonts, Google fonts, standard fonts.
+
+  if (typeof styleManager.fonts.third_party_fonts[fontFamily] !== 'undefined') {
+    fontType = 'third_party_font';
+  } else if (typeof styleManager.fonts.cloud_fonts[fontFamily] !== 'undefined') {
+    fontType = 'cloud_font';
+  } else if (typeof styleManager.fonts.theme_fonts[fontFamily] !== 'undefined') {
+    fontType = 'theme_font';
+  } else if (typeof styleManager.fonts.google_fonts[fontFamily] !== 'undefined') {
+    fontType = 'google_font';
+  }
+
+  return fontType;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/get-font-details.js
+
+var getFontDetails = function getFontDetails(fontFamily) {
+  var fontType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  if (false === fontType) {
+    // We will determine the font type based on font family.
+    fontType = determineFontType(fontFamily);
+  }
+
+  switch (fontType) {
+    case 'theme_font':
+      return styleManager.fonts.theme_fonts[fontFamily];
+      break;
+
+    case 'cloud_font':
+      return styleManager.fonts.cloud_fonts[fontFamily];
+      break;
+
+    case 'google_font':
+      return styleManager.fonts.google_fonts[fontFamily];
+      break;
+
+    case 'system_font':
+      if (typeof styleManager.fonts.system_fonts[fontFamily] !== 'undefined') {
+        return styleManager.fonts.system_fonts[fontFamily];
+      }
+
+      break;
+
+    case 'third_party_font':
+      if (typeof styleManager.fonts.third_party_fonts[fontFamily] !== 'undefined') {
+        return styleManager.fonts.third_party_fonts[fontFamily];
+      }
+
+      break;
+
+    default:
+  }
+
+  return false;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/self-update-value.js
+
+
+/**
+ * Gather the value for our entire font field and save it in the setting.
+ */
+
+var selfUpdateValue = function selfUpdateValue(wrapper, settingID) {
+  // If we are already self-updating this and we haven't finished, we need to stop here to prevent infinite loops
+  // This call might have come from a subfield detecting the change thus triggering a further selfUpdateValue()
+  // If we are loading this setting value and haven't finished,
+  // there is no point in updating it as this would cause infinite loops.
+  if (isUpdating(settingID) || isLoading(settingID)) {
+    return;
+  } // Mark the fact that we are self-updating the field value
+
+
+  setUpdating(settingID, true);
+  var optionsList = wrapper.find('.font-options__options-list');
+  var inputs = optionsList.find('[data-value_entry]');
+  var newFontData = {};
+  wp.customize(settingID, function (setting) {
+    newFontData = external_jQuery_default().extend(true, {}, setting());
+    inputs.each(function (key, input) {
+      var $input = external_jQuery_default()(input);
+      var valueEntry = $input.data('value_entry');
+      var value = $input.val(); // We only pick up subfields values that have been touched by the user, that are enabled (visible) or values that are missing in the oldValue.
+
+      if (_.isUndefined(valueEntry) || $input.data('disabled') || !$input.data('touched') && !_.isUndefined(newFontData[valueEntry])) {
+        return;
+      }
+
+      if ('font_family' === valueEntry) {
+        // Get the src of the selected option.
+        var src = external_jQuery_default()(input.options[input.selectedIndex]).data('src');
+
+        if (src) {
+          newFontData['src'] = src;
+        } else {
+          delete newFontData['src'];
+        }
+      }
+
+      if (!_.isUndefined(value) && !_.isNull(value) && value !== '') {
+        if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {
+          // Standardize the value.
+          value = standardizeNumericalValue(value, input, false);
+        }
+
+        newFontData[valueEntry] = value;
+      } else {
+        delete newFontData[valueEntry];
+      }
+    }); // We don't need to store font variants or subsets list in the value
+    // since we will get those from the global font details.
+
+    delete newFontData['variants'];
+    delete newFontData['subsets']; // We need to make sure that we don't "use" any variants not supported by the new font (values passed over from the old value).
+    // Get the new font details
+
+    var newFontDetails = getFontDetails(newFontData['font_family']); // Check the font variant
+
+    if (typeof newFontData['font_variant'] !== 'undefined' && typeof newFontDetails.variants !== 'undefined' && Object.keys(newFontDetails.variants).length > 0) {
+      // Make sure that the font_variant is a string, not a number.
+      newFontData['font_variant'] = String(newFontData['font_variant']);
+
+      if (!_.includes(newFontDetails.variants, newFontData['font_variant'])) {
+        // The new font doesn't have this variant. Nor should the value.
+        delete newFontData['font_variant'];
+      }
+    } else {
+      // The new font has no variants. Nor should the value.
+      delete newFontData['font_variant'];
+    } // Update the Customizer setting value.
+
+
+    setting.set(newFontData);
+  }); // Finished with the field value self-updating.
+
+  setUpdating(settingID, false);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/init-subfield.js
+
+
+var initSubfield = function initSubfield($subField) {
+  var select2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  // Mark these as not touched by the user.
+  $subField.data('touched', false);
+  $subField.on('input change', onSubfieldChange); // If we've been instructed, initialize a select2.
+
+  if (true === select2) {
+    $subField.select2();
+  }
+};
+
+var onSubfieldChange = function onSubfieldChange(event, who) {
+  var $subField = external_jQuery_default()(event.target); // The change was triggered programmatically by Style Manager.
+  // No need to self-update the value.
+
+  if ('style-manager' === who) {
+    return;
+  }
+
+  var wrapper = getWrapper($subField);
+  var settingID = getSettingID($subField); // Mark this input as touched by the user.
+
+  $subField.data('touched', true); // Gather subfield values and trigger refresh of the fonts in the preview window.
+
+  selfUpdateValue(wrapper, settingID);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/update-font-head-title.js
+
+/**
+ * Update the title of the font field (the field head) with the new font family name.
+ *
+ * @param newFontDetails
+ * @param wrapper
+ */
+
+var updateFontHeadTitle = function updateFontHeadTitle(newFontDetails, wrapper) {
+  var fontTitleElement = wrapper.find('.font-options__head .font-options__font-title');
+  var fontFamilyDisplay = newFontDetails.family;
+
+  if (typeof newFontDetails.family_display === 'string' && newFontDetails.family_display.length) {
+    fontFamilyDisplay = newFontDetails.family_display;
+  }
+
+  external_jQuery_default()(fontTitleElement).html(fontFamilyDisplay);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/update-variant-field.js
+
+var fontVariantSelector = '.style-manager_font_weight';
+/**
+ * This function updates the data in font weight selector from the given <option> element
+ *
+ * @param newFontDetails
+ * @param wrapper
+ */
+
+var updateVariantField = function updateVariantField(newFontDetails, wrapper) {
+  var variants = typeof newFontDetails.variants !== 'undefined' ? newFontDetails.variants : [],
+      fontVariantInput = wrapper.find(fontVariantSelector),
+      selectedVariant = fontVariantInput.val() ? fontVariantInput.val() : '',
+      newVariants = []; // We clear everything about this subfield.
+
+  fontVariantInput.val(null).empty();
+
+  if (fontVariantInput.hasClass("select2-hidden-accessible")) {
+    fontVariantInput.select2('destroy');
+  } // Mark this input as not touched by the user.
+
+
+  fontVariantInput.data('touched', false);
+
+  if (typeof variants === 'undefined' || Object.keys(variants).length < 2) {
+    fontVariantInput.parent().hide();
+    fontVariantInput.parent().prev('label').hide(); // Mark this input as disabled.
+
+    fontVariantInput.data('disabled', true);
+    return;
+  }
+
+  var variantAutoText = styleManager.l10n.fonts.variantAutoText; // Initialize the options with an empty one.
+
+  newVariants.push({
+    'id': '',
+    'text': variantAutoText
+  }); // we need to turn the data array into a specific form like [{id:"id", text:"Text"}]
+
+  external_jQuery_default().each(variants, function (index, variant) {
+    var newVariant = {
+      'id': variant,
+      // This is the option value.
+      'text': variant
+    }; // Leave the comparison loose.
+
+    if (selectedVariant == variant) {
+      newVariant.selected = true;
+    }
+
+    newVariants.push(newVariant);
+  }); // This is a costly operation especially when font palettes are changed and multiple font fields are updated
+
+  requestIdleCallback(function () {
+    // Only reinitialize the select2.
+    // No need to rebind on change or on input since those are still bound to the original HTML element.
+    fontVariantInput.select2({
+      data: newVariants
+    });
+    fontVariantInput.parent().show();
+    fontVariantInput.parent().prev('label').show(); // Mark this input as enabled.
+
+    fontVariantInput.data('disabled', false);
+  });
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/round.js
+var round = function round(number, precision) {
+  var factor = Math.pow(10, precision);
+  return Math.round(number * factor) / factor;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/load-font-value.js
+
+
+
+
+/**
+ * This function is a reverse of selfUpdateValue(), initializing the entire font field controls
+ * based on the setting value.
+ */
+
+var loadFontValue = function loadFontValue(wrapper, value, settingID) {
+  // If we are already loading this setting value and haven't finished, there is no point in starting again.
+  if (isLoading(settingID)) {
+    return;
+  } // Mark the fact that we are loading the field value
+
+
+  setLoading(settingID, true);
+  var optionsList = external_jQuery_default()(wrapper).find('.font-options__options-list'),
+      inputs = optionsList.find('[data-value_entry]');
+  inputs.each(function (key, input) {
+    var $input = external_jQuery_default()(input);
+    var valueEntry = $input.data('value_entry'); // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
+
+    if (typeof valueEntry === 'undefined' || valueEntry === '' || typeof value[valueEntry] === 'undefined') {
+      return;
+    } // We will do this only for numerical sub-fields.
+
+
+    if (_.includes(['letter_spacing', 'line_height', 'font_size'], valueEntry)) {
+      var subfieldValue = standardizeNumericalValue(value[valueEntry], input); // Make sure that the unit and value_unit attributes are in place.
+
+      if (subfieldValue.unit !== '') {
+        $input.data('value_unit', subfieldValue.unit);
+
+        if (_.isEmpty($input.attr('unit'))) {
+          $input.attr('unit', subfieldValue.unit);
+        }
+      } // If the field unit and value unit differ, we have some conversion to do.
+      // We will convert the received value to the appropriate unit declared by the input.
+      // We will use a guessed base size of 16px. Not an exact conversion, but it will have to do.
+
+
+      var baseSize = 16;
+      var subfieldUnit = $input.attr('unit').trim().toLowerCase();
+      var subfieldValueUnit = $input.data('value_unit').trim().toLowerCase(); // The comparison is intentionally loose.
+
+      if (subfieldUnit != subfieldValueUnit) {
+        if (_.includes(['em', 'rem'], subfieldValueUnit) && 'px' === subfieldUnit) {
+          // We will have to multiply the value.
+          subfieldValue.value = round(subfieldValue.value * baseSize, styleManager.fonts.floatPrecision);
+        } else if (_.includes(['em', 'rem'], subfieldUnit) && 'px' === subfieldValueUnit) {
+          // We will have to divide the value.
+          subfieldValue.value = round(subfieldValue.value / baseSize, styleManager.fonts.floatPrecision);
+        }
+      } // If this field has a min/max attribute we need to make sure that those attributes allow for the value we are trying to impose.
+
+
+      if ($input.attr('min') && $input.attr('min') > subfieldValue.value) {
+        $input.attr('min', subfieldValue.value);
+      }
+
+      if ($input.attr('max') && $input.attr('max') < subfieldValue.value) {
+        $input.attr('max', subfieldValue.value);
+      }
+
+      $input.val(subfieldValue.value);
+    } else {
+      $input.val(value[valueEntry]);
+    } // Mark this input as not touched by the user.
+
+
+    $input.data('touched', false);
+    $input.trigger('change', ['style-manager']);
+  }); // Finished with the field value loading.
+
+  setLoading(settingID, false);
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/callback-filter.js
+
+
+var getCallbackFilter = function getCallbackFilter(connectedFieldData) {
+  return function (newValue, oldValue) {
+    /* ======================
+     * Process the font logic to get the value that should be applied to the connected (font) fields.
+     *
+     * The font logic is already in the new value - @see setFieldFontsLogicConfig()
+     */
+    var newFontData = {};
+    var fontsLogic = newValue;
+
+    if (typeof fontsLogic.reset !== 'undefined') {
+      var settingID = connectedFieldData.setting_id;
+      var defaultValue = styleManager.config.settings[settingID].default;
+
+      if (!_.isUndefined(setting) && !_.isEmpty(defaultValue)) {
+        newFontData['font_family'] = defaultValue['font_family'];
+        newFontData['font_size'] = defaultValue['font_size'];
+        newFontData['line_height'] = defaultValue['line_height'];
+        newFontData['letter_spacing'] = defaultValue['letter_spacing'];
+        newFontData['text_transform'] = defaultValue['text_transform'];
+        newFontData['font_variant'] = defaultValue['font_variant'];
+      }
+    }
+    /* ===========
+     * We need to determine the 6 subfields values to be able to determine the value of the font field.
+     */
+    // The font family is straight forward as it comes directly from the parent field font logic configuration.
+
+
+    if (typeof fontsLogic.font_family !== 'undefined') {
+      newFontData['font_family'] = fontsLogic.font_family;
+    }
+
+    if (_.isEmpty(newFontData['font_family'])) {
+      // If we don't have a font family, we really can't do much.
+      return;
+    }
+
+    if (typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size) {
+      newFontData['font_size'] = standardizeNumericalValue(connectedFieldData.font_size); // Next, we what to apply the overall font size multiplier.
+
+      if (!isNaN(newFontData['font_size'].value)) {
+        // By default we use 1.
+        var overallFontSizeMultiplier = 1.0;
+
+        if (typeof fontsLogic.font_size_multiplier !== 'undefined') {
+          // Make sure it is a positive float.
+          overallFontSizeMultiplier = parseFloat(fontsLogic.font_size_multiplier); // We reject negative or 0 values.
+
+          if (overallFontSizeMultiplier <= 0) {
+            overallFontSizeMultiplier = 1.0;
+          }
+        }
+
+        newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * overallFontSizeMultiplier, styleManager.fonts.floatPrecision);
+      } // The font variant, letter spacing and text transform all come together from the font styles (intervals).
+      // We just need to find the one that best matches the connected field given font size (if given).
+      // Please bear in mind that we expect the font logic styles to be preprocessed, without any overlapping and using numerical keys.
+
+
+      if (typeof fontsLogic.font_styles_intervals !== 'undefined' && _.isArray(fontsLogic.font_styles_intervals) && fontsLogic.font_styles_intervals.length > 0) {
+        var idx = 0;
+
+        while (idx < fontsLogic.font_styles_intervals.length - 1 && typeof fontsLogic.font_styles_intervals[idx].end !== 'undefined' && fontsLogic.font_styles_intervals[idx].end <= connectedFieldData.font_size.value) {
+          idx++;
+        } // We will apply what we've got.
+
+
+        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].font_variant)) {
+          newFontData['font_variant'] = fontsLogic.font_styles_intervals[idx].font_variant;
+        }
+
+        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].letter_spacing)) {
+          newFontData['letter_spacing'] = standardizeNumericalValue(fontsLogic.font_styles_intervals[idx].letter_spacing);
+        }
+
+        if (!_.isEmpty(fontsLogic.font_styles_intervals[idx].text_transform)) {
+          newFontData['text_transform'] = fontsLogic.font_styles_intervals[idx].text_transform;
+        } // Next, we what to apply the interval font size multiplier.
+
+
+        if (!isNaN(newFontData['font_size'].value)) {
+          // By default we use 1.
+          var fontSizeMultiplier = 1.0;
+
+          if (typeof fontsLogic.font_styles_intervals[idx].font_size_multiplier !== 'undefined') {
+            // Make sure it is a positive float.
+            fontSizeMultiplier = parseFloat(fontsLogic.font_styles_intervals[idx].font_size_multiplier); // We reject negative or 0 values.
+
+            if (fontSizeMultiplier <= 0) {
+              fontSizeMultiplier = 1.0;
+            }
+          }
+
+          newFontData['font_size'].value = round(parseFloat(newFontData['font_size'].value) * fontSizeMultiplier, styleManager.fonts.floatPrecision);
+        }
+      } // The line height is determined by getting the value of the polynomial function determined by points.
+
+
+      if (typeof fontsLogic.font_size_to_line_height_points !== 'undefined' && _.isArray(fontsLogic.font_size_to_line_height_points)) {
+        var result = regression.logarithmic(fontsLogic.font_size_to_line_height_points, {
+          precision: styleManager.fonts.floatPrecision
+        });
+        var lineHeight = result.predict(newFontData['font_size'].value)[1];
+        newFontData['line_height'] = standardizeNumericalValue(lineHeight);
+      }
+    }
+
+    return newFontData;
+  };
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/index.js
+
+
+
+
+
+var fonts_wrapperSelector = '.font-options__wrapper';
+var fonts_fontVariantSelector = '.style-manager_font_weight';
+var initializeFonts = function initializeFonts() {
+  var $fontFields = external_jQuery_default()(fonts_wrapperSelector);
+  $fontFields.each(function (i, obj) {
+    var $fontField = external_jQuery_default()(obj);
+    initializeFontFamilyField($fontField);
+    initializeSubfields($fontField);
+  });
+  handleFontPopupToggle();
+  reloadConnectedFields();
+};
+
+var initializeFontFamilyField = function initializeFontFamilyField($fontField) {
+  var $fontFamilyField = $fontField.find('.style-manager_font_family');
+  var familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText; // Add the Google Fonts opts to each control
+
+  addGoogleFontsToFontFamilyField($fontFamilyField); // Initialize the select2 field for the font family
+
+  $fontFamilyField.select2({
+    placeholder: familyPlaceholderText
+  });
+  $fontFamilyField.on('change', onFontFamilyChange);
+  bindFontFamilySettingChange($fontFamilyField);
+};
+
+var initializeSubfields = function initializeSubfields($fontField) {
+  var $variant = $fontField.find(fonts_fontVariantSelector);
+  var $select = $fontField.find('select').not('select[class*=\' select2\'],select[class^=\'select2\']');
+  var $range = $fontField.find('input[type="range"]'); // Initialize the select2 field for the font variant
+
+  initSubfield($variant, true); // Initialize all the regular selects in the font subfields
+
+  initSubfield($select, false); // Initialize the all the range fields in the font subfields
+
+  initSubfield($range, false);
+};
+
+var addGoogleFontsToFontFamilyField = function addGoogleFontsToFontFamilyField($fontFamilyField) {
+  var googleFontsOptions = wp.customize.settings['google_fonts_opts'];
+  var $googleOptionsPlaceholder = $fontFamilyField.find('.google-fonts-opts-placeholder').first();
+
+  if (typeof googleFontsOptions !== 'undefined' && $googleOptionsPlaceholder.length) {
+    // Replace the placeholder with the HTML for the Google fonts select options.
+    $googleOptionsPlaceholder.replaceWith(googleFontsOptions); // The active font family might be a Google font so we need to set the current value after we've added the options.
+
+    var activeFontFamily = $fontFamilyField.data('active_font_family');
+
+    if (typeof activeFontFamily !== 'undefined') {
+      $fontFamilyField.val(activeFontFamily);
+    }
+  }
+};
+
+var onFontFamilyChange = function onFontFamilyChange(event) {
+  var newFontFamily = event.target.value;
+  var $target = external_jQuery_default()(event.target);
+  var $wrapper = $target.closest(fonts_wrapperSelector); // Get the new font details
+
+  var newFontDetails = getFontDetails(newFontFamily); // Update the font field head title (with the new font family name).
+
+  updateFontHeadTitle(newFontDetails, $wrapper); // Update the variant subfield with the new options given by the selected font family.
+
+  updateVariantField(newFontDetails, $wrapper);
+
+  if (typeof who !== 'undefined' && who === 'style-manager') {// The change was triggered programmatically by Style Manager.
+    // No need to self-update the value.
+  } else {
+    // Mark this input as touched by the user.
+    external_jQuery_default()(event.target).data('touched', true); // Serialize subfield values and refresh the fonts in the preview window.
+
+    selfUpdateValue($wrapper, getSettingID($target));
+  }
+};
+
+var bindFontFamilySettingChange = function bindFontFamilySettingChange($fontFamilyField) {
+  var $wrapper = $fontFamilyField.closest(fonts_wrapperSelector);
+  var settingID = getSettingID($fontFamilyField);
+  wp.customize(settingID, function (setting) {
+    setting.bind(function (newValue, oldValue) {
+      // this is a costly operation
+      if (!isUpdating(settingID)) {
+        loadFontValue($wrapper, newValue, settingID);
+      }
+    });
+  });
+};
+
+var reloadConnectedFields = debounce(function () {
+  var settingIDs = styleManager.fontPalettes.masterSettingIds;
+  unbindConnectedFields(settingIDs);
+  settingIDs.forEach(function (settingID) {
+    wp.customize(settingID, function (parentSetting) {
+      setCallback(settingID, function (newValue) {
+        var settingConfig = getSetting(settingID);
+        var connectedFields = settingConfig.connected_fields || {};
+        Object.keys(connectedFields).forEach(function (key) {
+          var connectedFieldData = connectedFields[key];
+          var connectedSettingID = connectedFieldData.setting_id;
+          var callbackFilter = getCallbackFilter(connectedFieldData);
+          wp.customize(connectedSettingID, function (connectedSetting) {
+            connectedSetting.set(callbackFilter(newValue));
+          });
+        });
+      });
+      parentSetting.bind(getCallback(settingID));
+    });
+  });
+}, 30);
+;// CONCATENATED MODULE: ./src/_js/customizer/font-palettes/index.js
+
+var initializeFontPalettes = function initializeFontPalettes() {
+  external_jQuery_default()('.js-font-palette').each(function (i, obj) {
+    var $paletteSet = external_jQuery_default()(obj);
+    var $labels = $paletteSet.find('label');
+    $labels.on('click', function (event) {
+      var $label = external_jQuery_default()(event.target);
+      var forID = $label.attr('for');
+      var $input = external_jQuery_default()("#".concat(forID));
+      var fontsLogic = $input.data('fonts_logic');
+      showAdvancedFontPaletteControls();
+      applyFontPalette(fontsLogic);
+    });
+  }); // Handle the case when there is no selected font palette (like on a fresh installation without any demo data import).
+  // In this case we want to hide the advanced tab.
+
+  wp.customize('sm_font_palette', function (setting) {
+    if (!setting()) {
+      hideAdvancedFontPaletteControls();
+    }
+  });
+};
+
+var applyFontPalette = function applyFontPalette(fontsLogic) {
+  external_jQuery_default().each(fontsLogic, function (settingID, config) {
+    wp.customize(settingID, function (setting) {
+      setting.set(config);
+    });
+  });
+};
+
+var advancedTabSelector = '#sub-accordion-section-sm_font_palettes_section .sm-tabs__item[data-target="advanced"]';
+
+var hideAdvancedFontPaletteControls = function hideAdvancedFontPaletteControls() {
+  external_jQuery_default()(advancedTabSelector).css('visibility', 'hidden');
+};
+
+var showAdvancedFontPaletteControls = function showAdvancedFontPaletteControls() {
+  external_jQuery_default()(advancedTabSelector).css('visibility', 'visible');
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/resizer/index.js
+var defaultOffset = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0
+};
+var offset = defaultOffset;
+wp.customize.bind('ready', function () {
+  setOffset({
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10
+  });
+  resize();
+  window.addEventListener('resize', resize);
+  wp.customize.previewedDevice.bind(resize);
+  wp.customize.previewer.bind('synced', function () {
+    window.requestAnimationFrame(resize);
+  });
+  var collapseSidebar = document.querySelector('.collapse-sidebar');
+
+  if (!collapseSidebar) {
+    return;
+  }
+
+  collapseSidebar.addEventListener('click', function () {
+    setTimeout(resize, 300);
+  });
+});
+var setOffset = function setOffset(newOffset) {
+  offset = Object.assign({}, newOffset);
+};
+var resize = function resize() {
+  var preview = document.querySelector('.wp-full-overlay');
+
+  if (!preview) {
+    return;
+  }
+
+  var iframe = preview.querySelector('iframe');
+  var previewedDevice = wp.customize.previewedDevice.get();
+
+  if (!iframe) {
+    return;
+  } // remove CSS properties that may have been previously added
+
+
+  iframe.style.removeProperty('width');
+  iframe.style.removeProperty('height');
+  iframe.style.removeProperty('transform-origin');
+  iframe.style.removeProperty('transform');
+  iframe.style.removeProperty('margin-top');
+  iframe.style.removeProperty('margin-left'); // scaling of the site preview should be done only in desktop preview mode
+
+  if (previewedDevice !== 'desktop') {
+    return;
+  }
+
+  var windowWidth = window.innerWidth;
+  var windowHeight = window.innerHeight;
+  var previewWidth = preview.offsetWidth;
+  var previewHeight = preview.offsetHeight; // for an accurate preview at resolutions where media queries may intervene
+  // increase the width of the preview and use CSS transforms to scale it back down
+
+  var shouldScale = previewWidth > 720 && previewWidth < 1100;
+  var initialHeight = previewHeight;
+  var finalHeight = previewHeight - offset.top - offset.bottom;
+  var initialWidth = shouldScale ? windowWidth : previewWidth;
+  var finalWidth = previewWidth - offset.left - offset.right;
+  var scaleX = initialWidth / finalWidth;
+  var scaleY = initialHeight / finalHeight;
+  var scale = Math.max(scaleX, scaleY);
+  iframe.style.width = "".concat(finalWidth * scale, "px");
+  iframe.style.height = "".concat(finalHeight * scale, "px");
+  iframe.style.transformOrigin = "left top";
+  iframe.style.transform = "scale( ".concat(1 / scale, " )");
+  iframe.style.marginTop = "".concat(offset.top, "px");
+  iframe.style.marginLeft = "".concat(offset.left, "px");
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fields/color-select/index.js
+
+var handleColorSelectFields = function handleColorSelectFields() {
+  external_jQuery_default()('.js-color-select').each(function (i, obj) {
+    convertToColorSelect(obj);
+  });
+};
+var convertToColorSelect = function convertToColorSelect(element) {
+  var $select = external_jQuery_default()(element);
+  var $selectOptions = $select.find('option');
+  var $colorSelect = external_jQuery_default()('<div class="style-manager-color-select">');
+  var settingID = $select.data('customize-setting-link');
+  var $optionsList = external_jQuery_default()('<div class="style-manager-color-select__option-list">');
+  $selectOptions.each(function (i, option) {
+    var $option = external_jQuery_default()(option);
+    var label = $option.text();
+    var value = $option.attr('value');
+    var $colorSelectOptionLabel = external_jQuery_default()('<div class="style-manager-color-select__option-label">');
+    var $colorSelectOption = external_jQuery_default()('<div class="style-manager-color-select__option">');
+    $colorSelectOptionLabel.text(label).appendTo($colorSelectOption);
+    $colorSelectOption.data('value', value).appendTo($optionsList);
+    $colorSelectOption.addClass('style-manager-color-select__option--' + value);
+  });
+  $optionsList.appendTo($colorSelect);
+  var $colorSelectOptions = $colorSelect.find('.style-manager-color-select__option');
+  $colorSelectOptions.each(function (i, option) {
+    var $colorSelectOption = external_jQuery_default()(option);
+    var value = $colorSelectOption.data('value');
+    $colorSelectOption.on('click', function () {
+      $select.val(value).change();
+    });
+  });
+  $colorSelect.insertBefore($select);
+  $select.hide();
+
+  function updateColorSelect(newValue) {
+    var $colorSelectOption = $colorSelectOptions.filter(function (index, obj) {
+      return external_jQuery_default()(obj).data('value') === newValue;
+    });
+
+    if ($colorSelectOption.length) {
+      $colorSelectOptions.removeClass('style-manager-color-select__option--selected');
+      $colorSelectOption.addClass('style-manager-color-select__option--selected');
+    }
+  }
+
+  wp.customize(settingID, function (setting) {
+    updateColorSelect(setting());
+    setting.bind(updateColorSelect);
+  });
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/fields/range/index.js
+
+var handleRangeFields = function handleRangeFields() {
+  var rangeControlSelectors = [".accordion-section-content[id*=\"".concat(styleManager.config.options_name, "\"]"), "#sub-accordion-section-sm_color_palettes_section", "#sub-accordion-section-sm_color_usage_section"];
+  var rangeControlSelector = rangeControlSelectors.join(', ');
+  external_jQuery_default()(rangeControlSelector).each(function (i, container) {
+    var $rangeFields = external_jQuery_default()(container).find('input[type="range"]'); // For each range input add a number field (for preview mainly - but it can also be used for input)
+
+    $rangeFields.each(function (i, obj) {
+      var $range = external_jQuery_default()(obj);
+      var settingID = $range.data('customize-setting-link');
+      var $number = $range.clone();
+      $number.attr('type', 'text').attr('class', 'range-value').removeAttr('data-value_entry');
+      $number.data('source', $range);
+
+      if ($range.first().attr('id')) {
+        $number.attr('id', $range.first().attr('id') + '_number');
+      }
+
+      $number.insertAfter($range);
+      wp.customize(settingID, function (setting) {
+        setting.bind(function (newValue) {
+          $number.val(newValue);
+        });
+      }); // When clicking outside the number field or on Enter.
+
+      $number.on('blur keyup', onRangePreviewBlur);
+    });
+  });
+};
+
+function onRangePreviewBlur(event) {
+  var $number = external_jQuery_default()(event.target);
+  var $range = $number.data('source');
+
+  if ('keyup' === event.type && event.keyCode !== 13) {
+    return;
+  }
+
+  if (event.target.value === $range.val()) {
+    // Nothing to do if the values are identical.
+    return;
+  }
+
+  if (!hasValidValue($number)) {
+    $number.val($range.val());
+    shake($number);
+  } else {
+    // Do not mark this trigger as being programmatically triggered by Style Manager since it is a result of a user input.
+    $range.val($number.val()).trigger('change');
+  }
+}
+
+function hasValidValue($input) {
+  var min = $input.attr('min');
+  var max = $input.attr('max');
+  var value = $input.val();
+
+  if (typeof min !== 'undefined' && parseFloat(min) > parseFloat(value)) {
+    return false;
+  }
+
+  if (typeof max !== 'undefined' && parseFloat(max) < parseFloat(value)) {
+    return false;
+  }
+
+  return true;
+}
+
+function shake($field) {
+  $field.addClass('input-shake input-error');
+  $field.one('animationend', function () {
+    $field.removeClass('input-shake input-error');
+  });
+}
+;// CONCATENATED MODULE: ./src/_js/customizer/fields/tabs/index.js
+
+var handleTabs = function handleTabs() {
+  external_jQuery_default()('.sm-tabs').each(function (i, obj) {
+    var $wrapper = external_jQuery_default()(obj);
+    var $section = $wrapper.closest('.control-section');
+    var $tabs = $wrapper.children('.sm-tabs__item');
+    var targets = $tabs.map(function (i, el) {
+      var target = external_jQuery_default()(el).data('target');
+      return "sm-view-".concat(target);
+    });
+    var targetClassnames = targets.toArray().join(" ");
+
+    function setActiveTab($active) {
+      var target = $active.data('target');
+      $tabs.removeClass('sm-tabs__item--active');
+      $active.addClass('sm-tabs__item--active');
+      $section.removeClass(targetClassnames).addClass("sm-view-".concat(target));
+    }
+
+    $wrapper.on('click', '.sm-tabs__item', function (e) {
+      e.preventDefault();
+      setActiveTab(external_jQuery_default()(this));
+    });
+    setActiveTab($tabs.first());
+  });
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/folding-fields.js
+
+/**
+ * This function will search for all the interdependend fields and make a bound between them.
+ * So whenever a target is changed, it will take actions to the dependent fields.
+ * @TODO  this is still written in a barbaric way, refactor when needed
+ */
+
+var handleFoldingFields = function handleFoldingFields() {
+  if (_.isUndefined(styleManager.config) || _.isUndefined(styleManager.config.settings)) {
+    return; // bail
+  }
+
+  (external_jQuery_default()).fn.reactor.defaults.compliant = function () {
+    external_jQuery_default()(this).slideDown();
+    external_jQuery_default()(this).find(':disabled').attr({
+      disabled: false
+    });
+  };
+
+  (external_jQuery_default()).fn.reactor.defaults.uncompliant = function () {
+    external_jQuery_default()(this).slideUp();
+    external_jQuery_default()(this).find(':enabled').attr({
+      disabled: true
+    });
+  };
+
+  var IS = external_jQuery_default().extend({}, (external_jQuery_default()).fn.reactor.helpers);
+
+  var bindFoldingEvents = function bindFoldingEvents(parentID, field, relation) {
+    var key = null;
+
+    if (_.isString(field)) {
+      key = field;
+    } else if (!_.isUndefined(field.id)) {
+      key = field.id;
+    } else if (_.isString(field[0])) {
+      key = field[0];
+    } else {
+      return; // no key, no fun
+    }
+
+    var value = 1,
+        // by default we use 1 the most used value for checkboxes or inputs
+    between = [0, 1]; // can only be `show` or `hide`
+
+    var target_key = styleManager.config.options_name + '[' + key + ']';
+    var target_type = styleManager.config.settings[target_key].type; // we support the usual syntax like a config array like `array( 'id' => $id, 'value' => $value, 'compare' => $compare )`
+    // but we also support a non-associative array like `array( $id, $value, $compare )`
+
+    if (!_.isUndefined(field.value)) {
+      value = field.value;
+    } else if (!_.isUndefined(field[1]) && !_.isString(field[1])) {
+      value = field[1];
+    }
+
+    if (!_.isUndefined(field.between)) {
+      between = field.between;
+    }
+    /**
+     * Now for each target we have, we will bind a change event to hide or show the dependent fields
+     */
+
+
+    var target_selector = '[data-customize-setting-link="' + styleManager.config.options_name + '[' + key + ']"]';
+
+    switch (target_type) {
+      case 'checkbox':
+        external_jQuery_default()(parentID).reactIf(target_selector, function () {
+          return external_jQuery_default()(this).is(':checked') == value;
+        });
+        break;
+
+      case 'radio':
+      case 'sm_radio':
+      case 'sm_switch':
+      case 'radio_image':
+      case 'radio_html':
+        // in case of an array of values we use the ( val in array) condition
+        if (_.isObject(value)) {
+          value = _.toArray(value);
+          external_jQuery_default()(parentID).reactIf(target_selector, function () {
+            return value.indexOf(external_jQuery_default()(target_selector + ':checked').val()) !== -1;
+          });
+        } else {
+          // in any other case we use a simple == comparison
+          external_jQuery_default()(parentID).reactIf(target_selector, function () {
+            return external_jQuery_default()(target_selector + ':checked').val() == value;
+          });
+        }
+
+        break;
+
+      case 'range':
+        var x = IS.Between(between[0], between[1]);
+        external_jQuery_default()(parentID).reactIf(target_selector, x);
+        break;
+
+      default:
+        // in case of an array of values we use the ( val in array) condition
+        if (_.isObject(value)) {
+          value = _.toArray(value);
+          external_jQuery_default()(parentID).reactIf(target_selector, function () {
+            return value.indexOf(external_jQuery_default()(target_selector).val()) !== -1;
+          });
+        } else {
+          // in any other case we use a simple == comparison
+          external_jQuery_default()(parentID).reactIf(target_selector, function () {
+            return external_jQuery_default()(target_selector).val() == value;
+          });
+        }
+
+        break;
+    }
+
+    external_jQuery_default()(target_selector).trigger('change', ['style-manager']);
+    external_jQuery_default()('.reactor').trigger('change.reactor'); // triggers all events on load
+  };
+
+  external_jQuery_default().each(styleManager.config.settings, function (id, field) {
+    /**
+     * Here we have the id of the fields. but we know for sure that we just need his parent selector
+     * So we just create it
+     */
+    var parentID = id.replace('[', '-');
+    parentID = parentID.replace(']', '');
+    parentID = '#customize-control-' + parentID + '_control'; // get only the fields that have a 'show_if' property
+
+    if (field.hasOwnProperty('show_if')) {
+      var relation = 'AND';
+
+      if (!_.isUndefined(field.show_if.relation)) {
+        relation = field.show_if.relation; // remove the relation property, we need the config to be array based only
+
+        delete field.show_if.relation;
+      }
+      /**
+       * The 'show_if' can be a simple array with one target like: [ id, value, comparison, action ]
+       * Or it could be an array of multiple targets and we need to process both cases
+       */
+
+
+      if (!_.isUndefined(field.show_if.id)) {
+        bindFoldingEvents(parentID, field.show_if, relation);
+      } else if (_.isObject(field.show_if)) {
+        external_jQuery_default().each(field.show_if, function (i, j) {
+          bindFoldingEvents(parentID, j, relation);
+        });
+      }
+    }
+  });
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/utils/api-set-setting-value.js
+/**
+ * Set a setting value.
+ *
+ * Mostly used for resetting settings (via the reset buttons) but also for the preset (legacy) field.
+ *
+ * @param settingID
+ * @param value
+ */
+var apiSetSettingValue = function apiSetSettingValue(settingID, value) {
+  var setting = api(settingID),
+      field = $('[data-customize-setting-link="' + settingID + '"]'),
+      fieldClass = $(field).parent().attr('class');
+
+  if (!_.isUndefined(fieldClass) && fieldClass === 'font-options__wrapper') {
+    // if the value is a simple string it must be the font family
+    if (_.isString(value)) {
+      setting.set({
+        'font_family': value
+      });
+    } else if (_.isObject(value)) {
+      var standardValue = {}; // We will process each font property and update it
+
+      _.each(value, function (val, key) {
+        // We need to map the keys to the data attributes we are using - I know :(
+        var mappedKey = key;
+
+        switch (key) {
+          case 'font-family':
+            mappedKey = 'font_family';
+            break;
+
+          case 'font-size':
+            mappedKey = 'font_size';
+            break;
+
+          case 'font-weight':
+            mappedKey = 'font_variant';
+            break;
+
+          case 'letter-spacing':
+            mappedKey = 'letter_spacing';
+            break;
+
+          case 'text-transform':
+            mappedKey = 'text_transform';
+            break;
+
+          default:
+            break;
+        }
+
+        standardValue[mappedKey] = val;
+      });
+
+      setting.set(standardValue);
+    }
+  } else {
+    setting.set(value);
+  }
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/create-reset-buttons.js
+
+
+var createResetButtons = function createResetButtons() {
+  var $document = external_jQuery_default()(document);
+  var showResetButtons = external_jQuery_default()('button[data-action="reset_style_manager"]').length > 0;
+
+  if (showResetButtons) {
+    createResetPanelButtons();
+    createResetSectionButtons();
+    $document.on('click', '.js-reset-panel', onResetPanel);
+    $document.on('click', '.js-reset-section', onResetSection);
+    $document.on('click', '#customize-control-reset_style_manager button', onReset);
+  }
+};
+
+function createResetPanelButtons() {
+  external_jQuery_default()('.panel-meta').each(function (i, obj) {
+    var $this = external_jQuery_default()(obj);
+    var container = $this.parents('.control-panel');
+    var id = container.attr('id');
+
+    if (typeof id !== 'undefined') {
+      id = id.replace('sub-accordion-panel-', '');
+      id = id.replace('accordion-panel-', '');
+      var $buttonWrapper = external_jQuery_default()('<li class="customize-control customize-control-reset"></li>');
+      var $button = external_jQuery_default()('<button class="button js-reset-panel" data-panel="' + id + '"></button>');
+      $button.text(styleManager.l10n.panelResetButton).appendTo($buttonWrapper);
+      $this.parent().append($buttonWrapper);
+    }
+  });
+}
+
+function createResetSectionButtons() {
+  external_jQuery_default()('.accordion-section-content').each(function (el, key) {
+    var $this = external_jQuery_default()(this);
+    var sectionID = $this.attr('id');
+
+    if (_.isUndefined(sectionID) || sectionID.indexOf(styleManager.config.options_name) === -1) {
+      return;
+    }
+
+    var id = sectionID.replace('sub-accordion-section-', '');
+    var $button = external_jQuery_default()('<button class="button js-reset-section" data-section="' + id + '"></button>');
+    var $buttonWrapper = external_jQuery_default()('<li class="customize-control customize-control-reset"></li>');
+    $button.text(styleManager.l10n.sectionResetButton);
+    $buttonWrapper.append($button);
+    $this.append($buttonWrapper);
+  });
+}
+
+function onReset(ev) {
+  ev.preventDefault();
+  var iAgree = confirm(styleManager.l10n.resetGlobalConfirmMessage);
+
+  if (!iAgree) {
+    return;
+  }
+
+  external_jQuery_default().each(api.settings.controls, function (key, ctrl) {
+    var settingID = key.replace('_control', '');
+    var setting = styleManager.config.settings[settingID];
+
+    if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
+      apiSetSettingValue(settingID, setting.default);
+    }
+  });
+  api.previewer.save();
+}
+
+function onResetPanel(e) {
+  e.preventDefault();
+  var panelID = external_jQuery_default()(this).data('panel'),
+      panel = api.panel(panelID),
+      sections = panel.sections(),
+      iAgree = confirm(styleManager.l10n.resetPanelConfirmMessage);
+
+  if (!iAgree) {
+    return;
+  }
+
+  if (sections.length > 0) {
+    external_jQuery_default().each(sections, function () {
+      var controls = this.controls();
+
+      if (controls.length > 0) {
+        external_jQuery_default().each(controls, function (key, ctrl) {
+          var settingID = ctrl.id.replace('_control', ''),
+              setting = styleManager.config.settings[settingID];
+
+          if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
+            apiSetSettingValue(settingID, setting.default);
+          }
+        });
+      }
+    });
+  }
+}
+
+function onResetSection(e) {
+  e.preventDefault();
+  var sectionID = external_jQuery_default()(this).data('section'),
+      section = api.section(sectionID),
+      controls = section.controls();
+  var iAgree = confirm(styleManager.l10n.resetSectionConfirmMessage);
+
+  if (!iAgree) {
+    return;
+  }
+
+  if (controls.length > 0) {
+    external_jQuery_default().each(controls, function (key, ctrl) {
+      var setting_id = ctrl.id.replace('_control', ''),
+          setting = styleManager.config.settings[setting_id];
+
+      if (!_.isUndefined(setting) && !_.isUndefined(setting.default)) {
+        apiSetSettingValue(setting_id, setting.default);
+      }
+    });
+  }
+}
+;// CONCATENATED MODULE: ./src/_js/customizer/fonts/utils/convert-font-variant.js
+/**
+ * Will convert an array of CSS like variants into their FVD equivalents. Web Font Loader expects this format.
+ * @link https://github.com/typekit/fvd
+ */
+var convertFontVariantToFVD = function convertFontVariantToFVD(variant) {
+  variant = String(variant);
+  var fontStyle = 'n'; // normal
+
+  if (-1 !== variant.indexOf('italic')) {
+    fontStyle = 'i';
+    variant = variant.replace('italic', '');
+  } else if (-1 !== variant.indexOf('oblique')) {
+    fontStyle = 'o';
+    variant = variant.replace('oblique', '');
+  }
+
+  var fontWeight; //  The equivalence:
+  //
+  //			1: 100
+  //			2: 200
+  //			3: 300
+  //			4: 400 (default, also recognized as 'normal')
+  //			5: 500
+  //			6: 600
+  //			7: 700 (also recognized as 'bold')
+  //			8: 800
+  //			9: 900
+
+  switch (variant) {
+    case '100':
+      fontWeight = '1';
+      break;
+
+    case '200':
+      fontWeight = '2';
+      break;
+
+    case '300':
+      fontWeight = '3';
+      break;
+
+    case '500':
+      fontWeight = '5';
+      break;
+
+    case '600':
+      fontWeight = '6';
+      break;
+
+    case '700':
+    case 'bold':
+      fontWeight = '7';
+      break;
+
+    case '800':
+      fontWeight = '8';
+      break;
+
+    case '900':
+      fontWeight = '9';
+      break;
+
+    default:
+      fontWeight = '4';
+      break;
+  }
+
+  return fontStyle + fontWeight;
+};
+;// CONCATENATED MODULE: ./src/_js/customizer/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+wp.customize.bind('ready', function () {
+  loadSettings();
+  var settings = getSettings();
+  var settingIDs = Object.keys(settings);
+  bindConnectedFields(settingIDs);
+  createResetButtons();
+  handleRangeFields();
+  handleColorSelectFields();
+  handleTabs(); // @todo check reason for this timeout
+
+  setTimeout(function () {
+    handleFoldingFields();
+  }, 1000); // Initialize simple select2 fields.
+
+  external_jQuery_default()('.style-manager_select2').select2();
+  initializeColors();
+  initializeFonts();
+  initializeFontPalettes();
+}); // expose API on sm.customizer global object
+
+
+
+
+}();
+(window.sm = window.sm || {}).customizer = __webpack_exports__;
 /******/ })()
 ;
