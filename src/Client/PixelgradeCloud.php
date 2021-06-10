@@ -69,13 +69,13 @@ class PixelgradeCloud implements CloudInterface {
 		];
 
 		// Handle development and testing constants.
-		if ( defined('SM_FETCH_DRAFT_ASSETS') && true === SM_FETCH_DRAFT_ASSETS ) {
+		if ( defined('STYLE_MANAGER_FETCH_DRAFT_ASSETS') && true === STYLE_MANAGER_FETCH_DRAFT_ASSETS ) {
 			$request_data['post_status'][] = 'draft';
 		}
-		if ( defined('SM_FETCH_PRIVATE_ASSETS') && true === SM_FETCH_PRIVATE_ASSETS ) {
+		if ( defined('STYLE_MANAGER_FETCH_PRIVATE_ASSETS') && true === STYLE_MANAGER_FETCH_PRIVATE_ASSETS ) {
 			$request_data['post_status'][] = 'private';
 		}
-		if ( defined('SM_FETCH_FUTURE_ASSETS') && true === SM_FETCH_FUTURE_ASSETS ) {
+		if ( defined('STYLE_MANAGER_FETCH_FUTURE_ASSETS') && true === STYLE_MANAGER_FETCH_FUTURE_ASSETS ) {
 			$request_data['post_status'][] = 'future';
 		}
 
