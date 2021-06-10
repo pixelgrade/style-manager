@@ -112,8 +112,8 @@ function sm_color_select_darker_cb( string $value, string $selector, string $pro
  *
  * @return array
  */
-function sm_get_color_switch_darker_config( $label, $selector, $default, $properties = [ 'color' ] ): array {
-	return sm_get_color_switch_dark_config( $label, $selector, $default, $properties, true );
+function sm_get_color_switch_darker_config( $label, $selector, $default, $coloration = 2, $properties = [ 'color' ] ): array {
+	return sm_get_color_switch_dark_config( $label, $selector, $default, $coloration, $properties, true );
 }
 
 /**
@@ -127,7 +127,7 @@ function sm_get_color_switch_darker_config( $label, $selector, $default, $proper
  *
  * @return array
  */
-function sm_get_color_switch_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ): array {
+function sm_get_color_switch_dark_config( $label, $selector, $default, $coloration = 2, $properties = [ 'color' ], $isDarker = false ): array {
 
 	$css      = [];
 	$callback = 'sm_color_switch_dark_cb';
@@ -149,11 +149,12 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $properti
 	}
 
 	return [
-		'type'    => 'sm_toggle',
-		'label'   => $label,
-		'live'    => true,
-		'default' => $default,
-		'css'     => $css,
+		'type'       => 'sm_toggle',
+		'label'      => $label,
+		'live'       => true,
+		'default'    => $default,
+		'css'        => $css,
+		'coloration' => $coloration,
 	];
 }
 

@@ -179,9 +179,6 @@ class ColorPalettes extends AbstractHookProvider {
 		$switch_foreground_connected_fields = [];
 		$switch_accent_connected_fields     = [];
 
-		$select_foreground_connected_fields = [];
-		$select_accent_connected_fields     = [];
-
 		if ( ! isset( $config['panels']['theme_options_panel']['sections']['colors_section']['options'] ) ) {
 			return $config;
 		}
@@ -195,14 +192,6 @@ class ColorPalettes extends AbstractHookProvider {
 					$switch_foreground_connected_fields[] = $id;
 				}
 			}
-
-			if ( $option_config['type'] === 'select_color' ) {
-				if ( $option_config['default'] === 'accent' ) {
-					$select_accent_connected_fields[] = $id;
-				} else {
-					$select_foreground_connected_fields[] = $id;
-				}
-			}
 		}
 
 		if ( ! isset( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
@@ -211,47 +200,17 @@ class ColorPalettes extends AbstractHookProvider {
 
 		$options = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
 
-		if ( isset( $options['sm_text_color_switch_master'] ) ) {
-			$options['sm_text_color_switch_master']['connected_fields'] = $switch_foreground_connected_fields;
+		$switch_dark_count = count( $switch_foreground_connected_fields );
+
+		// Avoid division by zero.
+		if ( empty( $switch_dark_count ) ) {
+			$switch_dark_count = 1;
 		}
 
-		if ( isset( $options['sm_accent_color_switch_master'] ) ) {
-			$options['sm_accent_color_switch_master']['connected_fields'] = $switch_accent_connected_fields;
-		}
+		$switch_accent_count                               = count( $switch_accent_connected_fields );
 
-		if ( isset( $options['sm_text_color_select_master'] ) ) {
-			$options['sm_text_color_select_master']['connected_fields'] = $select_foreground_connected_fields;
-		}
-
-		if ( isset( $options['sm_accent_color_select_master'] ) ) {
-			$options['sm_accent_color_select_master']['connected_fields'] = $select_accent_connected_fields;
-		}
-
-		if ( isset( $options['sm_dark_color_switch_slider'] ) ) {
-			$switch_dark_count = count( $switch_foreground_connected_fields );
-			// Avoid division by zero.
-			if ( empty( $switch_dark_count ) ) {
-				$switch_dark_count = 1;
-			}
-			$switch_accent_count                               = count( $switch_accent_connected_fields );
-			$options['sm_dark_color_switch_slider']['default'] = round( $switch_accent_count * 100 / $switch_dark_count );
-		}
-
-		if ( isset( $options['sm_dark_color_select_slider'] ) ) {
-			$select_dark_count = count( $select_foreground_connected_fields );
-			// Avoid division by zero.
-			if ( empty( $select_dark_count ) ) {
-				$select_dark_count = 1;
-			}
-			$select_accent_count                               = count( $select_accent_connected_fields );
-			$options['sm_dark_color_select_slider']['default'] = round( $select_accent_count * 100 / $select_dark_count );
-		}
-
-		if ( isset( $options['sm_dark_color_switch_slider'] ) &&
-		     isset( $options['sm_dark_color_select_slider'] ) &&
-		     isset( $options['sm_coloration_level'] ) ) {
-
-			$average                                   = ( $options['sm_dark_color_switch_slider']['default'] + $options['sm_dark_color_select_slider']['default'] ) * 0.5;
+		if ( isset( $options['sm_coloration_level'] ) ) {
+			$average                                   = round( $switch_accent_count * 100 / $switch_dark_count );
 			$default                                   = $average > 87.5 ? '100' : ( $average > 62.5 ? '75' : ( $average > 25 ? '50' : '0' ) );
 			$options['sm_coloration_level']['default'] = $default;
 		}
@@ -272,12 +231,8 @@ class ColorPalettes extends AbstractHookProvider {
 	protected function add_color_usage_section( array $config ): array {
 
 		$color_usage_fields = [
-			'sm_dark_color_switch_slider',
-			'sm_dark_color_select_slider',
 			'sm_text_color_switch_master',
-			'sm_text_color_select_master',
 			'sm_accent_color_switch_master',
-			'sm_accent_color_select_master',
 			'sm_site_color_variation',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
@@ -643,21 +598,6 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
-				'sm_text_color_select_master'   => [
-					'type'             => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_text_color_select_master',
-					'label'            => esc_html__( 'Text Select Master', '__plugin_txtd' ),
-					'live'             => true,
-					'default'          => 'dark',
-					'connected_fields' => [],
-					'css'              => [],
-					'choices'          => [
-						'text' => esc_html__( 'Text', '__plugin_txtd' ),
-					],
-				],
 				'sm_accent_color_switch_master' => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -669,21 +609,6 @@ class ColorPalettes extends AbstractHookProvider {
 					'default'          => true,
 					'connected_fields' => [],
 					'css'              => [],
-				],
-				'sm_accent_color_select_master' => [
-					'type'             => 'select_color',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_accent_color_select_master',
-					'label'            => esc_html__( 'Accent Select Master', '__plugin_txtd' ),
-					'live'             => true,
-					'default'          => 'accent',
-					'connected_fields' => [],
-					'css'              => [],
-					'choices'          => [
-						'accent' => esc_html__( 'Accent', '__plugin_txtd' ),
-					],
 				],
 				'sm_coloration_level'           => [
 					'type'         => 'sm_radio',
@@ -699,36 +624,6 @@ class ColorPalettes extends AbstractHookProvider {
 						'75'  => esc_html__( 'High', '__plugin_txtd' ),
 						'100' => esc_html__( 'Striking', '__plugin_txtd' ),
 					],
-				],
-				'sm_dark_color_switch_slider'   => [
-					'setting_id'  => 'sm_dark_color_switch_slider',
-					'type'        => 'range',
-					'label'       => esc_html__( 'Dark to Color (switch)', '__plugin_txtd' ),
-					'desc'        => '',
-					'live'        => true,
-					'default'     => 0,
-					'input_attrs' => [
-						'min'          => 0,
-						'max'          => 100,
-						'step'         => 1,
-						'data-preview' => true,
-					],
-					'css'         => [],
-				],
-				'sm_dark_color_select_slider'   => [
-					'setting_id'  => 'sm_dark_color_select_slider',
-					'type'        => 'range',
-					'label'       => esc_html__( 'Dark to Color (select)', '__plugin_txtd' ),
-					'desc'        => '',
-					'live'        => true,
-					'default'     => 0,
-					'input_attrs' => [
-						'min'          => 0,
-						'max'          => 100,
-						'step'         => 1,
-						'data-preview' => true,
-					],
-					'css'         => [],
 				],
 			] + $config['sections']['style_manager_section']['options'];
 
@@ -753,12 +648,8 @@ class ColorPalettes extends AbstractHookProvider {
 			self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 			'sm_advanced_palette_output',
 
-			'sm_dark_color_switch_slider',
-			'sm_dark_color_select_slider',
 			'sm_text_color_switch_master',
-			'sm_text_color_select_master',
 			'sm_accent_color_switch_master',
-			'sm_accent_color_select_master',
 			'sm_site_color_variation',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
