@@ -3,7 +3,11 @@ import getRandomStripes from "./get-random-stripes";
 import getTextColor from "./get-text-color";
 
 const normalizeCloudPresets = ( presets ) => {
-  return Object.keys( presets ).map( key => {
+  return Object.keys( presets ).filter( key => {
+    const preset = presets[ key ];
+
+    return Array.isArray( preset.color_groups ) && preset.color_groups.length;
+  } ).map( key => {
     const preset = presets[ key ];
 
     const colorGroups = preset.color_groups.map( group => {
@@ -19,7 +23,7 @@ const normalizeCloudPresets = ( presets ) => {
         }
       } );
 
-      sources.sort( ( a, b ) => ( a._priority > b._priority ) ? 1 : ( ( a._priority < b._priority ) ? -1 : 0 ) );
+      sources.sort( ( a, b ) => a._priority - b._priority );
 
       return {
         ...other,
@@ -28,7 +32,7 @@ const normalizeCloudPresets = ( presets ) => {
       };
     } );
 
-    colorGroups.sort( ( a, b ) => ( a._priority > b._priority ) ? 1 : ( ( a._priority < b._priority ) ? -1 : 0 ) );
+    colorGroups.sort( ( a, b ) => a._priority - b._priority );
 
     const palettes = getPalettesFromColors( colorGroups );
 
