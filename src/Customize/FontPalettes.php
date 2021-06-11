@@ -1331,6 +1331,12 @@ class FontPalettes extends AbstractHookProvider {
 			'big'     => [],
 		];
 
+		if ( empty( $localized['l10n'] ) ) {
+			$localized['l10n'] = [];
+		}
+		$localized['l10n']['fontPalettes'] = [
+		];
+
 		return $localized;
 	}
 }

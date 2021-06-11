@@ -120,13 +120,13 @@ const Builder = ( props ) => {
                 </svg>`
           } } />
           <div className="sm-panel-toggle__label">
-            Customize colors usage
+            { styleManager.l10n.colorPalettes.builderColorUsagePanelLabel }
           </div>
         </div>
       </div>
       <div className="sm-group">
         <div className="sm-group__body">
-          <Control label={ 'Brand Colors' }>
+          <Control label={ styleManager.l10n.colorPalettes.builderBrandColorsLabel }>
             <SourceColors
               sourceSetting={ sourceSetting }
               onChange={ () => {
@@ -138,16 +138,16 @@ const Builder = ( props ) => {
       </div>
       <div className="sm-group">
         <Accordion>
-          <AccordionSection title={ 'Explore colors' } open={ true }>
+          <AccordionSection title={ styleManager.l10n.colorPalettes.builderColorPresetsTitle } open={ true }>
             <div className="customize-control-description">
-              Curated color presets to help you lay the foundations of the color system and make it easy to get started.
+              { styleManager.l10n.colorPalettes.builderColorPresetsDesc }
             </div>
             <PresetsList active={ activePreset } onChange={ ( preset ) => {
               updateSource( preset.config );
               setActivePreset( preset.uid );
             } } />
           </AccordionSection>
-          <AccordionSection title={ 'Extract from Image' }>
+          <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
             <DropZone />
           </AccordionSection>
         </Accordion>

@@ -11,8 +11,8 @@ const Preview = ( props ) => {
         <div className={ `sm-overlay__wrap` }>
           <div className={ `sm-overlay__container` }>
             <div className={ `palette-preview-header-wrap` }>
-              <h1 className={ `palette-preview-title` }>The color system</h1>
-              <p className={ `palette-preview-description` }>The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.</p>
+              <h1 className={ `palette-preview-title` }>{ styleManager.l10n.colorPalettes.palettePreviewTitle }</h1>
+              <p className={ `palette-preview-description` }>{ styleManager.l10n.colorPalettes.palettePreviewDesc }</p>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@ const PalettePreviewList = ( props ) => {
   const [ active, setActive ] = useState( userPalettes[0].id );
 
   return userPalettes.map( ( palette, index ) => {
-    const description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';
+    const description = index === 0 ? styleManager.l10n.colorPalettes.palettePreviewListDesc : '';
 
     return (
       <PalettePreview
@@ -146,16 +146,16 @@ const PalettePreviewGrade = ( props ) => {
   return (
     <div className={ className }>
       <div className="palette-preview-swatches__wrap-surface">
-        <div className="palette-preview-swatches__text">Surface</div>
+        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText }</div>
         <PalettePreviewGradeCard variation={ variation } />
       </div>
       <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
       <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } }>
         <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
-        <div className="palette-preview-swatches__text">Accent</div>
+        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText }</div>
       </div>
       <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } }>
-        <div className="palette-preview-swatches__text">Text</div>
+        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText }</div>
       </div>
     </div>
   );

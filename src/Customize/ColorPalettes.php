@@ -47,7 +47,7 @@ class ColorPalettes extends AbstractHookProvider {
 	 * @since 2.0.0
 	 *
 	 * @param DesignAssets    $design_assets Design assets.
-	 * @param LoggerInterface $logger Logger.
+	 * @param LoggerInterface $logger        Logger.
 	 */
 	public function __construct(
 		DesignAssets $design_assets,
@@ -55,7 +55,7 @@ class ColorPalettes extends AbstractHookProvider {
 	) {
 
 		$this->design_assets = $design_assets;
-		$this->logger = $logger;
+		$this->logger        = $logger;
 	}
 
 	/**
@@ -207,7 +207,7 @@ class ColorPalettes extends AbstractHookProvider {
 			$switch_dark_count = 1;
 		}
 
-		$switch_accent_count                               = count( $switch_accent_connected_fields );
+		$switch_accent_count = count( $switch_accent_connected_fields );
 
 		if ( isset( $options['sm_coloration_level'] ) ) {
 			$average                                   = round( $switch_accent_count * 100 / $switch_dark_count );
@@ -273,13 +273,14 @@ class ColorPalettes extends AbstractHookProvider {
 
 	protected function add_color_palettes_to_novablocks_settings( array $settings ): array {
 		$palette_output_value = \Pixelgrade\StyleManager\get_option( 'sm_advanced_palette_output' );
-		$palettes = [];
+		$palettes             = [];
 
 		if ( ! empty( $palette_output_value ) ) {
 			$palettes = json_decode( $palette_output_value );
 		}
 
-		$settings[ 'palettes' ] = $palettes;
+		$settings['palettes'] = $palettes;
+
 		return $settings;
 	}
 
@@ -304,7 +305,7 @@ class ColorPalettes extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] =
 			[
-				'sm_advanced_palette_source'    => [
+				'sm_advanced_palette_source'                => [
 					'type'         => 'text',
 					'live'         => true,
 					'default'      => '[
@@ -349,7 +350,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'label'        => esc_html__( 'Palette Source', '__plugin_txtd' ),
 				],
 				// This is just a setting to hold the currently selected color palette (its hashid).
-				self::SM_COLOR_PALETTE_OPTION_KEY => [
+				self::SM_COLOR_PALETTE_OPTION_KEY           => [
 					'type'         => 'hidden_control',
 					'live'         => true,
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -366,10 +367,10 @@ class ColorPalettes extends AbstractHookProvider {
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'   => self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 				],
-				'sm_advanced_palette_output' => [
-					'type'    => 'text',
-					'live'    => true,
-					'default' => '[
+				'sm_advanced_palette_output'                => [
+					'type'         => 'text',
+					'live'         => true,
+					'default'      => '[
 					  {
 					    "sourceIndex": 5,
 					    "id": 1,
@@ -565,7 +566,7 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-				'sm_site_color_variation'       => [
+				'sm_site_color_variation'                   => [
 					'type'         => 'range',
 					'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-3 for subtle shades, 4-7 for colorful, above 8 for darker shades.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'live'         => true,
@@ -586,7 +587,7 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-				'sm_text_color_switch_master'   => [
+				'sm_text_color_switch_master'               => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -598,7 +599,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
-				'sm_accent_color_switch_master' => [
+				'sm_accent_color_switch_master'             => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -610,7 +611,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
-				'sm_coloration_level'           => [
+				'sm_coloration_level'                       => [
 					'type'         => 'sm_radio',
 					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'setting_type' => 'option',
@@ -807,6 +808,40 @@ class ColorPalettes extends AbstractHookProvider {
 		}
 
 		$localized['colorPalettes']['palettes'] = $this->get_palettes();
+
+		if ( empty( $localized['l10n'] ) ) {
+			$localized['l10n'] = [];
+		}
+		$localized['l10n']['colorPalettes'] = [
+			'colorizeElementsPanelLabel'         => esc_html__( 'Colorize elements one by one', '__plugin_txtd' ),
+			'builderColorUsagePanelLabel'        => esc_html__( 'Customize colors usage', '__plugin_txtd' ),
+			'builderBrandColorsLabel'            => esc_html__( 'Brand Colors', '__plugin_txtd' ),
+			'builderColorPresetsTitle'           => esc_html__( 'Explore colors', '__plugin_txtd' ),
+			'builderColorPresetsDesc'            => esc_html__( 'Curated color presets to help you lay the foundations of the color system and make it easy to get started.', '__plugin_txtd' ),
+			'builderImageExtractTitle'           => esc_html__( 'Extract from Image', '__plugin_txtd' ),
+			'dropzoneInterpolatedColorLabel'     => esc_html__( 'Interpolated Color', '__plugin_txtd' ),
+			'dropzoneDesc'                       => esc_html__( 'Extract colors from an image and generate a color palette for your design system.', '__plugin_txtd' ),
+			'dropzoneTitle'                      => esc_html__( 'Drag and drop your image', '__plugin_txtd' ),
+			'dropzoneSubtitle'                   => sprintf(
+				wp_kses(
+				/* translators 1: open span, 2: close span */
+					__( 'or %1$s select a file %2$s from your computer', '__plugin_txtd' ),
+					wp_kses_allowed_html()
+				),
+				'<span class="dropzone-info-anchor">',
+				'</span>'
+			),
+			'previewTabLiveSiteLabel'            => esc_html__( 'Live site', '__plugin_txtd' ),
+			'previewTabColorSystemLabel'         => esc_html__( 'Color system', '__plugin_txtd' ),
+			'palettePreviewTitle'                => esc_html__( 'The color system', '__plugin_txtd' ),
+			'palettePreviewDesc'                 => wp_kses( __( 'The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.', '__plugin_txtd' ), wp_kses_allowed_html() ),
+			'palettePreviewListDesc'             => wp_kses( __( 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.', '__plugin_txtd' ), wp_kses_allowed_html() ),
+			'palettePreviewSwatchSurfaceText'    => esc_html__( 'Surface', '__plugin_txtd' ),
+			'palettePreviewSwatchAccentText'     => esc_html__( 'Accent', '__plugin_txtd' ),
+			'palettePreviewSwatchForegroundText' => esc_html__( 'Text', '__plugin_txtd' ),
+			'sourceColorsDefaultLabel'           => esc_html__( 'Color', '__plugin_txtd' ),
+			'sourceColorsInterpolatedLabel'      => esc_html__( 'Interpolated Color', '__plugin_txtd' ),
+		];
 
 		return $localized;
 	}

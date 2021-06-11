@@ -106,7 +106,7 @@ const DropZone = () => {
             sources: colors.map( ( color, colorIndex ) => {
 
               if ( colorIndex !== 0 ) {
-                label = 'Interpolated Color';
+                label = styleManager.l10n.colorPalettes.dropzoneInterpolatedColorLabel;
               }
 
               return {
@@ -170,7 +170,7 @@ const DropZone = () => {
   return (
     <div className="dropzone">
       <div className="customize-control-description">
-        Extract colors from an image and generate a color palette for your design system.
+        { styleManager.l10n.colorPalettes.dropzoneDesc }
       </div>
       <div className="dropzone-container" onDragOver={dragOver}
            onDragEnter={dragEnter}
@@ -184,8 +184,8 @@ const DropZone = () => {
                   <use xlink:href="#${ uploadIcon.id }" />
                 </svg>`
             } } />
-            <div className="dropzone-info-title">Drag and drop your image</div>
-            <div className="dropzone-info-text">or <span className="dropzone-info-anchor">select a file</span> from your computer</div>
+            <div className="dropzone-info-title">{ styleManager.l10n.colorPalettes.dropzoneTitle }</div>
+            <div className="dropzone-info-text" dangerouslySetInnerHTML={ styleManager.l10n.colorPalettes.dropzoneSubtitle } />
           </div>
         </div>
         <PresetPreview stripes={ stripes } />

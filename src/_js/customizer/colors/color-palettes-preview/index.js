@@ -8,8 +8,8 @@ import Preview from '../components/preview';
 
 const PreviewTabs = ( props ) => {
   const [ active, setActive ] = useState( 'site' );
-  const previewdDevice = wp.customize.previewedDevice.get();
-  const [ visible, setVisible ] = useState( previewdDevice === 'desktop' );
+  const previewedDevice = wp.customize.previewedDevice.get();
+  const [ visible, setVisible ] = useState( previewedDevice === 'desktop' );
 
   const previewRef = useRef();
   const previewHeaderRef = useRef();
@@ -17,8 +17,8 @@ const PreviewTabs = ( props ) => {
   const setting = wp.customize( 'sm_advanced_palette_output' );
 
   const tabs = [
-    { id: 'site', label: 'Live site' },
-    { id: 'colors', label: 'Color system', callback: () => {
+    { id: 'site', label: styleManager.l10n.colorPalettes.previewTabLiveSiteLabel },
+    { id: 'colors', label: styleManager.l10n.colorPalettes.previewTabColorSystemLabel, callback: () => {
         wp.customize.section( 'sm_color_palettes_section', section => {
           section.focus();
         } )

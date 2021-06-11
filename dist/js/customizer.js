@@ -2382,7 +2382,7 @@ var getNewColorHex = function getNewColorHex() {
   return '#111111';
 };
 var getNewColor = function getNewColor() {
-  var label = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Color';
+  var label = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   return {
     uid: "color_".concat(new Date().getTime()),
     showPicker: true,
@@ -2393,7 +2393,7 @@ var getNewColor = function getNewColor() {
 var getNewColorGroup = function getNewColorGroup() {
   return {
     uid: "color_group_".concat(new Date().getTime()),
-    sources: [getNewColor()]
+    sources: [getNewColor(styleManager.l10n.colorPalettes.sourceColorsDefaultLabel)]
   };
 };
 var addNewColorGroup = function addNewColorGroup(config) {
@@ -2413,7 +2413,7 @@ var addNewColorGroup = function addNewColorGroup(config) {
 };
 var addNewColorToGroup = function addNewColorToGroup(config, groupIndex, index) {
   var newConfig = deepCopy(config);
-  newConfig[groupIndex].sources.splice(index + 1, 0, getNewColor('Interpolated Color'));
+  newConfig[groupIndex].sources.splice(index + 1, 0, getNewColor(styleManager.l10n.colorPalettes.sourceColorsDefaultLabel));
   return newConfig;
 };
 var deleteColor = function deleteColor(config, groupIndex, index) {
@@ -3274,7 +3274,7 @@ var DropZone = function DropZone() {
             uid: "color_group_".concat(time).concat(groupIndex),
             sources: colors.map(function (color, colorIndex) {
               if (colorIndex !== 0) {
-                label = 'Interpolated Color';
+                label = styleManager.l10n.colorPalettes.dropzoneInterpolatedColorLabel;
               }
 
               return {
@@ -3332,7 +3332,7 @@ var DropZone = function DropZone() {
     className: "dropzone"
   }, /*#__PURE__*/external_React_default().createElement("div", {
     className: "customize-control-description"
-  }, "Extract colors from an image and generate a color palette for your design system."), /*#__PURE__*/external_React_default().createElement("div", {
+  }, styleManager.l10n.colorPalettes.dropzoneDesc), /*#__PURE__*/external_React_default().createElement("div", {
     className: "dropzone-container",
     onDragOver: dragOver,
     onDragEnter: dragEnter,
@@ -3349,11 +3349,10 @@ var DropZone = function DropZone() {
     }
   }), /*#__PURE__*/external_React_default().createElement("div", {
     className: "dropzone-info-title"
-  }, "Drag and drop your image"), /*#__PURE__*/external_React_default().createElement("div", {
-    className: "dropzone-info-text"
-  }, "or ", /*#__PURE__*/external_React_default().createElement("span", {
-    className: "dropzone-info-anchor"
-  }, "select a file"), " from your computer"))), /*#__PURE__*/external_React_default().createElement(PresetPreview, {
+  }, styleManager.l10n.colorPalettes.dropzoneTitle), /*#__PURE__*/external_React_default().createElement("div", {
+    className: "dropzone-info-text",
+    dangerouslySetInnerHTML: styleManager.l10n.colorPalettes.dropzoneSubtitle
+  }))), /*#__PURE__*/external_React_default().createElement(PresetPreview, {
     stripes: stripes
   }), /*#__PURE__*/external_React_default().createElement("img", {
     alt: "Preview",
@@ -3672,12 +3671,12 @@ var Builder = function Builder(props) {
     }
   }), /*#__PURE__*/external_React_default().createElement("div", {
     className: "sm-panel-toggle__label"
-  }, "Customize colors usage"))), /*#__PURE__*/external_React_default().createElement("div", {
+  }, styleManager.l10n.colorPalettes.builderColorUsagePanelLabel))), /*#__PURE__*/external_React_default().createElement("div", {
     className: "sm-group"
   }, /*#__PURE__*/external_React_default().createElement("div", {
     className: "sm-group__body"
   }, /*#__PURE__*/external_React_default().createElement(Control, {
-    label: 'Brand Colors'
+    label: styleManager.l10n.colorPalettes.builderBrandColorsLabel
   }, /*#__PURE__*/external_React_default().createElement(SourceColors, {
     sourceSetting: sourceSetting,
     onChange: function onChange() {
@@ -3686,18 +3685,18 @@ var Builder = function Builder(props) {
   }), /*#__PURE__*/external_React_default().createElement("style", null, CSSOutput)))), /*#__PURE__*/external_React_default().createElement("div", {
     className: "sm-group"
   }, /*#__PURE__*/external_React_default().createElement(Accordion, null, /*#__PURE__*/external_React_default().createElement(AccordionSection, {
-    title: 'Explore colors',
+    title: styleManager.l10n.colorPalettes.builderColorPresetsTitle,
     open: true
   }, /*#__PURE__*/external_React_default().createElement("div", {
     className: "customize-control-description"
-  }, "Curated color presets to help you lay the foundations of the color system and make it easy to get started."), /*#__PURE__*/external_React_default().createElement(palette_list, {
+  }, styleManager.l10n.colorPalettes.builderColorPresetsDesc), /*#__PURE__*/external_React_default().createElement(palette_list, {
     active: activePreset,
     onChange: function onChange(preset) {
       updateSource(preset.config);
       setActivePreset(preset.uid);
     }
   })), /*#__PURE__*/external_React_default().createElement(AccordionSection, {
-    title: 'Extract from Image'
+    title: styleManager.l10n.colorPalettes.builderImageExtractTitle
   }, /*#__PURE__*/external_React_default().createElement(dropzone, null)))));
 };
 
@@ -3794,9 +3793,9 @@ var Preview = function Preview(props) {
     className: "palette-preview-header-wrap"
   }, /*#__PURE__*/external_React_default().createElement("h1", {
     className: "palette-preview-title"
-  }, "The color system"), /*#__PURE__*/external_React_default().createElement("p", {
+  }, styleManager.l10n.colorPalettes.palettePreviewTitle), /*#__PURE__*/external_React_default().createElement("p", {
     className: "palette-preview-description"
-  }, "The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks."))))), /*#__PURE__*/external_React_default().createElement(PalettePreviewList, props));
+  }, styleManager.l10n.colorPalettes.palettePreviewDesc))))), /*#__PURE__*/external_React_default().createElement(PalettePreviewList, props));
 };
 
 var PalettePreviewList = function PalettePreviewList(props) {
@@ -3816,7 +3815,7 @@ var PalettePreviewList = function PalettePreviewList(props) {
       setActive = _useState2[1];
 
   return userPalettes.map(function (palette, index) {
-    var description = index === 0 ? 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.' : '';
+    var description = index === 0 ? styleManager.l10n.colorPalettes.palettePreviewListDesc : '';
     return /*#__PURE__*/external_React_default().createElement(PalettePreview, {
       key: palette.id,
       isActive: active === palette.id,
@@ -3925,7 +3924,7 @@ var PalettePreviewGrade = function PalettePreviewGrade(props) {
     className: "palette-preview-swatches__wrap-surface"
   }, /*#__PURE__*/external_React_default().createElement("div", {
     className: "palette-preview-swatches__text"
-  }, "Surface"), /*#__PURE__*/external_React_default().createElement(PalettePreviewGradeCard, {
+  }, styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText), /*#__PURE__*/external_React_default().createElement(PalettePreviewGradeCard, {
     variation: variation
   })), /*#__PURE__*/external_React_default().createElement("div", {
     className: "palette-preview-swatches__wrap-background",
@@ -3941,14 +3940,14 @@ var PalettePreviewGrade = function PalettePreviewGrade(props) {
     className: "palette-preview-swatches__source-badge sm-variation-".concat(getStarVariation(variation))
   }), /*#__PURE__*/external_React_default().createElement("div", {
     className: "palette-preview-swatches__text"
-  }, "Accent")), /*#__PURE__*/external_React_default().createElement("div", {
+  }, styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText)), /*#__PURE__*/external_React_default().createElement("div", {
     className: "palette-preview-swatches__wrap-foreground",
     style: {
       color: textColor
     }
   }, /*#__PURE__*/external_React_default().createElement("div", {
     className: "palette-preview-swatches__text"
-  }, "Text")));
+  }, styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText)));
 };
 
 var PalettePreviewGradeCard = function PalettePreviewGradeCard(props) {
@@ -3999,9 +3998,9 @@ var PreviewTabs = function PreviewTabs(props) {
       active = _useState2[0],
       setActive = _useState2[1];
 
-  var previewdDevice = wp.customize.previewedDevice.get();
+  var previewedDevice = wp.customize.previewedDevice.get();
 
-  var _useState3 = (0,external_React_namespaceObject.useState)(previewdDevice === 'desktop'),
+  var _useState3 = (0,external_React_namespaceObject.useState)(previewedDevice === 'desktop'),
       _useState4 = color_palettes_preview_slicedToArray(_useState3, 2),
       visible = _useState4[0],
       setVisible = _useState4[1];
@@ -4011,10 +4010,10 @@ var PreviewTabs = function PreviewTabs(props) {
   var setting = wp.customize('sm_advanced_palette_output');
   var tabs = [{
     id: 'site',
-    label: 'Live site'
+    label: styleManager.l10n.colorPalettes.previewTabLiveSiteLabel
   }, {
     id: 'colors',
-    label: 'Color system',
+    label: styleManager.l10n.colorPalettes.previewTabColorSystemLabel,
     callback: function callback() {
       wp.customize.section('sm_color_palettes_section', function (section) {
         section.focus();
@@ -4215,7 +4214,7 @@ var ColorizeElementsButton = function ColorizeElementsButton(props) {
     }
   }), /*#__PURE__*/external_React_default().createElement("div", {
     className: "sm-panel-toggle__label"
-  }, "Colorize elements one by one")));
+  }, styleManager.l10n.colorPalettes.colorizeElementsPanelLabel)));
 };
 
 var initializeColorizeElementsButton = function initializeColorizeElementsButton() {

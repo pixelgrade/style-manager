@@ -68,7 +68,7 @@ const ColorizeElementsButton = ( props ) => {
                 </svg>`
         } } />
         <div className="sm-panel-toggle__label">
-          Colorize elements one by one
+          { styleManager.l10n.colorPalettes.colorizeElementsPanelLabel }
         </div>
       </div>
     </div>

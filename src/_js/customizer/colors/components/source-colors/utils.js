@@ -4,7 +4,7 @@ export const getNewColorHex = () => {
   return '#111111'
 };
 
-export const getNewColor = ( label = 'Color' ) => {
+export const getNewColor = ( label = '' ) => {
   return {
     uid: `color_${ new Date().getTime() }`,
     showPicker: true,
@@ -16,7 +16,7 @@ export const getNewColor = ( label = 'Color' ) => {
 export const getNewColorGroup = () => {
   return {
     uid: `color_group_${ new Date().getTime() }`,
-    sources: [ getNewColor() ]
+    sources: [ getNewColor( styleManager.l10n.colorPalettes.sourceColorsDefaultLabel ) ]
   }
 }
 
@@ -36,7 +36,7 @@ export const addNewColorGroup = ( config, groupIndex = 0 ) => {
 
 export const addNewColorToGroup = ( config, groupIndex, index ) => {
   const newConfig = deepCopy( config );
-  newConfig[groupIndex].sources.splice( index + 1, 0, getNewColor( 'Interpolated Color' ) );
+  newConfig[groupIndex].sources.splice( index + 1, 0, getNewColor( styleManager.l10n.colorPalettes.sourceColorsDefaultLabel ) );
   return newConfig;
 }
 
