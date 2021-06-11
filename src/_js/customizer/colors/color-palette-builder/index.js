@@ -5,11 +5,12 @@ import ReactDOM from 'react-dom';
 export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
   const containerID = `customize-control-${ sourceSettingID }_control`;
   const container = document.getElementById( containerID );
-  const target = document.createElement( 'DIV' );
 
-  if ( typeof container === "undefined" ) {
+  if ( ! container ) {
     return;
   }
+
+  const target = document.createElement( 'DIV' );
 
   container.children.forEach( child => {
     child.style.display = 'none';

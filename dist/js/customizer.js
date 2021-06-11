@@ -3720,12 +3720,12 @@ var Control = function Control(props) {
 var initializePaletteBuilder = function initializePaletteBuilder(sourceSettingID, outputSettingID) {
   var containerID = "customize-control-".concat(sourceSettingID, "_control");
   var container = document.getElementById(containerID);
-  var target = document.createElement('DIV');
 
-  if (typeof container === "undefined") {
+  if (!container) {
     return;
   }
 
+  var target = document.createElement('DIV');
   container.children.forEach(function (child) {
     child.style.display = 'none';
   });
@@ -4219,6 +4219,11 @@ var ColorizeElementsButton = function ColorizeElementsButton(props) {
 
 var initializeColorizeElementsButton = function initializeColorizeElementsButton() {
   var target = document.getElementById('customize-control-sm_coloration_level_control');
+
+  if (!target) {
+    return;
+  }
+
   var button = document.createElement('li');
   button.setAttribute('class', 'customize-control');
   button.setAttribute('style', 'padding: 0');

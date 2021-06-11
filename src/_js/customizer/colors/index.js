@@ -77,6 +77,11 @@ const ColorizeElementsButton = ( props ) => {
 
 const initializeColorizeElementsButton = () => {
   const target = document.getElementById( 'customize-control-sm_coloration_level_control' );
+
+  if ( ! target ) {
+    return;
+  }
+
   const button = document.createElement( 'li' );
 
   button.setAttribute( 'class', 'customize-control' );
