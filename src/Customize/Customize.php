@@ -458,7 +458,7 @@ class Customize extends AbstractHookProvider {
 			$localized['styleManager'] = [];
 		}
 
-		$localized['styleManager']['userFeedback'] = [
+		$localized['userFeedback'] = [
 			'nonce'    => wp_create_nonce( 'style_manager_user_feedback' ),
 			'provided' => get_option( self::USER_PROVIDED_FEEDBACK_OPTION_KEY, false ),
 		];
@@ -491,16 +491,17 @@ class Customize extends AbstractHookProvider {
 								<div class="modal-header">
 									<button type="button" class="close icon media-modal-close" data-dismiss="modal"
 									        aria-label="Close"><span class="media-modal-icon"><span
-												class="screen-reader-text">Close media panel</span></span></button>
+												class="screen-reader-text"><?php esc_html_e( 'Close media panel', '__plugin_txtd' ); ?></span></span></button>
 									<!-- <a href="#" class="close button button--naked gray" data-dismiss="modal" aria-label="Close">Close</a> -->
 								</div>
 								<div class="modal-body full">
 									<div class="box box--large">
 										<div class="first-step">
-											<h2 class="modal-title">How would you rate your experience in finding the
-												right colors for your site?</h2>
+											<h2 class="modal-title"><?php esc_html_e( 'How would you rate your experience in finding the right colors for your site?', '__plugin_txtd' ); ?></h2>
 											<div class="scorecard">
-												<span>Poor</span>
+												<span><?php
+													/* translators: The Style Manager lowest rating.  */
+													esc_html_e( 'Poor', '__plugin_txtd' ); ?></span>
 												<label>
 													<input type="radio" name="rating" value="1" required/>
 													<span>1</span>
@@ -521,36 +522,38 @@ class Customize extends AbstractHookProvider {
 													<input type="radio" name="rating" value="5" required/>
 													<span>5</span>
 												</label>
-												<span>Great</span>
+												<span><?php
+													/* translators: The Style Manager highest rating.  */
+													esc_html_e( 'Great', '__plugin_txtd' ); ?></span>
 											</div>
 										</div>
 										<div class="second-step hidden">
-											<p><strong>What points along the way made this a <span
-														class="rating-placeholder">5</span>* experience for
-													you?</strong><br>We are counting on your insights to guide us in
-												doing better 🙏</p>
+											<p><strong><?php
+													/* translators: %s: The selected star rating */
+													printf( esc_html__( 'What points along the way made this a %s* experience for you?', '__plugin_txtd' ), '<span class="rating-placeholder">5</span>'); ?></strong><br>
+												<?php esc_html_e( 'We are counting on your insights to guide us in doing better 🙏', '__plugin_txtd' ); ?></p>
 											<div class="not-floating-labels">
 												<div class="form-row field">
 												<textarea name="message"
-												          placeholder="Describe your experience in customizing your site colors.."
+												          placeholder="<?php esc_html_e( 'Describe your experience in customizing your site colors..', '__plugin_txtd' ); ?>"
 												          id="style-manager-user-feedback-message" rows="6"
-												          oninvalid="this.setCustomValidity('May we have a little more info about your experience?')"
+												          oninvalid="this.setCustomValidity('<?php esc_html_e( 'May we have a little more info about your experience?', '__plugin_txtd' ); ?>')"
 												          oninput="setCustomValidity('')" required></textarea>
 												</div>
 											</div>
 											<button id="style-manager-user-feedback_btn" class="button"
-											        type="submit"><?php _e( 'Send us your insights', '__plugin_txtd' ); ?></button>
+											        type="submit"><?php esc_html_e( 'Send us your insights', '__plugin_txtd' ); ?></button>
 										</div>
 										<div class="thanks-step hidden">
-											<h3 class="modal-title">Thank you so much for your feedback!</h3>
-											<p>It means the world to us as we strive to constantly push the limits
-												and aim higher. Stay awesome! 🤗</p>
-											<p><em>The Pixelgrade Team</em></p>
+											<h3 class="modal-title"><?php esc_html_e( 'Thank you so much for your feedback!', '__plugin_txtd' ); ?></h3>
+											<p><?php esc_html_e( 'It means the world to us as we strive to constantly push the limits and aim higher. Stay awesome! 🤗', '__plugin_txtd' ); ?></p>
+											<p><em><?php
+													/* translators: %s: Pixelgrade */
+													printf( esc_html__( 'The %s Team', '__plugin_txtd' ), 'Pixelgrade'); ?></em></p>
 										</div>
 										<div class="error-step hidden">
-											<h3 class="modal-title">We've hit a snag!</h3>
-											<p>We couldn't record your feedback and we would truly appreciate it if
-												you would try it again at a latter time. Stay awesome! 🤗</p>
+											<h3 class="modal-title"><?php esc_html_e( 'We\'ve hit a snag!', '__plugin_txtd' ); ?></h3>
+											<p><?php esc_html_e( 'We couldn\'t record your feedback and we would truly appreciate it if you would try it again at a latter time. Stay awesome! 🤗', '__plugin_txtd' ); ?></p>
 										</div>
 									</div>
 								</div>
