@@ -80,7 +80,7 @@ class Options extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param PluginSettings  $plugin_settings Plugin settings.
+	 * @param PluginSettings $plugin_settings Plugin settings.
 	 */
 	public function __construct(
 		PluginSettings $plugin_settings
