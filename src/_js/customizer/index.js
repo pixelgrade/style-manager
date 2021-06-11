@@ -14,6 +14,7 @@ import { handleTabs } from './fields/tabs';
 
 import { handleFoldingFields } from './folding-fields';
 import { createResetButtons } from './create-reset-buttons';
+import { initializeFeedbackModal } from './feedback-modal';
 
 wp.customize.bind( 'ready', () => {
   globalService.loadSettings();
@@ -39,7 +40,7 @@ wp.customize.bind( 'ready', () => {
   initializeColors();
   initializeFonts();
   initializeFontPalettes();
-
+  initializeFeedbackModal();
 } );
 
 // expose API on sm.customizer global object

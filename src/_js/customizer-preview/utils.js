@@ -136,6 +136,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
 
 // Mirror logic of server-side Utils\Fonts::getFontStyle()
 export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
+  const styleManager = styleManager || parent.styleManager;
   const fontConfig = styleManager.config.settings[settingID];
   const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix
 
@@ -275,31 +276,33 @@ const getFontFieldCSSProperties = function (cssValue, allowedProperties = false,
 }
 
 // Mirror logic of server-side Utils\Fonts::isCSSPropertyAllowed()
-const isCSSPropertyAllowed = function (property, allowedProperties = false) {
+const isCSSPropertyAllowed = function( property, allowedProperties = false ) {
+
   // Empty properties are not allowed.
-  if (_.isEmpty(property)) {
+  if ( _.isEmpty( property ) ) {
     return false
   }
 
   // Everything is allowed if nothing is specified.
-  if (_.isEmpty(allowedProperties)) {
+  if ( _.isEmpty( allowedProperties ) ) {
     return true
   }
 
   // For arrays
-  if (_.includes(allowedProperties, property)) {
+  if ( _.includes( allowedProperties, property ) ) {
     return true
   }
 
   // For objects
-  if (_.has(allowedProperties, property) && allowedProperties[property]) {
+  if ( _.has( allowedProperties, property ) && allowedProperties[property] ) {
     return true
   }
 
   return false
 }
 
-const extractAllowedCSSPropertiesFromFontFields = function (subfields) {
+const extractAllowedCSSPropertiesFromFontFields = ( subfields ) => {
+
   // Nothing is allowed by default.
   const allowedProperties = {
     'font-family': false,
@@ -313,7 +316,7 @@ const extractAllowedCSSPropertiesFromFontFields = function (subfields) {
     'text-decoration': false,
   }
 
-  if (_.isEmpty(subfields)) {
+  if ( _.isEmpty( subfields ) ) {
     return allowedProperties
   }
 
@@ -336,11 +339,14 @@ const extractAllowedCSSPropertiesFromFontFields = function (subfields) {
 }
 
 export const maybeLoadFontFamily = function (font, settingID) {
-  if (typeof font.font_family === 'undefined') {
+
+  const styleManager = styleManager || parent.styleManager;
+
+  if ( typeof font.font_family === 'undefined' ) {
     return
   }
 
-  const fontConfig = styleManager.config.settings[settingID]
+  const fontConfig = styleManager.config.settings[settingID];
 
   let family = font.font_family
   // The font family may be a comma separated list like "Roboto, sans"
@@ -436,6 +442,7 @@ export const maybeLoadFontFamily = function (font, settingID) {
 
 // This is a mirror logic of the server-side Utils\Fonts::getFontFamilyFallbackStack()
 const getFontFamilyFallbackStack = function (fontFamily) {
+  const styleManager = styleManager || parent.styleManager;
   let fallbackStack = '';
 
   const fontDetails = parent.sm.customizer.getFontDetails(fontFamily)
