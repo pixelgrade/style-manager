@@ -11,7 +11,7 @@ const Accordion = ( props ) => {
     const { title, children } = section.props;
 
     return (
-      <div className={ `sm-blinds sm-blinds--${ active === index ? 'open' : 'closed' }` }>
+      <div className={ `sm-blinds sm-blinds--${ active === index ? 'open' : 'closed' }` } key={ index }>
         <div className="sm-blinds__header" onClick={ () => {
           setActive( active !== index ? index : null );
         } }>
