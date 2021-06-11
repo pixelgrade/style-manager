@@ -185,7 +185,7 @@ const DropZone = () => {
                 </svg>`
             } } />
             <div className="dropzone-info-title">{ styleManager.l10n.colorPalettes.dropzoneTitle }</div>
-            <div className="dropzone-info-text" dangerouslySetInnerHTML={ styleManager.l10n.colorPalettes.dropzoneSubtitle } />
+            <div className="dropzone-info-text" dangerouslySetInnerHTML={{ __html: styleManager.l10n.colorPalettes.dropzoneSubtitle }} />
           </div>
         </div>
         <PresetPreview stripes={ stripes } />
