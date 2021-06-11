@@ -24,7 +24,7 @@ const getRandomStripes = ( palettes => {
     }
   } );
 
-  stripes.sort( ( a, b ) => a.width > b.width ? -1 : 1 );
+  stripes.sort( ( a, b ) => ( a.width > b.width ) ? -1 : ( ( a.width < b.width ) ? 1 : 0 ) );
 
   const segments = [ Array.from( Array(10).keys() ) ];
 
@@ -67,13 +67,13 @@ const getRandomStripes = ( palettes => {
   // merge sources and other colors
   const colors = sourceColors.concat( otherColors ).slice(0, 5);
 
-  stripes.sort( ( a, b ) => a.width > b.width ? -1 : 1 );
+  stripes.sort( ( a, b ) => ( a.width > b.width ) ? -1 : ( ( a.width < b.width ) ? 1 : 0 ) );
 
   stripes.forEach( ( stripe, index ) => {
     stripe.color = colors[index];
   } );
 
-  stripes.sort( ( a, b ) => a.index > b.index ? -1 : 1 );
+  stripes.sort( ( a, b ) => ( a.index > b.index ) ? -1 : ( ( a.index < b.index ) ? 1 : 0 ) );
 
   return stripes;
 } );

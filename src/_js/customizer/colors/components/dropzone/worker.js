@@ -11,7 +11,7 @@ function sendPalette( label, colors ) {
 addEventListener( 'message', function( event ) {  // eslint-disable-line no-restricted-globals
   const points = getDataArrayFromImage( event.data.imageData );
   const clusters = getClusters( points, 5, 10 );
-  clusters.sort( ( cluster1, cluster2 ) => cluster1.points.length > cluster2.points.length ? -1 : 1 );
+  clusters.sort( ( cluster1, cluster2 ) => (cluster1.points.length > cluster2.points.length) ? -1 :( ( cluster1.points.length < cluster2.points.length ) ? 1 : 0 ) );
   clusters.splice( 3 );
 
   const palette = clusters.map( cluster => chroma( cluster.centroid, 'lab' ).rgb() );

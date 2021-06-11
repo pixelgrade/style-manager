@@ -19,7 +19,7 @@ const normalizeCloudPresets = ( presets ) => {
         }
       } );
 
-      sources.sort( ( a, b ) => a._priority > b._priority ? 1 : -1 );
+      sources.sort( ( a, b ) => ( a._priority > b._priority ) ? 1 : ( ( a._priority < b._priority ) ? -1 : 0 ) );
 
       return {
         ...other,
@@ -28,7 +28,7 @@ const normalizeCloudPresets = ( presets ) => {
       };
     } );
 
-    colorGroups.sort( ( a, b ) => a._priority > b._priority ? 1 : -1 );
+    colorGroups.sort( ( a, b ) => ( a._priority > b._priority ) ? 1 : ( ( a._priority < b._priority ) ? -1 : 0 ) );
 
     const palettes = getPalettesFromColors( colorGroups );
 

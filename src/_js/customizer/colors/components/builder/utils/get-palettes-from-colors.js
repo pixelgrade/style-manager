@@ -179,7 +179,7 @@ const createAutoPalette = ( colors, attributes = {} ) => {
   newColors.splice( 0, 0, '#FFFFFF' );
   newColors.push( '#000000' );
   newColors.sort( ( c1, c2 ) => {
-    return chroma( c1 ).luminance() > chroma( c2 ).luminance() ? -1 : 1;
+    return ( chroma( c1 ).luminance() > chroma( c2 ).luminance() ) ? -1 : ( ( chroma( c1 ).luminance() < chroma( c2 ).luminance() ) ? 1 : 0 );
   } );
 
   if ( !! bezierInterpolation ) {
