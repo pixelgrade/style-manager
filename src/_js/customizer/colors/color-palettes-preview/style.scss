@@ -15,6 +15,10 @@
 
   pointer-events: none;
 
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
   &:not(.sm-preview--visible) {
 
     .sm-preview__header {

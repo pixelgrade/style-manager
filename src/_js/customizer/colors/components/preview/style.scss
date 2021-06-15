@@ -6,12 +6,15 @@
 
 .palette-preview-header-wrap {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 
   margin-left: -60px;
 
   > * {
-    margin-left: 60px;
+    flex: 1 1 400px;
+    max-width: 100%;
+    padding-left: 60px;
   }
 }
 
@@ -59,6 +62,9 @@
 }
 
 .palette-preview-swatches__text {
+  display: flex;
+  justify-content: center;
+
   position: absolute;
   left: 0;
   bottom: 100%;
@@ -194,7 +200,7 @@
 
 .palette-preview-swatches__card-content {
   position: relative;
-  min-width: 10em;
+  min-width: 13em;
   padding: 2em 1.5em;
 
   > * + * + * {

@@ -152,10 +152,10 @@ const PalettePreviewGrade = ( props ) => {
       <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
       <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } }>
         <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
-        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText }</div>
+        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchAccentText }</div>
       </div>
       <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } }>
-        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText }</div>
+        <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchForegroundText }</div>
       </div>
     </div>
   );
