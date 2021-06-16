@@ -47,7 +47,7 @@ class AdminAssets extends AbstractHookProvider {
 
 		wp_register_script(
 			'pixelgrade_style_manager-settings',
-			$this->plugin->get_url( 'dist/js/settings' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'dist/js/settings.js' ),
 			[ 'jquery' ],
 			VERSION,
 			true

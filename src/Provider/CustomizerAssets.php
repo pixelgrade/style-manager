@@ -62,7 +62,7 @@ class CustomizerAssets extends AbstractHookProvider {
 			],
 			VERSION, true );
 		wp_register_script( 'pixelgrade_style_manager-customizer',
-			$this->plugin->get_url( 'dist/js/customizer' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'dist/js/customizer.js' ),
 			[
 				'jquery',
 				'jquery-react',
@@ -102,7 +102,7 @@ class CustomizerAssets extends AbstractHookProvider {
 		 */
 		wp_register_script(
 			'pixelgrade_style_manager-dark-mode',
-			$this->plugin->get_url( 'dist/js/dark-mode' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'dist/js/dark-mode.js' ),
 			[ 'jquery' ],
 			VERSION
 		);
@@ -133,7 +133,7 @@ class CustomizerAssets extends AbstractHookProvider {
 			null );
 
 		wp_register_script( 'pixelgrade_style_manager-customizer-search',
-			$this->plugin->get_url( 'dist/js/customizer-search' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'dist/js/customizer-search.js' ),
 			[ 'jquery', 'pixelgrade_style_manager-fuse', ],
 			VERSION );
 

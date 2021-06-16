@@ -27,9 +27,7 @@ function kebabize( str ) {
 }
 
 const entries = files.reduce( ( acc, curr ) => {
-  const src = `./src/_js/${ curr }/index.js`;
-  acc[ camelize( curr ) ] = src;
-  acc[ `${ camelize( curr ) }.min` ] = src;
+  acc[ camelize( curr ) ] = `./src/_js/${ curr }/index.js`;
   return acc;
 }, {} );
 
@@ -95,7 +93,7 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserPlugin( {
-        include: /\.min\.js$/,
+        include: /\.js$/,
         extractComments: {
           condition: true,
           filename: ( fileData ) => {

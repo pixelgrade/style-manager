@@ -33,10 +33,8 @@ class CustomizerPreviewAssets extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	public function register_assets() {
-		$scripts_suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-
 		wp_register_script( 'pixelgrade_style_manager-previewer',
-			$this->plugin->get_url( 'dist/js/customizer-preview' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'dist/js/customizer-preview.js' ),
 			[
 				'jquery',
 				'lodash',
