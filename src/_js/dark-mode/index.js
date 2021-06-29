@@ -1,9 +1,10 @@
 import $ from 'jquery';
 
-const COLOR_SCHEME_BUTTON = '.is-color-scheme-switcher-button';
+const COLOR_SCHEME_BUTTON = '.menu-item--dark-mode';
 const STORAGE_ITEM = 'color-scheme-dark';
 const TEMP_STORAGE_ITEM = 'color-scheme-dark-temp'
 const ignoreStorage = !! wp.customize;
+
 
 export default class DarkMode {
 

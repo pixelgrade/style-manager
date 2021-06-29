@@ -63,6 +63,13 @@ class GeneralAssets extends AbstractHookProvider {
 			VERSION
 		);
 
+		wp_register_script(
+			'pixelgrade_style_manager-dark-mode',
+			$this->plugin->get_url( 'dist/js/dark-mode.js' ),
+			[],
+			VERSION
+		);
+
 		$advanced_palettes_output = $this->options->get( 'sm_advanced_palette_output' );
 
 		if ( $advanced_palettes_output !== null ) {
