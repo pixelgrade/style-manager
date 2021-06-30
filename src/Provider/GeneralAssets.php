@@ -66,7 +66,7 @@ class GeneralAssets extends AbstractHookProvider {
 		wp_register_script(
 			'pixelgrade_style_manager-dark-mode',
 			$this->plugin->get_url( 'dist/js/dark-mode.js' ),
-			[],
+			[ 'jquery' ],
 			VERSION
 		);
 

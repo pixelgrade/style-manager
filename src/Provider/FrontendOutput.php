@@ -421,5 +421,6 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	protected function enqueue_assets() {
 		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
+		wp_enqueue_script( 'pixelgrade_style_manager-dark-mode' );
 	}
 }

@@ -98,16 +98,6 @@ class CustomizerAssets extends AbstractHookProvider {
 			true );
 
 		/**
-		 * STYLE MANAGER RELATED
-		 */
-		wp_register_script(
-			'pixelgrade_style_manager-dark-mode',
-			$this->plugin->get_url( 'dist/js/dark-mode.js' ),
-			[ 'jquery' ],
-			VERSION
-		);
-
-		/**
 		 * COLOR PALETTES RELATED
 		 */
 
