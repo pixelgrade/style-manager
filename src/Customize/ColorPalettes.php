@@ -79,11 +79,6 @@ class ColorPalettes extends AbstractHookProvider {
 		$this->add_filter( 'novablocks_block_editor_settings', 'add_color_palettes_to_novablocks_settings' );
 
 		/**
-		 * Scripts enqueued in the Customizer.
-		 */
-		$this->add_action( 'customize_controls_enqueue_scripts', 'enqueue_admin_customizer_scripts', 10 );
-
-		/**
 		 * Add color palettes usage to site data.
 		 */
 		$this->add_filter( 'style_manager/get_site_data', 'add_palettes_to_site_data', 10, 1 );
@@ -133,19 +128,6 @@ class ColorPalettes extends AbstractHookProvider {
 				$editor_color_palettes
 			);
 		}
-	}
-
-	/**
-	 * Enqueue Customizer admin scripts
-	 */
-	protected function enqueue_admin_customizer_scripts() {
-
-		// If there is no color palettes support, bail early.
-		if ( ! $this->is_supported() ) {
-			return;
-		}
-
-		wp_enqueue_script( 'pixelgrade_style_manager-dark-mode' );
 	}
 
 	/**

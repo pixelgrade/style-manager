@@ -1,38 +1,53 @@
 import $ from 'jquery';
 
-const COLOR_SCHEME_BUTTON = '.js-sm-dark-mode-toggle';
+const COLOR_SCHEME_BUTTON_SELECTOR = '.js-sm-dark-mode-toggle';
 const STORAGE_ITEM = 'color-scheme-dark';
 const TEMP_STORAGE_ITEM = 'color-scheme-dark-temp'
-const ignoreStorage = !! window?.wp?.customize;
 
-export default class DarkMode {
+class DarkMode {
 
-  constructor( element ) {
-
-    this.$element = $( element );
-    this.$html = $( 'html' );
-
-    this.$colorSchemeButtons = $( COLOR_SCHEME_BUTTON );
-    this.$colorSchemeButtonsLink = this.$colorSchemeButtons.children( 'a' );
-
-    this.matchMedia = window.matchMedia( '(prefers-color-scheme: dark)' );
-    this.darkModeSetting = this.$html.data( 'dark-mode-advanced' );
-
-    this.theme = null;
-
+  constructor() {
     this.initialize();
   }
 
   initialize() {
-    localStorage.removeItem( TEMP_STORAGE_ITEM );
+    this.darkModeSetting = window.document.documentElement.dataset?.darkModeAdvanced;
+    this.matchMedia = window.matchMedia( '(prefers-color-scheme: dark)' );
+    this.storageItemKey = STORAGE_ITEM;
 
-    this.bindEvents();
-    this.bindCustomizer();
-    this.update();
+    onReady( () => {
+      if ( isCustomizePreview() || isLoggedIn() ) {
+        localStorage.removeItem( TEMP_STORAGE_ITEM );
+        this.storageItemKey = TEMP_STORAGE_ITEM;
+      }
+
+      if ( isCustomizePreview() ) {
+        this.initializeCustomizePreview();
+      }
+
+      this.bindEvents();
+      this.update();
+    } );
+
+  }
+
+  initializeCustomizePreview() {
+
+    window.parent.wp.customize( 'sm_dark_mode_advanced', setting => {
+      setting.bind( ( newValue ) => {
+        this.darkModeSetting = newValue;
+        localStorage.removeItem( TEMP_STORAGE_ITEM );
+        this.update();
+      } );
+    } );
   }
 
   bindEvents() {
-    $( document ).on( 'click', COLOR_SCHEME_BUTTON, this.onClick.bind( this ) );
+    const toggles = window.document.querySelectorAll( COLOR_SCHEME_BUTTON_SELECTOR );
+
+    toggles.forEach( toggle => {
+      toggle.addEventListener( 'click', this.onClick.bind( this ) );
+    } );
 
     this.matchMedia.addEventListener( 'change', () => {
       localStorage.removeItem( TEMP_STORAGE_ITEM );
@@ -40,47 +55,10 @@ export default class DarkMode {
     } );
   }
 
-  bindCustomizer() {
-
-    if ( ! window?.wp?.customize ) {
-      return;
-    }
-
-    wp.customize.bind( 'ready', () => {
-      wp.customize( 'sm_dark_mode_advanced', setting => {
-        localStorage.removeItem( TEMP_STORAGE_ITEM );
-        this.darkModeSetting = setting();
-        this.update();
-
-        setting.bind( ( newValue, oldValue ) => {
-          localStorage.removeItem( TEMP_STORAGE_ITEM );
-          this.darkModeSetting = newValue;
-          this.update();
-        } );
-
-        const previewer = wp?.customize?.previewer;
-
-        if ( previewer ) {
-          previewer.bind( 'ready', () => {
-            const targetWindow = previewer.preview.targetWindow();
-            this.$html = this.$html.add( targetWindow.document.documentElement );
-          } );
-        }
-      } );
-    } );
-  }
-
-  onClick( e ) {
-    e.preventDefault();
-    let isDark = this.isCompiledDark();
-
-    localStorage.setItem( this.getStorageItemKey(), !! isDark ? 'light' : 'dark' );
-
+  onClick( event ) {
+    event.preventDefault();
+    localStorage.setItem( this.storageItemKey, !! this.isCompiledDark() ? 'light' : 'dark' );
     this.update();
-  };
-
-  getStorageItemKey() {
-    return ! ignoreStorage ? STORAGE_ITEM : TEMP_STORAGE_ITEM;
   };
 
   isSystemDark() {
@@ -95,7 +73,7 @@ export default class DarkMode {
 
   isCompiledDark() {
     let isDark = this.isSystemDark();
-    let colorSchemeStorageValue = localStorage.getItem( this.getStorageItemKey() );
+    let colorSchemeStorageValue = localStorage.getItem( this.storageItemKey );
 
     if ( colorSchemeStorageValue !== null ) {
       isDark = colorSchemeStorageValue === 'dark';
@@ -105,8 +83,36 @@ export default class DarkMode {
   }
 
   update() {
-    this.$html.toggleClass( 'is-dark', this.isCompiledDark() );
+    if ( this.isCompiledDark() ) {
+      window.document.documentElement.classList.add( 'is-dark' );
+    } else {
+      window.document.documentElement.classList.remove( 'is-dark' );
+    }
   }
 }
 
-const Dark = new DarkMode();
+function onReady( fn ) {
+  if ( document.readyState != 'loading' ) {
+    fn();
+  } else {
+    document.addEventListener( 'DOMContentLoaded', fn );
+  }
+}
+
+function inIframe() {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+}
+
+function isLoggedIn() {
+  return window.document.body.classList.contains( 'logged-in' );
+}
+
+function isCustomizePreview() {
+  return inIframe() && window?.parent?.wp?.customize;
+}
+
+export default new DarkMode();

@@ -300,7 +300,6 @@ class EditWithBlocks extends AbstractHookProvider {
 
 	protected function enqueue_style_manager_scripts() {
 		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
-		wp_enqueue_script( 'pixelgrade_style_manager-dark-mode' );
 
 		$localized = [
 			'style_manager_colors_custom_properties_url' => $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ),
