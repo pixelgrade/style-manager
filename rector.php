@@ -18,6 +18,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$parameters->set(Option::PATHS, [
 		__DIR__ . '/src',
 		__DIR__ . '/vendor_prefixed',
+		__DIR__ . '/style-manager.php',
 	]);
 
 	$parameters->set(Option::SKIP, [
@@ -28,10 +29,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	// Rector is static reflection to load code without running it - see https://phpstan.org/blog/zero-config-analysis-with-static-reflection
 	$parameters->set(Option::AUTOLOAD_PATHS, [
 		__DIR__ . "/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php",
-		__DIR__ . "/vendor/autoload.php",
-		__DIR__ . "/vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
-		__DIR__ . "/vendor_prefixed/symfony/polyfill-php72/bootstrap.php",
-		__DIR__ . "/vendor_prefixed",
 	]);
 
 	// do you need to include constants, class aliases or custom autoloader? files listed will be executed

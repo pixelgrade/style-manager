@@ -120,7 +120,7 @@
 		],
 		"downgrade-to-php-70": [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
-			"vendor/bin/rector process"
+			"vendor/bin/rector process --autoload-file=vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"
 		],
 
 		"dev-install": [
