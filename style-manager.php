@@ -16,7 +16,7 @@
  * Domain Path: /languages/
  * Requires at least: 4.9.16
  * Tested up to: 5.7.2
- * Requires PHP: 5.6.20
+ * Requires PHP: 7.0
  * GitHub Plugin URI: pixelgrade/style-manager
  * Release Asset: true
  */
@@ -42,7 +42,7 @@ const VERSION        = '2.0.0';
  *
  * @var string
  */
-const PHP_VERSION    = '5.6.20';
+const PHP_VERSION    = '7.0';
 
 // Load the Composer autoloader.
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {

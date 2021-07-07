@@ -18,7 +18,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$parameters->set(Option::PATHS, [
 		__DIR__ . '/src',
 		__DIR__ . '/vendor_prefixed',
-		__DIR__ . '/style-manager.php',
 	]);
 
 	$parameters->set(Option::SKIP, [
