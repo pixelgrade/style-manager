@@ -42,7 +42,7 @@
 		}
 	},
     "require": {
-		"php": ">=5.6",
+		"php": ">=7.0",
         "pimple/pimple": "^3.2",
         "cedaro/wp-plugin": "^0.4.0",
         "htmlburger/carbon-fields": "^3.2",
@@ -53,17 +53,19 @@
 		"symfony/polyfill-php72": "^v1.22.1"
 	},
 	"require-dev": {
-        "brain/monkey": "^2.2",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
-        "pclzip/pclzip": "^2.8",
-        "phpcompatibility/php-compatibility": "^9.3",
-        "phpunit/phpunit": "^7.5",
-        "rector/rector": "^0.11",
-        "roave/security-advisories": "dev-master",
-        "squizlabs/php_codesniffer": "^3.3",
-        "vlucas/phpdotenv": "^5.3",
-        "wordpress/wordpress": "^5.6",
-        "wp-coding-standards/wpcs": "^2.3.0"
+		"brain/monkey": "^2.2",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"pclzip/pclzip": "^2.8",
+		"php-stubs/wordpress-stubs": "^5.7",
+		"phpcompatibility/php-compatibility": "^9.3",
+		"phpunit/phpunit": "^7.5",
+		"rector/rector": "dev-main",
+		"roave/security-advisories": "dev-master",
+		"squizlabs/php_codesniffer": "^3.3",
+		"szepeviktor/phpstan-wordpress": "^0.7.6",
+		"vlucas/phpdotenv": "^5.3",
+		"wordpress/wordpress": "^5.6",
+		"wp-coding-standards/wpcs": "^2.3.0"
     },
 	"autoload": {
 		"psr-4": {
@@ -98,7 +100,7 @@
 
 		"php-compatibility" : [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
-			"vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 5.6-"
+			"vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.0-"
 		],
 
 		"pre-install-cmd": "@create-vendor-prefix-folder",
@@ -116,7 +118,7 @@
 			"npm run gulp composer:prefix_outside_files",
 			"@composer dump-autoload"
 		],
-		"downgrade-to-php-56": [
+		"downgrade-to-php-70": [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
 			"vendor/bin/rector process"
 		],
@@ -134,7 +136,7 @@
 			"npm run gulp composer:delete_lock_and_vendor",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
-			"@downgrade-to-php-56",
+			"@downgrade-to-php-70",
 			"@composer dump-autoload --no-dev --optimize"
 		],
 		"zip": [

@@ -20,23 +20,30 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 		__DIR__ . '/vendor_prefixed',
 	]);
 
+	$parameters->set(Option::SKIP, [
+		__DIR__ . '/src/_js',
+		__DIR__ . '/src/_scss',
+	]);
+
 	// Rector is static reflection to load code without running it - see https://phpstan.org/blog/zero-config-analysis-with-static-reflection
 	$parameters->set(Option::AUTOLOAD_PATHS, [
+		__DIR__ . "/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php",
 		__DIR__ . "/vendor/autoload.php",
-		__DIR__ . "/src/functions.php",
-		__DIR__ . "/src/sm-functions.php",
-		__DIR__ . "/src/cloud-filter-functions.php",
-		__DIR__ . "/src/deprecated.php",
 		__DIR__ . "/vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
 		__DIR__ . "/vendor_prefixed/symfony/polyfill-php72/bootstrap.php",
 		__DIR__ . "/vendor_prefixed",
-		__DIR__ . '/vendor/wordpress/wordpress',
 	]);
 
 	// do you need to include constants, class aliases or custom autoloader? files listed will be executed
-	$parameters->set(Option::BOOTSTRAP_FILES, [
+//	$parameters->set(Option::BOOTSTRAP_FILES, [
+//
+//	]);
 
-	]);
+	// is your PHP version different from the one your refactor to? [default: your PHP version]
+	$parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_70);
+
+	// Path to phpstan with extensions, that PHPSTan in Rector uses to determine types
+	$parameters->set(Option::PHPSTAN_FOR_RECTOR_PATH, __DIR__ . '/phpstan.neon.dist');
 
 	// here we can define, what sets of rules will be applied
 	$containerConfigurator->import( DowngradeSetList::PHP_80 );
@@ -45,7 +52,4 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$containerConfigurator->import( DowngradeSetList::PHP_72 );
 	$containerConfigurator->import( DowngradeSetList::PHP_71 );
 	$containerConfigurator->import( DowngradeSetList::PHP_70 );
-
-	// is your PHP version different from the one your refactor to? [default: your PHP version]
-	$parameters->set(Option::PHP_VERSION_FEATURES, '7.4');
 };
