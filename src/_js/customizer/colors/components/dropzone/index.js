@@ -3,14 +3,11 @@ import chroma from "chroma-js";
 
 import { PresetPreview } from '../palette-list';
 import uploadIcon from "../../../svg/upload.svg";
-import Worker from "worker-loader!./worker.js";
 import ConfigContext from "../../context";
 
 import './style.scss';
 import getRandomStripes from "../palette-list/get-random-stripes";
 import { getPalettesFromColors } from "../builder";
-
-export const myWorker = new Worker();
 
 const canInterpolate = ( color1, color2 ) => {
   const luminance1 = chroma( color1 ).luminance();
@@ -43,7 +40,7 @@ const maybeInterpolateColors = ( colors ) => {
   return [ [ colors[0] ], [ colors[1] ], [ colors[2] ] ];
 }
 
-const DropZone = () => {
+const DropZone = ( props ) => {
 
   const { setConfig } = useContext( ConfigContext );
 
@@ -54,6 +51,8 @@ const DropZone = () => {
   const imgPreviewRef = useRef( null );
   const canvasRef = useRef( null );
   const previewRef = useRef( null );
+
+  const myWorker = props.worker;
 
   const dragOver = ( e ) => {
     e.preventDefault();
@@ -71,6 +70,10 @@ const DropZone = () => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     setFiles( files );
+  }
+
+  if ( ! myWorker ) {
+    return null;
   }
 
   useEffect( () => {
@@ -159,12 +162,14 @@ const DropZone = () => {
 
     const imageData = context.getImageData( 0, 0, canvas.width, canvas.height ).data;
 
-    myWorker.postMessage( {
-      type: 'image',
-      imageData: imageData,
-      width: canvas.width,
-      height: canvas.height
-    } );
+    if ( !! myWorker ) {
+      myWorker.postMessage( {
+        type: 'image',
+        imageData: imageData,
+        width: canvas.width,
+        height: canvas.height
+      } );
+    }
   }
 
   return (

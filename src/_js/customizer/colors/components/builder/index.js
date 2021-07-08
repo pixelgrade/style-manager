@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import Worker from "worker-loader!./worker.js";
+
 import { popFromBackArray, pushToBackArray } from "../../../global-service";
 import { useCustomizeSettingCallback } from "../../../utils";
 
@@ -20,6 +22,14 @@ import customizeColorsUsageIcon from "../../../svg/customize-colors-usage.svg";
 
 export { Builder }
 export * from './utils';
+
+let myWorker = null;
+
+try {
+  myWorker = new Worker();
+} catch (e) {
+
+}
 
 const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
@@ -147,9 +157,11 @@ const Builder = ( props ) => {
               setActivePreset( preset.uid );
             } } />
           </AccordionSection>
-          <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
-            <DropZone />
-          </AccordionSection>
+          { !! myWorker &&
+            <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
+              <DropZone worker={ myWorker } />
+            </AccordionSection>
+          }
         </Accordion>
       </div>
     </ConfigContext.Provider>
