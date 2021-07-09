@@ -20,6 +20,14 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
     return `
       ${ palettesAcc }
       
+      .sm-palette-${ id } {
+        ${ getPaletteCustomProps( id ) }
+      }
+      
+      .sm-palette-${ id }.sm-palette--shifted {
+        ${ getPaletteCustomProps( id, true ) }
+      }
+      
       html {
         ${ getInitialColorVaraibles( palette ) }
         ${ getVariablesCSS( palette, variation - 1 ) }
@@ -32,6 +40,23 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
       }
     `;
   }, '');
+}
+
+const getPaletteCustomProps = ( id, isShifted = false ) => {
+  let output = '';
+
+  for ( let i = 1; i <= 12; i++ ) {
+    let suffix = ! isShifted ? i : `${ i }-shifted`;
+
+    output += `
+      --sm-bg-color-${ i }: var(--sm-color-palette-' . ${ id } . '-bg-color-' . ${ suffix } . ');
+      --sm-accent-color-${ i }: var(--sm-color-palette-' . ${ id } . '-accent-color-' . ${ suffix } . '); 
+      --sm-fg1-color-${ i }: var(--sm-color-palette-' . ${ id } . '-fg1-color-' . ${ suffix } . ');' 
+      --sm-fg2-color-${ i }: var(--sm-color-palette-' . ${ id } . '-fg2-color-' . ${ suffix } . ');
+    `;
+  }
+
+  return output;
 }
 
 const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted = false ) => {

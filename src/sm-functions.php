@@ -252,6 +252,14 @@ function palettes_output( array $palettes ) {
 
 	foreach ( $palettes as $palette_index => $palette ) {
 		$sourceIndex = $palette->sourceIndex;
+		
+		$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+		$output .= get_palette_custom_props( $palette->id );
+		$output .= '}' . PHP_EOL;
+		
+		$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
+		$output .= get_palette_custom_props( $palette->id, true );
+		$output .= '}' . PHP_EOL;
 
 		$output .= 'html { ' . PHP_EOL;
 		$output .= get_initial_color_variables( $palette );
@@ -265,6 +273,25 @@ function palettes_output( array $palettes ) {
 		$output .= '}' . PHP_EOL;
 	}
 
+	return $output;
+}
+
+function get_palette_custom_props( $id, $isShifted = false ) {
+	$output = '';
+	
+	for ( $i = 1; $i <= 12; $i++ ) { 
+		$suffix = $i;
+		
+		if ( $isShifted ) {
+			$suffix = $i . '-shifted';
+		}
+		
+		$output .= '--sm-bg-color-' . $i . ': var(--sm-color-palette-' . $id . '-bg-color-' . $suffix . ');' . PHP_EOL;
+		$output .= '--sm-accent-color-' . $i . ': var(--sm-color-palette-' . $id . '-accent-color-' . $suffix . ');' . PHP_EOL;
+		$output .= '--sm-fg1-color-' . $i . ': var(--sm-color-palette-' . $id . '-fg1-color-' . $suffix . ');' . PHP_EOL;
+		$output .= '--sm-fg2-color-' . $i . ': var(--sm-color-palette-' . $id . '-fg2-color-' . $suffix . ');' . PHP_EOL;
+	}
+	
 	return $output;
 }
 
