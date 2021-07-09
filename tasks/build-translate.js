@@ -27,7 +27,7 @@ pluginTextdomainReplace.description = 'Replace the __plugin_txtd text-domain pla
 gulp.task('build:translate:replacetxtdomain', pluginTextdomainReplace)
 
 function generatePotFile ( done ) {
-  cp.execSync( 'wp i18n make-pot ../build/' + slug + '/ ../build/' + slug + '/languages/' + slug + '.pot',
+  cp.execSync( 'wp i18n make-pot ../build/' + slug + '/ ../build/' + slug + '/languages/' + slug + '.pot --skip-js',
     {
       stdio: 'inherit' // Use the same console as the io for the child process.
     }
