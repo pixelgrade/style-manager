@@ -50,7 +50,7 @@ const DropZone = ( props ) => {
   const imgSourceRef = useRef( null );
   const imgPreviewRef = useRef( null );
   const canvasRef = useRef( null );
-  const previewRef = useRef( null );
+  const inputFile = useRef( null );
 
   const myWorker = props.worker;
 
@@ -71,6 +71,14 @@ const DropZone = ( props ) => {
     const files = e.dataTransfer.files;
     setFiles( files );
   }
+
+  const onClick = () => {
+    inputFile.current.click();
+  }
+
+  const onFileChange = e => {
+    setFiles( e.target.files );
+  };
 
   if ( ! myWorker ) {
     return null;
@@ -180,7 +188,8 @@ const DropZone = ( props ) => {
       <div className="dropzone-container" onDragOver={dragOver}
            onDragEnter={dragEnter}
            onDragLeave={dragLeave}
-           onDrop={fileDrop}>
+           onDrop={fileDrop}
+           onClick={onClick}>
         <div className="dropzone-placeholder">
           <div className="dropzone-info">
             <div className="dropzone-info-icon" dangerouslySetInnerHTML={{
@@ -195,6 +204,7 @@ const DropZone = ( props ) => {
         </div>
         <PresetPreview stripes={ stripes } />
         <img alt="Preview" className="dropzone-image-preview" ref={ imgPreviewRef } />
+        <input type='file' id='file' ref={ inputFile } style={ { display: 'none' } } onChange={ onFileChange } />
       </div>
       <img alt="Source" className="dropzone-image-source" ref={ imgSourceRef } onLoad={ onImageLoad } />
       <canvas className="dropzone-canvas" ref={ canvasRef } />
