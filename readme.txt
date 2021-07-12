@@ -1,10 +1,10 @@
 === Style Manager - Auto-magical system to style your WordPress site ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
-Requires at least: 4.9.14
+Requires at least: 4.9.16
 Tested up to: 5.7.2
-Stable tag: 1.0.0
-Requires PHP: 5.6.20
+Stable tag: 2.0.0
+Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +55,7 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 == Changelog ==
 
 = 2.0 =
-* 2021-06-05
+* 2021-07-12
 * Complete rewrite and overhaul of the styling logic. Better in every way.
 
 = 1.0 =
