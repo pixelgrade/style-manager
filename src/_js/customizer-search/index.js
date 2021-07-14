@@ -142,7 +142,7 @@ window.styleManager = window.styleManager || parent.styleManager || {};
     const showSearchResultsWhenTopPaneVisible = function() {
       if (!api.state( 'expandedSection' ).get() && !api.state( 'expandedPanel' ).get()) {
         const searchString = $(searchInputSelector).val()
-        if (searchString.length > 2) {
+        if (searchString?.length > 2) {
           setTimeout( function() {
             displayResults(searchString)
           }, 400)
