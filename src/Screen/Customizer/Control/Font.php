@@ -89,6 +89,7 @@ class Font extends BaseControl {
 		parent::__construct( $manager, $id, $args );
 
 		$this->sm_fonts = $args['sm_fonts_service'];
+		$this->fields = $args['fields'];
 
 		$this->CSSID = $this->get_CSS_ID();
 
