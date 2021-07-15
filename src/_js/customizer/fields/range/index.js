@@ -6,6 +6,7 @@ export const handleRangeFields = () => {
     `.accordion-section-content[id*="${ styleManager.config.options_name }"]`,
     `#sub-accordion-section-sm_color_palettes_section`,
     `#sub-accordion-section-sm_color_usage_section`,
+    `#sub-accordion-section-sm_spacing_section`,
   ];
 
   const rangeControlSelector = rangeControlSelectors.join( ', ' );
@@ -33,6 +34,13 @@ export const handleRangeFields = () => {
           $number.val( newValue );
         } );
       } );
+
+      // font options don't have a setting associated with every input
+      if ( ! settingID ) {
+        $range.on( 'input', ( event ) => {
+          $number.val( event.target.value );
+        } );
+      }
 
       // When clicking outside the number field or on Enter.
       $number.on( 'blur keyup', onRangePreviewBlur );
