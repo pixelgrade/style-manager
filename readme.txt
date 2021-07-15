@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 4.9.16
 Tested up to: 5.7.2
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@ Installing "Style Manager" can be done either by searching for "Style Manager" v
 
 If you identify any errors or have an idea for improving the plugin, please open an [issue](https://github.com/pixelgrade/style-manager/issues?stage=open). We're more than excited to see what the community thinks of this project, and we welcome your input!
 
-If Github is not your thing but you are passionate about Style Manager and want to help us make it better, don't hesitate to [reach us](https://pixelgrade.com/contact/).
+If GitHub is not your thing, but you are passionate about Style Manager and want to help us make it better, don't hesitate to [reach us](https://pixelgrade.com/contact/).
 
 == Frequently Asked Questions ==
 
@@ -53,6 +53,10 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.0.1 =
+* 2021-07-14
+* Minor fix for font controls.
 
 = 2.0 =
 * 2021-07-12
