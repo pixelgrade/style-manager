@@ -29,16 +29,26 @@ class GeneralAssets extends AbstractHookProvider {
 	protected Options $options;
 
 	/**
+	 * Frontend output provider.
+	 *
+	 * @var FrontendOutput
+	 */
+	protected FrontendOutput $frontend_output;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param Options         $options Options.
+	 * @param FrontendOutput  $frontend_output Frontend output.
 	 */
 	public function __construct(
-		Options $options
+		Options $options,
+		FrontendOutput $frontend_output
 	) {
 		$this->options = $options;
+		$this->frontend_output = $frontend_output;
 	}
 
 	/**
@@ -87,6 +97,11 @@ class GeneralAssets extends AbstractHookProvider {
 		<script id="style-manager-colors-config">
 			window.styleManager = window.styleManager || {};
 			window.styleManager.colorsConfig = JSON.parse( <?php echo json_encode( $advanced_palettes_output ); ?> );
+			window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
+			window.styleManager.frontendOutput = <?php echo json_encode( $this->frontend_output->get_dynamic_style() ); ?>;
+			<?php if ( $advanced_palettes_output !== null ) { ?>
+			window.styleManager.smAdvancedPalettesOutput = <?php echo json_encode( sm_get_palette_output_from_color_config( $advanced_palettes_output ) ); ?>;
+			<?php } ?>
 		</script>
 
 		<?php echo ob_get_clean();

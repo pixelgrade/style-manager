@@ -123,7 +123,8 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['hooks.general_assets'] = function( $container ) {
 			return new Provider\GeneralAssets(
-				$container['options']
+				$container['options'],
+				$container['hooks.frontend_output']
 			);
 		};
 
