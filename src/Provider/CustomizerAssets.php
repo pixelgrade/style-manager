@@ -56,7 +56,7 @@ class CustomizerAssets extends AbstractHookProvider {
 			[],
 			VERSION );
 		wp_register_script( 'pixelgrade_style_manager-previewer-resizer',
-			$this->plugin->get_url( 'dist/js/customizer-preview-resizer' . $scripts_suffix . '.js' ),
+			$this->plugin->get_url( 'dist/js/customizer-preview-resizer.js' ),
 			[
 				'customize-preview',
 			],
