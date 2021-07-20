@@ -1463,17 +1463,18 @@ class Fonts extends AbstractHookProvider {
 		$custom_families = [];
 		$custom_urls     = [];
 
-		if ( ! empty( $args['custom_families'] ) && ! empty( $args['custom_srcs'] ) ) {
+		if ( ! empty( $custom_families ) ) {
 			$custom_families += $args['custom_families'];
-			$custom_urls     += $args['custom_srcs'];
-		}
+			echo 'webfontargs.custom = {};';
+			echo 'webfontargs.custom.families = [' .  join( ',', $custom_families ) . '];';
 
-		if ( ! empty( $custom_families ) && ! empty( $custom_urls ) ) { ?>
-			webfontargs.custom = {
-			families: [<?php echo join( ',', $custom_families ); ?>],
-			urls: [<?php echo join( ',', $custom_urls ) ?>]
-			};
-		<?php } ?>
+			if ( ! empty( $custom_urls ) ) {
+				$custom_urls += $args['custom_srcs'];
+				echo 'webfontargs.custom.urls = [' . join( ',', $custom_urls ) . '];';
+			}
+		}
+		?>
+
 		WebFont.load(webfontargs);
 		};
 
