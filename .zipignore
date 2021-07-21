@@ -1,3 +1,4 @@
+# General
 **/codekit-config.json
 node_modules
 **/node_modules
@@ -52,6 +53,10 @@ docs
 circle.yml
 .circleci
 browserslist
+babel.config.js
+.babelrc
+.eslintignore
+.eslintrc.js
 .stylelintrc
 tsconfig.json
 tslint.json
@@ -63,10 +68,13 @@ phpcs.xml.dist
 phpunit.xml.dist
 bin
 postcss.config.js
-.npmrc
 .phpcs.xml.dist
 phpstan.neon.dist
+.npmrc
+.nvmrc
+.node-version
 
+# Style Manager specifics
 # From src we will only exclude js and scss, since the rest of the files (PHP) are needed.
 src/_js
 src/_css
@@ -75,8 +83,6 @@ src/_scss
 #
 # Composer related
 #
-composer.json
-composer.lock
 
 # The php-scoper is only used during development.
 php-scoper
