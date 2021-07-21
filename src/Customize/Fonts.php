@@ -1431,55 +1431,51 @@ class Fonts extends AbstractHookProvider {
 		}
 
 		$args = $this->getFontFamiliesDetailsForWebfontloader();
-
-		if ( empty ( $args['custom_families'] ) && empty ( $args['google_families'] ) ) {
+		// If there are no families, bail.
+		if ( empty ( $args['google_families'] ) && empty ( $args['custom_families'] ) ) {
 			return '';
 		}
 
 		ob_start(); ?>
-		const styleManagerFontLoader = function() {
-		const webfontargs = {
+const styleManagerFontLoader = function() {
+	const webfontargs = {
 		classes: true,
 		events: true,
 		loading: function() {
-		window.dispatchEvent(new Event('wf-loading'));
+			window.dispatchEvent(new Event('wf-loading'));
 		},
 		active: function() {
-		window.dispatchEvent(new Event('wf-active'));
+			window.dispatchEvent(new Event('wf-active'));
 		},
 		inactive: function() {
-		window.dispatchEvent(new Event('wf-inactive'));
-		// Since we rely on this event to show text, if [all] the webfonts have failed, we still want to let the browser handle it.
-		// So we set the .wf-active class on the html element.
-		document.getElementByTag('html')[0].classList.add('wf-active');
+			window.dispatchEvent(new Event('wf-inactive'));
+			// Since we rely on this event to show text, if [all] the webfonts have failed, we still want to let the browser handle it.
+			// So we set the .wf-active class on the html element.
+			document.getElementByTag('html')[0].classList.add('wf-active');
 		}
-		};
+	};
 		<?php if ( ! empty( $args['google_families'] ) ) { ?>
-			webfontargs.google = {
-			families: [<?php echo join( ',', $args['google_families'] ); ?>]
-			};
+	webfontargs.google = {
+		families: [<?php echo join( ',', $args['google_families'] ); ?>]
+	};
 		<?php }
 
-		$custom_families = [];
-		$custom_urls     = [];
+		if ( ! empty( $args['custom_families'] ) ) { ?>
+	webfontargs.custom = {
+		families: [<?php echo join( ',', $args['custom_families'] ); ?>]
+	};
 
-		if ( ! empty( $args['custom_families'] ) && ! empty( $args['custom_srcs'] ) ) {
-			$custom_families += $args['custom_families'];
-			$custom_urls     += $args['custom_srcs'];
-		}
+			<?php if ( ! empty( $args['custom_srcs'] ) ) { ?>
+	webfontargs.custom.urls = [<?php echo join( ',', $args['custom_srcs'] ); ?>];
+			<?php }
+		} ?>
 
-		if ( ! empty( $custom_families ) && ! empty( $custom_urls ) ) { ?>
-			webfontargs.custom = {
-			families: [<?php echo join( ',', $custom_families ); ?>],
-			urls: [<?php echo join( ',', $custom_urls ) ?>]
-			};
-		<?php } ?>
-		WebFont.load(webfontargs);
-		};
+	WebFont.load(webfontargs);
+};
 
-		if (typeof WebFont !== 'undefined') {
-		styleManagerFontLoader();
-		}<?php
+if (typeof WebFont !== 'undefined') {
+	styleManagerFontLoader();
+}<?php
 		$output = ob_get_clean();
 
 		return apply_filters( 'style_manager/fonts_webfont_script', $output );
