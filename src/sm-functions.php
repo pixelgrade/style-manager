@@ -250,7 +250,7 @@ function palettes_output( array $palettes ) {
 	$output = '';
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
-	foreach ( $palettes as $palette_index => $palette ) {
+	foreach ( $palettes as $palette ) {
 		$sourceIndex = $palette->sourceIndex;
 
 		$output .= 'html { ' . PHP_EOL;
@@ -263,6 +263,27 @@ function palettes_output( array $palettes ) {
 		$output .= get_variables_css( $palette, $variation - 1, true );
 		$output .= get_variables_css( $palette, $sourceIndex, true, true );
 		$output .= '}' . PHP_EOL;
+
+		$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+		$output .= get_apply_palette_variables( $palette->id );
+		$output .= '}' . PHP_EOL;
+
+		$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
+		$output .= get_apply_palette_variables( $palette->id, '-shifted' );
+		$output .= '}' . PHP_EOL;
+	}
+
+	return $output;
+}
+
+function get_apply_palette_variables( $id, $suffix = '' ) {
+	$output = '';
+
+	for ( $i = 1; $i <= 12; $i++ ) {
+		$output .= '--sm-bg-color-' . $i . ': var(--sm-color-palette-' . $id . '-bg-color-' . $i . $suffix . ');' . PHP_EOL;
+		$output .= '--sm-accent-color-' . $i . ': var(--sm-color-palette-' . $id . '-accent-color-' . $i . $suffix . ');' . PHP_EOL;
+		$output .= '--sm-fg1-color-' . $i . ': var(--sm-color-palette-' . $id . '-fg1-color-' . $i . $suffix . ');' . PHP_EOL;
+		$output .= '--sm-fg2-color-' . $i . ': var(--sm-color-palette-' . $id . '-fg2-color-' . $i . $suffix . ');' . PHP_EOL;
 	}
 
 	return $output;
@@ -498,5 +519,12 @@ if ( ! function_exists( 'pixelgrade_option' ) ) {
 	 */
 	function pixelgrade_option( $option_id, $default = null, $force_given_default = false ) {
 		return \Pixelgrade\StyleManager\get_option( $option_id, $default );
+	}
+}
+
+if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
+	function sm_filter_user_palettes( $palette ) {
+		$id = (string) $palette->id;
+		return substr( $id, 0, 1 ) !== "_";
 	}
 }
