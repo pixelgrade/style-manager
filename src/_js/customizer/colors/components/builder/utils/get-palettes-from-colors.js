@@ -24,6 +24,7 @@ const mapSanitizePalettes = ( colors, attributes = {} ) => {
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
                .map( mapAddSourceIndex( attributes ) )
+               .map( mapMaybeSimplifyPalette )
                .map( mapAddTextColors );
 }
 
@@ -74,6 +75,45 @@ const mapColorToPalette = ( ( attributes ) => {
     };
   }
 } );
+
+const mapMaybeSimplifyPalette = ( palette ) => {
+
+  const { sourceIndex, colors } = palette;
+  const light = maybeFlatten( colors, 1, 4, sourceIndex );
+  const saturated = maybeFlatten( colors, 4, 8, sourceIndex );
+  const dark = maybeFlatten( colors, 8, 11, sourceIndex );
+  const newColors = [
+    colors[0],
+    ...light,
+    ...saturated,
+    ...dark,
+    colors[11]
+  ];
+
+  return {
+    ...palette,
+    colors: newColors,
+    lightColorsCount: 4,
+  }
+}
+
+const maybeFlatten = ( colors, start, end, sourceIndex ) => {
+  let colorIndex = Math.floor( ( end - start ) * 0.5 ) + start;
+
+  if ( start <= sourceIndex && end > sourceIndex ) {
+    colorIndex = sourceIndex;
+  }
+
+  return colors.slice( start, end ).reduce( ( res, current, index, array ) => {
+    const { isSource, ...color } = array[ colorIndex - start ];
+
+    if ( colorIndex === sourceIndex && index === sourceIndex - start ) {
+      color.isSource = true;
+    }
+
+    return res.concat( color );
+  }, [] );
+}
 
 const mapCorrectLightness = ( { correctLightness, mode } ) => {
 
