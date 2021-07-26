@@ -36,6 +36,7 @@ const Builder = ( props ) => {
   const sourceSetting = wp.customize( sourceSettingID );
   const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
+  const [ simplePalettes, setSimplePalettes ] = useState( true );
 
   const activePresetSetting = wp.customize( 'sm_color_palette_in_use' );
   const activePresetValue = activePresetSetting ? activePresetSetting() : null;
@@ -142,6 +143,27 @@ const Builder = ( props ) => {
               onChange={ () => {
                 setActivePreset( null );
               } } />
+            <div>
+              <label>
+                <input value={ simplePalettes } name="toggle-simplified-palettes" type="checkbox" onClick={ () => {
+                  setSimplePalettes( ! simplePalettes );
+
+                  wp.customize( sourceSettingID, setting => {
+                    const value = setting();
+                    const newConfig = getColorsFromInputValue( value );
+                    const newPalettes = getPalettesFromColors( newConfig, {}, ! simplePalettes );
+
+                    setConfig( getColorsFromInputValue( value ) );
+
+                    wp.customize( outputSettingID, setting => {
+                      setting.set( JSON.stringify( newPalettes ) );
+                    } );
+
+                  } );
+                } } />
+                <span>Simple palettes</span>
+              </label>
+            </div>
             <style>{ CSSOutput }</style>
           </Control>
         </div>

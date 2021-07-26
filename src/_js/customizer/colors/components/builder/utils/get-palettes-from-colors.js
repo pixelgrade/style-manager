@@ -8,23 +8,23 @@ export const getPalettesFromColors = ( colorGroups, attributes = {
   useSources: true,
   mode: 'lch',
   bezierInterpolation: false,
-} ) => {
+}, simple = false ) => {
   const functionalColors = getFunctionalColors( colorGroups );
   let palettes = colorGroups.map( mapColorToPalette( attributes ) );
   let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
   let allPalettes = palettes.concat( functionalPalettes );
 
-  return mapSanitizePalettes( allPalettes, attributes );
+  return mapSanitizePalettes( allPalettes, attributes, simple );
 }
 
 const noop = palette => palette;
 
-const mapSanitizePalettes = ( colors, attributes = {} ) => {
+const mapSanitizePalettes = ( colors, attributes = {}, simple ) => {
   return colors.map( mapCorrectLightness( attributes ) )
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
                .map( mapAddSourceIndex( attributes ) )
-               .map( mapMaybeSimplifyPalette )
+               .map( mapMaybeSimplifyPalette( simple ) )
                .map( mapAddTextColors );
 }
 
@@ -76,29 +76,41 @@ const mapColorToPalette = ( ( attributes ) => {
   }
 } );
 
-const mapMaybeSimplifyPalette = ( palette ) => {
+const mapMaybeSimplifyPalette = ( simple ) => {
 
-  const { sourceIndex, colors } = palette;
-  const light = maybeFlatten( colors, 1, 4, sourceIndex );
-  const saturated = maybeFlatten( colors, 4, 10, sourceIndex );
-  const dark = maybeFlatten( colors, 10, 11, sourceIndex );
-  const newColors = [
-    colors[0],
-    ...light,
-    ...saturated,
-    ...dark,
-    colors[11]
-  ];
+  if ( ! simple ) {
+    return noop;
+  }
 
-  return {
-    ...palette,
-    colors: newColors,
-    lightColorsCount: 4,
+  return ( palette ) => {
+
+    const { sourceIndex, colors } = palette;
+
+    const light = maybeFlatten( colors, 1, 4, sourceIndex );
+    const saturated = maybeFlatten( colors, 4, 10, sourceIndex );
+    const dark = maybeFlatten( colors, 10, 12, sourceIndex );
+    const newColors = [
+      colors[ 0 ],
+      ...light,
+      ...saturated,
+      ...dark,
+    ];
+
+    // When the sourceIndex is in the most saturate area of the palette (medium signal)
+    // Move it to the 8th position so the accent color comes from the dark colors area (high signal)
+    let newSourceIndex = 3 < sourceIndex && 10 > sourceIndex ? 5 : sourceIndex;
+
+    return {
+      ...palette,
+      colors: newColors,
+      lightColorsCount: 4,
+      sourceIndex: newSourceIndex
+    }
   }
 }
 
 const maybeFlatten = ( colors, start, end, sourceIndex ) => {
-  let colorIndex = Math.floor( ( end - start ) * 0.5 ) + start;
+  let colorIndex = Math.floor( ( end - 1 - start ) * 0.5 ) + start;
 
   if ( start <= sourceIndex && end > sourceIndex ) {
     colorIndex = sourceIndex;
