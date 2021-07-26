@@ -119,7 +119,7 @@ const PalettePreview = ( props ) => {
 }
 
 const getStarVariation = ( variation ) => {
-  return variation > 10 ? variation - 2 : variation + 2;
+  return ( variation + 6 - 1 ) % 12 + 1;
 }
 
 const PalettePreviewGrade = ( props ) => {

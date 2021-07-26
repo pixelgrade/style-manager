@@ -80,8 +80,8 @@ const mapMaybeSimplifyPalette = ( palette ) => {
 
   const { sourceIndex, colors } = palette;
   const light = maybeFlatten( colors, 1, 4, sourceIndex );
-  const saturated = maybeFlatten( colors, 4, 8, sourceIndex );
-  const dark = maybeFlatten( colors, 8, 11, sourceIndex );
+  const saturated = maybeFlatten( colors, 4, 10, sourceIndex );
+  const dark = maybeFlatten( colors, 10, 11, sourceIndex );
   const newColors = [
     colors[0],
     ...light,
