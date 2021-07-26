@@ -39,14 +39,3 @@ html,
     @include apply-variation($i);
   }
 }
-
-//@each $id in 1, 2, 3, _success, _error, _warning, _info {
-//
-//  .sm-palette-#{ $id } {
-//    @include apply-palette( $id );
-//  }
-//
-//  .sm-palette-#{ $id }.sm-palette--shifted {
-//    @include apply-palette( $id, true );
-//  }
-//}
