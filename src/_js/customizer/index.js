@@ -46,4 +46,5 @@ wp.customize.bind( 'ready', () => {
 // expose API on sm.customizer global object
 export { getFontDetails, determineFontType, convertFontVariantToFVD } from './fonts/utils';
 export { getCSSFromPalettes } from './colors/components/builder';
+export { maybeFillPalettesArray } from './colors/utils';
 export { resizer };

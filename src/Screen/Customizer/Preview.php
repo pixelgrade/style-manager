@@ -61,8 +61,11 @@ class Preview extends AbstractHookProvider {
 	}
 
 	protected function sm_advanced_palette_output_cb_customizer_preview() {
-		$palettes  = get_fallback_palettes();
+		$fallback_palettes  = get_fallback_palettes();
 		$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
+		$palettes = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
+		$user_palettes = array_filter( $palettes, 'sm_filter_user_palettes' );
+		$palettes_count = count( $user_palettes );
 
 		$js = "";
 
@@ -70,12 +73,13 @@ class Preview extends AbstractHookProvider {
 function sm_advanced_palette_output_cb( value, selector, property ) {
     var palettes = JSON.parse( value ),
         variation = " . $variation . ",
-        fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
+        fallbackPalettes = JSON.parse('" . json_encode( $fallback_palettes ) . "');
         
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
     
+    window.parent.sm.customizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
     return window.parent.sm.customizer.getCSSFromPalettes( palettes, variation );
 }" . PHP_EOL;
 
@@ -121,7 +125,10 @@ function sm_color_switch_darker_cb(value, selector, property) {
 	}
 
 	protected function sm_variation_range_cb_customizer_preview() {
-		$palettes = get_fallback_palettes();
+		$fallback_palettes = get_fallback_palettes();
+		$palettes = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
+		$user_palettes = array_filter( $palettes, 'sm_filter_user_palettes' );
+		$palettes_count = count( $user_palettes );
 
 		$js = "";
 
@@ -129,12 +136,13 @@ function sm_color_switch_darker_cb(value, selector, property) {
 function sm_variation_range_cb(value, selector, property) {
     var paletteOutputSetting = wp.customize( 'sm_advanced_palette_output' ),
         palettes = !! paletteOutputSetting ? JSON.parse( paletteOutputSetting() ) : [],
-        fallbackPalettes = JSON.parse('" . json_encode( $palettes ) . "');
+        fallbackPalettes = JSON.parse('" . json_encode( $fallback_palettes ) . "');
         
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
         
+    window.parent.sm.customizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
     return window.parent.sm.customizer.getCSSFromPalettes( palettes, value );
 }" . PHP_EOL;
 
