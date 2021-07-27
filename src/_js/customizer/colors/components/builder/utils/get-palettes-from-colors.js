@@ -89,10 +89,10 @@ const mapMaybeSimplifyPalette = ( simple ) => {
 
     const { sourceIndex, colors } = palette;
 
-    const white = maybeFlatten( colors, 0, 1, sourceIndex, 1 );
+    const white = maybeFlatten( colors, 0, 1, sourceIndex, 2 );
     const light = maybeFlatten( colors, 1, 5, sourceIndex, 4 );
-    const saturated = maybeFlatten( colors, 5, 10, sourceIndex, 6 );
-    const dark = maybeFlatten( colors, 10, 11, sourceIndex, 1 );
+    const saturated = maybeFlatten( colors, 5, 9, sourceIndex, 4 );
+    const dark = maybeFlatten( colors, 9, 12, sourceIndex, 2 );
 
     const newColors = [
       ...white,
@@ -103,27 +103,25 @@ const mapMaybeSimplifyPalette = ( simple ) => {
 
     // When the sourceIndex is in the most saturate area of the palette (medium signal)
     // Move it to the 8th position so the accent color comes from the dark colors area (high signal)
-    let newSourceIndex = 3;
+    let newSourceIndex = 0;
+
+    if ( sourceIndex > 0 ) {
+      newSourceIndex = 3;
+    }
 
     if ( sourceIndex > 4 ) {
       newSourceIndex = 8;
     }
 
-    if ( sourceIndex > 9 ) {
-      newSourceIndex = 10;
-    }
-
-    let lightColorsCount = 2;
-
-    if ( sourceIndex < 6 ) {
-      lightColorsCount = 5;
+    if ( sourceIndex > 8 ) {
+      newSourceIndex = 11;
     }
 
     return {
       ...palette,
       colors: newColors,
-      lightColorsCount: lightColorsCount,
-      sourceIndex: newSourceIndex
+      lightColorsCount: 6,
+      sourceIndex: newSourceIndex,
     }
   }
 }
