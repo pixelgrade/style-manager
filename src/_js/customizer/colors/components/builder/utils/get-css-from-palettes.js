@@ -94,13 +94,13 @@ const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShifted ) =
 
   if ( oldColorIndex < lightColorsCount ) {
     darkColors = `
-      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
-      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);
+      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);
+      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-3);
     `;
   } else {
     darkColors = `
-      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
-      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
+      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
+      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
     `;
   }
 

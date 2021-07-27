@@ -26,18 +26,22 @@ const mapSanitizePalettes = ( colors, attributes = {}, simple ) => {
   return colors.map( mapCorrectLightness( attributes ) )
                .map( mapUpdateProps )
                .map( mapUseSource( attributes ) )
+               .map( mapAddTextColors )
                .map( mapAddSourceIndex( attributes ) )
-               .map( mapMaybeSimplifyPalette( simple ) )
-               .map( mapAddTextColors );
+               .map( mapMaybeSimplifyPalette( simple ) );
 }
 
 const mapAddTextColors = ( palette ) => {
-  palette.textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
+
+  const textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
     return {
       ...color,
       value: getTextColor( color.value, 9 + index ),
     }
   } );
+
+  palette.textColors = palette.colors.slice( 0, 1 ).concat( textColors );
+
   return palette;
 }
 
@@ -87,40 +91,39 @@ const mapMaybeSimplifyPalette = ( simple ) => {
 
   return ( palette ) => {
 
-    const { sourceIndex, colors } = palette;
+    const { sourceIndex } = palette;
+    const colors = palette.colors.slice();
 
-    const white = maybeFlatten( colors, 0, 1, sourceIndex, 2 );
-    const light = maybeFlatten( colors, 1, 5, sourceIndex, 4 );
-    const saturated = maybeFlatten( colors, 5, 9, sourceIndex, 4 );
-    const dark = maybeFlatten( colors, 9, 12, sourceIndex, 2 );
+    const WHITE_COUNT = 0;
+    const LIGHT_COUNT = 3;
+    const COLOR_COUNT = 6;
+    const DARK_COUNT = 3;
 
-    const newColors = [
-      ...white,
-      ...light,
-      ...saturated,
-      ...dark,
-    ];
+    maybeFlatten( colors, 0, WHITE_COUNT, sourceIndex, WHITE_COUNT );
+    maybeFlatten( colors, WHITE_COUNT, WHITE_COUNT + LIGHT_COUNT, sourceIndex, LIGHT_COUNT );
+    maybeFlatten( colors, WHITE_COUNT + LIGHT_COUNT, WHITE_COUNT + COLOR_COUNT + DARK_COUNT, sourceIndex, COLOR_COUNT );
+    maybeFlatten( colors, WHITE_COUNT + COLOR_COUNT + DARK_COUNT, 12, sourceIndex, DARK_COUNT );
 
     // When the sourceIndex is in the most saturate area of the palette (medium signal)
     // Move it to the 8th position so the accent color comes from the dark colors area (high signal)
-    let newSourceIndex = 0;
+    let newSourceIndex = Math.floor( WHITE_COUNT / 2 );
 
-    if ( sourceIndex > 0 ) {
-      newSourceIndex = 3;
+    if ( sourceIndex > WHITE_COUNT - 1 ) {
+      newSourceIndex = WHITE_COUNT + Math.floor( LIGHT_COUNT / 2 );
     }
 
-    if ( sourceIndex > 4 ) {
-      newSourceIndex = 8;
+    if ( sourceIndex > WHITE_COUNT + LIGHT_COUNT - 1 ) {
+      newSourceIndex = WHITE_COUNT + LIGHT_COUNT + Math.floor( COLOR_COUNT / 2 );
     }
 
-    if ( sourceIndex > 8 ) {
-      newSourceIndex = 11;
+    if ( sourceIndex > WHITE_COUNT + LIGHT_COUNT + COLOR_COUNT - 1 ) {
+      newSourceIndex = WHITE_COUNT + LIGHT_COUNT + COLOR_COUNT + Math.floor( DARK_COUNT / 2 );;
     }
 
     return {
       ...palette,
-      colors: newColors,
-      lightColorsCount: 6,
+      colors,
+      lightColorsCount: WHITE_COUNT + LIGHT_COUNT,
       sourceIndex: newSourceIndex,
     }
   }
@@ -133,7 +136,7 @@ const maybeFlatten = ( colors, start, end, sourceIndex, count ) => {
     colorIndex = sourceIndex;
   }
 
-  count = count || end - start;
+  count = typeof count !== "undefined" ? count : end - start;
 
   const newColors = colors.slice( start, end ).reduce( ( res, current, index, array ) => {
     const { isSource, ...color } = array[ colorIndex - start ];
@@ -149,7 +152,7 @@ const maybeFlatten = ( colors, start, end, sourceIndex, count ) => {
     newColors.push( newColors[0] );
   }
 
-  return newColors.slice(0, count);
+  colors.splice(start, end - start, ...newColors);
 }
 
 const mapCorrectLightness = ( { correctLightness, mode } ) => {

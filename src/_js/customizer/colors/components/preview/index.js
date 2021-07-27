@@ -97,7 +97,7 @@ const PalettePreview = ( props ) => {
                 showCard: isActive && index === lastHover,
                 showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
                 showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
-                textColor: normalize( index ) >= lightColorsCount ? textColors[0].value : '#FFFFFF',
+                textColor: normalize( index ) >= lightColorsCount ? textColors[1].value : textColors[0].value,
                 variation,
               }
 
