@@ -3,18 +3,21 @@ import chroma from 'chroma-js';
 
 import contrastArray from "./contrast-array";
 
-export const getPalettesFromColors = ( colorGroups, attributes = {
+const defaultAttributes = {
   correctLightness: true,
   useSources: true,
   mode: 'lch',
   bezierInterpolation: false,
-}, simple = false ) => {
-  const functionalColors = getFunctionalColors( colorGroups );
-  let palettes = colorGroups.map( mapColorToPalette( attributes ) );
-  let functionalPalettes = functionalColors.map( mapColorToPalette( attributes ) );
-  let allPalettes = palettes.concat( functionalPalettes );
+};
 
-  return mapSanitizePalettes( allPalettes, attributes, simple );
+export const getPalettesFromColors = ( colorGroups, attributes = {}, simple = false ) => {
+  const options = Object.assign( {}, defaultAttributes, attributes );
+  const functionalColors = getFunctionalColors( colorGroups );
+  const palettes = colorGroups.map( mapColorToPalette( options ) );
+  const functionalPalettes = functionalColors.map( mapColorToPalette( options ) );
+  const allPalettes = palettes.concat( functionalPalettes );
+
+  return mapSanitizePalettes( allPalettes, options, simple );
 }
 
 const noop = palette => palette;
@@ -86,22 +89,35 @@ const mapMaybeSimplifyPalette = ( simple ) => {
 
     const { sourceIndex, colors } = palette;
 
-//    const light = maybeFlatten( colors, 1, 4, sourceIndex );
-    const saturated = maybeFlatten( colors, 1, 6, sourceIndex );
-    const dark = maybeFlatten( colors, 6, 12, sourceIndex );
+    const white = maybeFlatten( colors, 0, 1, sourceIndex, 1 );
+    const light = maybeFlatten( colors, 1, 5, sourceIndex, 4 );
+    const saturated = maybeFlatten( colors, 5, 10, sourceIndex, 6 );
+    const dark = maybeFlatten( colors, 10, 11, sourceIndex, 1 );
+
     const newColors = [
-      colors[ 0 ],
-//      ...light,
+      ...white,
+      ...light,
       ...saturated,
       ...dark,
     ];
 
     // When the sourceIndex is in the most saturate area of the palette (medium signal)
     // Move it to the 8th position so the accent color comes from the dark colors area (high signal)
-    let newSourceIndex = 3 < sourceIndex && 10 > sourceIndex ? 5 : sourceIndex;
-    newSourceIndex = sourceIndex;
+    let newSourceIndex = 3;
 
-    let lightColorsCount = sourceIndex > 4 ? 1 : 6;
+    if ( sourceIndex > 4 ) {
+      newSourceIndex = 8;
+    }
+
+    if ( sourceIndex > 9 ) {
+      newSourceIndex = 10;
+    }
+
+    let lightColorsCount = 2;
+
+    if ( sourceIndex < 6 ) {
+      lightColorsCount = 5;
+    }
 
     return {
       ...palette,
@@ -112,14 +128,16 @@ const mapMaybeSimplifyPalette = ( simple ) => {
   }
 }
 
-const maybeFlatten = ( colors, start, end, sourceIndex ) => {
-  let colorIndex = Math.floor( ( end - 1 - start ) * 0.5 ) + start;
+const maybeFlatten = ( colors, start, end, sourceIndex, count ) => {
+  let colorIndex = Math.floor( ( end - start ) * 0.5 ) + start;
 
   if ( start <= sourceIndex && end > sourceIndex ) {
     colorIndex = sourceIndex;
   }
 
-  return colors.slice( start, end ).reduce( ( res, current, index, array ) => {
+  count = count || end - start;
+
+  const newColors = colors.slice( start, end ).reduce( ( res, current, index, array ) => {
     const { isSource, ...color } = array[ colorIndex - start ];
 
     if ( colorIndex === sourceIndex && index === sourceIndex - start ) {
@@ -128,6 +146,12 @@ const maybeFlatten = ( colors, start, end, sourceIndex ) => {
 
     return res.concat( color );
   }, [] );
+
+  while ( count > newColors.length ) {
+    newColors.push( newColors[0] );
+  }
+
+  return newColors.slice(0, count);
 }
 
 const mapCorrectLightness = ( { correctLightness, mode } ) => {
@@ -195,17 +219,6 @@ const getBestPositionInPalette = ( color, colors, attributes, byColorDistance ) 
     if ( distance < min ) {
       min = distance;
       pos = i;
-    }
-  }
-
-  let firstDarkPos = Math.ceil( colors.length / 2 );
-
-  // if we want to preserve contrast we should do this
-  if ( attributes?.correctLightness ) {
-    if ( chroma.contrast( color, 'white' ) > Math.sqrt( 21 ) ) {
-      pos = Math.max( firstDarkPos, pos );
-    } else {
-      pos = Math.min( firstDarkPos - 1, pos );
     }
   }
 
