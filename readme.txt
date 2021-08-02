@@ -57,6 +57,8 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 = 2.0.5 =
 * 2021-08-02
 * Fixed a fatal PHP error on activation on certain PHP versions.
+* Fixed issues with Customizer preview links
+* Fixed feeback form
 
 = 2.0.4 =
 * 2021-07-21
