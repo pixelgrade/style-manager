@@ -50,7 +50,9 @@ const Builder = ( props ) => {
     } );
 
     wp.customize( 'sm_is_custom_color_palette', setting => {
-      setting.set( activePreset === null );
+      // Use empty string instead of false since that is what the DB provides.
+      // This way we avoid triggering a setting change when it really is not (false !== '' and the setting is updated).
+      setting.set( ( activePreset === null ) ? true  : '' );
     } );
 
   }, [ activePreset ] );
