@@ -17,8 +17,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	// paths to refactor; solid alternative to CLI arguments
 	$parameters->set(Option::PATHS, [
 		__DIR__ . '/src',
-		__DIR__ . '/vendor',
 		__DIR__ . '/vendor_prefixed',
+		__DIR__ . '/vendor/htmlburger/carbon-fields',
 	]);
 
 	$parameters->set(Option::SKIP, [
@@ -28,7 +28,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
 	// Rector is static reflection to load code without running it - see https://phpstan.org/blog/zero-config-analysis-with-static-reflection
 	$parameters->set(Option::AUTOLOAD_PATHS, [
-		__DIR__ . "/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php",
+		__DIR__ . '/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php',
 	]);
 
 	// do you need to include constants, class aliases or custom autoloader? files listed will be executed
