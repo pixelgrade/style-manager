@@ -17,6 +17,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	// paths to refactor; solid alternative to CLI arguments
 	$parameters->set(Option::PATHS, [
 		__DIR__ . '/src',
+		__DIR__ . '/vendor',
 		__DIR__ . '/vendor_prefixed',
 	]);
 
