@@ -1,11 +1,9 @@
 var gulp = require( 'gulp' ),
-	sass = require( 'gulp-sass' ),
+	sass = require( 'gulp-sass' )(require( 'node-sass' )),
 	sassUnicode = require('gulp-sass-unicode'),
 	rtlcss = require( 'gulp-rtlcss' ),
 	rename = require( 'gulp-rename' ),
 	replace = require( 'gulp-replace' );
-
-sass.compiler = require( 'node-sass' );
 
 function stylesBase( src, dest, cb ) {
 	return gulp.src( src )
