@@ -7,7 +7,13 @@
   align-items: center;
 
   width: auto;
-  margin-left: calc( -1 * var(--customize-control-spacing-x) );
+  
+  // We need an extra [class] just to make sure that we are overwriting
+  // CSS applied on .customizer-control:not([class*='customize-control-nav_menu_item']).
+  
+  &[class] {
+    margin-left: calc( -1 * var(--customize-control-spacing-x) );
+  }
 
   &[class][class] > * {
     margin-left: var(--customize-control-spacing-x);

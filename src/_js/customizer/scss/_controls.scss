@@ -2,12 +2,23 @@
   --customize-control-spacing-x: var(--customizer-spacing);
   --customize-control-spacing-y: var(--customizer-spacing);
 
-  margin: 0;
   padding: var(--customize-control-spacing-y) var(--customize-control-spacing-x);
   float: none;
+  
+  // We will remove margin on all customize-controls,
+  // except menu-items.
+  &:not([class*='customize-control-nav_menu_item']) {
+    margin: 0;
+  }
 
   &:not(:last-child) {
     padding-bottom: 0;
+  }
+  
+  // When UI is sortable (eg. Menus), we will
+  // rely more on WordPress default styling.
+  .ui-sortable & {
+    --customize-control-spacing-x: 0px;
   }
 }
 
@@ -45,6 +56,18 @@
   .control-section.open {
     border-bottom: 0;
     min-height: 100%;
+  }
+  
+  // We're in a sortable section,
+  // so we need to adjust the UI, to better
+  // match WordPress default styling.
+  .customize-pane-child.ui-sortable {
+    padding: 0 20px;
+  
+    .customize-section-description-container {
+      margin-left: -20px;
+      margin-right: -20px;
+    }
   }
 }
 
