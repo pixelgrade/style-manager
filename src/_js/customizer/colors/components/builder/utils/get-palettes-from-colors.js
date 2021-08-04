@@ -94,65 +94,67 @@ const mapMaybeSimplifyPalette = ( simple ) => {
     const { sourceIndex } = palette;
     const colors = palette.colors.slice();
 
-    const WHITE_COUNT = 0;
-    const LIGHT_COUNT = 3;
-    const COLOR_COUNT = 6;
-    const DARK_COUNT = 3;
+    let WHITES = 1;
+    let LIGHTS = 3;
+    let COLORS = 4;
+    let SHADES = 4;
 
-    maybeFlatten( colors, 0, WHITE_COUNT, sourceIndex, WHITE_COUNT );
-    maybeFlatten( colors, WHITE_COUNT, WHITE_COUNT + LIGHT_COUNT, sourceIndex, LIGHT_COUNT );
-    maybeFlatten( colors, WHITE_COUNT + LIGHT_COUNT, WHITE_COUNT + COLOR_COUNT + DARK_COUNT, sourceIndex, COLOR_COUNT );
-    maybeFlatten( colors, WHITE_COUNT + COLOR_COUNT + DARK_COUNT, 12, sourceIndex, DARK_COUNT );
+    if ( 0 < sourceIndex && sourceIndex <= 3 ) {
+      LIGHTS = 5;
+      COLORS = 3;
+      SHADES = 3;
 
-    // When the sourceIndex is in the most saturate area of the palette (medium signal)
-    // Move it to the 8th position so the accent color comes from the dark colors area (high signal)
-    let newSourceIndex = Math.floor( WHITE_COUNT / 2 );
-
-    if ( sourceIndex > WHITE_COUNT - 1 ) {
-      newSourceIndex = WHITE_COUNT + Math.floor( LIGHT_COUNT / 2 );
+      if ( sourceIndex === 3 ) {
+        LIGHTS = 6;
+        COLORS = 2;
+        SHADES = 3;
+      }
     }
 
-    if ( sourceIndex > WHITE_COUNT + LIGHT_COUNT - 1 ) {
-      newSourceIndex = WHITE_COUNT + LIGHT_COUNT + Math.floor( COLOR_COUNT / 2 );
+    if ( 3 < sourceIndex && sourceIndex <= 7 ) {
+      LIGHTS = 2;
+      COLORS = 6;
+      SHADES = 3;
     }
 
-    if ( sourceIndex > WHITE_COUNT + LIGHT_COUNT + COLOR_COUNT - 1 ) {
-      newSourceIndex = WHITE_COUNT + LIGHT_COUNT + COLOR_COUNT + Math.floor( DARK_COUNT / 2 );;
+    if ( 7 < sourceIndex && sourceIndex <= 12 ) {
+      LIGHTS = 2;
+      COLORS = 5;
+      SHADES = 4;
     }
+
+    const white = getAverage( colors, 0, WHITES, sourceIndex );
+    const light = getAverage( colors, 1, 3, sourceIndex );
+    const color = getAverage( colors, LIGHTS + WHITES, COLORS, sourceIndex );
+    const shade = getAverage( colors, LIGHTS + WHITES + COLORS, SHADES, sourceIndex );
+
+    const newColors = [
+      ...Array( WHITES ).fill( white ),
+      ...Array( LIGHTS ).fill( light ),
+      ...Array( COLORS ).fill( color ),
+      ...Array( SHADES ).fill( shade ),
+    ];
+
+    newColors[ sourceIndex ].isSource = true;
 
     return {
       ...palette,
-      colors,
-      lightColorsCount: WHITE_COUNT + LIGHT_COUNT,
-      sourceIndex: newSourceIndex,
+      colors: newColors,
+      lightColorsCount: sourceIndex === 4 ? 6 : WHITES + LIGHTS,
     }
   }
 }
 
-const maybeFlatten = ( colors, start, end, sourceIndex, count ) => {
-  let colorIndex = Math.floor( ( end - start ) * 0.5 ) + start;
+const getAverage = ( colors, start, length, sourceIndex ) => {
+  let colorIndex = Math.ceil( length * 0.5 ) + start - 1;
 
-  if ( start <= sourceIndex && end > sourceIndex ) {
+  if ( start <= sourceIndex && start + length > sourceIndex ) {
     colorIndex = sourceIndex;
   }
 
-  count = typeof count !== "undefined" ? count : end - start;
+  let { isSource, ...color } = colors[ colorIndex ];
 
-  const newColors = colors.slice( start, end ).reduce( ( res, current, index, array ) => {
-    const { isSource, ...color } = array[ colorIndex - start ];
-
-    if ( colorIndex === sourceIndex && index === sourceIndex - start ) {
-      color.isSource = true;
-    }
-
-    return res.concat( color );
-  }, [] );
-
-  while ( count > newColors.length ) {
-    newColors.push( newColors[0] );
-  }
-
-  colors.splice(start, end - start, ...newColors);
+  return color;
 }
 
 const mapCorrectLightness = ( { correctLightness, mode } ) => {

@@ -97,6 +97,7 @@ class GeneralAssets extends AbstractHookProvider {
 		<script id="style-manager-colors-config">
 			window.styleManager = window.styleManager || {};
 			window.styleManager.colorsConfig = JSON.parse( <?php echo json_encode( $advanced_palettes_output ); ?> );
+			window.styleManager.siteColorVariation = <?php echo $this->options->get( 'sm_site_color_variation' ) ?>;
 			window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
 			window.styleManager.frontendOutput = <?php echo json_encode( $this->frontend_output->get_dynamic_style() ); ?>;
 			<?php if ( $advanced_palettes_output !== null ) { ?>
