@@ -43,8 +43,15 @@
   }
 
   .accordion-section-content {
-    padding: 0;
     color: inherit;
+    
+    // We want to remove padding
+    // only on sections that are not sortable.
+    // In this type of sections we are going
+    // to rely more on WordPress default styling.
+    &:not(.ui-sortable) {
+      padding: 0;
+    }
   }
 
   .control-panel-content:not(.control-panel-nav_menus) .control-section:nth-child(2),
