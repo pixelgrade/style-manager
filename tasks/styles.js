@@ -18,7 +18,7 @@ function compileStyles( cb ) {
 }
 
 function stylesRTL( cb ) {
-	return gulp.src( [ './dist/css/**/*.css', '!./dist/css/**/*-rtl.css' ], { base: './' } )
+	return gulp.src( [ './dist/css/**/*.css', '!./dist/css/**/*-rtl.css', './dist/js/**/*.css', '!./dist/js/**/*-rtl.css' ], { base: './' } )
 	           .pipe( rtlcss() )
 	           .pipe( rename( function( path ) { path.basename += "-rtl"; } ) )
 	           .pipe( gulp.dest( '.' ) );
