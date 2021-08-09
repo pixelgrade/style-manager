@@ -55,7 +55,7 @@ export const initializeFeedbackModal = () => {
     let $form = $( event.target )
 
     let data = {
-      action: 'customify_style_manager_user_feedback',
+      action: 'style_manager_user_feedback',
       nonce: styleManager.userFeedback.nonce,
       type: $form.find( 'input[name=type]' ).val(),
       rating: $form.find( 'input[name=rating]:checked' ).val(),
@@ -63,7 +63,7 @@ export const initializeFeedbackModal = () => {
     }
 
     $.post(
-      customify.config.ajax_url,
+      styleManager.config.ajax_url,
       data,
       function( response ) {
         if ( true === response.success ) {

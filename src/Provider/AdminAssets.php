@@ -34,16 +34,7 @@ class AdminAssets extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	public function register_assets() {
-		$scripts_suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-		$rtl_suffix     = is_rtl() ? '-rtl' : '';
-
-		wp_register_script(
-			'pixelgrade_style_manager-admin',
-			$this->plugin->get_url( 'assets/js/admin.js' ),
-			[ 'jquery', 'wp-backbone', 'wp-util' ],
-			VERSION,
-			true
-		);
+		$rtl_suffix = is_rtl() ? '-rtl' : '';
 
 		wp_register_script(
 			'pixelgrade_style_manager-settings',

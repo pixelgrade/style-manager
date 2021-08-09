@@ -55,19 +55,12 @@ class CustomizerAssets extends AbstractHookProvider {
 			$this->plugin->get_url( 'vendor_js/chroma' . $scripts_suffix . '.js' ),
 			[],
 			VERSION );
-		wp_register_script( 'pixelgrade_style_manager-previewer-resizer',
-			$this->plugin->get_url( 'dist/js/customizer-preview-resizer.js' ),
-			[
-				'customize-preview',
-			],
-			VERSION, true );
 		wp_register_script( 'pixelgrade_style_manager-customizer',
 			$this->plugin->get_url( 'dist/js/customizer.js' ),
 			[
 				'jquery',
 				'jquery-react',
 				'pixelgrade_style_manager-chroma',
-				'pixelgrade_style_manager-previewer-resizer',
 				'pixelgrade_style_manager-select2',
 				'pixelgrade_style_manager-regression',
 				'react',
@@ -105,14 +98,6 @@ class CustomizerAssets extends AbstractHookProvider {
 		/**
 		 * FONT PALETTES RELATED
 		 */
-		//		wp_register_script( 'pixelgrade_style_manager-font-palettes',
-		//			$this->plugin->get_url( 'js/customizer/font-palettes' . $scripts_suffix . '.js' ),
-		//			[
-		//				'pixelgrade_style_manager-regression',
-		//				'jquery',
-		//				//'pixelgrade_style_manager-fontfields',
-		//			],
-		//			VERSION );
 
 		/**
 		 * CONTROLS SEARCH FIELD RELATED

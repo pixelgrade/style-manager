@@ -1,11 +1,9 @@
 var gulp = require( 'gulp' ),
-	sass = require( 'gulp-sass' ),
+	sass = require( 'gulp-sass' )(require( 'node-sass' )),
 	sassUnicode = require('gulp-sass-unicode'),
 	rtlcss = require( 'gulp-rtlcss' ),
 	rename = require( 'gulp-rename' ),
 	replace = require( 'gulp-replace' );
-
-sass.compiler = require( 'node-sass' );
 
 function stylesBase( src, dest, cb ) {
 	return gulp.src( src )
@@ -20,7 +18,7 @@ function compileStyles( cb ) {
 }
 
 function stylesRTL( cb ) {
-	return gulp.src( [ './dist/css/**/*.css', '!./dist/css/**/*-rtl.css' ], { base: './' } )
+	return gulp.src( [ './dist/css/**/*.css', '!./dist/css/**/*-rtl.css', './dist/js/**/*.css', '!./dist/js/**/*-rtl.css' ], { base: './' } )
 	           .pipe( rtlcss() )
 	           .pipe( rename( function( path ) { path.basename += "-rtl"; } ) )
 	           .pipe( gulp.dest( '.' ) );

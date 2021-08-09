@@ -30,8 +30,29 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
         ${ getVariablesCSS( palette, variation - 1, true ) }
         ${ getVariablesCSS( palette, sourceIndex, true, true ) }
       }
+      
+      .sm-palette-${ id } {
+        ${ getApplyPaletteVariables( id ) }
+      }
+      
+      .sm-palette-${ id }.sm-palette--shifted {
+        ${ getApplyPaletteVariables( id, '-shifted' ) }
+      }
     `;
   }, '');
+}
+
+const getApplyPaletteVariables = ( id, suffix = '' ) => {
+  let output = '';
+
+  for ( let i = 1; i <= 12; i++ ) {
+    output += `--sm-bg-color-${ i }: var(--sm-color-palette-${ id }-bg-color-${ i }${ suffix }); \n`
+    output += `--sm-accent-color-${ i }: var(--sm-color-palette-${ id }-accent-color-${ i }${ suffix }); \n`
+    output += `--sm-fg1-color-${ i }: var(--sm-color-palette-${ id }-fg1-color-${ i }${ suffix }); \n`
+    output += `--sm-fg2-color-${ i }: var(--sm-color-palette-${ id }-fg2-color-${ i }${ suffix }); \n`
+  }
+
+  return output;
 }
 
 const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted = false ) => {
