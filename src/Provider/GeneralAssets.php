@@ -101,6 +101,7 @@ class GeneralAssets extends AbstractHookProvider {
 			window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
 			window.styleManager.frontendOutput = <?php echo json_encode( $this->frontend_output->get_dynamic_style() ); ?>;
 			<?php if ( $advanced_palettes_output !== null ) { ?>
+			window.styleManager.palettes = <?php echo $advanced_palettes_output; ?>;
 			window.styleManager.smAdvancedPalettesOutput = <?php echo json_encode( sm_get_palette_output_from_color_config( $advanced_palettes_output ) ); ?>;
 			<?php } ?>
 		</script>
