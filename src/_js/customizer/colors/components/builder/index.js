@@ -153,8 +153,7 @@ const Builder = ( props ) => {
                   wp.customize( sourceSettingID, setting => {
                     const value = setting();
                     const newConfig = getColorsFromInputValue( value );
-                    const newPalettes = getPalettesFromColors( newConfig, {}, ! simplePalettes );
-
+                    const newPalettes = getPalettesFromColors( newConfig, {}, !! simplePalettes );
                     setConfig( getColorsFromInputValue( value ) );
 
                     wp.customize( outputSettingID, setting => {
