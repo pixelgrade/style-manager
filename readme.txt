@@ -54,6 +54,10 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 
 == Changelog ==
 
+= 2.0.7 =
+* 2021-08-16
+* Expose palettes configuration to frontend and block editor through the styleManager global object
+
 = 2.0.6 =
 * 2021-08-05
 * Fixed issues with Customizer menus section styling.
