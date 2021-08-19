@@ -92,6 +92,9 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['customize.spacing_section'] = function() {
 			return new Customize\SpacingSection();
 		};
+		$container['customize.tweak_board_section'] = function() {
+			return new Customize\TweakBoardSection();
+		};
 		$container['customize.general'] = function( $container ) {
 			return new Customize\Customize(
 				$container['client.pixelgrade_cloud'],
