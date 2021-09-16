@@ -213,11 +213,15 @@ class ColorPalettes extends AbstractHookProvider {
 	protected function add_color_usage_section( array $config ): array {
 
 		$color_usage_fields = [
+			'sm_description_color_usage_intro',
+			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
 			'sm_site_color_variation',
+			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
+			'sm_separator_1_2',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];
@@ -548,6 +552,16 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
+				'NOT_sm_description_color_system_intro' => array(
+					'type' => 'html',
+					'html' => 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System for your website.',
+				),
+
+				'sm_description_color_usage_intro' => array(
+					'type' => 'html',
+					'html' => 'Manage how to apply <a href="https://pixelgrade.com/docs/rosa2/design-and-style/color-system/#6-manage-how-to-apply-color-to-your-website" target="_blank">the default colors</a> to your website\'s elements.',
+				),
+				'sm_separator_1_0' => array( 'type' => 'html', 'html' => '' ),
 				'sm_site_color_variation'                   => [
 					'type'         => 'range',
 					'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-3 for subtle shades, 4-7 for colorful, above 8 for darker shades.', '__plugin_txtd' ), [ 'strong' => [] ] ),
@@ -569,6 +583,9 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
+
+				'sm_separator_1_1' => array( 'type' => 'html', 'html' => '' ),
+
 				'sm_text_color_switch_master'               => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -593,6 +610,9 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
+				
+				'sm_separator_1_2' => array( 'type' => 'html', 'html' => '' ),
+
 				'sm_coloration_level'                       => [
 					'type'         => 'sm_radio',
 					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
@@ -631,18 +651,23 @@ class ColorPalettes extends AbstractHookProvider {
 			self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 			'sm_advanced_palette_output',
 
+			'sm_description_color_usage_intro',
+			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
 			'sm_site_color_variation',
+			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
+			'sm_separator_1_2',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];
 
 		$color_palettes_section_config = [
-			'title'      => esc_html__( 'Colors', '__plugin_txtd' ),
+			'title'      => esc_html__( 'Color System', '__plugin_txtd' ),
 			'section_id' => 'sm_color_palettes_section',
+			'description' => wp_kses( __( 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System</a> for your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html('post') ),
 			'priority'   => 10,
 			'options'    => [],
 		];
