@@ -33,7 +33,7 @@
   position: relative;
 
   &--active .c-palette-builder__source-item-preview {
-    box-shadow: var(--sm-color-palette-neutral-color-6) 0 0 0 var(--customizer-field-border-width);
+    box-shadow: var(--sm-color-palette-accent-color-6) 0 0 0 var(--customizer-field-border-width);
   }
 
   &:not(&--active) .c-palette-builder__source-item-picker {
@@ -63,7 +63,7 @@
   flex: 0 0 auto;
   position: relative;
 
-  border: var(--customizer-field-border-width) solid var(--sm-color-palette-neutral-color-2);
+  border: var(--customizer-field-border-width) solid var(--sm-color-palette-accent-color-2);
 
   .c-palette-builder__source-item:not(:first-child) & {
 
@@ -109,7 +109,7 @@
 
     padding: 0.6em;
 
-    background: var(--sm-color-palette-neutral-color-2);
+    background: var(--sm-color-palette-accent-color-2);
     transition: var(--sm-transition);
     transition-property: box-shadow;
     cursor: pointer;
@@ -153,7 +153,7 @@
 
 .c-palette-builder__source-item-picker {
   padding: 10px;
-  background: var(--sm-color-palette-neutral-color-1);
+  background: var(--sm-color-palette-accent-color-1);
   box-shadow: var(--sm-customizer-box-shadow-2);
   border-radius: 0.25em;
 

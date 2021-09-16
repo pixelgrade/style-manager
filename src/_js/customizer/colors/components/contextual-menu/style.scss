@@ -7,7 +7,7 @@
   width: 2.4em;
   height: 2.4em;
   border-radius: 999em;
-  color: var(--sm-color-palette-neutral-text-color-1);
+  color: var(--sm-color-palette-accent-text-color-1);
   outline: 0;
 
   transition: var(--sm-transition);
@@ -34,7 +34,7 @@
 
   .c-contextual-menu--visible &,
   .c-contextual-menu:hover & {
-    background-color: var(--sm-color-palette-neutral-color-3);
+    background-color: var(--sm-color-palette-accent-color-3);
   }
 }
 
@@ -49,7 +49,7 @@
   padding: 0.75em 0;
 
   border-radius: 0.25em;
-  background: var(--sm-color-palette-neutral-color-1);
+  background: var(--sm-color-palette-accent-color-1);
   box-shadow: var(--sm-customizer-box-shadow-2);
 
   transition: var(--sm-transition);
@@ -68,7 +68,7 @@
   cursor: pointer;
 
   &:hover {
-    background: var(--sm-color-palette-neutral-color-2);
+    background: var(--sm-color-palette-accent-color-2);
   }
 }
 

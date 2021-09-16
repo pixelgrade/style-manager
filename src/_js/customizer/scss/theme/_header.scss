@@ -78,6 +78,15 @@ $close-button-width: 45px;
   }
 }
 
+// Increase font-weight to panel titles (from 200)
+#customize-controls .customize-pane-child .customize-section-title h3, 
+#customize-controls .customize-pane-child h3.customize-section-title, 
+#customize-outer-theme-controls .customize-pane-child .customize-section-title h3, 
+#customize-outer-theme-controls .customize-pane-child h3.customize-section-title, 
+#customize-controls .customize-info .panel-title {
+    font-weight: 400;
+}
+
 // Small screens
 .customize-controls-preview-toggle {
   background-color: var(--customizer-background-color);
