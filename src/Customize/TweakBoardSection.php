@@ -105,7 +105,7 @@ class TweakBoardSection extends AbstractHookProvider {
 						'setting_id'   => 'sm_blog_layout_style',
 						'live'         => true,
 						'label'    => esc_html__( 'Archive Style', '__plugin_txtd' ),
-						'desc'     => esc_html__( 'Display your Archive in a way that matches your style.', '__plugin_txtd' ),
+						'desc'     => esc_html__( 'Display your blog archive in a way that matches your style.', '__plugin_txtd' ),
 						'default'  => 'rosa2',
 						'choices'  => array(
 							'rosa2'    => esc_html__( 'Rosa2', '__plugin_txtd' ),
