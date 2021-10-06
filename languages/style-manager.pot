@@ -202,7 +202,7 @@ msgid "Shift the <strong>start position</strong> of the color palette. Use 0 for
 msgstr ""
 
 #: src/Customize/ColorPalettes.php:558
-msgid "Palette Basis Offset"
+msgid "Palette Basis Position"
 msgstr ""
 
 #: src/Customize/ColorPalettes.php:579

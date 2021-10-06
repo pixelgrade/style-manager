@@ -18,7 +18,7 @@
 
 :root {
   --sm-color-palette-accent-color-1: #ffffff;
-  --sm-color-palette-accent-color-2: #f5f7fc;
+  --sm-color-palette-accent-color-2: #EDF1F6;
   --sm-color-palette-accent-color-3: #dfe6f4;
   --sm-color-palette-accent-color-4: #afc2e3;
   --sm-color-palette-accent-color-5: #7fa1d4;
@@ -920,7 +920,7 @@ input.font-options__checkbox {
   display: flex;
   align-items: center;
   padding: 8px 6px;
-  background: #f4f7fc;
+  background: var(--sm-color-palette-accent-color-2);
   border-radius: 9em;
   transition-property: background-color;
 }
@@ -1739,7 +1739,7 @@ and other section use the available space
 #customize-control-sm_advanced_palette_source_control > div > .sm-group:last-child > .sm-blinds--open > .sm-blinds__body {
   flex: 1 0 0;
   overflow: auto;
-  min-height: 250px;
+  min-height: 400px;
 }
 
 /* Remove customizer transitions on complex navigation to avoid confusing the user */
@@ -1882,6 +1882,14 @@ and other section use the available space
   color: var(--sm-color-palette-neutral-color-6);
 }
 
+#customize-controls .customize-pane-child .customize-section-title h3,
+#customize-controls .customize-pane-child h3.customize-section-title,
+#customize-outer-theme-controls .customize-pane-child .customize-section-title h3,
+#customize-outer-theme-controls .customize-pane-child h3.customize-section-title,
+#customize-controls .customize-info .panel-title {
+  font-weight: 400;
+}
+
 .customize-controls-preview-toggle {
   background-color: var(--customizer-background-color);
   border-color: var(--customizer-border-color);
@@ -1960,6 +1968,7 @@ and other section use the available space
   margin-top: 0;
   padding: var(--customizer-spacing);
   background: var(--sm-color-palette-neutral-color-1);
+  border-bottom: 1px solid var(--customizer-border-color);
 }
 
 #customize-controls[id] {
@@ -2028,7 +2037,7 @@ and other section use the available space
   position: relative;
 }
 .c-palette-builder__source-item-color--active .c-palette-builder__source-item-preview {
-  box-shadow: var(--sm-color-palette-neutral-color-6) 0 0 0 var(--customizer-field-border-width);
+  box-shadow: var(--sm-color-palette-accent-color-6) 0 0 0 var(--customizer-field-border-width);
 }
 .c-palette-builder__source-item-color:not(.c-palette-builder__source-item-color--active) .c-palette-builder__source-item-picker {
   transform: translateY(-1em);
@@ -2054,7 +2063,7 @@ and other section use the available space
   border-radius: 50%;
   flex: 0 0 auto;
   position: relative;
-  border: var(--customizer-field-border-width) solid var(--sm-color-palette-neutral-color-2);
+  border: var(--customizer-field-border-width) solid var(--sm-color-palette-accent-color-2);
 }
 .c-palette-builder__source-item:not(:first-child) .c-palette-builder__source-item-preview:before, .c-palette-builder__source-item:not(:first-child) .c-palette-builder__source-item-preview:after {
   content: "";
@@ -2084,7 +2093,7 @@ and other section use the available space
   font-size: 15px;
   line-height: 1.5;
   padding: 0.6em;
-  background: var(--sm-color-palette-neutral-color-2);
+  background: var(--sm-color-palette-accent-color-2);
   transition: var(--sm-transition);
   transition-property: box-shadow;
   cursor: pointer;
@@ -2119,7 +2128,7 @@ and other section use the available space
 
 .c-palette-builder__source-item-picker {
   padding: 10px;
-  background: var(--sm-color-palette-neutral-color-1);
+  background: var(--sm-color-palette-accent-color-1);
   box-shadow: var(--sm-customizer-box-shadow-2);
   border-radius: 0.25em;
 }
@@ -2146,7 +2155,7 @@ and other section use the available space
   width: 2.4em;
   height: 2.4em;
   border-radius: 999em;
-  color: var(--sm-color-palette-neutral-text-color-1);
+  color: var(--sm-color-palette-accent-text-color-1);
   outline: 0;
   transition: var(--sm-transition);
   transition-property: background-color;
@@ -2168,7 +2177,7 @@ and other section use the available space
   text-indent: -999em;
 }
 .c-contextual-menu--visible .c-contextual-menu__toggle, .c-contextual-menu:hover .c-contextual-menu__toggle {
-  background-color: var(--sm-color-palette-neutral-color-3);
+  background-color: var(--sm-color-palette-accent-color-3);
 }
 
 .c-contextual-menu__list {
@@ -2180,7 +2189,7 @@ and other section use the available space
   margin-top: 0.66em;
   padding: 0.75em 0;
   border-radius: 0.25em;
-  background: var(--sm-color-palette-neutral-color-1);
+  background: var(--sm-color-palette-accent-color-1);
   box-shadow: var(--sm-customizer-box-shadow-2);
   transition: var(--sm-transition);
   transition-property: opacity, transform, box-shadow;
@@ -2197,7 +2206,7 @@ and other section use the available space
   cursor: pointer;
 }
 .c-contextual-menu__list-item:hover {
-  background: var(--sm-color-palette-neutral-color-2);
+  background: var(--sm-color-palette-accent-color-2);
 }
 
 .c-contextual-menu__list-item--danger {
@@ -2261,9 +2270,11 @@ and other section use the available space
   align-items: center;
   width: 100%;
   font-size: 15px;
+  font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.02em;
   cursor: pointer;
+  transition: 0.15s color ease-in-out, 0.15s background-color ease-in-out, 0.15s border-color ease-in-out;
 }
 .sm-panel-toggle:after {
   content: "";
@@ -2274,11 +2285,15 @@ and other section use the available space
   color: var(--sm-color-palette-accent-color-5);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: 0.15s color ease-in-out, 0.15s background-color ease-in-out, 0.15s border-color ease-in-out;
+}
+.sm-panel-toggle:hover {
+  background: var(--sm-color-palette-accent-color-2);
+}
+.sm-panel-toggle:hover:after {
+  color: var(--sm-color-palette-accent-color-8);
 }
 
-.sm-panel-toggle__label {
-  margin-right: 10px;
-}
 .sm-panel-toggle__icon + .sm-panel-toggle__label {
   margin-left: 10px;
 }
