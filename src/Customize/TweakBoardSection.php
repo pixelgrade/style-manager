@@ -97,6 +97,22 @@ class TweakBoardSection extends AbstractHookProvider {
 							'sideways' => esc_html__( 'Sideways', '__plugin_txtd' ),
 						),
 					),
+					'sm_blog_layout_style' => array(
+						'type'  => 'radio',
+						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+						'setting_type' => 'option',
+						// We will force this setting id preventing prefixing and other regular processing.
+						'setting_id'   => 'sm_blog_layout_style',
+						'live'         => true,
+						'label'    => esc_html__( 'Archive Style', '__plugin_txtd' ),
+						'desc'     => esc_html__( 'Display your Archive in a way that matches your style.', '__plugin_txtd' ),
+						'default'  => 'rosa2',
+						'choices'  => array(
+							'rosa2'    => esc_html__( 'Rosa2', '__plugin_txtd' ),
+							'felt' => esc_html__( 'Felt', '__plugin_txtd' ),
+						),
+
+					)
 				]
 			]
 		);
@@ -117,7 +133,8 @@ class TweakBoardSection extends AbstractHookProvider {
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 
 		$tweak_board_section_fields = [
-			'sm_collection_title_position'
+			'sm_collection_title_position',
+			'sm_blog_layout_style'
 		];
 
 		$tweak_board_section_config = [
