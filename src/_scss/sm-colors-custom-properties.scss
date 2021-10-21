@@ -28,7 +28,7 @@ html {
 }
 
 html,
-[class*="sm-variation-"] {
+[class*="sm-variation-"]:not(.sm-color-signal-0) {
   background-color: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color);
 }
