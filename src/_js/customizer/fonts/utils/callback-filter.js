@@ -23,6 +23,7 @@ const applyFontSizeInterval = ( fontData, fontsLogic, connectedFieldData, fontSi
     if ( !! fontSize ) {
       const newFontSize = ( fontSize - ab[0] ) * ( cd[1] - cd[0] ) / ( ab[1] - ab[0] ) + cd[0];
       fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
+      console.log( ab, fontSize, cd, fontData.font_size.value );
     }
   } );
 }
@@ -120,8 +121,6 @@ export const getCallbackFilter = ( fontsLogic, connectedFieldData, fontSizeInter
       newFontData[ 'line_height' ] = standardizeNumericalValue( lineHeight )
     }
   }
-
-  console.log( newFontData );
 
   return newFontData;
 }
