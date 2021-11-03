@@ -235,7 +235,7 @@ class EditWithBlocks extends AbstractHookProvider {
 		}
 
 		// We need to look into the registered theme stylesheets and get the one most likely to be used for Gutenberg.
-		// Thus we can attach inline styles to it.
+		// Thus, we can attach inline styles to it.
 		$theme_dir_uri = get_template_directory_uri();
 		$theme_slug    = get_template();
 
@@ -244,13 +244,15 @@ class EditWithBlocks extends AbstractHookProvider {
 		/** @var \_WP_Dependency $style */
 		foreach ( $reversed as $style ) {
 			// This is the most precise.
-			if ( 0 === strpos( $style->src, $theme_dir_uri ) ) {
+			if ( is_string( $style->src ) && 0 === strpos( $style->src, $theme_dir_uri ) ) {
 				$handle = $style->handle;
 				break;
 			}
 
 			// If it is prefixed with the theme slug, it is good also.
-			if ( 0 === strpos( $style->handle, $theme_slug . '-' ) || 0 === strpos( $style->handle, $theme_slug . '_' ) ) {
+			if ( is_string( $style->handle )
+			     && ( 0 === strpos( $style->handle, $theme_slug . '-' ) || 0 === strpos( $style->handle, $theme_slug . '_' ) ) ) {
+
 				$handle = $style->handle;
 				break;
 			}
@@ -273,7 +275,7 @@ class EditWithBlocks extends AbstractHookProvider {
 		}
 
 		// We need to look into the registered theme stylesheets and get the one most likely to be used for Gutenberg.
-		// Thus we can attach inline styles to it.
+		// Thus, we can attach inline styles to it.
 		$style_css_uri = get_template_directory_uri() . '/style.css';
 		$theme_slug    = get_template();
 
@@ -282,14 +284,17 @@ class EditWithBlocks extends AbstractHookProvider {
 		/** @var \_WP_Dependency $style */
 		foreach ( $reversed as $style ) {
 			// This is the most precise.
-			if ( 0 === strpos( $style->src, $style_css_uri ) ) {
+			if ( is_string( $style->src ) && 0 === strpos( $style->src, $style_css_uri ) ) {
 				$handle = $style->handle;
 				break;
 			}
 
 			// If it is prefixed with the theme slug, it is good also.
-			if ( ( 0 === strpos( $style->handle, $theme_slug . '-' ) || 0 === strpos( $style->handle, $theme_slug . '_' ) )
+			if ( is_string( $style->handle )
+			     && ( 0 === strpos( $style->handle, $theme_slug . '-' ) || 0 === strpos( $style->handle, $theme_slug . '_' ) )
+			     && is_string( $style->src )
 			     && false !== strpos( $style->src, '.css' ) ) {
+
 				$handle = $style->handle;
 				break;
 			}
