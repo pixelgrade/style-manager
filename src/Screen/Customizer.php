@@ -477,7 +477,7 @@ class Customizer extends AbstractHookProvider {
 			$setting_args['capability'] = $field_config['capability'];
 		}
 
-		// If the setting defines it's own type we will respect that, otherwise we will follow the global plugin setting.
+		// If the setting defines its own type we will respect that, otherwise we will follow the global plugin setting.
 		if ( ! empty( $field_config['setting_type'] ) && 'option' === $field_config['setting_type'] ) {
 			$setting_args['type'] = 'option';
 		} elseif ( $this->plugin_settings->get( 'values_store_mod' ) === 'option' ) {
@@ -816,6 +816,9 @@ class Customizer extends AbstractHookProvider {
 
 		$to_remove = $this->plugin_settings->get( 'disable_default_sections' );
 		if ( ! empty( $to_remove ) ) {
+			if ( is_string( $to_remove ) ) {
+				$to_remove = [ $to_remove, ];
+			}
 			foreach ( $to_remove as $section => $nothing ) {
 
 				if ( $section === 'widgets' ) {

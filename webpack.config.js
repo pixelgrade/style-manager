@@ -70,7 +70,12 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           // Translates CSS into CommonJS
-          "css-loader?url=false",
+          {
+            loader: "css-loader",
+            options: {
+              url: false,
+            },
+          },
           // Compiles Sass to CSS
           "sass-loader",
         ],

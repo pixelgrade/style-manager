@@ -35,17 +35,19 @@ class PluginSettingsCFDatastore extends Datastore {
 		$value = $this->format_value( $value );
 
 		// First, get the entire serialized array.
-		$all_values = $this->get_all_values();
+		$old_all_values = $new_all_values = $this->get_all_values();
 
-		if ( empty( $all_values ) ) {
-			$all_values = [
+		if ( empty( $new_all_values ) ) {
+			$new_all_values = [
 				$key => $value,
 			];
 		} else {
-			$all_values[ $key ] = $value;
+			$new_all_values[ $key ] = $value;
 		}
 
-		$this->update_all_values( $all_values );
+		do_action( 'style_manager/plugin_settings_cfdatastore/before_save', $key, $value, $new_all_values, $old_all_values );
+
+		$this->update_all_values( $new_all_values );
 	}
 
 	protected function format_value( $value ) {
