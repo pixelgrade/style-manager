@@ -1,3 +1,7 @@
+import contrastArray from "./components/builder/utils/contrast-array";
+import { hexToHpluv, hpluvToRgb } from "hsluv";
+import chroma from "chroma-js";
+
 export const moveConnectedFields = ( oldSettings, from, to, ratio ) => {
 
   const settings = JSON.parse( JSON.stringify( oldSettings ) );
@@ -53,4 +57,21 @@ export const maybeFillPalettesArray = ( arr, minLength ) => {
       }
     }
   }
+}
+
+export const getTextDarkColorFromSource = ( palette, position = 9 ) => {
+  const { sourceIndex } = palette;
+  const hex = palette.colors[ sourceIndex ].value;
+  const luminance = contrastToLuminance( contrastArray[position] );
+  const hpluv = hexToHpluv( hex );
+  const h = Math.min( Math.max( hpluv[ 0 ], 0 ), 360 );
+  const p = Math.min( Math.max( hpluv[ 1 ], 0 ), 100 );
+  const l = Math.min( Math.max( hpluv[ 2 ], 0 ), 100 );
+  const rgb = hpluvToRgb( [ h, p, l ] ).map( x => x * 255 );
+
+  return chroma( rgb ).luminance( luminance ).hex();
+}
+
+export const contrastToLuminance = ( contrast ) => {
+  return 1.05 / contrast - 0.05;
 }

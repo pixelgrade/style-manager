@@ -1,6 +1,6 @@
-const getTextColor = ( palette ) => {
-  const { lightColorsCount, sourceIndex, textColors } = palette;
-  return sourceIndex > lightColorsCount ? textColors[0].value : textColors[1].value;
-}
+import chroma from "chroma-js";
+import { hexToHpluv, hpluvToRgb } from "hsluv";
+import contrastArray from "../builder/utils/contrast-array";
 
-export default getTextColor;
+
+export default getTextDarkColorFromSource;

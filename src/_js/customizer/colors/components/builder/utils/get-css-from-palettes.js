@@ -16,30 +16,37 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
 
     const { id, sourceIndex } = palette;
+    const selector = paletteIndex === 0 ? `html, .sm-palette-${ id }` : `.sm-palette-${ id }`;
 
     return `
       ${ palettesAcc }
       
-      html {
-        ${ getInitialColorVaraibles( palette ) }
-        ${ getVariablesCSS( palette, variation - 1 ) }
-        ${ getVariablesCSS( palette, sourceIndex, false, true ) }
-      } 
-      
-      .is-dark {
-        ${ getVariablesCSS( palette, variation - 1, true ) }
-        ${ getVariablesCSS( palette, sourceIndex, true, true ) }
-      }
-      
-      .sm-palette-${ id } {
-        ${ getApplyPaletteVariables( id ) }
-      }
-      
-      .sm-palette-${ id }.sm-palette--shifted {
-        ${ getApplyPaletteVariables( id, '-shifted' ) }
+      ${ selector } {
+        ${ Array.from( Array( 12 ) ).reduce( ( variationsAcc, value, index ) =>{
+          return `
+            ${ variationsAcc }
+            ${ getVariationCSS( palette, index ) }  
+          `
+        }, '' ) }
       }
     `;
   }, '');
+}
+
+const getVariationCSS = ( palette, index ) => {
+  const { id, variations } = palette;
+  
+  const suffix = '';
+  const selectorPrefix = id.toString() !== '1' ? `.sm-palette-${ id } ` : '';
+  const variation = variations[ index ];
+
+  return `
+        --sm-bg-color-${ index + 1 }: ${ variation.background }; \n;
+        --sm-accent-color-${ index + 1 }: ${ variation.accent }; \n;
+        --sm-fg1-color-${ index + 1 }: ${ variation.foreground1 }; \n;
+        --sm-fg2-color-${ index + 1 }: ${ variation.foreground2 }; \n;
+        `;
+
 }
 
 const getApplyPaletteVariables = ( id, suffix = '' ) => {
@@ -115,13 +122,13 @@ const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShifted ) =
 
   if ( oldColorIndex < lightColorsCount ) {
     darkColors = `
-      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);
-      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-3);
+      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
+      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);
     `;
   } else {
     darkColors = `
-      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
-      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
+      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
+      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
     `;
   }
 

@@ -250,6 +250,8 @@ function palettes_output( array $palettes ) {
 	$output = '';
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
+	return '';
+
 	foreach ( $palettes as $palette ) {
 		$sourceIndex = $palette->sourceIndex;
 

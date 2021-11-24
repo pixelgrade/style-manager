@@ -1,59 +1,11 @@
 html {
-  --sm-bg-color-1: var(--sm-color-palette-1-bg-color-1);
-  --sm-accent-color-1: var(--sm-color-palette-1-accent-color-1);
-  --sm-fg1-color-1: var(--sm-color-palette-1-fg1-color-1);
-  --sm-fg2-color-1: var(--sm-color-palette-1-fg2-color-1);
-  --sm-bg-color-2: var(--sm-color-palette-1-bg-color-2);
-  --sm-accent-color-2: var(--sm-color-palette-1-accent-color-2);
-  --sm-fg1-color-2: var(--sm-color-palette-1-fg1-color-2);
-  --sm-fg2-color-2: var(--sm-color-palette-1-fg2-color-2);
-  --sm-bg-color-3: var(--sm-color-palette-1-bg-color-3);
-  --sm-accent-color-3: var(--sm-color-palette-1-accent-color-3);
-  --sm-fg1-color-3: var(--sm-color-palette-1-fg1-color-3);
-  --sm-fg2-color-3: var(--sm-color-palette-1-fg2-color-3);
-  --sm-bg-color-4: var(--sm-color-palette-1-bg-color-4);
-  --sm-accent-color-4: var(--sm-color-palette-1-accent-color-4);
-  --sm-fg1-color-4: var(--sm-color-palette-1-fg1-color-4);
-  --sm-fg2-color-4: var(--sm-color-palette-1-fg2-color-4);
-  --sm-bg-color-5: var(--sm-color-palette-1-bg-color-5);
-  --sm-accent-color-5: var(--sm-color-palette-1-accent-color-5);
-  --sm-fg1-color-5: var(--sm-color-palette-1-fg1-color-5);
-  --sm-fg2-color-5: var(--sm-color-palette-1-fg2-color-5);
-  --sm-bg-color-6: var(--sm-color-palette-1-bg-color-6);
-  --sm-accent-color-6: var(--sm-color-palette-1-accent-color-6);
-  --sm-fg1-color-6: var(--sm-color-palette-1-fg1-color-6);
-  --sm-fg2-color-6: var(--sm-color-palette-1-fg2-color-6);
-  --sm-bg-color-7: var(--sm-color-palette-1-bg-color-7);
-  --sm-accent-color-7: var(--sm-color-palette-1-accent-color-7);
-  --sm-fg1-color-7: var(--sm-color-palette-1-fg1-color-7);
-  --sm-fg2-color-7: var(--sm-color-palette-1-fg2-color-7);
-  --sm-bg-color-8: var(--sm-color-palette-1-bg-color-8);
-  --sm-accent-color-8: var(--sm-color-palette-1-accent-color-8);
-  --sm-fg1-color-8: var(--sm-color-palette-1-fg1-color-8);
-  --sm-fg2-color-8: var(--sm-color-palette-1-fg2-color-8);
-  --sm-bg-color-9: var(--sm-color-palette-1-bg-color-9);
-  --sm-accent-color-9: var(--sm-color-palette-1-accent-color-9);
-  --sm-fg1-color-9: var(--sm-color-palette-1-fg1-color-9);
-  --sm-fg2-color-9: var(--sm-color-palette-1-fg2-color-9);
-  --sm-bg-color-10: var(--sm-color-palette-1-bg-color-10);
-  --sm-accent-color-10: var(--sm-color-palette-1-accent-color-10);
-  --sm-fg1-color-10: var(--sm-color-palette-1-fg1-color-10);
-  --sm-fg2-color-10: var(--sm-color-palette-1-fg2-color-10);
-  --sm-bg-color-11: var(--sm-color-palette-1-bg-color-11);
-  --sm-accent-color-11: var(--sm-color-palette-1-accent-color-11);
-  --sm-fg1-color-11: var(--sm-color-palette-1-fg1-color-11);
-  --sm-fg2-color-11: var(--sm-color-palette-1-fg2-color-11);
-  --sm-bg-color-12: var(--sm-color-palette-1-bg-color-12);
-  --sm-accent-color-12: var(--sm-color-palette-1-accent-color-12);
-  --sm-fg1-color-12: var(--sm-color-palette-1-fg1-color-12);
-  --sm-fg2-color-12: var(--sm-color-palette-1-fg2-color-12);
   --sm-current-bg-color: var(--sm-bg-color-1);
   --sm-current-accent-color: var(--sm-accent-color-1);
   --sm-current-fg1-color: var(--sm-fg1-color-1);
   --sm-current-fg2-color: var(--sm-fg2-color-1); }
 
 html,
-[class*="sm-variation-"]:not(.sm-color-signal-0) {
+[class*="sm-variation-"] {
   background-color: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color); }
 

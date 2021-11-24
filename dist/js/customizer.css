@@ -2882,8 +2882,8 @@ img:not([src]) {
   border-radius: 0.25em;
   font-size: 1.25em;
   display: inline-block;
-  background: var(--sm-current-bg-color);
-  color: var(--sm-current-fg1-color);
+  background: var(--sm-current-fg1-color);
+  color: var(--sm-current-bg-color);
 }
 
 .palette-preview-swatches__wrap.is-source .palette-preview-swatches__source-badge {

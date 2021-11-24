@@ -52,7 +52,7 @@ const PalettePreviewList = ( props ) => {
 
 const PalettePreview = ( props ) => {
   const { palette, isActive, setActivePalette } = props;
-  const { id, colors, textColors, lightColorsCount, sourceIndex } = palette;
+  const { id, colors, lightColorsCount, sourceIndex } = palette;
   const [ lastHover, setLastHover ] = useState( sourceIndex );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
@@ -97,7 +97,6 @@ const PalettePreview = ( props ) => {
                 showCard: isActive && index === lastHover,
                 showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
                 showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
-                textColor: normalize( index ) >= lightColorsCount ? textColors[1].value : textColors[0].value,
                 variation,
               }
 
@@ -129,7 +128,6 @@ const PalettePreviewGrade = ( props ) => {
     showCard,
     showAccent,
     showForeground,
-    textColor,
     variation,
   } = props;
 
@@ -138,8 +136,8 @@ const PalettePreviewGrade = ( props ) => {
     {
       'is-source': isSource,
       'show-card': showCard,
-      'show-accent': showAccent,
-      'show-fg': showForeground,
+//      'show-accent': showAccent,
+//      'show-fg': showForeground,
     }
   )
 
@@ -154,7 +152,7 @@ const PalettePreviewGrade = ( props ) => {
         <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
         <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchAccentText }</div>
       </div>
-      <div className="palette-preview-swatches__wrap-foreground"  style={ { color: textColor } }>
+      <div className="palette-preview-swatches__wrap-foreground"  style={ { color: 'var(--sm-current-fg1-color)' } }>
         <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchForegroundText }</div>
       </div>
     </div>
@@ -164,7 +162,6 @@ const PalettePreviewGrade = ( props ) => {
 const PalettePreviewGradeCard = ( props ) => {
 
   const { variation } = props;
-  const buttonVariation = ( variation - 1 + 6 ) % 12 + 1;
 
   return (
     <div className={ `palette-preview-swatches__card` }>
@@ -175,7 +172,7 @@ const PalettePreviewGradeCard = ( props ) => {
           <div className="palette-preview-swatches__row" />
           <div className="palette-preview-swatches__row" />
         </div>
-        <div className={ `palette-preview-swatches__button sm-variation-${ buttonVariation }` }>&rarr;</div>
+        <div className={ `palette-preview-swatches__button` }>&rarr;</div>
       </div>
     </div>
   )

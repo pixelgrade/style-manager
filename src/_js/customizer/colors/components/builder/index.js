@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 
 import Worker from "worker-loader!./worker.js";
 
@@ -35,8 +35,8 @@ const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
   const sourceSetting = wp.customize( sourceSettingID );
   const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
+  const [ options, setOptions ] = useState( {} );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
-  const [ simplePalettes, setSimplePalettes ] = useState( true );
 
   const activePresetSetting = wp.customize( 'sm_color_palette_in_use' );
   const activePresetValue = activePresetSetting ? activePresetSetting() : null;
@@ -64,16 +64,25 @@ const Builder = ( props ) => {
     } );
   }
 
-  const onSourceChange = ( newValue ) => {
+  useEffect(() => {
+    console.log( options );
+    const newPalettes = getPalettesFromColors( config, options );
+
+    wp.customize( outputSettingID, setting => {
+      setting.set( JSON.stringify( newPalettes ) );
+    } );
+  }, [ options ] );
+
+  const onSourceChange = useCallback(( newValue ) => {
     const newConfig = getColorsFromInputValue( newValue );
-    const newPalettes = getPalettesFromColors( newConfig );
+    const newPalettes = getPalettesFromColors( newConfig, options );
 
     setConfig( getColorsFromInputValue( newValue ) );
 
     wp.customize( outputSettingID, setting => {
       setting.set( JSON.stringify( newPalettes ) );
     } );
-  }
+  }, [ options ] );
 
   const onOutputChange = ( value ) => {
     const palettes = JSON.parse( value );
@@ -118,8 +127,16 @@ const Builder = ( props ) => {
     }
   }, [] );
 
+  const providerValue = {
+    config: config,
+    setConfig: updateSource,
+    options: options,
+    setOptions: setOptions,
+    resetActivePreset
+  }
+
   return (
-    <ConfigContext.Provider value={ { config: config, setConfig: updateSource, resetActivePreset } }>
+    <ConfigContext.Provider value={ providerValue }>
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
@@ -145,28 +162,11 @@ const Builder = ( props ) => {
               onChange={ () => {
                 setActivePreset( null );
               } } />
-            <div>
-              <label>
-                <input value={ simplePalettes } name="toggle-simplified-palettes" type="checkbox" onClick={ () => {
-                  setSimplePalettes( ! simplePalettes );
-
-                  wp.customize( sourceSettingID, setting => {
-                    const value = setting();
-                    const newConfig = getColorsFromInputValue( value );
-                    const newPalettes = getPalettesFromColors( newConfig, {}, !! simplePalettes );
-                    setConfig( getColorsFromInputValue( value ) );
-
-                    wp.customize( outputSettingID, setting => {
-                      setting.set( JSON.stringify( newPalettes ) );
-                    } );
-
-                  } );
-                } } />
-                <span>Simple palettes</span>
-              </label>
-            </div>
             <style>{ CSSOutput }</style>
           </Control>
+        </div>
+        <div className="sm-group__body">
+          <ConfigOptions />
         </div>
       </div>
       <div className="sm-group">
@@ -189,6 +189,60 @@ const Builder = ( props ) => {
       </div>
     </ConfigContext.Provider>
   );
+}
+
+const ConfigOptions = () => {
+  const { options, setOptions } = useContext( ConfigContext );
+
+  return (
+    <Fragment>
+      <ConfigPropsToggle property={ 'simple-palettes' } label={ 'Simplify Palettes' } />
+      { !! options?.[ 'simple-palettes' ] && <SimplePalettesOptions /> }
+      <ConfigPropsToggle property={ 'wcag-aa' } label={ 'WCAG AA' } />
+      <ConfigPropsToggle property={ 'wcag-aaa' } label={ 'WCAG AAA' } />
+    </Fragment>
+  )
+}
+
+const SimplePalettesOptions = () => {
+  return (
+    <Fragment>
+      <ConfigPropsToggle property={ 'force-source' } label={ 'Source' } />
+      <ConfigPropsToggle property={ 'force-white' } label={ 'White' } />
+      <ConfigPropsToggle property={ 'force-tints' } label={ 'Tints' } />
+      <ConfigPropsToggle property={ 'force-color' } label={ 'Color' } />
+      <ConfigPropsToggle property={ 'force-shades' } label={ 'Shades' } />
+      <ConfigPropsToggle property={ 'force-black' } label={ 'Black' } />
+    </Fragment>
+  )
+}
+
+const ConfigPropsToggle = ( props ) => {
+  const { label, property, onChange } = props;
+  const { options, setOptions } = useContext( ConfigContext );
+
+  return (
+    <div className="customize-control-sm_toggle">
+      <div className="sm-toggle">
+        <input className="sm-toggle__checkbox" type="checkbox" checked={ options?.[ property ] } />
+        <label className="sm-toggle__label" onClick={ () => {
+          const newOptions = {
+            ...options,
+            [property]: ! options?.[property]
+          };
+
+          setOptions( newOptions );
+
+          if ( typeof onChange === "function" ) {
+            onChange( ! options?.[property] )
+          }
+        } }>
+          <div className="sm-toggle__switch"></div>
+          <div className="sm-toggle__label-text">{ label }</div>
+        </label>
+      </div>
+    </div>
+  )
 }
 
 const Control = ( props ) => {

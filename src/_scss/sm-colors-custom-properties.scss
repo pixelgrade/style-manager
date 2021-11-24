@@ -23,12 +23,12 @@
 }
 
 html {
-  @include apply-palette(1);
+//  @include apply-palette(1);
   @include apply-variation(1);
 }
 
 html,
-[class*="sm-variation-"]:not(.sm-color-signal-0) {
+[class*="sm-variation-"] {
   background-color: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color);
 }

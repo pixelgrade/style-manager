@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useCallback, useState, useRef } from 'react';
+import React, { Fragment, useContext, useEffect, useCallback, useState, useRef } from 'react';
 
 import { ColorPicker } from './color-picker';
 import { ContextualMenu } from "../contextual-menu";

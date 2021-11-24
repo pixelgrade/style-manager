@@ -1,6 +1,6 @@
 import { getPalettesFromColors } from "../builder";
 import getRandomStripes from "./get-random-stripes";
-import getTextColor from "./get-text-color";
+import { getTextDarkColorFromSource } from "../../utils";
 
 const normalizeCloudPresets = ( presets ) => {
   return Object.keys( presets ).filter( key => {
@@ -40,7 +40,7 @@ const normalizeCloudPresets = ( presets ) => {
       uid: preset.hashid,
       config: colorGroups,
       stripes: getRandomStripes( palettes ),
-      textColor: getTextColor( palettes[0] ),
+      textColor: getTextDarkColorFromSource( palettes[0] ),
       image: preset?.preview?.background_image_url,
       quote: preset?.description
     }

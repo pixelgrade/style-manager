@@ -1,17 +1,20 @@
 import { hexToHpluv, hpluvToRgb } from 'hsluv';
 import chroma from 'chroma-js';
-
+import {
+  contrastToLuminance,
+  getTextDarkColorFromSource
+} from "../../../utils";
 import contrastArray from "./contrast-array";
 
-const defaultAttributes = {
+const defaultOptions = {
   correctLightness: true,
   useSources: true,
   mode: 'lch',
   bezierInterpolation: false,
 };
 
-export const getPalettesFromColors = ( colorGroups, attributes = {}, simple = false ) => {
-  const options = Object.assign( {}, defaultAttributes, attributes );
+export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) => {
+  const options = Object.assign( {}, defaultOptions, opts );
   const functionalColors = getFunctionalColors( colorGroups );
   const palettes = colorGroups.map( mapColorToPalette( options ) );
   const functionalPalettes = functionalColors.map( mapColorToPalette( options ) );
@@ -22,25 +25,104 @@ export const getPalettesFromColors = ( colorGroups, attributes = {}, simple = fa
 
 const noop = palette => palette;
 
-const mapSanitizePalettes = ( colors, attributes = {}, simple ) => {
-  return colors.map( mapCorrectLightness( attributes ) )
+const mapSanitizePalettes = ( colors, options = {}, simple ) => {
+  return colors.map( mapCorrectLightness( options ) )
                .map( mapUpdateProps )
-               .map( mapUseSource( attributes ) )
-               .map( mapAddTextColors )
-               .map( mapAddSourceIndex( attributes ) )
-               .map( mapMaybeSimplifyPalette( simple ) );
+               .map( mapUseSource( options ) )
+               .map( mapAddSourceIndex( options ) )
+               .map( mapCreateVariations( options ) );
+}
+
+const mapCreateVariations = ( options ) => {
+
+  return ( palette ) => {
+
+    const { colors, sourceIndex } = palette;
+
+    let colorsArray = colors.map( color => color.value );
+
+    if ( options[ 'simple-palettes' ] ) {
+
+      colorsArray = [];
+
+      const white = '#FFFFFF';
+      const light = getAverage( colors, 1, 3, sourceIndex ).value;
+      const color = getAverage( colors, 4, 4, sourceIndex ).value;
+      const shade = getAverage( colors, 8, 3, sourceIndex ).value;
+      const black = getAverage( colors, 11, 1, sourceIndex ).value;
+      const source = colors[sourceIndex].value;
+
+      if ( options[ 'force-white' ] ) {
+        colorsArray.push( white );
+      }
+
+      if ( options[ 'force-tints' ] ) {
+        colorsArray.push( light );
+      }
+
+      if ( options[ 'force-color' ] ) {
+        colorsArray.push( color );
+      }
+
+      if ( options[ 'force-shades' ] ) {
+        colorsArray.push( shade );
+      }
+
+      if ( options[ 'force-black' ] ) {
+        colorsArray.push( black );
+      }
+
+      if ( options[ 'force-source' ] ) {
+        colorsArray.push( source );
+      }
+
+      colorsArray = colorsArray.filter( ( value, index, self ) => {
+        return self.indexOf( value ) === index;
+      } );
+
+      if ( colorsArray.length < 1 ) {
+        colorsArray.push( source );
+      }
+    }
+
+    let workingColors = contrastArray.map( contrast => {
+      let colorToAdd = colorsArray[0];
+      let minContrast = 21;
+
+      colorsArray.forEach( color => {
+        const contrastOnWhite = chroma.contrast( color, '#FFFFFF' );
+        const contrastToCompare = Math.max( contrast, contrastOnWhite ) / Math.min( contrast, contrastOnWhite );
+
+        if ( contrastToCompare < minContrast ) {
+          minContrast = contrastToCompare;
+          colorToAdd = color;
+        }
+      } );
+
+      return colorToAdd;
+    } );
+
+    palette.variations = workingColors.map( ( color, index ) => {
+      return {
+        background: color,
+        accent: getAccentColor( palette, workingColors, index ),
+        foreground1: getTextColor( palette, color ),
+        foreground2: getTextColor( palette, color, true ),
+      }
+    } );
+
+    return palette;
+  }
 }
 
 const mapAddTextColors = ( palette ) => {
 
-  const textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
+  palette.textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
     return {
       ...color,
-      value: getTextColor( color.value, 9 + index ),
+      value: getTextDarkColorFromSource( palette, 9 + index ),
     }
   } );
-
-  palette.textColors = palette.colors.slice( 0, 1 ).concat( textColors );
 
   return palette;
 }
@@ -82,68 +164,6 @@ const mapColorToPalette = ( ( attributes ) => {
     };
   }
 } );
-
-const mapMaybeSimplifyPalette = ( simple ) => {
-
-  if ( ! simple ) {
-    return noop;
-  }
-
-  return ( palette ) => {
-
-    const { sourceIndex } = palette;
-    const colors = palette.colors.slice();
-
-    let WHITES = 1;
-    let LIGHTS = 3;
-    let COLORS = 4;
-    let SHADES = 4;
-
-    if ( 0 < sourceIndex && sourceIndex <= 3 ) {
-      LIGHTS = 5;
-      COLORS = 3;
-      SHADES = 3;
-
-      if ( sourceIndex === 3 ) {
-        LIGHTS = 6;
-        COLORS = 2;
-        SHADES = 3;
-      }
-    }
-
-    if ( 3 < sourceIndex && sourceIndex <= 7 ) {
-      LIGHTS = 2;
-      COLORS = 6;
-      SHADES = 3;
-    }
-
-    if ( 7 < sourceIndex && sourceIndex <= 12 ) {
-      LIGHTS = 2;
-      COLORS = 5;
-      SHADES = 4;
-    }
-
-    const white = getAverage( colors, 0, WHITES, sourceIndex );
-    const light = getAverage( colors, 1, 3, sourceIndex );
-    const color = getAverage( colors, LIGHTS + WHITES, COLORS, sourceIndex );
-    const shade = getAverage( colors, LIGHTS + WHITES + COLORS, SHADES, sourceIndex );
-
-    const newColors = [
-      ...Array( WHITES ).fill( white ),
-      ...Array( LIGHTS ).fill( light ),
-      ...Array( COLORS ).fill( color ),
-      ...Array( SHADES ).fill( shade ),
-    ];
-
-    newColors[ sourceIndex ].isSource = true;
-
-    return {
-      ...palette,
-      colors: newColors,
-      lightColorsCount: sourceIndex === 4 ? 6 : WHITES + LIGHTS,
-    }
-  }
-}
 
 const getAverage = ( colors, start, length, sourceIndex ) => {
   let colorIndex = Math.ceil( length * 0.5 ) + start - 1;
@@ -228,19 +248,48 @@ const getBestPositionInPalette = ( color, colors, attributes, byColorDistance ) 
   return pos;
 }
 
-const getTextColor = ( hex, position ) => {
-  const luminance = contrastToLuminance( contrastArray[ position ] );
-  const hpluv = hexToHpluv( hex );
-  const h = Math.min( Math.max( hpluv[0], 0), 360 );
-  const p = Math.min( Math.max( hpluv[1], 0), 100 );
-  const l = Math.min( Math.max( hpluv[2], 0), 100 );
-  const rgb = hpluvToRgb( [h, p, l] ).map( x => x * 255 );
+const getAccentColor = ( palette, workingColors, index ) => {
+  const { sourceIndex } = palette;
+  const colors = workingColors.slice();
+  const color = colors[ index ];
+  const source = palette.colors[sourceIndex].value;
+  const sourceContrast = chroma.contrast( source, color );
 
-  return chroma( rgb ).luminance( luminance ).hex();
+  // if the current palette source color has a contrast of at least 3 (WCAG AA) use that
+  if ( sourceContrast >= 3 ) {
+    return source;
+  }
+
+  // otherwise search in the current palette the color that can provide the closest contrast to 4.5 (WCAG AAA)
+  colors.sort( ( color1, color2 ) => {
+    const c1 = chroma.contrast( color1, color );
+    const c2 = chroma.contrast( color2, color );
+    const abs1 = Math.max( 4.5, c1 ) / Math.min( 4.5, c1 );
+    const abs2 = Math.max( 4.5, c2 ) / Math.min( 4.5, c2 );
+    return abs1 - abs2;
+  } );
+
+  const accentColor = colors[0];
+
+  if ( accentColor === color ) {
+    return getTextColor( palette, color );
+  }
+
+  return accentColor;
 }
 
-const contrastToLuminance = ( contrast ) => {
-  return 1.05 / contrast - 0.05;
+const getTextColor = ( palette, background, darker = false ) => {
+  const addon = darker ? 1 : 0;
+  const dark = getTextDarkColorFromSource( palette, 9 + addon );
+  const white = '#FFFFFF';
+  const contrastOnWhite = chroma.contrast( white, background );
+  const contrastOnDark = contrastArray[9] / contrastOnWhite;
+
+  if ( 4.5 > contrastOnDark ) {
+    return white;
+  }
+
+  return dark;
 }
 
 const createAutoPalette = ( colors, attributes = {} ) => {
