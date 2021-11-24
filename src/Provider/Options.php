@@ -106,6 +106,9 @@ class Options extends AbstractHookProvider {
 		// Customize save (publish) used the same changeset save logic, so this filter is fired then also.
 		$this->add_filter( 'customize_changeset_save_data', 'filter_invalidate_details_cache', 50, 1 );
 
+		// Invalidate caches after Pixelgrade Care import.
+		$this->add_action( 'pixcare_sce_import_end', 'invalidate_all_caches', 1 );
+
 		/**
 		 * Migrate Customizer controls data between site options and theme_mods on plugin settings change.
 		 */
