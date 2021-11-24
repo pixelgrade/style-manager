@@ -12,7 +12,7 @@ export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => 
 
   const target = document.createElement( 'DIV' );
 
-  container.children.forEach( child => {
+  Array.from(container.children).forEach( child => {
     child.style.display = 'none';
   } );
 

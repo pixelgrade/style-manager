@@ -213,11 +213,15 @@ class ColorPalettes extends AbstractHookProvider {
 	protected function add_color_usage_section( array $config ): array {
 
 		$color_usage_fields = [
+			'sm_description_color_usage_intro',
+			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
 			'sm_site_color_variation',
+			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
+			'sm_separator_1_2',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];
@@ -290,41 +294,43 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_advanced_palette_source'                => [
 					'type'         => 'text',
 					'live'         => true,
-					'default'      => '[
-					{
-						"uid": "color_group_1",
-						"sources": [
-							{ 
-								"uid": "color_11", 
-								"showPicker": true,
-								"label": "Color",
-								"value": "#ddaa61"
-							}
+					'default'      => json_encode(
+						[
+							[
+								'uid'     => 'color_group_1',
+								'sources' => [
+									[
+										'uid'        => 'color_11',
+										'showPicker' => true,
+										'label'      => 'Color',
+										'value'      => '#ddaa61',
+									],
+								],
+							],
+							[
+								'uid'     => 'color_group_2',
+								'sources' => [
+									[
+										'uid'        => 'color_21',
+										'showPicker' => true,
+										'label'      => 'Color',
+										'value'      => '#39497C',
+									],
+								],
+							],
+							[
+								'uid'     => 'color_group_3',
+								'sources' => [
+									[
+										'uid'        => 'color_31',
+										'showPicker' => true,
+										'label'      => 'Color',
+										'value'      => '#B12C4A',
+									],
+								],
+							],
 						]
-					},
-					{
-						"uid": "color_group_2",
-						"sources": [
-							{ 
-								"uid": "color_21", 
-								"showPicker": true,
-								"label": "Color",
-								"value": "#39497C"
-							}
-						]
-					},
-					{
-						"uid": "color_group_3",
-						"sources": [
-							{ 
-								"uid": "color_31", 
-								"showPicker": true,
-								"label": "Color",
-								"value": "#B12C4A"
-							}
-						]
-					}
-					]',
+					),
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
@@ -352,189 +358,191 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_advanced_palette_output'                => [
 					'type'         => 'text',
 					'live'         => true,
-					'default'      => '[
-					  {
-					    "sourceIndex": 5,
-					    "id": 1,
-					    "lightColorsCount": 5,
-					    "label": "Color",
-					    "source": {
-					      "0": "#DDAB5D"
-					    },
-					    "colors": [
-					      { "value": "#FFFFFF" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#DDAB5D", "isSource": true },
-					      { "value": "#DDAB5D" },
-					      { "value": "#DDAB5D" },
-					      { "value": "#212B49" },
-					      { "value": "#212B49" },
-					      { "value": "#141928" },
-					      { "value": "#141928" }
+					'default'      => json_encode(
+						[
+					  [
+					    'sourceIndex'=> 5,
+					    'id'=> 1,
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Color', '__plugin_txtd' ),
+					    'source'=> [
+					      '0'=> '#DDAB5D'
 					    ],
-					    "textColors": [
-					      { "value": "#34394B" },
-					      { "value": "#34394B" }
-					    ]
-					  },
-					  {
-					    "sourceIndex": 5,
-					    "id": 2,
-					    "lightColorsCount": 5,
-					    "label": "Color",
-					    "source": {
-					      "0": "#39497C"
-					    },
-					    "colors": [
-					      { "value": "#FFFFFF" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#39497C", "isSource": true },
-					      { "value": "#39497C" },
-					      { "value": "#39497C" },
-					      { "value": "#212B49" },
-					      { "value": "#212B49" },
-					      { "value": "#141928" },
-					      { "value": "#141928" }
+					    'colors'=> [
+					      [ 'value'=> '#FFFFFF' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#DDAB5D', 'isSource'=> true ],
+					      [ 'value'=> '#DDAB5D' ],
+					      [ 'value'=> '#DDAB5D' ],
+					      [ 'value'=> '#212B49' ],
+					      [ 'value'=> '#212B49' ],
+					      [ 'value'=> '#141928' ],
+					      [ 'value'=> '#141928' ]
 					    ],
-					    "textColors": [
-					      { "value": "#34394B" },
-					      { "value": "#34394B" }
+					    'textColors'=> [
+					      [ 'value'=> '#34394B' ],
+					      [ 'value'=> '#34394B' ]
 					    ]
-					  },
-					  {
-					    "sourceIndex": 5,
-					    "id": 3,
-					    "lightColorsCount": 5,
-					    "label": "Color",
-					    "source": {
-					      "0": "#B12C4A"
-					    },
-					    "colors": [
-					      { "value": "#FFFFFF" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#EEEFF2" },
-					      { "value": "#B12C4A", "isSource": true },
-					      { "value": "#B12C4A" },
-					      { "value": "#B12C4A" },
-					      { "value": "#212B49" },
-					      { "value": "#212B49" },
-					      { "value": "#141928" },
-					      { "value": "#141928" }
+					  ],
+					  [
+					    'sourceIndex'=> 5,
+					    'id'=> 2,
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Color', '__plugin_txtd' ),
+					    'source'=> [
+					      '0'=> '#39497C'
 					    ],
-					    "textColors": [
-					      { "value": "#34394B" },
-					      { "value": "#34394B" }
+					    'colors'=> [
+					      [ 'value'=> '#FFFFFF' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#39497C', 'isSource'=> true ],
+					      [ 'value'=> '#39497C' ],
+					      [ 'value'=> '#39497C' ],
+					      [ 'value'=> '#212B49' ],
+					      [ 'value'=> '#212B49' ],
+					      [ 'value'=> '#141928' ],
+					      [ 'value'=> '#141928' ]
+					    ],
+					    'textColors'=> [
+					      [ 'value'=> '#34394B' ],
+					      [ 'value'=> '#34394B' ]
 					    ]
-					  },
-					  {
-					    "sourceIndex": 6,
-					    "id": "_info",
-					    "lightColorsCount": 5,
-					    "label": "Info",
-					    "source": [ "#2E72D2" ],
-					    "colors": [
-					      { "value": "#ffffff" },
-					      { "value": "#f6f7fd" },
-					      { "value": "#e1e5f8" },
-					      { "value": "#b2c0ec" },
-					      { "value": "#859ee2" },
-					      { "value": "#527ed3" },
-					      { "value": "#2E72D2", "isSource": true },
-					      { "value": "#0758b0" },
-					      { "value": "#0c4496" },
-					      { "value": "#0e317b" },
-					      { "value": "#0c1861" },
-					      { "value": "#101010" }
+					  ],
+					  [
+					    'sourceIndex'=> 5,
+					    'id'=> 3,
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Color', '__plugin_txtd' ),
+					    'source'=> [
+					      '0'=> '#B12C4A'
+					    ],
+					    'colors'=> [
+					      [ 'value'=> '#FFFFFF' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#EEEFF2' ],
+					      [ 'value'=> '#B12C4A', 'isSource'=> true ],
+					      [ 'value'=> '#B12C4A' ],
+					      [ 'value'=> '#B12C4A' ],
+					      [ 'value'=> '#212B49' ],
+					      [ 'value'=> '#212B49' ],
+					      [ 'value'=> '#141928' ],
+					      [ 'value'=> '#141928' ]
+					    ],
+					    'textColors'=> [
+					      [ 'value'=> '#34394B' ],
+					      [ 'value'=> '#34394B' ]
+					    ]
+					  ],
+					  [
+					    'sourceIndex'=> 6,
+					    'id'=> '_info',
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Info', '__plugin_txtd' ),
+					    'source'=> [ '#2E72D2' ],
+					    'colors'=> [
+					      [ 'value'=> '#ffffff' ],
+					      [ 'value'=> '#f6f7fd' ],
+					      [ 'value'=> '#e1e5f8' ],
+					      [ 'value'=> '#b2c0ec' ],
+					      [ 'value'=> '#859ee2' ],
+					      [ 'value'=> '#527ed3' ],
+					      [ 'value'=> '#2E72D2', 'isSource'=> true ],
+					      [ 'value'=> '#0758b0' ],
+					      [ 'value'=> '#0c4496' ],
+					      [ 'value'=> '#0e317b' ],
+					      [ 'value'=> '#0c1861' ],
+					      [ 'value'=> '#101010' ]
 				        ],
-				        "textColors": [
-				          { "value": "#30354c" },
-				          { "value": "#202132" }
+				        'textColors'=> [
+				          [ 'value'=> '#30354c' ],
+				          [ 'value'=> '#202132' ]
 			            ]
-		              },
-					  {
-					    "sourceIndex": 6,
-					    "id": "_error",
-					    "lightColorsCount": 5,
-					    "label": "Error",
-					    "source": [ "#D82C0D" ],
-					    "colors": [
-					      { "value": "#ffffff" },
-					      { "value": "#fff5f2" },
-					      { "value": "#ffdfd6" },
-					      { "value": "#fbaf98" },
-					      { "value": "#f18061" },
-					      { "value": "#de4f2e" },
-					      { "value": "#D82C0D", "isSource": true },
-					      { "value": "#b50f0f" },
-					      { "value": "#901313" },
-					      { "value": "#6c1212" },
-					      { "value": "#4d0000" },
-					      { "value": "#101010" }
+		              ],
+					  [
+					    'sourceIndex'=> 6,
+					    'id'=> '_error',
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Error', '__plugin_txtd' ),
+					    'source'=> [ '#D82C0D' ],
+					    'colors'=> [
+					      [ 'value'=> '#ffffff' ],
+					      [ 'value'=> '#fff5f2' ],
+					      [ 'value'=> '#ffdfd6' ],
+					      [ 'value'=> '#fbaf98' ],
+					      [ 'value'=> '#f18061' ],
+					      [ 'value'=> '#de4f2e' ],
+					      [ 'value'=> '#D82C0D', 'isSource'=> true ],
+					      [ 'value'=> '#b50f0f' ],
+					      [ 'value'=> '#901313' ],
+					      [ 'value'=> '#6c1212' ],
+					      [ 'value'=> '#4d0000' ],
+					      [ 'value'=> '#101010' ]
 				        ],
-				        "textColors": [
-				          { "value": "#4c2e2e" },
-				          { "value": "#311c1c" }
+				        'textColors'=> [
+				          [ 'value'=> '#4c2e2e' ],
+				          [ 'value'=> '#311c1c' ]
 			            ]
-		              },
-					  {
-					    "sourceIndex": 3,
-					    "id": "_warning",
-					    "lightColorsCount": 5,
-					    "label": "Warning",
-					    "source": [ "#FFCC00" ],
-					    "colors": [
-					      { "value": "#ffffff" },
-					      { "value": "#fff7df" },
-					      { "value": "#fce690" },
-					      { "value": "#FFCC00", "isSource": true },
-					      { "value": "#c39b10" },
-					      { "value": "#9f7a00" },
-					      { "value": "#896701" },
-					      { "value": "#735507" },
-					      { "value": "#60430a" },
-					      { "value": "#4e2f0d" },
-					      { "value": "#40140b" },
-					      { "value": "#101010" }
+		              ],
+					  [
+					    'sourceIndex'=> 3,
+					    'id'=> '_warning',
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Warning', '__plugin_txtd' ),
+					    'source'=> [ '#FFCC00' ],
+					    'colors'=> [
+					      [ 'value'=> '#ffffff' ],
+					      [ 'value'=> '#fff7df' ],
+					      [ 'value'=> '#fce690' ],
+					      [ 'value'=> '#FFCC00', 'isSource'=> true ],
+					      [ 'value'=> '#c39b10' ],
+					      [ 'value'=> '#9f7a00' ],
+					      [ 'value'=> '#896701' ],
+					      [ 'value'=> '#735507' ],
+					      [ 'value'=> '#60430a' ],
+					      [ 'value'=> '#4e2f0d' ],
+					      [ 'value'=> '#40140b' ],
+					      [ 'value'=> '#101010' ]
 				        ],
-				        "textColors": [
-				          { "value": "#473222" },
-				          { "value": "#311d1b" }
+				        'textColors'=> [
+				          [ 'value'=> '#473222' ],
+				          [ 'value'=> '#311d1b' ]
 			            ]
-		              },
-					  {
-					    "sourceIndex": 7,
-					    "id": "_success",
-					    "lightColorsCount": 5,
-					    "label": "Success",
-					    "source": [ "#00703c" ],
-					    "colors": [
-					      { "value": "#ffffff" },
-					      { "value": "#f4f8f5" },
-					      { "value": "#dce9e0" },
-					      { "value": "#a9c9b2" },
-					      { "value": "#7aab89" },
-					      { "value": "#4c8c63" },
-					      { "value": "#257b4a" },
-					      { "value": "#00703c", "isSource": true },
-					      { "value": "#0b5425" },
-					      { "value": "#0d3f12" },
-					      { "value": "#092809" },
-					      { "value": "#101010" }
+		              ],
+					  [
+					    'sourceIndex'=> 7,
+					    'id'=> '_success',
+					    'lightColorsCount'=> 5,
+					    'label'=> esc_html__( 'Success', '__plugin_txtd' ),
+					    'source'=> [ '#00703c' ],
+					    'colors'=> [
+					      [ 'value'=> '#ffffff' ],
+					      [ 'value'=> '#f4f8f5' ],
+					      [ 'value'=> '#dce9e0' ],
+					      [ 'value'=> '#a9c9b2' ],
+					      [ 'value'=> '#7aab89' ],
+					      [ 'value'=> '#4c8c63' ],
+					      [ 'value'=> '#257b4a' ],
+					      [ 'value'=> '#00703c', 'isSource'=> true ],
+					      [ 'value'=> '#0b5425' ],
+					      [ 'value'=> '#0d3f12' ],
+					      [ 'value'=> '#092809' ],
+					      [ 'value'=> '#101010' ]
 				        ],
-				        "textColors": [
-				          { "value": "#223c23" },
-				          { "value": "#142614" }
+				        'textColors'=> [
+				          [ 'value'=> '#223c23' ],
+				          [ 'value'=> '#142614' ]
 			            ]
-		              }
-					]',
+		              ]
+					]
+	),
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
@@ -548,7 +556,17 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-				'sm_site_color_variation'                   => [
+				'NOT_sm_description_color_system_intro'     => array(
+					'type' => 'html',
+					'html' => 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System for your website.',
+				),
+
+				'sm_description_color_usage_intro' => array(
+					'type' => 'html',
+					'html' => 'Manage how to apply <a href="https://pixelgrade.com/docs/rosa2/design-and-style/color-system/#6-manage-how-to-apply-color-to-your-website" target="_blank">the default colors</a> to your website\'s elements.',
+				),
+				'sm_separator_1_0'                 => array( 'type' => 'html', 'html' => '' ),
+				'sm_site_color_variation'          => [
 					'type'         => 'range',
 					'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-3 for subtle shades, 4-7 for colorful, above 8 for darker shades.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'live'         => true,
@@ -569,7 +587,10 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-				'sm_text_color_switch_master'               => [
+
+				'sm_separator_1_1' => array( 'type' => 'html', 'html' => '' ),
+
+				'sm_text_color_switch_master'   => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -581,7 +602,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
-				'sm_accent_color_switch_master'             => [
+				'sm_accent_color_switch_master' => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -593,7 +614,10 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
-				'sm_coloration_level'                       => [
+
+				'sm_separator_1_2' => array( 'type' => 'html', 'html' => '' ),
+
+				'sm_coloration_level' => [
 					'type'         => 'sm_radio',
 					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'setting_type' => 'option',
@@ -631,20 +655,25 @@ class ColorPalettes extends AbstractHookProvider {
 			self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 			'sm_advanced_palette_output',
 
+			'sm_description_color_usage_intro',
+			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
 			'sm_site_color_variation',
+			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
+			'sm_separator_1_2',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];
 
 		$color_palettes_section_config = [
-			'title'      => esc_html__( 'Colors', '__plugin_txtd' ),
-			'section_id' => 'sm_color_palettes_section',
-			'priority'   => 10,
-			'options'    => [],
+			'title'       => esc_html__( 'Color System', '__plugin_txtd' ),
+			'section_id'  => 'sm_color_palettes_section',
+			'description' => wp_kses( __( 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System</a> for your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html( 'post' ) ),
+			'priority'    => 10,
+			'options'     => [],
 		];
 
 		foreach ( $color_palettes_fields as $field_id ) {

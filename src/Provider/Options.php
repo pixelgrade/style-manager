@@ -11,6 +11,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Provider;
 
+use Carbon_Fields\Field\Field;
 use Pixelgrade\StyleManager\Utils\ArrayHelpers;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
@@ -104,6 +105,16 @@ class Options extends AbstractHookProvider {
 		// Whenever we update data from the Customizer, we will invalidate the options details (that include the value).
 		// Customize save (publish) used the same changeset save logic, so this filter is fired then also.
 		$this->add_filter( 'customize_changeset_save_data', 'filter_invalidate_details_cache', 50, 1 );
+
+		// Invalidate caches after Pixelgrade Care import.
+		$this->add_action( 'pixcare_sce_import_end', 'invalidate_all_caches', 1 );
+
+		/**
+		 * Migrate Customizer controls data between site options and theme_mods on plugin settings change.
+		 */
+		$this->add_action( 'style_manager/plugin_settings_cfdatastore/before_save', 'maybe_migrate_controls_data', 10, 4 );
+		// We need to prevent the deletion (upon save) of the "Store value as" option.
+		$this->add_filter( 'carbon_fields_should_delete_field_value_on_save', 'prevent_deletion_on_save', 10, 2 );
 	}
 
 	/**
@@ -769,5 +780,78 @@ class Options extends AbstractHookProvider {
 		\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
 
 		$this->clear_locally_cached_data();
+	}
+
+	protected function maybe_migrate_controls_data( $key, $value, $new_all_values, $old_all_values ) {
+		if ( $key !== 'values_store_mod' ) {
+			return;
+		}
+		// Only migrate on `values_store_mod` change.
+		if ( ! isset( $old_all_values['values_store_mod'] ) || ! isset( $new_all_values['values_store_mod'] ) ) {
+			return;
+		}
+		if ( $old_all_values['values_store_mod'] === $new_all_values['values_store_mod'] ) {
+			return;
+		}
+
+		$old_values_store = $old_all_values['values_store_mod'];
+		$new_values_store = $new_all_values['values_store_mod'];
+
+		$settings = $this->get_details_all();
+		if ( empty( $settings ) ) {
+			return;
+		}
+
+		$options_values = \get_option( $this->get_options_key() );
+		$theme_mods_values = \get_theme_mod( $this->get_options_key() );
+
+		foreach ( $settings as $setting_id => $setting_details ) {
+			// Ignore certain purely visual settings.
+			if ( ! empty( $setting_details['type'] ) && in_array( $setting_details['type'], [
+					'html',
+					'button',
+				] ) ) {
+
+				continue;
+			}
+
+			// Ignore settings that declare their own type of storage.
+			if ( isset( $setting_details['setting_type'] ) ) {
+				continue;
+			}
+
+			// If we have a value saved in the old store, save it in the new one.
+			$old_setting_value = null;
+			if ( $old_values_store === 'option' && isset( $options_values[ $setting_id ] ) ) {
+				$old_setting_value = $options_values[ $setting_id ];
+			} else if ( $old_values_store === 'theme_mod' && isset( $theme_mods_values[ $setting_id ] ) ) {
+				$old_setting_value = $theme_mods_values[ $setting_id ];
+			}
+			// No old value to migrate.
+			if ( $old_setting_value === null ) {
+				continue;
+			}
+
+			if ( $new_values_store === 'option' ) {
+				$options_values[ $setting_id ] = $old_setting_value;
+			} else {
+				$theme_mods_values[ $setting_id ] = $old_setting_value;
+			}
+		}
+
+		// Finally, update the DB values.
+		if ( $new_values_store === 'option' ) {
+			update_option( $this->get_options_key(), $options_values );
+		} else {
+			set_theme_mod( $this->get_options_key(), $theme_mods_values );
+		}
+	}
+
+	protected function prevent_deletion_on_save( bool $delete, Field $field ) : bool {
+		if ( $field->get_base_name() === 'values_store_mod' ) {
+			$delete = false;
+		}
+
+		return $delete;
 	}
 }

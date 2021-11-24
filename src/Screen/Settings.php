@@ -112,7 +112,10 @@ class Settings extends AbstractHookProvider {
 		         ->set_datastore( $this->cf_datastore )
 		         ->add_tab( esc_html__( 'General', '__plugin_txtd' ), [
 			         Field::make( 'select', 'values_store_mod', esc_html__( 'Store values as:', '__plugin_txtd' ) )
-			              ->set_help_text( esc_html__( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme', '__plugin_txtd' ) )
+			              ->set_help_text(
+							  esc_html__( 'You can store the values globally so you can use them with other themes or store them as a "theme_mod" which will make an individual set of options only for the current theme.', '__plugin_txtd' ) .
+							  '<p>' . wp_kses_post( __( '<strong>Important Note:</strong> On save with a different way of storing, we will <strong>automatically migrate your existing data</strong> to the new storage location, so you can easily pick-up from were you left off.', '__plugin_txtd' ) ). '</p>'
+			                )
 			              ->set_options( [
 				              'option'    => esc_html__( 'Option (global options)', '__plugin_txtd' ),
 				              'theme_mod' => esc_html__( 'Theme Mod (per theme options)', '__plugin_txtd' ),
