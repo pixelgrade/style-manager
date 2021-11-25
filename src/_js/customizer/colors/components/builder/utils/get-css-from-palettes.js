@@ -22,7 +22,9 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
       ${ palettesAcc }
       
       ${ selector } {
-        ${ Array.from( Array( 12 ) ).reduce( ( variationsAcc, value, index ) =>{
+        ${ palette.colors.sort( ( c1, c2 ) => {
+          return chroma( c2.value ).luminance - chroma( c2.value ).luminance( c1 )
+    } ).reduce( ( variationsAcc, value, index ) =>{
           return `
             ${ variationsAcc }
             ${ getVariationCSS( palette, index ) }  

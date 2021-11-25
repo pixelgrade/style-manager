@@ -93,7 +93,7 @@ const PalettePreview = ( props ) => {
               const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
               const passedProps = {
-                isSource: normalize( index ) === sourceIndex,
+                isSource: color.isSource,
                 showCard: isActive && index === lastHover,
                 showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
                 showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
@@ -149,7 +149,7 @@ const PalettePreviewGrade = ( props ) => {
       </div>
       <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
       <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } }>
-        <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
+        <div className={ `palette-preview-swatches__source-badge` } />
         <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchAccentText }</div>
       </div>
       <div className="palette-preview-swatches__wrap-foreground"  style={ { color: 'var(--sm-current-fg1-color)' } }>
@@ -166,12 +166,9 @@ const PalettePreviewGradeCard = ( props ) => {
   return (
     <div className={ `palette-preview-swatches__card` }>
       <div className={ `palette-preview-swatches__card-content` }>
-        <div className={ `palette-preview-swatches__source-badge sm-variation-${ getStarVariation( variation ) }` } />
-        <h2 className="palette-preview-swatches__title">Text</h2>
-        <div className="palette-preview-swatches__body">
-          <div className="palette-preview-swatches__row" />
-          <div className="palette-preview-swatches__row" />
-        </div>
+        <div className={ `palette-preview-swatches__source-badge` } />
+        <div className="palette-preview-swatches__title">Text</div>
+        <div className="palette-preview-swatches__body">Lorem ipsum dolor sit amet</div>
         <div className={ `palette-preview-swatches__button` }>&rarr;</div>
       </div>
     </div>

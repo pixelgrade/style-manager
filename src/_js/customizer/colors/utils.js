@@ -60,8 +60,7 @@ export const maybeFillPalettesArray = ( arr, minLength ) => {
 }
 
 export const getTextDarkColorFromSource = ( palette, position = 9 ) => {
-  const { sourceIndex } = palette;
-  const hex = palette.colors[ sourceIndex ].value;
+  const hex = palette.source[0];
   const luminance = contrastToLuminance( contrastArray[position] );
   const hpluv = hexToHpluv( hex );
   const h = Math.min( Math.max( hpluv[ 0 ], 0 ), 360 );

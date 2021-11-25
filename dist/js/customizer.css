@@ -2756,7 +2756,7 @@ img:not([src]) {
 
 .palette-preview-swatches__wrap {
   position: relative;
-  color: var(--sm-current-fg1-color);
+  color: var(--sm-current-fg2-color);
 }
 
 .palette-preview-swatches__wrap-foreground,
@@ -2839,7 +2839,7 @@ img:not([src]) {
   font-size: 26px;
   font-weight: 500;
   margin: 0;
-  color: inherit;
+  color: var(--sm-current-fg1-color);
 }
 
 .palette-preview-swatches__card {
@@ -2868,7 +2868,7 @@ img:not([src]) {
 
 .palette-preview-swatches__row {
   height: 1.05em;
-  background-color: var(--sm-current-fg1-color);
+  background-color: currentColor;
 }
 .palette-preview-swatches__row:last-child {
   width: 70%;
@@ -2882,7 +2882,7 @@ img:not([src]) {
   border-radius: 0.25em;
   font-size: 1.25em;
   display: inline-block;
-  background: var(--sm-current-fg1-color);
+  background: var(--sm-current-accent-color);
   color: var(--sm-current-bg-color);
 }
 
@@ -2893,7 +2893,7 @@ img:not([src]) {
   right: 0.75em;
   width: 1.3em;
   height: 1.3em;
-  background: var(--sm-current-bg-color);
+  background: var(--sm-current-accent-color);
   border-radius: 50%;
 }
 @supports (mask-size: contain) {
