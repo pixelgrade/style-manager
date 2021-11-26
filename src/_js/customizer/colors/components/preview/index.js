@@ -81,30 +81,35 @@ const PalettePreview = ( props ) => {
   }
 
   return (
-    <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover + 1 }` : '' }` }>
+    <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover }` : '' }` }>
       <div className={ `sm-overlay__wrap` }>
         <div className={ `sm-overlay__container` }>
           <div className={ `palette-preview-set` }>
             { colors.map( ( color, index ) => {
 
-              const variation = index + 1;
               const showLightForeground = normalize( index ) === 0;
               const showDarkForeground = normalize( index ) === 9;
               const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
 
+              let variation = index + 1;
+
+              if ( palette.variations.length ) {
+                variation = palette.variations.findIndex( variation => variation.background === color.value ) + 1;
+              }
+
               const passedProps = {
                 isSource: color.isSource,
-                showCard: isActive && index === lastHover,
-                showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
-                showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
+                showCard: isActive && variation === lastHover,
+//                showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
+//                showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
                 variation,
               }
 
               return (
-                <div key={ index } className={ `palette-preview-swatches sm-variation-${ variation }` }
+                <div key={ variation } className={ `palette-preview-swatches sm-variation-${ variation }` }
                      onMouseEnter={ () => {
                        setActivePalette( id );
-                       setLastHover( index );
+                       setLastHover( variation );
                      } }>
                   <PalettePreviewGrade { ...passedProps } />
                 </div>
@@ -168,7 +173,10 @@ const PalettePreviewGradeCard = ( props ) => {
       <div className={ `palette-preview-swatches__card-content` }>
         <div className={ `palette-preview-swatches__source-badge` } />
         <div className="palette-preview-swatches__title">Text</div>
-        <div className="palette-preview-swatches__body">Lorem ipsum dolor sit amet</div>
+        <div className="palette-preview-swatches__body">
+          <div className="palette-preview-swatches__row" />
+          <div className="palette-preview-swatches__row" />
+        </div>
         <div className={ `palette-preview-swatches__button` }>&rarr;</div>
       </div>
     </div>

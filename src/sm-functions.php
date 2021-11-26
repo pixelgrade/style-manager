@@ -250,30 +250,71 @@ function palettes_output( array $palettes ) {
 	$output = '';
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
-	return '';
-
 	foreach ( $palettes as $palette ) {
-		$sourceIndex = $palette->sourceIndex;
 
-		$output .= 'html { ' . PHP_EOL;
-		$output .= get_initial_color_variables( $palette );
-		$output .= get_variables_css( $palette, $variation - 1 );
-		$output .= get_variables_css( $palette, $sourceIndex, false, true );
-		$output .= '}' . PHP_EOL;
-
-		$output .= '.is-dark { ' . PHP_EOL;
-		$output .= get_variables_css( $palette, $variation - 1, true );
-		$output .= get_variables_css( $palette, $sourceIndex, true, true );
-		$output .= '}' . PHP_EOL;
-
-		$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
-		$output .= get_apply_palette_variables( $palette->id );
-		$output .= '}' . PHP_EOL;
-
-		$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
-		$output .= get_apply_palette_variables( $palette->id, '-shifted' );
-		$output .= '}' . PHP_EOL;
+		if ( ! empty( $palette->variations ) ) {
+			$output .= get_palette_css( $palette );
+		} else {
+			$output .= get_legacy_palette_css( $palette );
+		}
 	}
+
+	return $output;
+}
+
+function get_palette_css( $palette ) {
+	$output = '';
+
+	$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+	$output .= get_variation_css_variables( $palette );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
+	$output .= get_variation_css_variables( $palette, $palette->sourceIndex );
+	$output .= '}' . PHP_EOL;
+
+	return $output;
+}
+
+function get_variation_css_variables( $palette, $offset = 0 ) {
+	$output = '';
+
+	for ( $i = 0; $i < 12; $i++ ) {
+		$index = ( $i + 12 - $offset ) % 12;
+		$variation = $palette->variations[ $index ];
+
+		$output .= '--sm-bg-color-' . ( $i + 1 ) . ': ' . $variation->background . ';' . PHP_EOL;
+		$output .= '--sm-accent-color-' . ( $i + 1 ) . ': ' . $variation->accent . ';' . PHP_EOL;
+		$output .= '--sm-fg1-color-' . ( $i + 1 ) . ': ' . $variation->foreground1 . ';' . PHP_EOL;
+		$output .= '--sm-fg2-color-' . ( $i + 1 ) . ': ' . $variation->foreground2 . ';' . PHP_EOL;
+	}
+
+	return $output;
+}
+
+function get_legacy_palette_css( $palette ) {
+	$output = '';
+
+	$sourceIndex = $palette->sourceIndex;
+
+	$output .= 'html { ' . PHP_EOL;
+	$output .= get_initial_color_variables( $palette );
+	$output .= get_variables_css( $palette, $variation - 1 );
+	$output .= get_variables_css( $palette, $sourceIndex, false, true );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.is-dark { ' . PHP_EOL;
+	$output .= get_variables_css( $palette, $variation - 1, true );
+	$output .= get_variables_css( $palette, $sourceIndex, true, true );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+	$output .= get_apply_palette_variables( $palette->id );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
+	$output .= get_apply_palette_variables( $palette->id, '-shifted' );
+	$output .= '}' . PHP_EOL;
 
 	return $output;
 }

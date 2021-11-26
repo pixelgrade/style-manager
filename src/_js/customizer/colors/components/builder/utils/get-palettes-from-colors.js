@@ -74,35 +74,42 @@ const mapCreateVariations = ( options ) => {
         colors.push( black );
       }
 
-
       if ( colors.length < 1 ) {
         colors.push( ...sourceColors );
       }
-
-      colors = colors.filter( ( variation, index, self ) => {
-        return self.findIndex( compare => variation.value === compare.value ) === index;
-      } );
     }
 
-    fillColors( colors );
+    colors = colors.filter( ( variation, index, self ) => {
+      return self.findIndex( compare => variation.value === compare.value ) === index;
+    } );
+
+    colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
 
     palette.colors = colors;
-    palette.variations = colors.slice().sort( ( c1, c2 ) => chroma( c1.value ).luminance - chroma( c2.value ).luminance ).map( mycolor => {
-      return {
-        background: mycolor.value,
-        accent: getAccentHex( palette, mycolor, options ),
-        foreground1: getTextHex( palette, mycolor, options ),
-        foreground2: getTextHex( palette, mycolor, options, true ),
-      }
-    } );
+
+    addVariationsToPalette( palette, options );
 
     return palette;
   }
 }
 
-const fillColors = ( colors ) => {
+const addVariationsToPalette = ( palette, options ) => {
+  const mycolors = getFilledColors( palette.colors.slice() );
+
+  palette.variations = mycolors.map( mycolor => {
+    return {
+      background: mycolor.value,
+      accent: getAccentHex( palette, mycolor, options ),
+      foreground1: getTextHex( palette, mycolor, options ),
+      foreground2: getTextHex( palette, mycolor, options, true ),
+    }
+  } )
+}
+
+const getFilledColors = ( colors ) => {
   const white = chroma( '#FFFFFF' );
   const mycolors = colors.slice();
+  const output = [];
 
   const grays = contrastArray.map( contrast => {
     const luminance = contrastToLuminance( contrast );
@@ -117,15 +124,17 @@ const fillColors = ( colors ) => {
       return contrast1 - contrast2;
     } );
 
-    colors[ index ] = mycolors[0];
+    output[ index ] = mycolors[0];
 
   } );
 
-  colors.sort( ( v1, v2 ) => {
+  output.sort( ( v1, v2 ) => {
     const contrast1 = chroma.contrast( white, v1.value );
     const contrast2 = chroma.contrast( white, v2.value );
     return contrast1 - contrast2;
   } );
+
+  return output;
 }
 
 const mapAddTextColors = ( palette ) => {
@@ -262,7 +271,7 @@ const getBestPositionInPalette = ( color, colors, attributes, byColorDistance ) 
   return pos;
 }
 
-const getMinCotrast = ( options, largeText = false ) => {
+const getMinContrast = ( options, largeText = false ) => {
 
   if ( options[ 'wcag-aaa' ] ) {
     return largeText ? 4.5 : 7;
@@ -272,12 +281,12 @@ const getMinCotrast = ( options, largeText = false ) => {
     return largeText ? 3 : 4.5;
   }
 
-  return contrastArray[3];
+  return contrastArray[4];
 }
 
 const getAccentHex = ( palette, color, options ) => {
   const colors = palette.colors.slice();
-  const minContrast = getMinCotrast( options );
+  const minContrast = getMinContrast( options );
 
   colors.push( { value: getTextHex( palette, color ) } );
   colors.push( { value: getTextHex( palette, color, options, true ) } );

@@ -22,9 +22,7 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
       ${ palettesAcc }
       
       ${ selector } {
-        ${ palette.colors.sort( ( c1, c2 ) => {
-          return chroma( c2.value ).luminance - chroma( c2.value ).luminance( c1 )
-    } ).reduce( ( variationsAcc, value, index ) =>{
+        ${ palette.variations.reduce( ( variationsAcc, value, index ) =>{
           return `
             ${ variationsAcc }
             ${ getVariationCSS( palette, index ) }  
@@ -43,11 +41,11 @@ const getVariationCSS = ( palette, index ) => {
   const variation = variations[ index ];
 
   return `
-        --sm-bg-color-${ index + 1 }: ${ variation.background }; \n;
-        --sm-accent-color-${ index + 1 }: ${ variation.accent }; \n;
-        --sm-fg1-color-${ index + 1 }: ${ variation.foreground1 }; \n;
-        --sm-fg2-color-${ index + 1 }: ${ variation.foreground2 }; \n;
-        `;
+        --sm-bg-color-${ index + 1 }: ${ variation.background };
+        --sm-accent-color-${ index + 1 }: ${ variation.accent };
+        --sm-fg1-color-${ index + 1 }: ${ variation.foreground1 };
+        --sm-fg2-color-${ index + 1 }: ${ variation.foreground2 };
+  `;
 
 }
 
