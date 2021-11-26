@@ -2,7 +2,7 @@ import { hexToHpluv, hpluvToRgb } from 'hsluv';
 import chroma from 'chroma-js';
 import {
   contrastToLuminance,
-  getTextDarkColorFromSource
+  desaturateTextColor,
 } from "../../../utils";
 import contrastArray from "./contrast-array";
 
@@ -11,6 +11,10 @@ const defaultOptions = {
   useSources: true,
   mode: 'lch',
   bezierInterpolation: false,
+
+  count: 12,
+  center: 0.5,
+  width: 1,
 };
 
 export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) => {
@@ -26,9 +30,10 @@ export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) 
 const noop = palette => palette;
 
 const mapSanitizePalettes = ( colors, options = {}, simple ) => {
-  return colors.map( mapCorrectLightness( options ) )
+  return colors
+//              .map( mapCorrectLightness( options ) )
                .map( mapUpdateProps )
-               .map( mapUseSource( options ) )
+//               .map( mapUseSource( options ) )
                .map( mapAddSourceIndex( options ) )
                .filter( mapCreateVariations( options ) );
 }
@@ -37,55 +42,33 @@ const mapCreateVariations = ( options ) => {
 
   return ( palette ) => {
 
-    let colors = palette.colors.slice();
-
-    const white = { value: '#FFFFFF' };
-    const light = getAverageColor( palette, 1, 3 );
-    const color = getAverageColor( palette, 4, 4 );
-    const shade = getAverageColor( palette, 8, 3 );
-    const black = getAverageColor( palette, 11, 1 );
     const sourceColors = palette.source.map( color => ( { value: color, isSource: true } ) );
 
-    if ( options[ 'simple-palettes' ] ) {
+    const forcedColors = [];
 
-      colors = [];
-
-      if ( options[ 'force-source' ] ) {
-        colors.push( ...sourceColors );
-      }
-
-      if ( options[ 'force-white' ] ) {
-        colors.push( white );
-      }
-
-      if ( options[ 'force-tints' ] ) {
-        colors.push( light );
-      }
-
-      if ( options[ 'force-color' ] ) {
-        colors.push( color );
-      }
-
-      if ( options[ 'force-shades' ] ) {
-        colors.push( shade );
-      }
-
-      if ( options[ 'force-black' ] ) {
-        colors.push( black );
-      }
-
-      if ( colors.length < 1 ) {
-        colors.push( ...sourceColors );
-      }
+    if ( options[ 'force-source' ] ) {
+      forcedColors.push( ...sourceColors );
     }
 
-    colors = colors.filter( ( variation, index, self ) => {
-      return self.findIndex( compare => variation.value === compare.value ) === index;
+    if ( options[ 'force-white' ] ) {
+      forcedColors.unshift( { value: '#FFFFFF' } );
+    }
+
+    if ( options[ 'force-black' ] ) {
+      forcedColors.push( { value: chroma( '#FFFFFF' ).luminance( contrastToLuminance( 19 ) ).hex() } );
+    }
+
+    const uniqueForcedColors = forcedColors.filter( ( color, index, self ) => {
+      return self.findIndex( compare => color.value === compare.value ) === index;
     } );
 
-    colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
+    uniqueForcedColors.forEach( color => {
+      palette.colors.sort( ( c1, c2 ) => chroma.contrast( c2.value, color.value ) - chroma.contrast( c1.value, color.value ) );
+      palette.colors.pop();
+    } );
 
-    palette.colors = colors;
+    palette.colors.push( ...uniqueForcedColors );
+    palette.colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
 
     addVariationsToPalette( palette, options );
 
@@ -101,12 +84,15 @@ const addVariationsToPalette = ( palette, options ) => {
       background: mycolor.value,
       accent: getAccentHex( palette, mycolor, options ),
       foreground1: getTextHex( palette, mycolor, options ),
-      foreground2: getTextHex( palette, mycolor, options, true ),
+      foreground2: getTextHex( palette, mycolor, options, 7 ),
     }
   } )
 }
 
 const getFilledColors = ( colors ) => {
+
+  return colors;
+
   const white = chroma( '#FFFFFF' );
   const mycolors = colors.slice();
   const output = [];
@@ -135,18 +121,6 @@ const getFilledColors = ( colors ) => {
   } );
 
   return output;
-}
-
-const mapAddTextColors = ( palette ) => {
-
-  palette.textColors = palette.colors.slice( 9, 11 ).map( ( color, index ) => {
-    return {
-      ...color,
-      value: getTextDarkColorFromSource( palette, 9 + index ),
-    }
-  } );
-
-  return palette;
 }
 
 const mapAddSourceIndex = ( attributes ) => {
@@ -179,7 +153,6 @@ const mapColorToPalette = ( ( attributes ) => {
 
     return {
       id: id || ( index + 1 ),
-      lightColorsCount: 5,
       label: label,
       source: sources,
       colors: colors,
@@ -207,7 +180,7 @@ const mapCorrectLightness = ( { correctLightness, mode } ) => {
   return ( palette ) => {
     palette.colors = palette.colors.map( ( color, index ) => {
       const luminance = contrastToLuminance( contrastArray[ index ] );
-      return chroma( color ).luminance( luminance, 'rgb' ).hex();
+      return chroma( color ).luminance( luminance ).hex();
     } );
     return palette;
   }
@@ -281,18 +254,18 @@ const getMinContrast = ( options, largeText = false ) => {
     return largeText ? 3 : 4.5;
   }
 
-  return contrastArray[4];
+  return contrastArray[3];
 }
 
 const getAccentHex = ( palette, color, options ) => {
   const colors = palette.colors.slice();
   const minContrast = getMinContrast( options );
+  const sources = palette.source.map( hex => ( { value: hex, isSource: true } ) );
+  const textColors = getTextColors( color.value );
 
-  colors.push( { value: getTextHex( palette, color ) } );
-  colors.push( { value: getTextHex( palette, color, options, true ) } );
-
-  // otherwise search in the current palette the color that can provide the closest contrast to 4.5 (WCAG AAA)
-  colors.sort( ( color1, color2 ) => color1.isSource ? -1 : 0 );
+  // always add sources and text colors to use as possible accent colors
+  colors.shift( ...sources );
+  colors.push( ...textColors.map( hex => ( { value: hex } ) ) );
 
   const bestIndex = colors.findIndex( mycolor => chroma.contrast( mycolor.value, color.value ) > minContrast );
 
@@ -303,35 +276,54 @@ const getAccentHex = ( palette, color, options ) => {
   return colors[ bestIndex ].value;
 }
 
-const getTextHex = ( palette, color, options, darker = false ) => {
-  const addon = darker ? 1 : 0;
-  const dark = getTextDarkColorFromSource( palette, 9 + addon );
-  const white = '#FFFFFF';
-  const contrastOnWhite = chroma.contrast( white, color.value );
-  const contrastOnDark = contrastArray[9] / contrastOnWhite;
+const getTextColors = ( hex ) => {
 
-  if ( 4.5 > contrastOnDark ) {
-    return white;
-  }
+  const textContrastArray = [
+    ...contrastArray.slice( 0, 1 ),
+    ...contrastArray.slice( -3 )
+  ];
 
-  return dark;
-}
-
-const createAutoPalette = ( colors, attributes = {} ) => {
-  const { mode, bezierInterpolation } = attributes;
-  const newColors = colors.slice();
-
-  newColors.splice( 0, 0, '#FFFFFF' );
-  newColors.push( '#000000' );
-  newColors.sort( ( c1, c2 ) => {
-    return ( chroma( c1 ).luminance() > chroma( c2 ).luminance() ) ? -1 : ( ( chroma( c1 ).luminance() < chroma( c2 ).luminance() ) ? 1 : 0 );
+  return textContrastArray.map( contrast => {
+    const desaturated = desaturateTextColor( hex );
+    const luminance = contrastToLuminance( contrast );
+    return chroma( desaturated ).luminance( luminance ).hex();
   } );
 
-  if ( !! bezierInterpolation ) {
-    return chroma.bezier( newColors ).scale().mode( mode ).correctLightness().colors( 12 );
-  } else {
-    return chroma.scale( newColors ).mode( mode ).correctLightness().colors( 12 );
+}
+
+const getTextHex = ( palette, color, options, defaultMinContrast ) => {
+  const minContrast = Math.max( getMinContrast( options ), defaultMinContrast );
+  const textColors = getTextColors( color.value );
+
+  textColors.sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
+
+  const bestIndex = textColors.findIndex( mycolor => chroma.contrast( mycolor, color.value ) > minContrast );
+
+  if ( bestIndex < 0 ) {
+    return textColors[ textColors.length - 1 ];
   }
+
+  return textColors[ bestIndex ];
+}
+
+const createAutoPalette = ( colors, options = {} ) => {
+  const { count, width, center, mode, bezierInterpolation } = options;
+  const newColors = colors.slice();
+
+  newColors.unshift( '#FFFFFF' );
+  newColors.push( '#000000' );
+  newColors.sort( ( c1, c2 ) => chroma( c2 ).luminance() - chroma( c1 ).luminance() );
+
+  let scale = bezierInterpolation ? chroma.bezier( newColors ).scale() : chroma.scale( newColors );
+
+  scale.correctLightness();
+
+  let paddingLeft = ( 1 - width ) * center;
+  let paddingRight = ( 1 - width ) * ( 1 - center );
+
+  scale.padding( [ paddingLeft, paddingRight ] );
+
+  return scale.colors( count );
 }
 
 const blend = ( functionalColor, brandColor, ratio = 1 ) => {

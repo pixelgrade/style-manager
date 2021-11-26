@@ -62,27 +62,6 @@ const getApplyPaletteVariables = ( id, suffix = '' ) => {
   return output;
 }
 
-const getVariablesCSS = ( palette, offset = 0, isDark = false, isShifted = false ) => {
-  const { colors } = palette;
-  const count = colors.length;
-
-  return colors.reduce( ( colorsAcc, color, index ) => {
-    let oldColorIndex = ( index + offset ) % count;
-
-    if ( isDark ) {
-      if ( oldColorIndex < count / 2 ) {
-        oldColorIndex = 11 - oldColorIndex;
-      } else {
-        return colorsAcc;
-      }
-    }
-
-    return `${ colorsAcc }
-      ${ getColorVariables( palette, index, oldColorIndex, isShifted ) }
-    `;
-  }, '' );
-}
-
 const getInitialColorVaraibles = ( palette ) => {
   const { colors, textColors, id } = palette;
   const prefix = '--sm-color-palette-';
@@ -98,39 +77,6 @@ const getInitialColorVaraibles = ( palette ) => {
       ${ prefix }${ id }-text-color-${ index + 1 }: ${ color.value };
     `;
   }, '' );
-
-  return `
-    ${ accentColors }
-    ${ darkColors }
-  `;
-}
-
-const getColorVariables = ( palette, newColorIndex, oldColorIndex, isShifted ) => {
-  const { colors, id, lightColorsCount } = palette;
-  const count = colors.length;
-  const accentColorIndex = ( oldColorIndex + count / 2 ) % count;
-  const prefix = '--sm-color-palette-';
-  const suffix = isShifted ? '-shifted' : '';
-  const newIndex = parseInt( newColorIndex, 10 ) + 1;
-
-  let accentColors = `
-    ${ prefix }${ id }-bg-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-${ oldColorIndex + 1 });
-    ${ prefix }${ id }-accent-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-${ accentColorIndex + 1 });
-  `;
-
-  let darkColors = '';
-
-  if ( oldColorIndex < lightColorsCount ) {
-    darkColors = `
-      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-1);
-      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-text-color-2);
-    `;
-  } else {
-    darkColors = `
-      ${ prefix }${ id }-fg1-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
-      ${ prefix }${ id }-fg2-color-${ newIndex }${ suffix }: var(${ prefix }${ id }-color-1);
-    `;
-  }
 
   return `
     ${ accentColors }

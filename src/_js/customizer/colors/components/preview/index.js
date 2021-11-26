@@ -52,7 +52,7 @@ const PalettePreviewList = ( props ) => {
 
 const PalettePreview = ( props ) => {
   const { palette, isActive, setActivePalette } = props;
-  const { id, colors, lightColorsCount, sourceIndex } = palette;
+  const { id, colors, sourceIndex } = palette;
   const [ lastHover, setLastHover ] = useState( sourceIndex );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
@@ -87,10 +87,6 @@ const PalettePreview = ( props ) => {
           <div className={ `palette-preview-set` }>
             { colors.map( ( color, index ) => {
 
-              const showLightForeground = normalize( index ) === 0;
-              const showDarkForeground = normalize( index ) === 9;
-              const foregroundToShow = normalize( lastHover ) >= lightColorsCount ? showLightForeground : showDarkForeground;
-
               let variation = index + 1;
 
               if ( palette.variations.length ) {
@@ -100,8 +96,6 @@ const PalettePreview = ( props ) => {
               const passedProps = {
                 isSource: color.isSource,
                 showCard: isActive && variation === lastHover,
-//                showAccent: isActive && ( lastHover !== false ) && ( index === ( lastHover + 6 ) % 12 ),
-//                showForeground: isActive && ( lastHover !== false ) && foregroundToShow,
                 variation,
               }
 

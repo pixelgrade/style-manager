@@ -35,7 +35,11 @@ const Builder = ( props ) => {
   const { sourceSettingID, outputSettingID } = props;
   const sourceSetting = wp.customize( sourceSettingID );
   const [ config, setConfig ] = useState( getColorsFromInputValue( sourceSetting() ) );
-  const [ options, setOptions ] = useState( {} );
+  const [ options, setOptions ] = useState( {
+    width: 1,
+    center: 0.5,
+    count: 12
+  } );
   const [ CSSOutput, setCSSOutput ] = useState( '' );
 
   const activePresetSetting = wp.customize( 'sm_color_palette_in_use' );
@@ -65,7 +69,6 @@ const Builder = ( props ) => {
   }
 
   useEffect(() => {
-    console.log( options );
     const newPalettes = getPalettesFromColors( config, options );
 
     wp.customize( outputSettingID, setting => {
@@ -192,15 +195,40 @@ const Builder = ( props ) => {
 }
 
 const ConfigOptions = () => {
-  const { options, setOptions } = useContext( ConfigContext );
 
   return (
     <Fragment>
-      <ConfigPropsToggle property={ 'simple-palettes' } label={ 'Simplify Palettes' } />
-      { !! options?.[ 'simple-palettes' ] && <SimplePalettesOptions /> }
+      <ConfigPropsRange label={ 'Count' } property={ 'count' } min={ 1 } max={ 12 } step={ 1 } />
+      <ConfigPropsRange label={ 'Width' } property={ 'width' } min={ 0 } max={ 1 } step={ 0.01 } />
+      <ConfigPropsRange label={ 'Center' } property={ 'center' } min={ 0 } max={ 1 } step={ 0.01 } />
+      <ConfigPropsToggle property={ 'force-source' } label={ 'Source' } />
+      <ConfigPropsToggle property={ 'force-white' } label={ 'White' } />
+      <ConfigPropsToggle property={ 'force-black' } label={ 'Black' } />
       <ConfigPropsToggle property={ 'wcag-aa' } label={ 'WCAG AA' } />
       <ConfigPropsToggle property={ 'wcag-aaa' } label={ 'WCAG AAA' } />
     </Fragment>
+  )
+}
+
+const ConfigPropsRange = ( props ) => {
+  const { options, setOptions } = useContext( ConfigContext );
+  const { property, label, min, max, step } = props;
+  const value = options?.[ property ];
+  const onChange = ( e ) => {
+    const newOptions = {
+      ...options,
+      [ property ]: parseFloat( e.target.value )
+    };
+
+    setOptions( newOptions );
+  }
+
+  return (
+    <div className={ 'customize-control-range' }>
+      <label className={ 'customize-control-title' }>{ label }</label>
+      <input type="range" min={ min } max={ max } step={ step } value={ value } onChange={ onChange } />
+      <input className="range-value" type="text" value={ value } disabled />
+    </div>
   )
 }
 

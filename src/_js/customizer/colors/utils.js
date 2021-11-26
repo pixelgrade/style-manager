@@ -59,16 +59,14 @@ export const maybeFillPalettesArray = ( arr, minLength ) => {
   }
 }
 
-export const getTextDarkColorFromSource = ( palette, position = 9 ) => {
-  const hex = palette.source[0];
-  const luminance = contrastToLuminance( contrastArray[position] );
+export const desaturateTextColor = ( hex ) => {
   const hpluv = hexToHpluv( hex );
   const h = Math.min( Math.max( hpluv[ 0 ], 0 ), 360 );
   const p = Math.min( Math.max( hpluv[ 1 ], 0 ), 100 );
   const l = Math.min( Math.max( hpluv[ 2 ], 0 ), 100 );
   const rgb = hpluvToRgb( [ h, p, l ] ).map( x => x * 255 );
 
-  return chroma( rgb ).luminance( luminance ).hex();
+  return chroma( rgb ).hex();
 }
 
 export const contrastToLuminance = ( contrast ) => {
