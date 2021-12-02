@@ -35,7 +35,7 @@ const mapSanitizePalettes = ( colors, options = {}, simple ) => {
                .map( mapUpdateProps )
 //               .map( mapUseSource( options ) )
                .map( mapAddSourceIndex( options ) )
-               .filter( mapCreateVariations( options ) );
+               .map( mapCreateVariations( options ) );
 }
 
 const mapCreateVariations = ( options ) => {
