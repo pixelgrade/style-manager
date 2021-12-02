@@ -79,7 +79,19 @@ const mapCreateVariations = ( options ) => {
 const addVariationsToPalette = ( palette, options ) => {
   const mycolors = palette.colors.slice();
 
-  palette.variations = contrastArray.map( contrast => {
+  const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c.value ) );
+
+  const minContrast = Math.min( ...contrasts );
+  const maxContrast = Math.max( ...contrasts );
+
+  const prevMin = 1;
+  const prevMax = contrastArray[ contrastArray.length - 1 ];
+
+  const newContrastArray = contrastArray.map( contrast => {
+    return minContrast + maxContrast * ( contrast - prevMin ) / ( prevMax - prevMin );
+  } );
+
+  palette.variations = newContrastArray.map( contrast => {
     const gray = chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) );
 
     mycolors.sort( ( v1, v2 ) => {

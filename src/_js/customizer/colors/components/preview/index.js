@@ -80,9 +80,11 @@ const PalettePreview = ( props ) => {
     return ( index + siteVariation - 1 + 12 ) % 12;
   }
 
-  const uniqueVariations = variations.map( v => v.background )
-                                     .filter( ( hex, index ) => variations.findIndex( v => v.background === hex ) === index )
-                                     .map( hex => variations.findIndex( v => v.background === hex ) + 1 )
+//  const uniqueVariations = variations.map( v => v.background )
+//                                     .filter( ( hex, index ) => variations.findIndex( v => v.background === hex ) === index )
+//                                     .map( hex => variations.findIndex( v => v.background === hex ) + 1 );
+
+  const uniqueVariations = Array.from( Array( 12 ) ).map( ( x, y ) => y + 1 );
 
   return (
     <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover }` : '' }` }>
