@@ -77,32 +77,10 @@ const mapCreateVariations = ( options ) => {
 }
 
 const addVariationsToPalette = ( palette, options ) => {
-  const mycolors = getFilledColors( palette.colors.slice() );
+  const mycolors = palette.colors.slice();
 
-  palette.variations = mycolors.map( mycolor => {
-    return {
-      background: mycolor.value,
-      accent: getAccentHex( palette, mycolor, options ),
-      foreground1: getTextHex( palette, mycolor, options ),
-      foreground2: getTextHex( palette, mycolor, options, 7 ),
-    }
-  } )
-}
-
-const getFilledColors = ( colors ) => {
-
-  return colors;
-
-  const white = chroma( '#FFFFFF' );
-  const mycolors = colors.slice();
-  const output = [];
-
-  const grays = contrastArray.map( contrast => {
-    const luminance = contrastToLuminance( contrast );
-    return white.luminance( luminance );
-  } );
-
-  grays.forEach( ( gray, index ) => {
+  palette.variations = contrastArray.map( contrast => {
+    const gray = chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) );
 
     mycolors.sort( ( v1, v2 ) => {
       const contrast1 = chroma.contrast( v1.value, gray );
@@ -110,17 +88,15 @@ const getFilledColors = ( colors ) => {
       return contrast1 - contrast2;
     } );
 
-    output[ index ] = mycolors[0];
+    const mycolor = mycolors[0];
 
+    return {
+      background: mycolor.value,
+      accent: getAccentHex( palette, mycolor, options ),
+      foreground1: getTextHex( palette, mycolor, options ),
+      foreground2: getTextHex( palette, mycolor, options, 7 ),
+    }
   } );
-
-  output.sort( ( v1, v2 ) => {
-    const contrast1 = chroma.contrast( white, v1.value );
-    const contrast2 = chroma.contrast( white, v2.value );
-    return contrast1 - contrast2;
-  } );
-
-  return output;
 }
 
 const mapAddSourceIndex = ( attributes ) => {

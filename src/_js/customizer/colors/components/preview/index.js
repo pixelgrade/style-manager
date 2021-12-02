@@ -52,7 +52,7 @@ const PalettePreviewList = ( props ) => {
 
 const PalettePreview = ( props ) => {
   const { palette, isActive, setActivePalette } = props;
-  const { id, colors, sourceIndex } = palette;
+  const { id, colors, variations, sourceIndex } = palette;
   const [ lastHover, setLastHover ] = useState( sourceIndex );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
@@ -80,23 +80,22 @@ const PalettePreview = ( props ) => {
     return ( index + siteVariation - 1 + 12 ) % 12;
   }
 
+  const uniqueVariations = variations.map( v => v.background )
+                                     .filter( ( hex, index ) => variations.findIndex( v => v.background === hex ) === index )
+                                     .map( hex => variations.findIndex( v => v.background === hex ) + 1 )
+
   return (
     <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover }` : '' }` }>
       <div className={ `sm-overlay__wrap` }>
         <div className={ `sm-overlay__container` }>
           <div className={ `palette-preview-set` }>
-            { colors.map( ( color, index ) => {
+            { uniqueVariations.map( variation => {
 
-              let variation = index + 1;
-
-              if ( palette.variations.length ) {
-                variation = palette.variations.findIndex( variation => variation.background === color.value ) + 1;
-              }
+              const isSource = palette.source.findIndex( hex => variations[ variation - 1 ].background === hex ) > -1;
 
               const passedProps = {
-                isSource: color.isSource,
+                isSource: isSource,
                 showCard: isActive && variation === lastHover,
-                variation,
               }
 
               return (
@@ -125,9 +124,6 @@ const PalettePreviewGrade = ( props ) => {
   const {
     isSource,
     showCard,
-    showAccent,
-    showForeground,
-    variation,
   } = props;
 
   const className = classnames(
@@ -135,8 +131,6 @@ const PalettePreviewGrade = ( props ) => {
     {
       'is-source': isSource,
       'show-card': showCard,
-//      'show-accent': showAccent,
-//      'show-fg': showForeground,
     }
   )
 
@@ -144,7 +138,7 @@ const PalettePreviewGrade = ( props ) => {
     <div className={ className }>
       <div className="palette-preview-swatches__wrap-surface">
         <div className="palette-preview-swatches__text">{ styleManager.l10n.colorPalettes.palettePreviewSwatchSurfaceText }</div>
-        <PalettePreviewGradeCard variation={ variation } />
+        <PalettePreviewGradeCard />
       </div>
       <div className="palette-preview-swatches__wrap-background" style={ { color: 'var(--sm-current-bg-color)' } } />
       <div className="palette-preview-swatches__wrap-accent" style={ { color: 'var(--sm-current-bg-color)' } }>
@@ -158,9 +152,7 @@ const PalettePreviewGrade = ( props ) => {
   );
 }
 
-const PalettePreviewGradeCard = ( props ) => {
-
-  const { variation } = props;
+const PalettePreviewGradeCard = () => {
 
   return (
     <div className={ `palette-preview-swatches__card` }>
