@@ -264,13 +264,14 @@ const getAccentHex = ( palette, color, options ) => {
   const textColors = getTextColors( color.value );
 
   // always add sources and text colors to use as possible accent colors
-  colors.shift( ...sources );
+  colors.unshift( ...sources );
   colors.push( ...textColors.map( hex => ( { value: hex } ) ) );
 
   const bestIndex = colors.findIndex( mycolor => chroma.contrast( mycolor.value, color.value ) > minContrast );
 
   if ( bestIndex < 0 ) {
-    return colors[ colors.length - 1 ].value;
+    const sortedColors = colors.slice().sort( ( c1, c2 ) => chroma.contrast( c1.value, color.value ) - chroma.contrast( c2.value, color.value ) );
+    return sortedColors[ sortedColors.length - 1 ].value;
   }
 
   return colors[ bestIndex ].value;
@@ -300,7 +301,8 @@ const getTextHex = ( palette, color, options, defaultMinContrast ) => {
   const bestIndex = textColors.findIndex( mycolor => chroma.contrast( mycolor, color.value ) > minContrast );
 
   if ( bestIndex < 0 ) {
-    return textColors[ textColors.length - 1 ];
+    const sortedColors = textColors.slice().sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
+    return sortedColors[ sortedColors.length - 1 ];
   }
 
   return textColors[ bestIndex ];
