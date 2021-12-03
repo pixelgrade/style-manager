@@ -32,7 +32,6 @@ class Preview extends AbstractHookProvider {
 
 		// Register hooks related to Style Manager controls callbacks in sm-functions.php
 
-		$this->add_action( 'customize_preview_init', 'sm_variation_range_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_advanced_palette_output_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_color_select_dark_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_color_select_darker_cb_customizer_preview', 20 );
@@ -119,31 +118,6 @@ function sm_color_switch_dark_cb(value, selector, property) {
 function sm_color_switch_darker_cb(value, selector, property) {
 	var color = value === true ? 'accent' : 'fg2';
 	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
-}" . PHP_EOL;
-
-		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
-	}
-
-	protected function sm_variation_range_cb_customizer_preview() {
-		$fallback_palettes = get_fallback_palettes();
-		$palettes = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
-		$user_palettes = array_filter( $palettes, 'sm_filter_user_palettes' );
-		$palettes_count = count( $user_palettes );
-
-		$js = "";
-
-		$js .= "
-function sm_variation_range_cb(value, selector, property) {
-    var paletteOutputSetting = wp.customize( 'sm_advanced_palette_output' ),
-        palettes = !! paletteOutputSetting ? JSON.parse( paletteOutputSetting() ) : [],
-        fallbackPalettes = JSON.parse('" . json_encode( $fallback_palettes ) . "');
-        
-    if ( ! palettes.length ) {
-        palettes = fallbackPalettes;
-    }
-        
-    window.parent.sm.customizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
-    return window.parent.sm.customizer.getCSSFromPalettes( palettes, value );
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );

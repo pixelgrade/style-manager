@@ -214,17 +214,6 @@ function sm_advanced_palette_output_cb( string $value ) {
  *
  * @return string
  */
-function sm_variation_range_cb( string $value ) {
-	return '';
-}
-
-/**
- * @since   2.0.0
- *
- * @param string $value
- *
- * @return string
- */
 function sm_get_palette_output_from_color_config( $value ) {
 	$output = '';
 

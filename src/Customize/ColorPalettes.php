@@ -75,6 +75,7 @@ class ColorPalettes extends AbstractHookProvider {
 
 		$this->add_filter( 'style_manager/final_config', 'alter_master_controls_connected_fields', 100, 1 );
 		$this->add_filter( 'style_manager/final_config', 'add_color_usage_section', 110, 1 );
+		$this->add_filter( 'style_manager/final_config', 'add_fine_tune_palette_section', 120, 1 );
 
 		$this->add_filter( 'novablocks_block_editor_settings', 'add_color_palettes_to_novablocks_settings' );
 
@@ -217,7 +218,6 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
-			'sm_site_color_variation',
 			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
@@ -253,6 +253,53 @@ class ColorPalettes extends AbstractHookProvider {
 		}
 
 		$config['panels']['theme_options_panel']['sections']['sm_color_usage_section'] = $color_usage_section;
+
+		return $config;
+	}
+
+	protected function add_fine_tune_palette_section( array $config ): array {
+
+		$fine_tune_palette_fields = [
+			'sm_color_grades_number',
+			'sm_potential_color_contrast',
+			'sm_color_grade_balancer',
+			'sm_site_color_variation',
+			'sm_separator_2_0',
+			'sm_elements_color_contrast',
+			'sm_separator_2_1',
+			'sm_color_promotion_brand',
+			'sm_color_promotion_white',
+			'sm_color_promotion_black',
+			'sm_separator_2_2',
+		];
+
+		$fine_tune_palette_section = [
+			'title'      => esc_html__( 'Fine-tune palette', '__plugin_txtd' ),
+			'section_id' => 'sm_fine_tune_palette_section',
+			'priority'   => 20,
+			'options'    => [],
+		];
+
+		if ( ! isset( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
+			return $config;
+		}
+
+		$sm_colors_options = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
+
+		foreach ( $fine_tune_palette_fields as $field_id ) {
+
+			if ( ! isset( $sm_colors_options[ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $fine_tune_palette_section['options'] ) ) {
+				$fine_tune_palette_section['options'] = [ $field_id => $sm_colors_options[ $field_id ] ];
+			} else {
+				$fine_tune_palette_section['options'] = array_merge( $fine_tune_palette_section['options'], [ $field_id => $sm_colors_options[ $field_id ] ] );
+			}
+		}
+
+		$config['panels']['theme_options_panel']['sections']['sm_fine_tune_palette_section'] = $fine_tune_palette_section;
 
 		return $config;
 	}
@@ -356,193 +403,193 @@ class ColorPalettes extends AbstractHookProvider {
 					'setting_id'   => self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 				],
 				'sm_advanced_palette_output'                => [
-					'type'         => 'text',
-					'live'         => true,
-					'default'      => json_encode(
+					'type'    => 'text',
+					'live'    => true,
+					'default' => json_encode(
 						[
-					  [
-					    'sourceIndex'=> 5,
-					    'id'=> 1,
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Color', '__plugin_txtd' ),
-					    'source'=> [
-					      '0'=> '#DDAB5D'
-					    ],
-					    'colors'=> [
-					      [ 'value'=> '#FFFFFF' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#DDAB5D', 'isSource'=> true ],
-					      [ 'value'=> '#DDAB5D' ],
-					      [ 'value'=> '#DDAB5D' ],
-					      [ 'value'=> '#212B49' ],
-					      [ 'value'=> '#212B49' ],
-					      [ 'value'=> '#141928' ],
-					      [ 'value'=> '#141928' ]
-					    ],
-					    'textColors'=> [
-					      [ 'value'=> '#34394B' ],
-					      [ 'value'=> '#34394B' ]
-					    ]
-					  ],
-					  [
-					    'sourceIndex'=> 5,
-					    'id'=> 2,
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Color', '__plugin_txtd' ),
-					    'source'=> [
-					      '0'=> '#39497C'
-					    ],
-					    'colors'=> [
-					      [ 'value'=> '#FFFFFF' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#39497C', 'isSource'=> true ],
-					      [ 'value'=> '#39497C' ],
-					      [ 'value'=> '#39497C' ],
-					      [ 'value'=> '#212B49' ],
-					      [ 'value'=> '#212B49' ],
-					      [ 'value'=> '#141928' ],
-					      [ 'value'=> '#141928' ]
-					    ],
-					    'textColors'=> [
-					      [ 'value'=> '#34394B' ],
-					      [ 'value'=> '#34394B' ]
-					    ]
-					  ],
-					  [
-					    'sourceIndex'=> 5,
-					    'id'=> 3,
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Color', '__plugin_txtd' ),
-					    'source'=> [
-					      '0'=> '#B12C4A'
-					    ],
-					    'colors'=> [
-					      [ 'value'=> '#FFFFFF' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#EEEFF2' ],
-					      [ 'value'=> '#B12C4A', 'isSource'=> true ],
-					      [ 'value'=> '#B12C4A' ],
-					      [ 'value'=> '#B12C4A' ],
-					      [ 'value'=> '#212B49' ],
-					      [ 'value'=> '#212B49' ],
-					      [ 'value'=> '#141928' ],
-					      [ 'value'=> '#141928' ]
-					    ],
-					    'textColors'=> [
-					      [ 'value'=> '#34394B' ],
-					      [ 'value'=> '#34394B' ]
-					    ]
-					  ],
-					  [
-					    'sourceIndex'=> 6,
-					    'id'=> '_info',
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Info', '__plugin_txtd' ),
-					    'source'=> [ '#2E72D2' ],
-					    'colors'=> [
-					      [ 'value'=> '#ffffff' ],
-					      [ 'value'=> '#f6f7fd' ],
-					      [ 'value'=> '#e1e5f8' ],
-					      [ 'value'=> '#b2c0ec' ],
-					      [ 'value'=> '#859ee2' ],
-					      [ 'value'=> '#527ed3' ],
-					      [ 'value'=> '#2E72D2', 'isSource'=> true ],
-					      [ 'value'=> '#0758b0' ],
-					      [ 'value'=> '#0c4496' ],
-					      [ 'value'=> '#0e317b' ],
-					      [ 'value'=> '#0c1861' ],
-					      [ 'value'=> '#101010' ]
-				        ],
-				        'textColors'=> [
-				          [ 'value'=> '#30354c' ],
-				          [ 'value'=> '#202132' ]
-			            ]
-		              ],
-					  [
-					    'sourceIndex'=> 6,
-					    'id'=> '_error',
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Error', '__plugin_txtd' ),
-					    'source'=> [ '#D82C0D' ],
-					    'colors'=> [
-					      [ 'value'=> '#ffffff' ],
-					      [ 'value'=> '#fff5f2' ],
-					      [ 'value'=> '#ffdfd6' ],
-					      [ 'value'=> '#fbaf98' ],
-					      [ 'value'=> '#f18061' ],
-					      [ 'value'=> '#de4f2e' ],
-					      [ 'value'=> '#D82C0D', 'isSource'=> true ],
-					      [ 'value'=> '#b50f0f' ],
-					      [ 'value'=> '#901313' ],
-					      [ 'value'=> '#6c1212' ],
-					      [ 'value'=> '#4d0000' ],
-					      [ 'value'=> '#101010' ]
-				        ],
-				        'textColors'=> [
-				          [ 'value'=> '#4c2e2e' ],
-				          [ 'value'=> '#311c1c' ]
-			            ]
-		              ],
-					  [
-					    'sourceIndex'=> 3,
-					    'id'=> '_warning',
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Warning', '__plugin_txtd' ),
-					    'source'=> [ '#FFCC00' ],
-					    'colors'=> [
-					      [ 'value'=> '#ffffff' ],
-					      [ 'value'=> '#fff7df' ],
-					      [ 'value'=> '#fce690' ],
-					      [ 'value'=> '#FFCC00', 'isSource'=> true ],
-					      [ 'value'=> '#c39b10' ],
-					      [ 'value'=> '#9f7a00' ],
-					      [ 'value'=> '#896701' ],
-					      [ 'value'=> '#735507' ],
-					      [ 'value'=> '#60430a' ],
-					      [ 'value'=> '#4e2f0d' ],
-					      [ 'value'=> '#40140b' ],
-					      [ 'value'=> '#101010' ]
-				        ],
-				        'textColors'=> [
-				          [ 'value'=> '#473222' ],
-				          [ 'value'=> '#311d1b' ]
-			            ]
-		              ],
-					  [
-					    'sourceIndex'=> 7,
-					    'id'=> '_success',
-					    'lightColorsCount'=> 5,
-					    'label'=> esc_html__( 'Success', '__plugin_txtd' ),
-					    'source'=> [ '#00703c' ],
-					    'colors'=> [
-					      [ 'value'=> '#ffffff' ],
-					      [ 'value'=> '#f4f8f5' ],
-					      [ 'value'=> '#dce9e0' ],
-					      [ 'value'=> '#a9c9b2' ],
-					      [ 'value'=> '#7aab89' ],
-					      [ 'value'=> '#4c8c63' ],
-					      [ 'value'=> '#257b4a' ],
-					      [ 'value'=> '#00703c', 'isSource'=> true ],
-					      [ 'value'=> '#0b5425' ],
-					      [ 'value'=> '#0d3f12' ],
-					      [ 'value'=> '#092809' ],
-					      [ 'value'=> '#101010' ]
-				        ],
-				        'textColors'=> [
-				          [ 'value'=> '#223c23' ],
-				          [ 'value'=> '#142614' ]
-			            ]
-		              ]
-					]
-	),
+							[
+								'sourceIndex'      => 5,
+								'id'               => 1,
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Color', '__plugin_txtd' ),
+								'source'           => [
+									'0' => '#DDAB5D',
+								],
+								'colors'           => [
+									[ 'value' => '#FFFFFF' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#DDAB5D', 'isSource' => true ],
+									[ 'value' => '#DDAB5D' ],
+									[ 'value' => '#DDAB5D' ],
+									[ 'value' => '#212B49' ],
+									[ 'value' => '#212B49' ],
+									[ 'value' => '#141928' ],
+									[ 'value' => '#141928' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#34394B' ],
+									[ 'value' => '#34394B' ],
+								],
+							],
+							[
+								'sourceIndex'      => 5,
+								'id'               => 2,
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Color', '__plugin_txtd' ),
+								'source'           => [
+									'0' => '#39497C',
+								],
+								'colors'           => [
+									[ 'value' => '#FFFFFF' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#39497C', 'isSource' => true ],
+									[ 'value' => '#39497C' ],
+									[ 'value' => '#39497C' ],
+									[ 'value' => '#212B49' ],
+									[ 'value' => '#212B49' ],
+									[ 'value' => '#141928' ],
+									[ 'value' => '#141928' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#34394B' ],
+									[ 'value' => '#34394B' ],
+								],
+							],
+							[
+								'sourceIndex'      => 5,
+								'id'               => 3,
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Color', '__plugin_txtd' ),
+								'source'           => [
+									'0' => '#B12C4A',
+								],
+								'colors'           => [
+									[ 'value' => '#FFFFFF' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#EEEFF2' ],
+									[ 'value' => '#B12C4A', 'isSource' => true ],
+									[ 'value' => '#B12C4A' ],
+									[ 'value' => '#B12C4A' ],
+									[ 'value' => '#212B49' ],
+									[ 'value' => '#212B49' ],
+									[ 'value' => '#141928' ],
+									[ 'value' => '#141928' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#34394B' ],
+									[ 'value' => '#34394B' ],
+								],
+							],
+							[
+								'sourceIndex'      => 6,
+								'id'               => '_info',
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Info', '__plugin_txtd' ),
+								'source'           => [ '#2E72D2' ],
+								'colors'           => [
+									[ 'value' => '#ffffff' ],
+									[ 'value' => '#f6f7fd' ],
+									[ 'value' => '#e1e5f8' ],
+									[ 'value' => '#b2c0ec' ],
+									[ 'value' => '#859ee2' ],
+									[ 'value' => '#527ed3' ],
+									[ 'value' => '#2E72D2', 'isSource' => true ],
+									[ 'value' => '#0758b0' ],
+									[ 'value' => '#0c4496' ],
+									[ 'value' => '#0e317b' ],
+									[ 'value' => '#0c1861' ],
+									[ 'value' => '#101010' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#30354c' ],
+									[ 'value' => '#202132' ],
+								],
+							],
+							[
+								'sourceIndex'      => 6,
+								'id'               => '_error',
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Error', '__plugin_txtd' ),
+								'source'           => [ '#D82C0D' ],
+								'colors'           => [
+									[ 'value' => '#ffffff' ],
+									[ 'value' => '#fff5f2' ],
+									[ 'value' => '#ffdfd6' ],
+									[ 'value' => '#fbaf98' ],
+									[ 'value' => '#f18061' ],
+									[ 'value' => '#de4f2e' ],
+									[ 'value' => '#D82C0D', 'isSource' => true ],
+									[ 'value' => '#b50f0f' ],
+									[ 'value' => '#901313' ],
+									[ 'value' => '#6c1212' ],
+									[ 'value' => '#4d0000' ],
+									[ 'value' => '#101010' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#4c2e2e' ],
+									[ 'value' => '#311c1c' ],
+								],
+							],
+							[
+								'sourceIndex'      => 3,
+								'id'               => '_warning',
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Warning', '__plugin_txtd' ),
+								'source'           => [ '#FFCC00' ],
+								'colors'           => [
+									[ 'value' => '#ffffff' ],
+									[ 'value' => '#fff7df' ],
+									[ 'value' => '#fce690' ],
+									[ 'value' => '#FFCC00', 'isSource' => true ],
+									[ 'value' => '#c39b10' ],
+									[ 'value' => '#9f7a00' ],
+									[ 'value' => '#896701' ],
+									[ 'value' => '#735507' ],
+									[ 'value' => '#60430a' ],
+									[ 'value' => '#4e2f0d' ],
+									[ 'value' => '#40140b' ],
+									[ 'value' => '#101010' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#473222' ],
+									[ 'value' => '#311d1b' ],
+								],
+							],
+							[
+								'sourceIndex'      => 7,
+								'id'               => '_success',
+								'lightColorsCount' => 5,
+								'label'            => esc_html__( 'Success', '__plugin_txtd' ),
+								'source'           => [ '#00703c' ],
+								'colors'           => [
+									[ 'value' => '#ffffff' ],
+									[ 'value' => '#f4f8f5' ],
+									[ 'value' => '#dce9e0' ],
+									[ 'value' => '#a9c9b2' ],
+									[ 'value' => '#7aab89' ],
+									[ 'value' => '#4c8c63' ],
+									[ 'value' => '#257b4a' ],
+									[ 'value' => '#00703c', 'isSource' => true ],
+									[ 'value' => '#0b5425' ],
+									[ 'value' => '#0d3f12' ],
+									[ 'value' => '#092809' ],
+									[ 'value' => '#101010' ],
+								],
+								'textColors'       => [
+									[ 'value' => '#223c23' ],
+									[ 'value' => '#142614' ],
+								],
+							],
+						]
+					),
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.
@@ -566,7 +613,90 @@ class ColorPalettes extends AbstractHookProvider {
 					'html' => 'Manage how to apply <a href="https://pixelgrade.com/docs/rosa2/design-and-style/color-system/#6-manage-how-to-apply-color-to-your-website" target="_blank">the default colors</a> to your website\'s elements.',
 				),
 				'sm_separator_1_0'                 => array( 'type' => 'html', 'html' => '' ),
-				'sm_site_color_variation'          => [
+				'sm_text_color_switch_master'      => [
+					'type'             => 'sm_toggle',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_text_color_switch_master',
+					'label'            => esc_html__( 'Text Master', '__plugin_txtd' ),
+					'live'             => true,
+					'default'          => false,
+					'connected_fields' => [],
+					'css'              => [],
+				],
+				'sm_accent_color_switch_master'    => [
+					'type'             => 'sm_toggle',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type'     => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'       => 'sm_accent_color_switch_master',
+					'label'            => esc_html__( 'Accent Master', '__plugin_txtd' ),
+					'live'             => true,
+					'default'          => true,
+					'connected_fields' => [],
+					'css'              => [],
+				],
+				'sm_separator_1_1'                 => array( 'type' => 'html', 'html' => '' ),
+				'sm_coloration_level'              => [
+					'type'         => 'sm_radio',
+					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_coloration_level',
+					'label'        => esc_html__( 'Coloration Level', '__plugin_txtd' ),
+					'default'      => 0,
+					'live'         => true,
+					'choices'      => [
+						'0'   => esc_html__( 'Low', '__plugin_txtd' ),
+						'50'  => esc_html__( 'Medium', '__plugin_txtd' ),
+						'75'  => esc_html__( 'High', '__plugin_txtd' ),
+						'100' => esc_html__( 'Striking', '__plugin_txtd' ),
+					],
+				],
+
+				'sm_color_grades_number'      => [
+					'type'         => 'range',
+					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 10)' ),
+					'live'         => true,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_grades_number',
+					'label'        => esc_html__( 'Number of color grades', '__plugin_txtd' ),
+					'default'      => 12,
+					'input_attrs'  => [
+						'min'  => 1,
+						'max'  => 12,
+						'step' => 1,
+					],
+				],
+				'sm_potential_color_contrast' => [
+					'type'         => 'range',
+					'desc'         => __( 'Increase or decrease the contrast between colors within the generated palette.' ),
+					'live'         => true,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_potential_color_contrast',
+					'label'        => esc_html__( 'Potential color contrast', '__plugin_txtd' ),
+					'default'      => 0.5,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 1,
+						'step' => 0.1,
+					],
+				],
+				'sm_color_grade_balancer'     => [
+					'type'         => 'range',
+					'desc'         => __( 'Move the slider towards the left side to promote lighter color grades.' ),
+					'live'         => true,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_grade_balancer',
+					'label'        => esc_html__( 'Color grade balancer', '__plugin_txtd' ),
+					'default'      => 0,
+					'input_attrs'  => [
+						'min'  => - 1,
+						'max'  => 1,
+						'step' => 0.1,
+					],
+				],
+				'sm_site_color_variation'     => [
 					'type'         => 'range',
 					'desc'         => wp_kses( __( 'Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-3 for subtle shades, 4-7 for colorful, above 8 for darker shades.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'live'         => true,
@@ -587,51 +717,47 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-
-				'sm_separator_1_1' => array( 'type' => 'html', 'html' => '' ),
-
-				'sm_text_color_switch_master'   => [
-					'type'             => 'sm_toggle',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_text_color_switch_master',
-					'label'            => esc_html__( 'Text Master', '__plugin_txtd' ),
-					'live'             => true,
-					'default'          => false,
-					'connected_fields' => [],
-					'css'              => [],
-				],
-				'sm_accent_color_switch_master' => [
-					'type'             => 'sm_toggle',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type'     => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'       => 'sm_accent_color_switch_master',
-					'label'            => esc_html__( 'Accent Master', '__plugin_txtd' ),
-					'live'             => true,
-					'default'          => true,
-					'connected_fields' => [],
-					'css'              => [],
-				],
-
-				'sm_separator_1_2' => array( 'type' => 'html', 'html' => '' ),
-
-				'sm_coloration_level' => [
-					'type'         => 'sm_radio',
-					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
-					'setting_type' => 'option',
-					'setting_id'   => 'sm_coloration_level',
-					'label'        => esc_html__( 'Coloration Level', '__plugin_txtd' ),
-					'default'      => 0,
+				'sm_separator_2_0'            => array( 'type' => 'html', 'html' => '' ),
+				'sm_elements_color_contrast'  => [
+					'type'         => 'radio',
+					'desc'         => __( 'Increase or decrease the contrast between the background colors and the elements over them..' ),
 					'live'         => true,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_elements_color_contrast',
+					'label'        => esc_html__( 'Color grade balancer', '__plugin_txtd' ),
+					'default'      => 'normal',
 					'choices'      => [
-						'0'   => esc_html__( 'Low', '__plugin_txtd' ),
-						'50'  => esc_html__( 'Medium', '__plugin_txtd' ),
-						'75'  => esc_html__( 'High', '__plugin_txtd' ),
-						'100' => esc_html__( 'Striking', '__plugin_txtd' ),
+						'normal'  => esc_html__( 'Normal', '__plugin_txtd' ),
+						'average' => esc_html__( 'Average', '__plugin_txtd' ),
+						'maximum' => esc_html__( 'Maximum', '__plugin_txtd' ),
 					],
 				],
+				'sm_separator_2_1'            => array( 'type' => 'html', 'html' => '' ),
+				'sm_color_promotion_brand'    => [
+					'type'         => 'sm_toggle',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_promotion_brand',
+					'label'        => esc_html__( 'Brand solors', '__plugin_txtd' ),
+					'live'         => true,
+					'default'      => true,
+				],
+				'sm_color_promotion_white'    => [
+					'type'         => 'sm_toggle',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_promotion_white',
+					'label'        => esc_html__( 'Pure white', '__plugin_txtd' ),
+					'live'         => true,
+					'default'      => false,
+				],
+				'sm_color_promotion_black'    => [
+					'type'         => 'sm_toggle',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_promotion_black',
+					'label'        => esc_html__( 'Pure black', '__plugin_txtd' ),
+					'live'         => true,
+					'default'      => false,
+				],
+				'sm_separator_2_2'            => array( 'type' => 'html', 'html' => '' ),
 			] + $config['sections']['style_manager_section']['options'];
 
 		return $config;
@@ -666,6 +792,19 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_separator_1_2',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
+
+			// fine tune palette fields
+			'sm_color_grades_number',
+			'sm_potential_color_contrast',
+			'sm_color_grade_balancer',
+			'sm_site_color_variation',
+			'sm_separator_2_0',
+			'sm_elements_color_contrast',
+			'sm_separator_2_1',
+			'sm_color_promotion_brand',
+			'sm_color_promotion_white',
+			'sm_color_promotion_black',
+			'sm_separator_2_2',
 		];
 
 		$color_palettes_section_config = [
