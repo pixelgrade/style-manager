@@ -70,29 +70,28 @@ const mapCreateVariations = ( options ) => {
     palette.colors.push( ...uniqueForcedColors );
     palette.colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
 
-    addVariationsToPalette( palette, options );
+    palette.variations = getVariationsFromColors( palette, options );
 
     return palette;
   }
 }
 
-const addVariationsToPalette = ( palette, options ) => {
+const getVariationsFromColors = ( palette, options ) => {
+  const newContrastArray = getNewContrastArray( palette );
   const mycolors = palette.colors.slice();
+  const grays = newContrastArray.map( contrast => chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) ) );
 
-  const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c.value ) );
+  // make sure palette colors are used at lease once
+  // remove grays that are similar in luminance with the variationColor
+  mycolors.forEach( color => {
+    grays.sort( ( g1, g2 ) => {
+      return chroma.contrast( g1, color.value ) - chroma.contrast( g2, color.value )
+    } );
 
-  const minContrast = Math.min( ...contrasts );
-  const maxContrast = Math.max( ...contrasts );
-
-  const prevMin = 1;
-  const prevMax = contrastArray[ contrastArray.length - 1 ];
-
-  const newContrastArray = contrastArray.map( contrast => {
-    return minContrast + maxContrast * ( contrast - prevMin ) / ( prevMax - prevMin );
+    grays.shift();
   } );
 
-  palette.variations = newContrastArray.map( contrast => {
-    const gray = chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) );
+  grays.forEach( gray => {
 
     mycolors.sort( ( v1, v2 ) => {
       const contrast1 = chroma.contrast( v1.value, gray );
@@ -100,15 +99,38 @@ const addVariationsToPalette = ( palette, options ) => {
       return contrast1 - contrast2;
     } );
 
-    const mycolor = mycolors[0];
+    mycolors.push( mycolors[0] );
 
-    return {
-      background: mycolor.value,
-      accent: getAccentHex( palette, mycolor, options ),
-      foreground1: getTextHex( palette, mycolor, options ),
-      foreground2: getTextHex( palette, mycolor, options, 7 ),
-    }
   } );
+
+  mycolors.sort( ( v1, v2 ) => {
+    return chroma( v2.value ).luminance() - chroma( v1.value ).luminance();
+  } );
+
+  return mycolors.map( mycolor => getVariation( palette, mycolor, options ) );
+}
+
+const getNewContrastArray = ( palette ) => {
+  const mycolors = palette.colors.slice();
+  const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c.value ) );
+  const minContrast = Math.min( ...contrasts );
+  const maxContrast = Math.max( ...contrasts );
+  const prevMin = 1;
+  const prevMax = contrastArray[ contrastArray.length - 1 ];
+
+  return contrastArray.map( contrast => {
+    return minContrast + maxContrast * ( contrast - prevMin ) / ( prevMax - prevMin );
+  } );
+}
+
+const getVariation = ( palette, mycolor, options ) => {
+
+  return {
+    background: mycolor.value,
+    accent: getAccentHex( palette, mycolor, options ),
+    foreground1: getTextHex( palette, mycolor, options ),
+    foreground2: getTextHex( palette, mycolor, options, 7 ),
+  }
 }
 
 const mapAddSourceIndex = ( attributes ) => {
