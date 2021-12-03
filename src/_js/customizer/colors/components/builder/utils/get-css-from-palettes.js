@@ -40,13 +40,13 @@ const getPaletteCSS = ( palette, shifted = false ) => {
   return `
         ${ palette.variations.reduce( ( variationsAcc, value, index ) => `
             ${ variationsAcc }
-            ${ getVariationCSS( palette, ( index + offset ) % 12 ) }  
+            ${ getVariationCSS( palette, index, offset ) }  
         `, '' ) }
         `
 }
 
-const getVariationCSS = ( palette, index ) => {
-  const variation = palette.variations[ index ];
+const getVariationCSS = ( palette, index, offset ) => {
+  const variation = palette.variations[ ( index + offset ) % 12 ];
 
   return `
         --sm-bg-color-${ index + 1 }: ${ variation.background };

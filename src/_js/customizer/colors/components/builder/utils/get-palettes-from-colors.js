@@ -7,8 +7,6 @@ import {
 import contrastArray from "./contrast-array";
 
 const defaultOptions = {
-  correctLightness: true,
-  useSources: true,
   mode: 'lch',
   bezierInterpolation: false,
 
@@ -31,11 +29,9 @@ const noop = palette => palette;
 
 const mapSanitizePalettes = ( colors, options = {}, simple ) => {
   return colors
-//              .map( mapCorrectLightness( options ) )
                .map( mapUpdateProps )
-//               .map( mapUseSource( options ) )
-               .map( mapAddSourceIndex( options ) )
-               .map( mapCreateVariations( options ) );
+               .map( mapCreateVariations( options ) )
+               .map( mapAddSourceIndex( options ) );
 }
 
 const mapCreateVariations = ( options ) => {
@@ -133,16 +129,12 @@ const getVariation = ( palette, mycolor, options ) => {
   }
 }
 
-const mapAddSourceIndex = ( attributes ) => {
+const mapAddSourceIndex = ( options ) => {
 
   return ( palette, index, palettes ) => {
-    const { source, colors } = palette;
-    let sourceIndex = getSourceIndex( palette );
-
-    // falback sourceIndex when the source isn't used in the palette
-    if ( ! sourceIndex > -1 ) {
-      sourceIndex = getBestPositionInPalette( source[0], colors.map( color => color.value ), attributes );
-    }
+    const source = palette.source[0];
+    const colors = palette.variations.map( variation => variation.background );
+    const sourceIndex = getBestPositionInPalette( source, colors, options );
 
     return {
       sourceIndex,
@@ -151,13 +143,12 @@ const mapAddSourceIndex = ( attributes ) => {
   }
 }
 
-const mapColorToPalette = ( ( attributes ) => {
+const mapColorToPalette = ( ( options ) => {
 
   return ( groupObject, index ) => {
 
     const colorObjects = groupObject.sources;
     const sources = colorObjects.map( colorObj => colorObj.value );
-    const colors = createAutoPalette( sources, attributes );
 
     const { label, id } = colorObjects[0];
 
@@ -165,36 +156,11 @@ const mapColorToPalette = ( ( attributes ) => {
       id: id || ( index + 1 ),
       label: label,
       source: sources,
-      colors: colors,
+      colors: createAutoPalette( sources, options ),
     };
   }
 } );
 
-const getAverageColor = ( palette, start, length, sourceIndex ) => {
-  const { source } = palette;
-  const colors = palette.colors.slice(start, start + length);
-  let midIndex = Math.ceil( length * 0.5 ) - 1;
-  let srcIndex = colors.findIndex( color => source.some( mycolor => chroma.contrast( mycolor, color.value ) === 1 ) );
-
-  let index = srcIndex > -1 ? srcIndex : midIndex;
-
-  return palette.colors[ index + start ];
-}
-
-const mapCorrectLightness = ( { correctLightness, mode } ) => {
-
-  if ( ! correctLightness ) {
-    return noop;
-  }
-
-  return ( palette ) => {
-    palette.colors = palette.colors.map( ( color, index ) => {
-      const luminance = contrastToLuminance( contrastArray[ index ] );
-      return chroma( color ).luminance( luminance ).hex();
-    } );
-    return palette;
-  }
-}
 
 const mapUpdateProps = ( palette ) => {
   palette.colors = palette.colors.map( ( color, index ) => {
@@ -206,52 +172,10 @@ const mapUpdateProps = ( palette ) => {
   return palette;
 }
 
-const mapUseSource = ( attributes ) => {
-  const { useSources } = attributes;
-
-  if ( ! useSources ) {
-    return noop;
-  }
-
-  return ( palette ) => {
-    const { source } = palette;
-
-    source.forEach( mycolor => {
-      const position = getBestPositionInPalette( mycolor, palette.colors.map( color => color.value ), attributes );
-      palette.colors[position] = {
-        value: mycolor,
-        isSource: true
-      }
-    } )
-
-    return palette;
-  }
-}
-
-const getSourceIndex = ( palette ) => {
-  return palette.colors.findIndex( color => color.value === palette.source )
-}
-
-const getBestPositionInPalette = ( color, colors, attributes, byColorDistance ) => {
-  let min = Number.MAX_SAFE_INTEGER;
-  let pos = -1;
-
-  for ( let i = 0; i < colors.length - 1; i++ ) {
-    let distance;
-
-    if ( !! byColorDistance ) {
-      distance = chroma.distance( colors[i], color, 'rgb' );
-    } else {
-      distance = Math.abs( chroma( colors[i] ).luminance() - chroma( color ).luminance() );
-    }
-
-    if ( distance < min ) {
-      min = distance;
-      pos = i;
-    }
-  }
-
-  return pos;
+const getBestPositionInPalette = ( color, colors, attributes ) => {
+  const mycolors = colors.map( ( color, index ) => ( { color, index } ) );
+  mycolors.sort( ( c1, c2 ) => chroma.contrast( c1.color, color ) - chroma.contrast( c2.color, color ) );
+  return mycolors[0].index;
 }
 
 const getMinContrast = ( options, largeText = false ) => {

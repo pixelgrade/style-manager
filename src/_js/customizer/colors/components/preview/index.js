@@ -53,7 +53,7 @@ const PalettePreviewList = ( props ) => {
 const PalettePreview = ( props ) => {
   const { palette, isActive, setActivePalette } = props;
   const { id, colors, variations, sourceIndex } = palette;
-  const [ lastHover, setLastHover ] = useState( sourceIndex );
+  const [ lastHover, setLastHover ] = useState( sourceIndex + 1 );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
   const [ siteVariation, setSiteVariation ] = useState( parseInt( siteVariationSetting(), 10 ) );
@@ -63,7 +63,7 @@ const PalettePreview = ( props ) => {
   }
 
   useEffect( () => {
-    setLastHover( sourceIndex );
+    setLastHover( sourceIndex + 1 );
   }, [ colors ] );
 
   useEffect( () => {

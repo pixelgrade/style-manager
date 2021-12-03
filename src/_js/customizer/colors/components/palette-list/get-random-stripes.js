@@ -47,15 +47,18 @@ const getRandomStripes = ( palettes => {
 
   palettes.forEach( palette => {
     const id = palette.id + '';
-    const { sourceIndex } = palette;
 
     if ( id.charAt( 0 ) === '_' ) {
       return;
     }
 
-    sourceColors.push( palette.colors[ sourceIndex ].value );
+    const sourceIndex = palette.colors.findIndex( color => palette.source.includes( color.value ) );
 
-    const remainingColors = palette.colors.slice().map( color => color.value );
+    if ( sourceIndex > -1 ) {
+      sourceColors.push( palette.colors[sourceIndex].value );
+    }
+
+    const remainingColors = palette.colors.slice();
     remainingColors.splice( sourceIndex, 1 );
 
     otherColors = otherColors.concat( remainingColors );
