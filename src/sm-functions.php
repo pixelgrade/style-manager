@@ -248,7 +248,6 @@ function sm_get_palette_output_from_color_config( $value ) {
  */
 function palettes_output( array $palettes ) {
 	$output = '';
-	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
 	foreach ( $palettes as $palette ) {
 
@@ -265,6 +264,7 @@ function palettes_output( array $palettes ) {
 function get_palette_css( $palette ) {
 	$output = '';
 	$id = $palette->id;
+	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
 	$paletteSelector = '.sm-palette-' . $id;
 	$paletteShiftedSelector = '.sm-palette-' . $id . '.sm-palette--shifted';
@@ -275,7 +275,7 @@ function get_palette_css( $palette ) {
 
 	$output .= $paletteSelector . ' { ' . PHP_EOL;
 	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= get_variation_css_variables( $palette, $i );
+		$output .= get_variation_css_variables( $palette, $i, $variation - 1 );
 	}
 	$output .= '}' . PHP_EOL;
 
@@ -304,6 +304,7 @@ function get_variation_css_variables( $palette, $index, $offset = 0 ) {
 function get_legacy_palette_css( $palette ) {
 	$output = '';
 
+	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 	$sourceIndex = $palette->sourceIndex;
 
 	$output .= 'html { ' . PHP_EOL;

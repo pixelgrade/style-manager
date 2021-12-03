@@ -25,17 +25,16 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
     return `
       ${ palettesAcc }
       ${ paletteSelector } {
-      ${ getPaletteCSS( palette ) }
+      ${ getPaletteCSS( palette, variation - 1 ) }
       }
       ${ paletteShiftedSelector } {
-      ${ getPaletteCSS( palette, true ) }
+      ${ getPaletteCSS( palette, palette.sourceIndex ) }
       }
     `;
   }, '');
 }
 
-const getPaletteCSS = ( palette, shifted = false ) => {
-  let offset = shifted ? palette.sourceIndex : 0;
+const getPaletteCSS = ( palette, offset ) => {
 
   return `
         ${ palette.variations.reduce( ( variationsAcc, value, index ) => `
