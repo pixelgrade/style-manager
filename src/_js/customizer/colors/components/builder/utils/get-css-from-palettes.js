@@ -14,31 +14,39 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
   }
 
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
+    const { id } = palette;
+    let paletteSelector = `.sm-palette-${ id }`;
+    let paletteShiftedSelector = `.sm-palette-${ id }.sm-palette--shifted`;
 
-    const { id, sourceIndex } = palette;
-    const selector = paletteIndex === 0 ? `html, .sm-palette-${ id }` : `.sm-palette-${ id }`;
+    if ( id.toString() === '1' ) {
+      paletteSelector = `html, ${ paletteSelector }`;
+    }
 
     return `
       ${ palettesAcc }
-      
-      ${ selector } {
-        ${ palette.variations.reduce( ( variationsAcc, value, index ) =>{
-          return `
-            ${ variationsAcc }
-            ${ getVariationCSS( palette, index ) }  
-          `
-        }, '' ) }
+      ${ paletteSelector } {
+      ${ getPaletteCSS( palette ) }
+      }
+      ${ paletteShiftedSelector } {
+      ${ getPaletteCSS( palette, true ) }
       }
     `;
   }, '');
 }
 
+const getPaletteCSS = ( palette, shifted = false ) => {
+  let offset = shifted ? palette.sourceIndex : 0;
+
+  return `
+        ${ palette.variations.reduce( ( variationsAcc, value, index ) => `
+            ${ variationsAcc }
+            ${ getVariationCSS( palette, ( index + offset ) % 12 ) }  
+        `, '' ) }
+        `
+}
+
 const getVariationCSS = ( palette, index ) => {
-  const { id, variations } = palette;
-  
-  const suffix = '';
-  const selectorPrefix = id.toString() !== '1' ? `.sm-palette-${ id } ` : '';
-  const variation = variations[ index ];
+  const variation = palette.variations[ index ];
 
   return `
         --sm-bg-color-${ index + 1 }: ${ variation.background };

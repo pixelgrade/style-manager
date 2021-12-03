@@ -264,12 +264,20 @@ function palettes_output( array $palettes ) {
 
 function get_palette_css( $palette ) {
 	$output = '';
+	$id = $palette->id;
 
-	$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+	$paletteSelector = '.sm-palette-' . $id;
+	$paletteShiftedSelector = '.sm-palette-' . $id . '.sm-palette--shifted';
+
+	if ( ( string ) $id === '1' ) {
+		$paletteSelector = 'html, ' . $paletteSelector;
+	}
+
+	$output .= $paletteSelector . ' { ' . PHP_EOL;
 	$output .= get_variation_css_variables( $palette );
 	$output .= '}' . PHP_EOL;
 
-	$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
+	$output .= $paletteShiftedSelector . ' { ' . PHP_EOL;
 	$output .= get_variation_css_variables( $palette, $palette->sourceIndex );
 	$output .= '}' . PHP_EOL;
 
