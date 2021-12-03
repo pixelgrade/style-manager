@@ -675,7 +675,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_potential_color_contrast',
 					'label'        => esc_html__( 'Potential color contrast', '__plugin_txtd' ),
-					'default'      => 0.5,
+					'default'      => 1,
 					'input_attrs'  => [
 						'min'  => 0,
 						'max'  => 1,
@@ -691,7 +691,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'label'        => esc_html__( 'Color grade balancer', '__plugin_txtd' ),
 					'default'      => 0,
 					'input_attrs'  => [
-						'min'  => - 1,
+						'min'  => -1,
 						'max'  => 1,
 						'step' => 0.1,
 					],

@@ -1,6 +1,7 @@
 import contrastArray from "./components/builder/utils/contrast-array";
 import { hexToHpluv, hpluvToRgb } from "hsluv";
 import chroma from "chroma-js";
+import { getSettingConfig } from "../global-service";
 
 export const moveConnectedFields = ( oldSettings, from, to, ratio ) => {
 
@@ -71,4 +72,29 @@ export const desaturateTextColor = ( hex ) => {
 
 export const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
+}
+
+export const getColorOptionsIDs = () => {
+  return [
+    'sm_color_grades_number',
+    'sm_potential_color_contrast',
+    'sm_color_grade_balancer',
+    'sm_site_color_variation',
+    'sm_elements_color_contrast',
+    'sm_color_promotion_brand',
+    'sm_color_promotion_white',
+    'sm_color_promotion_black',
+  ];
+}
+
+export const getColorOptionsDefaults = () => {
+  const settingsIDs = getColorOptionsIDs();
+  const defaults = {};
+
+  settingsIDs.forEach( settingID => {
+    const config = getSettingConfig( settingID );
+    defaults[ settingID ] = config.default;
+  } );
+
+  return defaults;
 }

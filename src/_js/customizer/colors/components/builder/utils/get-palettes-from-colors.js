@@ -9,10 +9,6 @@ import contrastArray from "./contrast-array";
 const defaultOptions = {
   mode: 'lch',
   bezierInterpolation: false,
-
-  count: 12,
-  center: 0.5,
-  width: 1,
 };
 
 export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) => {
@@ -42,15 +38,15 @@ const mapCreateVariations = ( options ) => {
 
     const forcedColors = [];
 
-    if ( options[ 'force-source' ] ) {
+    if ( options.sm_color_promotion_brand ) {
       forcedColors.push( ...sourceColors );
     }
 
-    if ( options[ 'force-white' ] ) {
+    if ( options.sm_color_promotion_white ) {
       forcedColors.unshift( { value: '#FFFFFF' } );
     }
 
-    if ( options[ 'force-black' ] ) {
+    if ( options.sm_color_promotion_black ) {
       forcedColors.push( { value: chroma( '#FFFFFF' ).luminance( contrastToLuminance( 19 ) ).hex() } );
     }
 
@@ -180,11 +176,11 @@ const getBestPositionInPalette = ( color, colors, attributes ) => {
 
 const getMinContrast = ( options, largeText = false ) => {
 
-  if ( options[ 'wcag-aaa' ] ) {
+  if ( options.sm_elements_color_contrast === 'maximum' ) {
     return largeText ? 4.5 : 7;
   }
 
-  if ( options[ 'wcag-aa' ] ) {
+  if ( options.sm_elements_color_contrast === 'average' ) {
     return largeText ? 3 : 4.5;
   }
 
@@ -243,7 +239,11 @@ const getTextHex = ( palette, color, options, defaultMinContrast ) => {
 }
 
 const createAutoPalette = ( colors, options = {} ) => {
-  const { count, width, center, mode, bezierInterpolation } = options;
+  const width = parseFloat( options.sm_potential_color_contrast );
+  const center = parseFloat( options.sm_color_grade_balancer ) + 0.5;
+  const count = parseInt( options.sm_color_grades_number, 10 );
+
+  const { mode, bezierInterpolation } = options;
   const newColors = colors.slice();
 
   newColors.unshift( '#FFFFFF' );

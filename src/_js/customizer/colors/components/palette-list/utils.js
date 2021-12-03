@@ -1,4 +1,5 @@
 import { getPalettesFromColors } from "../builder";
+import { getColorOptionsDefaults } from "../../utils";
 import getRandomStripes from "./get-random-stripes";
 
 const normalizeCloudPresets = ( presets ) => {
@@ -33,7 +34,8 @@ const normalizeCloudPresets = ( presets ) => {
 
     colorGroups.sort( ( a, b ) => a._priority - b._priority );
 
-    const palettes = getPalettesFromColors( colorGroups );
+    const options = getColorOptionsDefaults();
+    const palettes = getPalettesFromColors( colorGroups, options );
 
     return {
       uid: preset.hashid,
