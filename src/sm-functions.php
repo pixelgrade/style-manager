@@ -274,28 +274,29 @@ function get_palette_css( $palette ) {
 	}
 
 	$output .= $paletteSelector . ' { ' . PHP_EOL;
-	$output .= get_variation_css_variables( $palette );
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= get_variation_css_variables( $palette, $i );
+	}
 	$output .= '}' . PHP_EOL;
 
 	$output .= $paletteShiftedSelector . ' { ' . PHP_EOL;
-	$output .= get_variation_css_variables( $palette, $palette->sourceIndex );
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= get_variation_css_variables( $palette, $i, $palette->sourceIndex );
+	}
 	$output .= '}' . PHP_EOL;
 
 	return $output;
 }
 
-function get_variation_css_variables( $palette, $offset = 0 ) {
+function get_variation_css_variables( $palette, $index, $offset = 0 ) {
 	$output = '';
 
-	for ( $i = 0; $i < 12; $i++ ) {
-		$index = ( $i + 12 - $offset ) % 12;
-		$variation = $palette->variations[ $index ];
+	$variation = $palette->variations[ ( $index + $offset ) % 12 ];
 
-		$output .= '--sm-bg-color-' . ( $i + 1 ) . ': ' . $variation->background . ';' . PHP_EOL;
-		$output .= '--sm-accent-color-' . ( $i + 1 ) . ': ' . $variation->accent . ';' . PHP_EOL;
-		$output .= '--sm-fg1-color-' . ( $i + 1 ) . ': ' . $variation->foreground1 . ';' . PHP_EOL;
-		$output .= '--sm-fg2-color-' . ( $i + 1 ) . ': ' . $variation->foreground2 . ';' . PHP_EOL;
-	}
+	$output .= '--sm-bg-color-' . ( $index + 1 ) . ': ' . $variation->background . ';' . PHP_EOL;
+	$output .= '--sm-accent-color-' . ( $index + 1 ) . ': ' . $variation->accent . ';' . PHP_EOL;
+	$output .= '--sm-fg1-color-' . ( $index + 1 ) . ': ' . $variation->foreground1 . ';' . PHP_EOL;
+	$output .= '--sm-fg2-color-' . ( $index + 1 ) . ': ' . $variation->foreground2 . ';' . PHP_EOL;
 
 	return $output;
 }
