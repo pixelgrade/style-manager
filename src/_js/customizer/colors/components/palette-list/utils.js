@@ -37,8 +37,6 @@ const normalizeCloudPresets = ( presets ) => {
     return {
       uid: preset.hashid,
       config: colorGroups,
-      stripes: [],
-      textColor: '#FFFFFF',
       image: preset?.preview?.background_image_url,
       quote: preset?.description
     }

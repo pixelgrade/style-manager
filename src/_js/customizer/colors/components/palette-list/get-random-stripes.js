@@ -6,10 +6,6 @@ const getRandomBetween = ( min, max ) => {
 const getRandomStripes = ( palettes => {
   const widths = [1, 1, 2, 2, 4];
 
-  if ( ! palettes.length ) {
-    return [];
-  }
-
   const stripes = Array.from( Array(5).keys() ).map( idx => {
     const stripe = document.createElement( 'div' );
     const widthPos = getRandomBetween( 0, widths.length - 1 );
@@ -41,42 +37,6 @@ const getRandomStripes = ( palettes => {
 
     stripe.pos = position;
   } );
-
-  let sourceColors = [];
-  let otherColors = [];
-
-  palettes.forEach( palette => {
-    const id = palette.id + '';
-
-    if ( id.charAt( 0 ) === '_' ) {
-      return;
-    }
-
-    const sourceIndex = palette.colors.findIndex( color => palette.source.includes( color.value ) );
-
-    if ( sourceIndex > -1 ) {
-      sourceColors.push( palette.colors[sourceIndex].value );
-    }
-
-    const remainingColors = palette.colors.slice();
-    remainingColors.splice( sourceIndex, 1 );
-
-    otherColors = otherColors.concat( remainingColors );
-  } );
-
-  // Randomize order of generated colors
-  otherColors.sort( () => Math.random() > 0.5 ? -1 : 1 );
-
-  // merge sources and other colors
-  const colors = sourceColors.concat( otherColors ).slice(0, 5);
-
-  stripes.sort( ( a, b ) => ( a.width > b.width ) ? -1 : ( ( a.width < b.width ) ? 1 : 0 ) );
-
-  stripes.forEach( ( stripe, index ) => {
-    stripe.color = colors[index];
-  } );
-
-  stripes.sort( ( a, b ) => ( a.index > b.index ) ? -1 : ( ( a.index < b.index ) ? 1 : 0 ) );
 
   return stripes;
 } );

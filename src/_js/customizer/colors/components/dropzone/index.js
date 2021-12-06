@@ -202,7 +202,6 @@ const DropZone = ( props ) => {
             <div className="dropzone-info-text" dangerouslySetInnerHTML={{ __html: styleManager.l10n.colorPalettes.dropzoneSubtitle }} />
           </div>
         </div>
-        <PresetPreview stripes={ stripes } />
         <img alt="Preview" className="dropzone-image-preview" ref={ imgPreviewRef } />
         <input type='file' id='file' ref={ inputFile } style={ { display: 'none' } } onChange={ onFileChange } />
       </div>

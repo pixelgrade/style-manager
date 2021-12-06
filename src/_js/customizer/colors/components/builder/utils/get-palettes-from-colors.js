@@ -1,14 +1,22 @@
 import { hexToHpluv, hpluvToRgb } from 'hsluv';
 import chroma from 'chroma-js';
+
 import {
   contrastToLuminance,
   desaturateTextColor,
+  getColorOptionsDefaults,
+  getTextHex,
+  getTextColors,
+  getAccentHex,
+  getMinContrast,
 } from "../../../utils";
+
 import contrastArray from "./contrast-array";
 
 const defaultOptions = {
   mode: 'lch',
   bezierInterpolation: false,
+  ...getColorOptionsDefaults()
 };
 
 export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) => {
@@ -172,70 +180,6 @@ const getBestPositionInPalette = ( color, colors, attributes ) => {
   const mycolors = colors.map( ( color, index ) => ( { color, index } ) );
   mycolors.sort( ( c1, c2 ) => chroma.contrast( c1.color, color ) - chroma.contrast( c2.color, color ) );
   return mycolors[0].index;
-}
-
-const getMinContrast = ( options, largeText = false ) => {
-
-  if ( options.sm_elements_color_contrast === 'maximum' ) {
-    return largeText ? 4.5 : 7;
-  }
-
-  if ( options.sm_elements_color_contrast === 'average' ) {
-    return largeText ? 3 : 4.5;
-  }
-
-  return contrastArray[3];
-}
-
-const getAccentHex = ( palette, color, options ) => {
-  const colors = palette.colors.slice();
-  const minContrast = getMinContrast( options );
-  const sources = palette.source.map( hex => ( { value: hex, isSource: true } ) );
-  const textColors = getTextColors( color.value );
-
-  // always add sources and text colors to use as possible accent colors
-  colors.unshift( ...sources );
-  colors.push( ...textColors.map( hex => ( { value: hex } ) ) );
-
-  const bestIndex = colors.findIndex( mycolor => chroma.contrast( mycolor.value, color.value ) > minContrast );
-
-  if ( bestIndex < 0 ) {
-    const sortedColors = colors.slice().sort( ( c1, c2 ) => chroma.contrast( c1.value, color.value ) - chroma.contrast( c2.value, color.value ) );
-    return sortedColors[ sortedColors.length - 1 ].value;
-  }
-
-  return colors[ bestIndex ].value;
-}
-
-const getTextColors = ( hex ) => {
-
-  const textContrastArray = [
-    ...contrastArray.slice( 0, 1 ),
-    ...contrastArray.slice( -3 )
-  ];
-
-  return textContrastArray.map( contrast => {
-    const desaturated = desaturateTextColor( hex );
-    const luminance = contrastToLuminance( contrast );
-    return chroma( desaturated ).luminance( luminance ).hex();
-  } );
-
-}
-
-const getTextHex = ( palette, color, options, defaultMinContrast ) => {
-  const minContrast = Math.max( getMinContrast( options ), defaultMinContrast );
-  const textColors = getTextColors( color.value );
-
-  textColors.sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
-
-  const bestIndex = textColors.findIndex( mycolor => chroma.contrast( mycolor, color.value ) > minContrast );
-
-  if ( bestIndex < 0 ) {
-    const sortedColors = textColors.slice().sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
-    return sortedColors[ sortedColors.length - 1 ];
-  }
-
-  return textColors[ bestIndex ];
 }
 
 const createAutoPalette = ( colors, options = {} ) => {
