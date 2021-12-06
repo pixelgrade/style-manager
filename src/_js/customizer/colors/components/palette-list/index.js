@@ -52,18 +52,18 @@ export const PresetPreview = ( props ) => {
   } );
 
   const sources = palettes.reduce( ( acc, palette ) => acc.concat( palette.source ), [] );
-  const colors = palettes.reduce( ( acc, palette ) => acc.concat( palette.colors ), [] ).slice( 0, 5 );
+  const colors = palettes.reduce( ( acc, palette ) => acc.concat( palette.colors ), [] );
 
   colors.sort( ( c1, c2 ) => {
     let min1 = 21;
     let min2 = 21;
     sources.forEach( source => {
-      const contrast1 = chroma.contrast( source, c1.value );
-      const contrast2 = chroma.contrast( source, c2.value );
-      min1 = contrast1 < min1 ? contrast1 : min1;
-      min2 = contrast2 < min2 ? contrast2 : min2;
+      const d1 = chroma.distance( source, c1.value );
+      const d2 = chroma.distance( source, c2.value );
+      min1 = d1 < min1 ? d1 : min1;
+      min2 = d2 < min2 ? d2 : min2;
     } );
-    return c1 - c2;
+    return min1 - min2;
   } );
 
   const stripes = getRandomStripes();
