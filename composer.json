@@ -42,7 +42,7 @@
 		}
 	},
     "require": {
-		"php": ">=7.1",
+		"php": ">=7.2",
         "pimple/pimple": "^3.2",
         "cedaro/wp-plugin": "^0.4.0",
         "htmlburger/carbon-fields": "^3.2",
@@ -118,7 +118,7 @@
 			"npm run gulp composer:prefix_outside_files",
 			"@composer dump-autoload"
 		],
-		"downgrade-to-php-70": [
+		"downgrade-php": [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
 			"vendor/bin/rector process --autoload-file=vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"
 		],
@@ -133,10 +133,10 @@
 
 		"pre-build": [
 			"npm install",
-			"npm run gulp composer:delete_lock_and_vendor",
+			"npm run gulp composer:delete_vendor",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
-			"@downgrade-to-php-70",
+			"@downgrade-php",
 			"@composer dump-autoload --no-dev --optimize"
 		],
 		"zip": [

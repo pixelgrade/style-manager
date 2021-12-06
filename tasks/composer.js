@@ -4,8 +4,8 @@ var gulp = require( 'gulp' ),
   merge = require('merge-stream'),
   plugins = require( 'gulp-load-plugins' )();
 
-gulp.task( 'composer:delete_lock_and_vendor', function () {
-  return gulp.src( [ 'composer.lock', 'vendor' ] , { allowEmpty: true, read: false } )
+gulp.task( 'composer:delete_vendor', function () {
+  return gulp.src( [ 'vendor' ] , { allowEmpty: true, read: false } )
     .pipe( plugins.clean() );
 } );
 

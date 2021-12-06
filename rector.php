@@ -37,7 +37,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 //	]);
 
 	// is your PHP version different from the one your refactor to? [default: your PHP version]
-	$parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_71);
+	$parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_72);
 
 	// Path to phpstan with extensions, that PHPSTan in Rector uses to determine types
 	$parameters->set(Option::PHPSTAN_FOR_RECTOR_PATH, __DIR__ . '/phpstan.neon.dist');
@@ -46,5 +46,4 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$containerConfigurator->import( DowngradeSetList::PHP_80 );
 	$containerConfigurator->import( DowngradeSetList::PHP_74 );
 	$containerConfigurator->import( DowngradeSetList::PHP_73 );
-	$containerConfigurator->import( DowngradeSetList::PHP_72 );
 };
