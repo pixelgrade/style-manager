@@ -84,27 +84,27 @@ const PalettePreview = ( props ) => {
 //                                     .filter( ( hex, index ) => variations.findIndex( v => v.background === hex ) === index )
 //                                     .map( hex => variations.findIndex( v => v.background === hex ) + 1 );
 
-  const uniqueVariations = Array.from( Array( 12 ) ).map( ( x, y ) => y + 1 );
-
   return (
     <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover }` : '' }` }>
       <div className={ `sm-overlay__wrap` }>
         <div className={ `sm-overlay__container` }>
           <div className={ `palette-preview-set` }>
-            { uniqueVariations.map( variation => {
+            { variations.map( ( variation, index ) => {
 
-              const isSource = palette.source.findIndex( hex => variations[ variation - 1 ].background === hex ) > -1;
+              const workingIndex = ( index + siteVariation - 1 + 12 ) % 12;
+              const isSource = palette.source.findIndex( hex => variations[workingIndex].background === hex ) > -1 &&
+                               variations.findIndex( v => variations[workingIndex].background === v.background ) === workingIndex;
 
               const passedProps = {
                 isSource: isSource,
-                showCard: isActive && variation === lastHover,
+                showCard: isActive && index + 1 === lastHover,
               }
 
               return (
-                <div key={ variation } className={ `palette-preview-swatches sm-variation-${ variation }` }
+                <div key={ index + 1 } className={ `palette-preview-swatches sm-variation-${ index + 1 }` }
                      onMouseEnter={ () => {
                        setActivePalette( id );
-                       setLastHover( variation );
+                       setLastHover( index + 1 );
                      } }>
                   <PalettePreviewGrade { ...passedProps } />
                 </div>
