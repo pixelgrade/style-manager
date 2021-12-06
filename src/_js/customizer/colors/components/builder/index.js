@@ -41,6 +41,18 @@ const withOptions = ( Component ) => {
     const [ options, setOptions ] = useState( defaults );
 
     useEffect( () => {
+      const newOptions = {};
+
+      settingsIDs.forEach( settingID => {
+        wp.customize( settingID, setting => {
+          newOptions[ settingID ] = setting();
+        } );
+      } );
+
+      setOptions( newOptions );
+    }, [] );
+
+    useEffect( () => {
       const callbacks = {};
 
       settingsIDs.forEach( settingID => {
@@ -107,7 +119,7 @@ const Builder = withOptions( props => {
     } );
   }, [ options ] );
 
-  const onSourceChange = useCallback(( newValue ) => {
+  const onSourceChange = ( newValue ) => {
     const newConfig = getColorsFromInputValue( newValue );
     const newPalettes = getPalettesFromColors( newConfig, options );
 
@@ -116,7 +128,7 @@ const Builder = withOptions( props => {
     wp.customize( outputSettingID, setting => {
       setting.set( JSON.stringify( newPalettes ) );
     } );
-  }, [ options ] );
+  }
 
   const onOutputChange = ( value ) => {
     const palettes = JSON.parse( value );
@@ -135,7 +147,7 @@ const Builder = withOptions( props => {
     } );
   }
 
-  useCustomizeSettingCallback( sourceSettingID, onSourceChange );
+  useCustomizeSettingCallback( sourceSettingID, onSourceChange, [ options ] );
   useCustomizeSettingCallback( outputSettingID, onOutputChange );
   useCustomizeSettingCallback( 'sm_site_color_variation', onSiteVariationChange );
 

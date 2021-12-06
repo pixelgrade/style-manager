@@ -1,24 +1,24 @@
 import React, { useEffect } from 'react';
 
-const useCustomizeSettingCallback = ( settingID, callback ) => {
+const useCustomizeSettingCallback = ( settingID, callback, deps = [] ) => {
 
   if ( typeof callback !== "function" ) {
     return;
   }
 
-  wp.customize( settingID, setting => {
+  useEffect( () => {
 
-    useEffect( () => {
-
+    wp.customize( settingID, setting => {
       setting.bind( callback );
+    } )
 
-      return () => {
+    return () => {
+      wp.customize( settingID, setting => {
         setting.unbind( callback );
-      }
+      } )
+    }
 
-    }, [] );
-
-  } )
+  }, deps );
 
 }
 

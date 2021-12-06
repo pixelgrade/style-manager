@@ -34,13 +34,10 @@ const normalizeCloudPresets = ( presets ) => {
 
     colorGroups.sort( ( a, b ) => a._priority - b._priority );
 
-    const options = getColorOptionsDefaults();
-    const palettes = getPalettesFromColors( colorGroups, options );
-
     return {
       uid: preset.hashid,
       config: colorGroups,
-      stripes: getRandomStripes( palettes ),
+      stripes: [],
       textColor: '#FFFFFF',
       image: preset?.preview?.background_image_url,
       quote: preset?.description
