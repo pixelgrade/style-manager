@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-
+import React, { useContext, useMemo } from 'react';
+import { useTraceUpdate } from '../../../utils'
 import { getTextHex } from "../../utils";
 import ConfigContext from "../../context";
 import { normalizeCloudPresets } from './utils';
@@ -43,13 +43,19 @@ const PaletteListItem = ( props ) => {
 
 export const PresetPreview = ( props ) => {
 
-  const { options } = useContext( ConfigContext );
+  const context = useContext( ConfigContext );
+
+  useTraceUpdate( context );
+
+  const { options } = context;
   const { config, quote, image, active } = props;
 
-  const palettes = getPalettesFromColors( config, options ).filter( palette => {
-    const id = `${ palette.id }`;
-    return id.charAt( 0 ) !== '_';
-  } );
+  const palettes = useMemo( () => {
+    return getPalettesFromColors( config, options ).filter( palette => {
+      const id = `${ palette.id }`;
+      return id.charAt( 0 ) !== '_';
+    } );
+  }, [ config, options ] );
 
   const sources = palettes.reduce( ( acc, palette ) => acc.concat( palette.source ), [] );
   const colors = palettes.reduce( ( acc, palette ) => acc.concat( palette.colors ), [] );

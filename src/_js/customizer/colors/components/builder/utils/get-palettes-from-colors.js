@@ -3,10 +3,8 @@ import chroma from 'chroma-js';
 
 import {
   contrastToLuminance,
-  desaturateTextColor,
   getColorOptionsDefaults,
   getTextHex,
-  getTextColors,
   getAccentHex,
   getMinContrast,
 } from "../../../utils";

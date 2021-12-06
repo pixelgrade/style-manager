@@ -1,10 +1,11 @@
-import React, { createContext, Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import Worker from "worker-loader!./worker.js";
 
 import { getSettingConfig, popFromBackArray, pushToBackArray } from "../../../global-service";
 import { useCustomizeSettingCallback } from "../../../utils";
 import ConfigContext from "../../context";
+import { useTraceUpdate } from "../../../utils";
 
 import { getColorOptionsIDs, getColorOptionsDefaults } from "../../utils"
 import { SourceColors } from "../source-colors";
@@ -105,11 +106,11 @@ const Builder = withOptions( props => {
 
   }, [ activePreset ] );
 
-  const updateSource = ( newValue ) => {
+  const updateSource = useCallback( newValue => {
     wp.customize( sourceSettingID, setting => {
       setting.set( getValueFromColors( newValue ) );
     } );
-  }
+  }, [ sourceSettingID ] );
 
   useEffect(() => {
     const newPalettes = getPalettesFromColors( config, options );
@@ -120,13 +121,15 @@ const Builder = withOptions( props => {
   }, [ options ] );
 
   const onSourceChange = ( newValue ) => {
-    const newConfig = getColorsFromInputValue( newValue );
-    const newPalettes = getPalettesFromColors( newConfig, options );
+    requestIdleCallback( () => {
+      const newConfig = getColorsFromInputValue( newValue );
+      const newPalettes = getPalettesFromColors( newConfig, options );
 
-    setConfig( getColorsFromInputValue( newValue ) );
+      setConfig( getColorsFromInputValue( newValue ) );
 
-    wp.customize( outputSettingID, setting => {
-      setting.set( JSON.stringify( newPalettes ) );
+      wp.customize( outputSettingID, setting => {
+        setting.set( JSON.stringify( newPalettes ) );
+      } );
     } );
   }
 
@@ -180,12 +183,19 @@ const Builder = withOptions( props => {
     }
   }, [] );
 
-  const providerValue = {
-    config: config,
-    setConfig: updateSource,
-    options: options,
-    resetActivePreset
-  }
+  const providerValue = useMemo( () => {
+    return {
+      config: config,
+      setConfig: updateSource,
+      options: options,
+      resetActivePreset
+    }
+  }, [ config, updateSource, options, resetActivePreset ] );
+
+  const onPresetChange = useCallback( preset => {
+    updateSource( preset.config );
+    setActivePreset( preset.uid );
+  }, [ updateSource, setActivePreset ] );
 
   return (
     <ConfigContext.Provider value={ providerValue }>
@@ -239,10 +249,7 @@ const Builder = withOptions( props => {
             <div className="customize-control-description">
               { styleManager.l10n.colorPalettes.builderColorPresetsDesc }
             </div>
-            <PresetsList active={ activePreset } onChange={ ( preset ) => {
-              updateSource( preset.config );
-              setActivePreset( preset.uid );
-            } } />
+            <PresetsList active={ activePreset } onChange={ onPresetChange } />
           </AccordionSection>
           { !! myWorker &&
             <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
