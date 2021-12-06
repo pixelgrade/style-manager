@@ -95,8 +95,9 @@ class Customize extends AbstractHookProvider {
 		/**
 		 * Handle the logic for the user giving us feedback.
 		 */
-		$this->add_action( 'customize_controls_print_footer_scripts', 'output_user_feedback_modal' );
-		$this->add_action( 'wp_ajax_style_manager_user_feedback', 'user_feedback_callback' );
+		// STATUS: Temporary pause asking for user feedback
+		// $this->add_action( 'customize_controls_print_footer_scripts', 'output_user_feedback_modal' );
+		// $this->add_action( 'wp_ajax_style_manager_user_feedback', 'user_feedback_callback' );
 
 		$this->add_filter( 'style_manager/localized_js_settings', 'add_to_localized_data', 10, 1 );
 	}
