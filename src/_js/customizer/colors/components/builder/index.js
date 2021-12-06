@@ -118,20 +118,12 @@ const Builder = withOptions( props => {
     wp.customize( outputSettingID, setting => {
       setting.set( JSON.stringify( newPalettes ) );
     } );
-  }, [ options ] );
+  }, [ config, options ] );
 
-  const onSourceChange = ( newValue ) => {
-    requestIdleCallback( () => {
-      const newConfig = getColorsFromInputValue( newValue );
-      const newPalettes = getPalettesFromColors( newConfig, options );
-
-      setConfig( getColorsFromInputValue( newValue ) );
-
-      wp.customize( outputSettingID, setting => {
-        setting.set( JSON.stringify( newPalettes ) );
-      } );
-    } );
-  }
+  const onSourceChange = useCallback( ( newValue ) => {
+    const newConfig = getColorsFromInputValue( newValue );
+    setConfig( newConfig );
+  }, [] );
 
   const onOutputChange = ( value ) => {
     const palettes = JSON.parse( value );
@@ -199,6 +191,7 @@ const Builder = withOptions( props => {
 
   return (
     <ConfigContext.Provider value={ providerValue }>
+      <button onClick={() => { setConfig( [] ) } }>Aici</button>
       <div className="sm-group">
         <div className="sm-panel-toggle" onClick={ () => {
           wp.customize.section( 'sm_color_usage_section', ( colorUsageSection ) => {
@@ -249,7 +242,12 @@ const Builder = withOptions( props => {
             <div className="customize-control-description">
               { styleManager.l10n.colorPalettes.builderColorPresetsDesc }
             </div>
-            <PresetsList active={ activePreset } onChange={ onPresetChange } />
+            <PresetsList
+              active={ activePreset }
+              onChange={ onPresetChange }
+              updateSource={ updateSource }
+              options={ options }
+            />
           </AccordionSection>
           { !! myWorker &&
             <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
