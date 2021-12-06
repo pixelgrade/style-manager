@@ -20,6 +20,7 @@ import {
 } from "./utils";
 
 import customizeColorsUsageIcon from "../../../svg/customize-colors-usage.svg";
+import fineTunePaletteIcon from "../../../svg/fine-tune-palette.svg";
 
 export { Builder }
 export * from './utils';
@@ -147,16 +148,23 @@ const Builder = withOptions( props => {
       }
     }
 
-    const sourceSection = wp.customize.section( 'sm_color_usage_section' );
+    const sectionIDs = [
+      'sm_color_usage_section',
+      'sm_fine_tune_palette_section'
+    ];
 
-    if ( ! sourceSection ) {
-      return;
-    }
-
-    sourceSection.expanded.bind( callback );
+    sectionIDs.forEach( sectionID => {
+      wp.customize.section( sectionID, section => {
+        section.expanded.bind( callback );
+      } )
+    } );
 
     return () => {
-      sourceSection.expanded.unbind( callback );
+      sectionIDs.forEach( sectionID => {
+        wp.customize.section( sectionID, section => {
+          section.expanded.unbind( callback );
+        } )
+      } );
     }
   }, [] );
 
@@ -196,6 +204,21 @@ const Builder = withOptions( props => {
               } } />
             <style>{ CSSOutput }</style>
           </Control>
+        </div>
+        <div className="sm-panel-toggle" onClick={ () => {
+          wp.customize.section( 'sm_fine_tune_palette_section', ( fineTuneSection ) => {
+            pushToBackArray( fineTuneSection, 'sm_color_palettes_section' );
+          } );
+        } }>
+          <div className="sm-panel-toggle__icon" dangerouslySetInnerHTML={{
+            __html: `
+                <svg viewBox="${ fineTunePaletteIcon.viewBox }">
+                  <use xlink:href="#${ fineTunePaletteIcon.id }" />
+                </svg>`
+          } } />
+          <div className="sm-panel-toggle__label">
+            { styleManager.l10n.colorPalettes.builderFineTunePanelLabel }
+          </div>
         </div>
       </div>
       <div className="sm-group">
