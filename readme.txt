@@ -1,10 +1,10 @@
 === Style Manager - Auto-magical system to style your WordPress site ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
-Requires at least: 4.9.18
-Tested up to: 5.8.0
+Requires at least: 5.5.0
+Tested up to: 5.8.2
 Stable tag: 2.1.0
-Requires PHP: 7.0
+Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,14 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.1.0 =
+* 2021-12-06
+* Introduces data migration when switching data store location from plugin settings
+* Fixes bug in Color Palettes
+* Invalidate caches after demo data import
+* Increase minimum PHP version to 7.1 and WordPress version to 5.5.0
+* Tested with the latest WordPress version (5.8.2)
 
 = 2.0.7 =
 * 2021-08-16

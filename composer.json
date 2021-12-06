@@ -42,15 +42,15 @@
 		}
 	},
     "require": {
-		"php": ">=7.0",
+		"php": ">=7.1",
         "pimple/pimple": "^3.2",
         "cedaro/wp-plugin": "^0.4.0",
         "htmlburger/carbon-fields": "^3.2",
 		"instituteweb/composer-scripts": "^1.1",
 		"psr/container": "^1.1",
 		"psr/log": "^1.0",
-		"symfony/polyfill-mbstring": "^v1.22.1",
-		"symfony/polyfill-php72": "^v1.22.1"
+		"symfony/polyfill-mbstring": "^v1.23.1",
+		"symfony/polyfill-php72": "^v1.23.0"
 	},
 	"require-dev": {
 		"brain/monkey": "^2.2",
@@ -62,9 +62,9 @@
 		"rector/rector": "dev-main",
 		"roave/security-advisories": "dev-master",
 		"squizlabs/php_codesniffer": "^3.3",
-		"szepeviktor/phpstan-wordpress": "^0.7.6",
+		"szepeviktor/phpstan-wordpress": "^v1.0",
 		"vlucas/phpdotenv": "^5.3",
-		"wordpress/wordpress": "^5.6",
+		"wordpress/wordpress": "^5.8",
 		"wp-coding-standards/wpcs": "^2.3.0"
     },
 	"autoload": {
