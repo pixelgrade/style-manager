@@ -38,8 +38,8 @@ export const PaletteListItem = ( props ) => {
     } );
   }, [ preset.config, options ] );
 
-  const sources = palettes.reduce( ( acc, palette ) => acc.concat( palette.source ), [] );
   const colors = useMemo( () => {
+    const sources = palettes.reduce( ( acc, palette ) => acc.concat( palette.source ), [] );
     const colors = palettes.reduce( ( acc, palette ) => acc.concat( palette.colors ), [] );
 
     colors.sort( ( c1, c2 ) => {

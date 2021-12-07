@@ -1,7 +1,7 @@
 import './style.scss';
 
 import chroma from "chroma-js";
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import uploadIcon from "../../svg/upload.svg";
 
@@ -53,13 +53,18 @@ const DropZone = ( props ) => {
   const canvasRef = useRef( null );
   const inputFile = useRef( null );
 
-  let myWorker = null;
+  const myWorker = useMemo( () => {
+    let worker = null;
 
-  try {
-    myWorker = new Worker();
-  } catch (e) {
+    try {
+      worker = new Worker();
+    } catch (e) {
 
-  }
+    }
+
+    return worker;
+  }, [] );
+
 
   if ( ! myWorker ) {
     return null;
@@ -91,12 +96,10 @@ const DropZone = ( props ) => {
     setFiles( e.target.files );
   };
 
-  if ( ! myWorker ) {
-    return null;
-  }
-
   useEffect( () => {
+
     myWorker.onmessage = function( event ) {
+
       const order = [
         "primary",
         "secondary",
@@ -169,7 +172,11 @@ const DropZone = ( props ) => {
     }
   }, [ files ] );
 
-  const onImageLoad = () => {
+  if ( ! myWorker ) {
+    return null;
+  }
+
+  const onImageLoad = useCallback( () => {
     const imgSource = imgSourceRef.current;
 
     const canvas = canvasRef.current;
@@ -189,7 +196,7 @@ const DropZone = ( props ) => {
         height: canvas.height
       } );
     }
-  }
+  }, [ imgSourceRef.current, canvasRef.current ] );
 
   return (
     <div className="dropzone">

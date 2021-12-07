@@ -46,14 +46,14 @@ const App = () => {
       </div>
       <div className="sm-group">
         <Accordion>
-          <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
-            <DropZone />
-          </AccordionSection>
           <AccordionSection title={ styleManager.l10n.colorPalettes.builderColorPresetsTitle } open={ true }>
             <div className="customize-control-description">
               { styleManager.l10n.colorPalettes.builderColorPresetsDesc }
             </div>
             <PaletteList />
+          </AccordionSection>
+          <AccordionSection title={ styleManager.l10n.colorPalettes.builderImageExtractTitle }>
+            <DropZone />
           </AccordionSection>
         </Accordion>
       </div>
