@@ -180,7 +180,7 @@ const getBestPositionInPalette = ( color, colors, attributes ) => {
 
 const createAutoPalette = ( colors, options = {} ) => {
   const width = parseFloat( options.sm_potential_color_contrast );
-  const center = parseFloat( options.sm_color_grade_balancer ) + 0.5;
+  const center = parseFloat( options.sm_color_grade_balancer );
   const count = parseInt( options.sm_color_grades_number, 10 );
 
   const { mode, bezierInterpolation } = options;
