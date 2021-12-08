@@ -702,7 +702,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_site_color_variation',
-					'label'        => esc_html__( 'Palette Basis Offset', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Palette basis offset', '__plugin_txtd' ),
 					'default'      => 1,
 					'input_attrs'  => [
 						'min'  => 1,
@@ -720,11 +720,11 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_separator_2_0'            => array( 'type' => 'html', 'html' => '' ),
 				'sm_elements_color_contrast'  => [
 					'type'         => 'radio',
-					'desc'         => __( 'Increase or decrease the contrast between the background colors and the elements over them..' ),
+					'desc'         => __( 'Increase or decrease the contrast between the background colors and the elements over them.' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_elements_color_contrast',
-					'label'        => esc_html__( 'Color grade balancer', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Elements color contrast', '__plugin_txtd' ),
 					'default'      => 'normal',
 					'choices'      => [
 						'normal'  => esc_html__( 'Normal', '__plugin_txtd' ),
@@ -737,7 +737,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'type'         => 'sm_toggle',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_color_promotion_brand',
-					'label'        => esc_html__( 'Brand solors', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Brand colors', '__plugin_txtd' ),
 					'live'         => true,
 					'default'      => true,
 				],
