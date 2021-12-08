@@ -6,24 +6,35 @@ export const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getAccentHex = ( palette, color, options ) => {
-  const colors = palette.colors.slice();
-  const minContrast = getMinContrast( options );
-  const sources = palette.source.map( hex => ( { value: hex, isSource: true } ) );
+export const getAccentHex = ( colors, sources, color, minContrast ) => {
+  const mycolors = colors.slice();
+  const sourceColors = sources.map( hex => ( { value: hex, isSource: true } ) );
   const textColors = getTextColors( color.value );
 
   // always add sources and text colors to use as possible accent colors
-  colors.unshift( ...sources );
-  colors.push( ...textColors.map( hex => ( { value: hex } ) ) );
+  mycolors.unshift( ...sourceColors );
+  mycolors.push( ...textColors.map( hex => ( { value: hex } ) ) );
 
-  const bestIndex = colors.findIndex( mycolor => chroma.contrast( mycolor.value, color.value ) > minContrast );
+  const bestIndex = mycolors.findIndex( mycolor => chroma.contrast( mycolor.value, color.value ) > minContrast );
 
   if ( bestIndex < 0 ) {
-    const sortedColors = colors.slice().sort( ( c1, c2 ) => chroma.contrast( c1.value, color.value ) - chroma.contrast( c2.value, color.value ) );
+    const sortedColors = mycolors.slice().sort( ( c1, c2 ) => chroma.contrast( c1.value, color.value ) - chroma.contrast( c2.value, color.value ) );
     return sortedColors[ sortedColors.length - 1 ].value;
   }
 
-  return colors[ bestIndex ].value;
+  return mycolors[ bestIndex ].value;
+}
+
+export const getTextHex = ( color, minContrast ) => {
+  const textColors = getTextColors( color.value );
+  const bestIndex = textColors.findIndex( mycolor => chroma.contrast( mycolor, color.value ) > minContrast );
+
+  if ( bestIndex < 0 ) {
+    const sortedColors = textColors.slice().sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
+    return sortedColors[ sortedColors.length - 1 ];
+  }
+
+  return textColors[ bestIndex ];
 }
 
 export const getTextColors = ( hex ) => {
@@ -35,25 +46,9 @@ export const getTextColors = ( hex ) => {
 
   return textContrastArray.map( contrast => {
     const luminance = contrastToLuminance( contrast );
-    return desaturateTextColor( hex, luminance * 100 );
+    return desaturateTextColor( hex, luminance );
   } );
 
-}
-
-export const getTextHex = ( palette, color, options, defaultMinContrast ) => {
-  const minContrast = Math.max( getMinContrast( options ), defaultMinContrast );
-  const textColors = getTextColors( color.value );
-
-  textColors.sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
-
-  const bestIndex = textColors.findIndex( mycolor => chroma.contrast( mycolor, color.value ) > minContrast );
-
-  if ( bestIndex < 0 ) {
-    const sortedColors = textColors.slice().sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
-    return sortedColors[ sortedColors.length - 1 ];
-  }
-
-  return textColors[ bestIndex ];
 }
 
 export const getMinContrast = ( options, largeText = false ) => {
@@ -66,7 +61,7 @@ export const getMinContrast = ( options, largeText = false ) => {
     return largeText ? 3 : 4.5;
   }
 
-  return contrastArray[3];
+  return largeText ? contrastArray[4] : contrastArray[5];
 }
 
 export const desaturateTextColor = ( hex, luminance ) => {
@@ -76,7 +71,7 @@ export const desaturateTextColor = ( hex, luminance ) => {
   const p = Math.min( Math.max( hpluv[ 1 ], 0 ), 100 );
   const l = Math.min( Math.max( hpluv[ 2 ], 0 ), 100 );
 
-  return hpluvToHex( [ h, p, luminance ] );
+  return chroma( hpluvToHex( [ h, p, l ] ) ).luminance( luminance ).hex();
 }
 
 // powers of 21 ^ 1/10 but with small adjustments for the lighter colors

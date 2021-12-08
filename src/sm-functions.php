@@ -245,31 +245,39 @@ function get_palette_css( $palette ) {
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
 	$paletteSelector = '.sm-palette-' . $id;
+	$darkPaletteSelector = '.is-dark .sm-palette-' . $id;
 	$paletteShiftedSelector = '.sm-palette-' . $id . '.sm-palette--shifted';
 
 	if ( ( string ) $id === '1' ) {
 		$paletteSelector = 'html, ' . $paletteSelector;
+		$darkPaletteSelector = 'html.is-dark, ' . $darkPaletteSelector;
 	}
 
 	$output .= $paletteSelector . ' { ' . PHP_EOL;
 	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= get_variation_css_variables( $palette, $i, $variation - 1 );
+		$output .= get_variation_css_variables( $palette->variations, $i, $variation - 1 );
+	}
+	$output .= '}' . PHP_EOL;
+
+	$output .= $darkPaletteSelector . ' { ' . PHP_EOL;
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= get_variation_css_variables( $palette->darkVariations, $i, $variation - 1 );
 	}
 	$output .= '}' . PHP_EOL;
 
 	$output .= $paletteShiftedSelector . ' { ' . PHP_EOL;
 	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= get_variation_css_variables( $palette, $i, $palette->sourceIndex );
+		$output .= get_variation_css_variables( $palette->variations, $i, $palette->sourceIndex );
 	}
 	$output .= '}' . PHP_EOL;
 
 	return $output;
 }
 
-function get_variation_css_variables( $palette, $index, $offset = 0 ) {
+function get_variation_css_variables( $variations, $index, $offset = 0 ) {
 	$output = '';
 
-	$variation = $palette->variations[ ( $index + $offset ) % 12 ];
+	$variation = $variations[ ( $index + $offset ) % 12 ];
 
 	$output .= '--sm-bg-color-' . ( $index + 1 ) . ': ' . $variation->background . ';' . PHP_EOL;
 	$output .= '--sm-accent-color-' . ( $index + 1 ) . ': ' . $variation->accent . ';' . PHP_EOL;

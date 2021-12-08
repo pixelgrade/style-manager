@@ -16,36 +16,41 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
   return palettes.reduce( ( palettesAcc, palette, paletteIndex, palettes ) => {
     const { id } = palette;
     let paletteSelector = `.sm-palette-${ id }`;
+    let darkPaletteSelector = `.is-dark .sm-palette-${ id }`;
     let paletteShiftedSelector = `.sm-palette-${ id }.sm-palette--shifted`;
 
     if ( id.toString() === '1' ) {
       paletteSelector = `html, ${ paletteSelector }`;
+      darkPaletteSelector = `html.is-dark, ${ darkPaletteSelector }`;
     }
 
     return `
       ${ palettesAcc }
       ${ paletteSelector } {
-      ${ getPaletteCSS( palette, variation - 1 ) }
+      ${ getVariationsCSS( palette.variations, variation - 1 ) }
+      }
+      ${ darkPaletteSelector } {
+      ${ getVariationsCSS( palette.darkVariations, variation - 1 ) }
       }
       ${ paletteShiftedSelector } {
-      ${ getPaletteCSS( palette, palette.sourceIndex ) }
+      ${ getVariationsCSS( palette.variations, palette.sourceIndex ) }
       }
     `;
   }, '');
 }
 
-const getPaletteCSS = ( palette, offset ) => {
+const getVariationsCSS = ( variations, offset ) => {
 
   return `
-        ${ palette.variations.reduce( ( variationsAcc, value, index ) => `
+        ${ variations.reduce( ( variationsAcc, value, index ) => `
             ${ variationsAcc }
-            ${ getVariationCSS( palette, index, offset ) }  
+            ${ getVariationCSS( variations, index, offset ) }  
         `, '' ) }
         `
 }
 
-const getVariationCSS = ( palette, index, offset ) => {
-  const variation = palette.variations[ ( index + offset ) % 12 ];
+const getVariationCSS = ( variations, index, offset ) => {
+  const variation = variations[ ( index + offset ) % 12 ];
 
   return `
         --sm-bg-color-${ index + 1 }: ${ variation.background };

@@ -70,7 +70,7 @@ export const PaletteListItem = ( props ) => {
   }, [ stripes, colors ] );
 
   const textColor = useMemo( () => {
-    getTextHex( palettes[ 0 ], colors[ 0 ], options );
+    getTextHex( colors[ 0 ], options );
   }, [ palettes, colors, options ] );
 
   return (

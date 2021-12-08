@@ -1,13 +1,24 @@
 import classnames from 'classnames';
 import React, { Fragment, useEffect, useState } from 'react';
-import { useTraceUpdate } from "../../../utils";
+import { useCustomizeSettingCallback } from "../../hooks";
+import DarkMode from '../../../dark-mode';
 
 import './style.scss';
 
 const Preview = ( props ) => {
 
+  const [ isDark, setDark ] = useState( DarkMode.isCompiledDark() );
+
+  useEffect( () => {
+    DarkMode.bind( setDark );
+
+    return () => {
+      DarkMode.unbind( setDark );
+    }
+  }, [] );
+
   return (
-    <Fragment>
+    <div className={ `palette-preview-wrap ${ isDark ? 'is-dark' : '' }` }>
       <div className={ `palette-preview-header sm-palette-1 sm-palette--shifted sm-variation-1` }>
         <div className={ `sm-overlay__wrap` }>
           <div className={ `sm-overlay__container` }>
@@ -18,14 +29,14 @@ const Preview = ( props ) => {
           </div>
         </div>
       </div>
-      <PalettePreviewList { ...props } />
-    </Fragment>
+      <PalettePreviewList { ...props } isDark={ isDark } />
+    </div>
   )
 }
 
 const PalettePreviewList = ( props ) => {
 
-  const { palettes } = props;
+  const { palettes, isDark } = props;
 
   const userPalettes = palettes.filter( palette => {
     const { id } = palette;
@@ -46,14 +57,17 @@ const PalettePreviewList = ( props ) => {
         key={ palette.id }
         isActive={ active === palette.id }
         setActivePalette={ setActive }
-        palette={ { description, ...palette } } />
+        palette={ { description, ...palette } }
+        isDark={ isDark }
+      />
     );
   } )
 }
 
 const PalettePreview = ( props ) => {
-  const { palette, isActive, setActivePalette } = props;
-  const { id, colors, variations, sourceIndex } = palette;
+  const { palette, isActive, setActivePalette, isDark } = props;
+  const { id, colors, sourceIndex } = palette;
+  const variations = isDark ? palette.darkVariations : palette.variations;
   const [ lastHover, setLastHover ] = useState( sourceIndex + 1 );
 
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
@@ -80,10 +94,6 @@ const PalettePreview = ( props ) => {
   const normalize = index => {
     return ( index + siteVariation - 1 + 12 ) % 12;
   }
-
-//  const uniqueVariations = variations.map( v => v.background )
-//                                     .filter( ( hex, index ) => variations.findIndex( v => v.background === hex ) === index )
-//                                     .map( hex => variations.findIndex( v => v.background === hex ) + 1 );
 
   return (
     <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover }` : '' }` }>

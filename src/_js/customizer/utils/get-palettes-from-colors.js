@@ -19,27 +19,19 @@ const defaultOptions = {
 export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) => {
   const options = Object.assign( {}, defaultOptions, opts );
   const functionalColors = getFunctionalColors( colorGroups );
-  const palettes = colorGroups.map( mapColorToPalette( options ) );
-  const functionalPalettes = functionalColors.map( mapColorToPalette( options ) );
-  const allPalettes = palettes.concat( functionalPalettes );
+  const allColors = colorGroups.concat( functionalColors );
 
-  return mapSanitizePalettes( allPalettes, options, simple );
+  return allColors.map( mapColorToPalette( options ) )
+                  .map( mapAddColors( options ) )
+                  .map( mapForceColors( options ) )
+                  .map( mapCreateVariations( options ) )
+                  .map( mapAddSourceIndex( options ) );
 }
 
-const noop = palette => palette;
-
-const mapSanitizePalettes = ( colors, options = {}, simple ) => {
-  return colors.map( mapUpdateProps )
-               .map( mapCreateVariations( options ) )
-               .map( mapAddSourceIndex( options ) );
-}
-
-const mapCreateVariations = ( options ) => {
+const mapForceColors = ( options ) => {
 
   return ( palette ) => {
-
-    const sourceColors = palette.source.map( color => ( { value: color, isSource: true } ) );
-
+    const sourceColors = palette.source.map( color => ( { value: color } ) );
     const forcedColors = [];
 
     if ( options.sm_color_promotion_brand ) {
@@ -66,15 +58,25 @@ const mapCreateVariations = ( options ) => {
     palette.colors.push( ...uniqueForcedColors );
     palette.colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
 
-    palette.variations = getVariationsFromColors( palette, options );
+    return palette;
+  }
+}
+
+const mapCreateVariations = ( options ) => {
+
+  return ( palette ) => {
+    const { colors, darkColors, source } = palette;
+
+    palette.variations = getVariationsFromColors( colors, source, options );
+    palette.darkVariations = getVariationsFromColors( darkColors, source, options );
 
     return palette;
   }
 }
 
-const getVariationsFromColors = ( palette, options ) => {
-  const newContrastArray = getNewContrastArray( palette );
-  const mycolors = palette.colors.slice();
+const getVariationsFromColors = ( colors, sources, options ) => {
+  const newContrastArray = getNewContrastArray( colors );
+  const mycolors = colors.slice();
   const grays = newContrastArray.map( contrast => chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) ) );
 
   // make sure palette colors are used at lease once
@@ -103,11 +105,11 @@ const getVariationsFromColors = ( palette, options ) => {
     return chroma( v2.value ).luminance() - chroma( v1.value ).luminance();
   } );
 
-  return mycolors.map( mycolor => getVariation( palette, mycolor, options ) );
+  return mycolors.map( mycolor => getVariation( colors, sources, mycolor, options ) );
 }
 
-const getNewContrastArray = ( palette ) => {
-  const mycolors = palette.colors.slice();
+const getNewContrastArray = ( colors ) => {
+  const mycolors = colors.slice();
   const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c.value ) );
   const minContrast = Math.min( ...contrasts );
   const maxContrast = Math.max( ...contrasts );
@@ -119,13 +121,19 @@ const getNewContrastArray = ( palette ) => {
   } );
 }
 
-const getVariation = ( palette, mycolor, options ) => {
+const getVariation = ( colors, sources, mycolor, options ) => {
+  const minContrast = getMinContrast( options );
+  const bigTextMinContrast = getMinContrast( options, true );
+
+  const accentColor = getAccentHex( colors, sources, mycolor, minContrast );
+  const textColor = getTextHex( mycolor, minContrast );
+  const bigTextColor = getTextHex( mycolor, 0 );
 
   return {
     background: mycolor.value,
-    accent: getAccentHex( palette, mycolor, options ),
-    foreground1: getTextHex( palette, mycolor, options ),
-    foreground2: getTextHex( palette, mycolor, options, 7 ),
+    accent: accentColor,
+    foreground1: textColor,
+    foreground2: chroma.contrast( textColor, bigTextColor ) > contrastArray[4] ? textColor : bigTextColor,
   }
 }
 
@@ -156,20 +164,26 @@ const mapColorToPalette = ( ( options ) => {
       id: id || ( index + 1 ),
       label: label,
       source: sources,
-      colors: createAutoPalette( sources, options ),
     };
   }
 } );
 
 
-const mapUpdateProps = ( palette ) => {
-  palette.colors = palette.colors.map( ( color, index ) => {
-    return Object.assign( {}, {
-      value: color,
-    } )
-  } );
+const mapAddColors = options => {
 
-  return palette;
+  return palette => {
+
+    const darkOptions = Object.assign( {}, options, {
+      sm_potential_color_contrast: Math.min( 0.25, options.sm_potential_color_contrast ),
+      sm_color_grade_balancer: 1,
+      sm_color_grades_number: options.sm_color_grades_number,
+    } );
+
+    palette.colors = createAutoPalette( palette.source, options ).map( color => ( { value: color } ) );
+    palette.darkColors = createAutoPalette( palette.source, darkOptions ).map( color => ( { value: color } ) );
+
+    return palette;
+  }
 }
 
 const getBestPositionInPalette = ( color, colors, attributes ) => {

@@ -14,16 +14,16 @@ class DarkMode {
     this.darkModeSetting = window.document.documentElement.dataset?.darkModeAdvanced;
     this.matchMedia = window.matchMedia( '(prefers-color-scheme: dark)' );
     this.storageItemKey = STORAGE_ITEM;
+    this.callbacks = [];
 
     onReady( () => {
+
       if ( isCustomizePreview() || isLoggedIn() ) {
         localStorage.removeItem( TEMP_STORAGE_ITEM );
         this.storageItemKey = TEMP_STORAGE_ITEM;
       }
 
-      if ( isCustomizePreview() ) {
-        this.initializeCustomizePreview();
-      }
+      this.initializeCustomizePreview();
 
       this.bindEvents();
       this.update();
@@ -33,13 +33,20 @@ class DarkMode {
 
   initializeCustomizePreview() {
 
-    window.parent.wp.customize( 'sm_dark_mode_advanced', setting => {
+    const api = window.wp?.customize || window.parent?.wp?.customize;
+
+    if ( ! api ) {
+      return;
+    }
+
+    api( 'sm_dark_mode_advanced', setting => {
       setting.bind( ( newValue ) => {
         this.darkModeSetting = newValue;
         localStorage.removeItem( TEMP_STORAGE_ITEM );
         this.update();
       } );
     } );
+
   }
 
   bindEvents() {
@@ -53,6 +60,26 @@ class DarkMode {
       localStorage.removeItem( TEMP_STORAGE_ITEM );
       this.update();
     } );
+  }
+
+  bind( callback ) {
+    const index = this.callbacks.indexOf( callback );
+
+    if ( typeof callback !== "function" ) {
+      return;
+    }
+
+    if ( index === -1 ) {
+      this.callbacks.push( callback );
+    }
+  }
+
+  unbind( callback ) {
+    const index = this.callbacks.indexOf( callback );
+
+    if ( index > -1 ) {
+      this.callbacks.splice( index, 1 );
+    }
   }
 
   onClick( event ) {
@@ -83,7 +110,13 @@ class DarkMode {
   }
 
   update() {
-    if ( this.isCompiledDark() ) {
+    const isDark = this.isCompiledDark();
+
+    this.callbacks.forEach( callback => {
+      callback( isDark );
+    } )
+
+    if ( isDark ) {
       window.document.documentElement.classList.add( 'is-dark' );
     } else {
       window.document.documentElement.classList.remove( 'is-dark' );
