@@ -119,7 +119,7 @@ const SourceColorControl = ( props ) => {
 
   const removeColor = useCallback( () => {
     setConfig( deleteColor( config, groupIndex, index ) );
-    resetActivePreset();
+    setActivePreset( '' );
   }, [config, groupIndex, index] );
 
   const actions = [

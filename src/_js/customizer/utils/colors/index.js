@@ -61,7 +61,7 @@ export const getMinContrast = ( options, largeText = false ) => {
     return largeText ? 3 : 4.5;
   }
 
-  return largeText ? contrastArray[4] : contrastArray[5];
+  return contrastArray[4];
 }
 
 export const desaturateTextColor = ( hex, luminance ) => {
