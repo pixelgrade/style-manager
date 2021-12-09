@@ -3,7 +3,7 @@ import './style.scss';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { useActivePreset, useUpdateSourceSetting } from '../../hooks'
-import { getTextHex, getPalettesFromColors } from '../../utils';
+import { getBestColor, getPalettesFromColors } from '../../utils';
 import { OptionsContext } from '../../components';
 
 import { normalizeCloudPresets } from './utils';
@@ -70,8 +70,8 @@ export const PaletteListItem = ( props ) => {
   }, [ stripes, colors ] );
 
   const textColor = useMemo( () => {
-    getTextHex( colors[ 0 ], options );
-  }, [ palettes, colors, options ] );
+    return getBestColor( colors[0].value, ['#FFFFFF', '#000000'], 4.5, true );
+  }, [ palettes, colors ] );
 
   return (
     <div className={ `sm-presets-list__item` } onClick={ () => { onChange( preset ) } }>

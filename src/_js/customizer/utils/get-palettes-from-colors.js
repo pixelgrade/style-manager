@@ -4,10 +4,9 @@ import chroma from 'chroma-js';
 import {
   contrastToLuminance,
   getColorOptionsDefaults,
-  getTextHex,
-  getAccentHex,
   getMinContrast,
-  contrastArray,
+  getBestColor,
+  contrastArray, getTextColors,
 } from "./colors";
 
 const defaultOptions = {
@@ -121,20 +120,30 @@ const getNewContrastArray = ( colors ) => {
   } );
 }
 
-const getVariation = ( colors, sources, mycolor, options ) => {
-  const accentMinContrast = 2.5;
-  const minContrast = getMinContrast( options );
-  const bigTextMinContrast = getMinContrast( options, true );
+const getVariation = ( colors, sources, color, options ) => {
+  const accentContrast = 2.5;
+  const darkerContrast = getMinContrast( options );
+  const darkContrast = getMinContrast( options, true );
 
-  const accentColor = getAccentHex( colors, sources, mycolor, accentMinContrast );
-  const textColor = getTextHex( mycolor, minContrast );
-  const bigTextColor = getTextHex( mycolor, bigTextMinContrast );
+  const accentColors = colors.slice().map( color => color.value );
+  const sourceColors = sources.slice();
+
+  // always add sources to use as possible accent colors
+  accentColors.unshift( ...sourceColors );
+
+  const background = color.value;
+  const accent = getBestColor( background, accentColors, accentContrast );
+  const textColors = getTextColors( accent || background );
+  const darker = getBestColor( background, textColors, darkerContrast, true );
+  const dark = getBestColor( background, textColors, darkContrast, true );
+  const fg1 = darker;
+  const fg2 = chroma.contrast( darker, dark ) > contrastArray[4] ? darker : dark;
 
   return {
-    background: mycolor.value,
-    accent: accentColor,
-    foreground1: textColor,
-    foreground2: chroma.contrast( textColor, bigTextColor ) > contrastArray[4] ? textColor : bigTextColor,
+    background: background,
+    accent: accent || fg2,
+    foreground1: fg1,
+    foreground2: fg2,
   }
 }
 

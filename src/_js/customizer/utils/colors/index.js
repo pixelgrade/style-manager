@@ -6,35 +6,19 @@ export const contrastToLuminance = ( contrast ) => {
   return 1.05 / contrast - 0.05;
 }
 
-export const getAccentHex = ( colors, sources, color, minContrast ) => {
-  const mycolors = colors.slice();
-  const sourceColors = sources.map( hex => ( { value: hex, isSource: true } ) );
-  const textColors = getTextColors( color.value );
+export const getBestColor = ( background, colors, minContrast, please ) => {
+  const bestIndex = colors.findIndex( mycolor => chroma.contrast( mycolor, background ) > minContrast );
 
-  // always add sources and text colors to use as possible accent colors
-  mycolors.unshift( ...sourceColors );
-  mycolors.push( ...textColors.map( hex => ( { value: hex } ) ) );
-
-  const bestIndex = mycolors.findIndex( mycolor => chroma.contrast( mycolor.value, color.value ) > minContrast );
-
-  if ( bestIndex < 0 ) {
-    const sortedColors = mycolors.slice().sort( ( c1, c2 ) => chroma.contrast( c1.value, color.value ) - chroma.contrast( c2.value, color.value ) );
-    return sortedColors[ sortedColors.length - 1 ].value;
+  if ( bestIndex > -1 ) {
+    return colors[ bestIndex ];
   }
 
-  return mycolors[ bestIndex ].value;
-}
-
-export const getTextHex = ( color, minContrast ) => {
-  const textColors = getTextColors( color.value );
-  const bestIndex = textColors.findIndex( mycolor => chroma.contrast( mycolor, color.value ) > minContrast );
-
-  if ( bestIndex < 0 ) {
-    const sortedColors = textColors.slice().sort( ( c1, c2 ) => chroma.contrast( c1, color.value ) - chroma.contrast( c2, color.value ) );
+  if ( !! please ) {
+    const sortedColors = colors.slice().sort( ( c1, c2 ) => chroma.contrast( c1, background ) - chroma.contrast( c2, background ) );
     return sortedColors[ sortedColors.length - 1 ];
   }
 
-  return textColors[ bestIndex ];
+  return false;
 }
 
 export const getTextColors = ( hex ) => {
