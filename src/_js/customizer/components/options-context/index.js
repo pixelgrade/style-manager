@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { getColorOptionsIDs } from "../../utils";
 import { useCustomizeSettingCallback } from "../../hooks";
@@ -8,6 +8,8 @@ const OptionsContext = createContext();
 export const OptionsProvider = ( props ) => {
   const settingsIDs = useMemo( getColorOptionsIDs, [] );
   const [ options, setOptions ] = useState( {} );
+  const nextOptions = useRef( {} );
+  const callback = useRef( null );
 
   useEffect( () => {
     const newOptions = {};
@@ -23,17 +25,18 @@ export const OptionsProvider = ( props ) => {
 
   settingsIDs.forEach( settingID => {
     useCustomizeSettingCallback( settingID, newValue => {
-      setOptions( { ...options, [settingID]: newValue } );
-    }, [ options ] )
+      callback.current = () => {
+        console.log( 'niciun pai' );
+        setOptions( nextOptions.current );
+      }
+      nextOptions.current = { ...nextOptions.current, [settingID]: newValue }
+      cancelIdleCallback( callback.current );
+      requestIdleCallback( callback.current );
+    }, [ nextOptions.current ] )
   } );
 
-  const providerValue = {
-    options,
-    setOptions,
-  };
-
   return (
-    <OptionsContext.Provider value={ providerValue }>
+    <OptionsContext.Provider value={ options }>
       { props.children }
     </OptionsContext.Provider>
   )

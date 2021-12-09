@@ -23,16 +23,14 @@ export const getBestColor = ( background, colors, minContrast, please ) => {
 
 export const getTextColors = ( hex ) => {
 
-  const textContrastArray = [
-    ...contrastArray.slice( 0, 1 ),
-    ...contrastArray.slice( -3 )
-  ];
-
-  return textContrastArray.map( contrast => {
+  const textColors = contrastArray.slice( -3 ).map( contrast => {
     const luminance = contrastToLuminance( contrast );
-    return desaturateTextColor( hex, luminance );
+    return chroma( hex ).luminance( luminance ).hex();
   } );
 
+  textColors.unshift( '#FFFFFF' );
+
+  return textColors;
 }
 
 export const getMinContrast = ( options, largeText = false ) => {

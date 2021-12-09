@@ -18,15 +18,13 @@ import ConfigContext, { ConfigProvider } from "../config-context";
 import OptionsContext, { OptionsProvider } from "../options-context";
 
 const App = () => {
-  const { options } = useContext( OptionsContext );
+  const options = useContext( OptionsContext );
   const { config, outputSettingID } = useContext( ConfigContext );
 
   useEffect(() => {
-    requestIdleCallback( () => {
-      wp.customize( outputSettingID, setting => {
-        const newPalettes = getPalettesFromColors( config, options );
-        setting.set( JSON.stringify( newPalettes ) );
-      } );
+    wp.customize( outputSettingID, setting => {
+      const newPalettes = getPalettesFromColors( config, options );
+      setting.set( JSON.stringify( newPalettes ) );
     } );
   }, [ config, options ] );
 

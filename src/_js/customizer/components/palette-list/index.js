@@ -22,7 +22,7 @@ const PresetsList = ( props ) => {
 export const PaletteListItem = ( props ) => {
   const { preset } = props;
   const { quote, image, uid } = preset;
-  const { options } = useContext( OptionsContext );
+  const options = useContext( OptionsContext );
   const [ activePreset, setActivePreset ] = useActivePreset();
   const updateSourceSetting = useUpdateSourceSetting();
 
