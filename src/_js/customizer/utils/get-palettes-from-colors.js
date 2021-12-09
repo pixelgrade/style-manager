@@ -133,7 +133,8 @@ const getVariation = ( colors, sources, color, options ) => {
 
   const background = color.value;
   const accent = getBestColor( background, accentColors, accentContrast );
-  const textColors = getTextColors( accent || background );
+  const textReference = ( accent && chroma.contrast( accent, '#FFFFFF' ) > 1 ) ? accent : background;
+  const textColors = getTextColors( textReference );
   const darker = getBestColor( background, textColors, darkerContrast, true );
   const dark = getBestColor( background, textColors, darkContrast, true );
   const fg1 = darker;
