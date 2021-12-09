@@ -117,8 +117,8 @@ const PalettePreview = ( props ) => {
             { variations.map( ( variation, index ) => {
 
               const workingIndex = normalize( index );
-              const isSource = palette.source.findIndex( hex => variations[workingIndex].background === hex ) > -1 &&
-                               variations.findIndex( v => variations[workingIndex].background === v.background ) === workingIndex;
+              const isSource = palette.source.findIndex( hex => variations[workingIndex].bg === hex ) > -1 &&
+                               variations.findIndex( v => variations[workingIndex].bg === v.bg ) === workingIndex;
 
               const passedProps = {
                 isSource: isSource,

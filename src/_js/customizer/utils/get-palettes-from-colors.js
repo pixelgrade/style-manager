@@ -157,7 +157,8 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
 const getBestAccentColor = ( background, colors, sources ) => {
   const accentContrast = 2.5;
   const accentColorOptions = colors.slice().map( color => color.value );
-  const sourceColors = sources.slice();
+
+  accentColorOptions.unshift( ...sources );
 
   return getBestColor( background, accentColorOptions, accentContrast );;
 }
