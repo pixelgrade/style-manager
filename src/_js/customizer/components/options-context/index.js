@@ -26,7 +26,6 @@ export const OptionsProvider = ( props ) => {
   settingsIDs.forEach( settingID => {
     useCustomizeSettingCallback( settingID, newValue => {
       callback.current = () => {
-        console.log( 'niciun pai' );
         setOptions( nextOptions.current );
       }
       nextOptions.current = { ...nextOptions.current, [settingID]: newValue }
