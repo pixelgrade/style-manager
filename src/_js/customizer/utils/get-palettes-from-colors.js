@@ -43,7 +43,7 @@ const mapForceColors = ( options ) => {
     }
 
     if ( options.sm_color_promotion_black ) {
-      forcedColors.push( { value: chroma( '#FFFFFF' ).luminance( contrastToLuminance( 19 ) ).hex() } );
+      forcedColors.push( { value: '#000000' } );
     }
 
     const uniqueForcedColors = forcedColors.filter( ( color, index, self ) => {
@@ -122,12 +122,13 @@ const getNewContrastArray = ( colors ) => {
 }
 
 const getVariation = ( colors, sources, mycolor, options ) => {
+  const accentMinContrast = 2.5;
   const minContrast = getMinContrast( options );
   const bigTextMinContrast = getMinContrast( options, true );
 
-  const accentColor = getAccentHex( colors, sources, mycolor, minContrast );
+  const accentColor = getAccentHex( colors, sources, mycolor, accentMinContrast );
   const textColor = getTextHex( mycolor, minContrast );
-  const bigTextColor = getTextHex( mycolor, 0 );
+  const bigTextColor = getTextHex( mycolor, bigTextMinContrast );
 
   return {
     background: mycolor.value,

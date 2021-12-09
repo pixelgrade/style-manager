@@ -656,7 +656,7 @@ class ColorPalettes extends AbstractHookProvider {
 
 				'sm_color_grades_number'      => [
 					'type'         => 'range',
-					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 10)' ),
+					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 12)' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_color_grades_number',
@@ -679,7 +679,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'input_attrs'  => [
 						'min'  => 0,
 						'max'  => 1,
-						'step' => 0.1,
+						'step' => 0.01,
 					],
 				],
 				'sm_color_grade_balancer'     => [
@@ -693,7 +693,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'input_attrs'  => [
 						'min'  => -1,
 						'max'  => 1,
-						'step' => 0.1,
+						'step' => 0.01,
 					],
 				],
 				'sm_site_color_variation'     => [
