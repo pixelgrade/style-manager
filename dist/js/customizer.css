@@ -2912,13 +2912,24 @@ img:not([src]) {
   margin-top: 10px;
 }
 
+.palette-preview-swatches__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2em;
+}
+
 .palette-preview-swatches__button {
-  padding: 0.3em 1em;
+  padding: 0.3em 0.7em;
   border-radius: 0.25em;
   font-size: 1.25em;
-  display: inline-block;
   background: var(--sm-current-accent-color);
   color: var(--sm-current-bg-color);
+}
+.palette-preview-swatches__button--style-2 {
+  background: var(--sm-current-accent2-color);
+}
+.palette-preview-swatches__button--style-3 {
+  background: var(--sm-current-accent3-color);
 }
 
 .palette-preview-swatches__wrap.is-source .palette-preview-swatches__source-badge {

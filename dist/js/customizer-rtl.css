@@ -2920,6 +2920,12 @@ img:not([src]) {
   background: var(--sm-current-accent-color);
   color: var(--sm-current-bg-color);
 }
+.palette-preview-swatches__button--style-2 {
+  background: var(--sm-current-accent2-color);
+}
+.palette-preview-swatches__button--style-3 {
+  background: var(--sm-current-accent3-color);
+}
 
 .palette-preview-swatches__wrap.is-source .palette-preview-swatches__source-badge {
   content: "";

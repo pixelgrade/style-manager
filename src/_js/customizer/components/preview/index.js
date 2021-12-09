@@ -1,7 +1,8 @@
 import classnames from 'classnames';
-import React, { Fragment, useEffect, useState } from 'react';
-import { useCustomizeSettingCallback } from "../../hooks";
+import React, { Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+
 import DarkMode from '../../../dark-mode';
+import { useCustomizeSettingCallback } from "../../hooks";
 
 import './style.scss';
 
@@ -36,18 +37,33 @@ const Preview = ( props ) => {
 
 const PalettePreviewList = ( props ) => {
 
-  const { palettes, isDark } = props;
+  const { isDark } = props;
+  const [ palettes, setPalettes ] = useState( [] );
+  const [ active, setActive ] = useState( null );
 
-  const userPalettes = palettes.filter( palette => {
-    const { id } = palette;
-    return ! ( typeof id === 'string' && id.charAt(0) === '_' );
+  const userPalettes = useMemo( () => {
+    return palettes.filter( palette => {
+      const { id } = palette;
+      return ! ( typeof id === 'string' && id.charAt(0) === '_' );
+    } );
+  }, [ palettes ] );
+
+  useEffect( () => {
+    wp.customize( 'sm_advanced_palette_output', setting => {
+      const value = setting();
+      setPalettes( JSON.parse( value ) );
+    } );
+  }, [] );
+
+  useEffect( () => {
+    if ( userPalettes.length ) {
+      setActive( userPalettes[0].id );
+    }
+  }, [ userPalettes ] )
+
+  useCustomizeSettingCallback( 'sm_advanced_palette_output', newValue => {
+    setPalettes( JSON.parse( newValue ) );
   } );
-
-  if ( ! userPalettes.length ) {
-    return null;
-  }
-
-  const [ active, setActive ] = useState( userPalettes[0].id );
 
   return userPalettes.map( ( palette, index ) => {
     const description = index === 0 ? styleManager.l10n.colorPalettes.palettePreviewListDesc : '';
@@ -73,9 +89,9 @@ const PalettePreview = ( props ) => {
   const siteVariationSetting = wp.customize( 'sm_site_color_variation' );
   const [ siteVariation, setSiteVariation ] = useState( parseInt( siteVariationSetting(), 10 ) );
 
-  const onSiteVariationChange = ( newValue ) => {
+  const onSiteVariationChange = useCallback( newValue => {
     setSiteVariation( parseInt( newValue, 10 ) );
-  }
+  }, [] );
 
   useEffect( () => {
     setLastHover( sourceIndex + 1 );
@@ -91,9 +107,7 @@ const PalettePreview = ( props ) => {
     }
   }, [] );
 
-  const normalize = index => {
-    return ( index + siteVariation - 1 + 12 ) % 12;
-  }
+  const normalize = useCallback( index => ( index + siteVariation - 1 + 12 ) % 12, [ siteVariation ] );
 
   return (
     <div className={ `palette-preview sm-palette-${ id } ${ lastHover !== false ? `sm-variation-${ lastHover }` : '' }` }>
@@ -102,7 +116,7 @@ const PalettePreview = ( props ) => {
           <div className={ `palette-preview-set` }>
             { variations.map( ( variation, index ) => {
 
-              const workingIndex = ( index + siteVariation - 1 + 12 ) % 12;
+              const workingIndex = normalize( index );
               const isSource = palette.source.findIndex( hex => variations[workingIndex].background === hex ) > -1 &&
                                variations.findIndex( v => variations[workingIndex].background === v.background ) === workingIndex;
 
@@ -176,7 +190,11 @@ const PalettePreviewGradeCard = () => {
           <div className="palette-preview-swatches__row" />
           <div className="palette-preview-swatches__row" />
         </div>
-        <div className={ `palette-preview-swatches__button` }>&rarr;</div>
+        <div className="palette-preview-swatches__buttons">
+          <div className={ `palette-preview-swatches__button` }>&rarr;</div>
+          <div className={ `palette-preview-swatches__button  palette-preview-swatches__button--style-2` }>&rarr;</div>
+          <div className={ `palette-preview-swatches__button  palette-preview-swatches__button--style-3` }>&rarr;</div>
+        </div>
       </div>
     </div>
   )

@@ -52,12 +52,10 @@ const getVariationsCSS = ( variations, offset ) => {
 const getVariationCSS = ( variations, index, offset ) => {
   const variation = variations[ ( index + offset ) % 12 ];
 
-  return `
-        --sm-bg-color-${ index + 1 }: ${ variation.background };
-        --sm-accent-color-${ index + 1 }: ${ variation.accent };
-        --sm-fg1-color-${ index + 1 }: ${ variation.foreground1 };
-        --sm-fg2-color-${ index + 1 }: ${ variation.foreground2 };
-  `;
+  return Object.keys( variation ).reduce( ( acc, key ) => {
+    return `${ acc }
+    --sm-${ key }-color-${ index + 1 }: ${ variation[ key ] };`
+  }, '' );
 
 }
 

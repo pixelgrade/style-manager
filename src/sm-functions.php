@@ -279,10 +279,9 @@ function get_variation_css_variables( $variations, $index, $offset = 0 ) {
 
 	$variation = $variations[ ( $index + $offset ) % 12 ];
 
-	$output .= '--sm-bg-color-' . ( $index + 1 ) . ': ' . $variation->background . ';' . PHP_EOL;
-	$output .= '--sm-accent-color-' . ( $index + 1 ) . ': ' . $variation->accent . ';' . PHP_EOL;
-	$output .= '--sm-fg1-color-' . ( $index + 1 ) . ': ' . $variation->foreground1 . ';' . PHP_EOL;
-	$output .= '--sm-fg2-color-' . ( $index + 1 ) . ': ' . $variation->foreground2 . ';' . PHP_EOL;
+	foreach ( $variation as $key => $value ) {
+		$output .= '--sm-' . $key . '-color-' . ( $index + 1 ) . ': ' . $value . ';' . PHP_EOL;
+	}
 
 	return $output;
 }

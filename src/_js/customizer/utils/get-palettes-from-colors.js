@@ -20,11 +20,12 @@ export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) 
   const functionalColors = getFunctionalColors( colorGroups );
   const allColors = colorGroups.concat( functionalColors );
 
-  return allColors.map( mapColorToPalette( options ) )
-                  .map( mapAddColors( options ) )
-                  .map( mapForceColors( options ) )
-                  .map( mapCreateVariations( options ) )
-                  .map( mapAddSourceIndex( options ) );
+  const palettes = allColors.map( mapColorToPalette( options ) )
+                            .map( mapAddColors( options ) )
+                            .map( mapForceColors( options ) );
+
+  return palettes.map( mapCreateVariations( options, palettes ) )
+                 .map( mapAddSourceIndex( options ) );
 }
 
 const mapForceColors = ( options ) => {
@@ -61,19 +62,24 @@ const mapForceColors = ( options ) => {
   }
 }
 
-const mapCreateVariations = ( options ) => {
+const mapCreateVariations = ( options, allPalettes ) => {
 
   return ( palette ) => {
     const { colors, darkColors, source } = palette;
 
-    palette.variations = getVariationsFromColors( colors, source, options );
-    palette.darkVariations = getVariationsFromColors( darkColors, source, options );
+    const otherPalettes = allPalettes.filter( thisPalette => {
+      const thisId = `${ thisPalette.id }`;
+      return thisId !== `${ palette.id }` && thisId.charAt( 0 ) !== '_';
+    } );
+
+    palette.variations = getVariationsFromColors( colors, source, options, otherPalettes );
+    palette.darkVariations = getVariationsFromColors( darkColors, source, options, otherPalettes );
 
     return palette;
   }
 }
 
-const getVariationsFromColors = ( colors, sources, options ) => {
+const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] ) => {
   const newContrastArray = getNewContrastArray( colors );
   const mycolors = colors.slice();
   const grays = newContrastArray.map( contrast => chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) ) );
@@ -104,7 +110,7 @@ const getVariationsFromColors = ( colors, sources, options ) => {
     return chroma( v2.value ).luminance() - chroma( v1.value ).luminance();
   } );
 
-  return mycolors.map( mycolor => getVariation( colors, sources, mycolor, options ) );
+  return mycolors.map( mycolor => getVariation( colors, sources, mycolor, options, otherPalettes ) );
 }
 
 const getNewContrastArray = ( colors ) => {
@@ -120,19 +126,11 @@ const getNewContrastArray = ( colors ) => {
   } );
 }
 
-const getVariation = ( colors, sources, color, options ) => {
-  const accentContrast = 2.5;
+const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => {
   const darkerContrast = getMinContrast( options );
   const darkContrast = getMinContrast( options, true );
-
-  const accentColors = colors.slice().map( color => color.value );
-  const sourceColors = sources.slice();
-
-  // always add sources to use as possible accent colors
-  accentColors.unshift( ...sourceColors );
-
   const background = color.value;
-  const accent = getBestColor( background, accentColors, accentContrast );
+  const accent = getBestAccentColor( background, colors, sources );
   const textReference = ( accent && chroma.contrast( accent, '#FFFFFF' ) > 1 ) ? accent : background;
   const textColors = getTextColors( textReference );
   const darker = getBestColor( background, textColors, darkerContrast, true );
@@ -140,19 +138,35 @@ const getVariation = ( colors, sources, color, options ) => {
   const fg1 = darker;
   const fg2 = chroma.contrast( darker, dark ) > contrastArray[4] ? darker : dark;
 
-  return {
-    background: background,
+  const variationConfig = {
+    bg: background,
     accent: accent || fg2,
-    foreground1: fg1,
-    foreground2: fg2,
+    fg1: fg1,
+    fg2: fg2,
   }
+
+  otherPalettes.forEach( ( otherPalette, index ) => {
+    const key = `accent${ index + 2 }`;
+    const otherAccent = getBestAccentColor( background, otherPalette.colors, otherPalette.source );
+    variationConfig[ key ] = otherAccent || fg2;
+  } );
+
+  return variationConfig;
+}
+
+const getBestAccentColor = ( background, colors, sources ) => {
+  const accentContrast = 2.5;
+  const accentColorOptions = colors.slice().map( color => color.value );
+  const sourceColors = sources.slice();
+
+  return getBestColor( background, accentColorOptions, accentContrast );;
 }
 
 const mapAddSourceIndex = ( options ) => {
 
   return ( palette, index, palettes ) => {
     const source = palette.source[0];
-    const colors = palette.variations.map( variation => variation.background );
+    const colors = palette.variations.map( variation => variation.bg );
     const sourceIndex = getBestPositionInPalette( source, colors, options );
 
     return {

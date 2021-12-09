@@ -2,7 +2,7 @@ import ReactDOM from "react-dom";
 
 import { Builder } from '../components';
 
-export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => {
+export const initializePaletteBuilder = ( sourceSettingID ) => {
   const containerID = `customize-control-${ sourceSettingID }_control`;
   const container = document.getElementById( containerID );
 
@@ -18,5 +18,5 @@ export const initializePaletteBuilder = ( sourceSettingID, outputSettingID ) => 
 
   container.insertBefore( target, container.firstChild );
 
-  ReactDOM.render( <Builder sourceSettingID={ sourceSettingID } outputSettingID={ outputSettingID } />, target );
+  ReactDOM.render( <Builder sourceSettingID={ sourceSettingID } />, target );
 }

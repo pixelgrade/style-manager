@@ -23,7 +23,7 @@ const useConfig = ( sourceSettingID ) => {
 }
 
 export const ConfigProvider = ( props ) => {
-  const { outputSettingID, sourceSettingID } = props;
+  const { sourceSettingID } = props;
   const initialConfig = useConfig( sourceSettingID );
   const [ config, setConfig ] = useState( initialConfig );
 
@@ -37,7 +37,6 @@ export const ConfigProvider = ( props ) => {
   const providerValue = {
     config,
     sourceSettingID,
-    outputSettingID,
   };
 
   return (
@@ -45,6 +44,16 @@ export const ConfigProvider = ( props ) => {
       { props.children }
     </ConfigContext.Provider>
   )
+}
+
+export const withConfigProvider = Component => {
+  return ( props ) => {
+    return (
+      <ConfigProvider { ...props }>
+        <Component { ...props } />
+      </ConfigProvider>
+    )
+  }
 }
 
 export default ConfigContext;

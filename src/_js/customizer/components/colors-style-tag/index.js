@@ -5,12 +5,11 @@ import { useCustomizeSettingCallback } from "../../hooks";
 import { ConfigContext } from "../../components";
 
 const ColorsStyleTag = props => {
-  const { outputSettingID } = useContext( ConfigContext );
   const siteVariationSettingID = 'sm_site_color_variation';
   const [ CSS, setCSS ] = useState( '' );
 
   const onSiteVariationChange = useCallback( newVariation => {
-    wp.customize( outputSettingID, setting => {
+    wp.customize( 'sm_advanced_palette_output', setting => {
       const output = setting();
       const palettes = JSON.parse( output );
       setCSS( getCSSFromPalettes( palettes, newVariation ) );
@@ -26,7 +25,7 @@ const ColorsStyleTag = props => {
     } );
   }, [] );
 
-  useCustomizeSettingCallback( outputSettingID, onOutputChange );
+  useCustomizeSettingCallback( 'sm_advanced_palette_output', onOutputChange );
   useCustomizeSettingCallback( siteVariationSettingID, onSiteVariationChange );
 
   return (

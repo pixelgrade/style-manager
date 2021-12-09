@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import Overlay from "../overlay";
-import Preview from "../preview";
+import { Overlay, Preview } from "../../components";
+
+import { OptionsProvider } from '../options-context';
 
 const ColorsOverlay = ( props ) => {
   const { setting, show } = props;
@@ -23,7 +24,7 @@ const ColorsOverlay = ( props ) => {
 
   return (
     <Overlay show={ show }>
-      <Preview palettes={ palettes } />
+      <Preview />
     </Overlay>
   )
 }

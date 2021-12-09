@@ -78,7 +78,7 @@ const PreviewTabs = ( props ) => {
       wp.customize.previewedDevice.unbind( callback );
     }
 
-  }, [] )
+  }, [] );
 
   return (
     <div className={ `sm-preview ${ visible ? 'sm-preview--visible' : '' }` } ref={ previewRef }>

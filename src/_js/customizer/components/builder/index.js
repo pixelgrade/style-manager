@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect } from 'react';
+import React, { Fragment, createContext, useContext, useEffect, useMemo } from 'react';
 
 import { getPalettesFromColors } from "../../utils";
 
@@ -14,22 +14,28 @@ import {
   SourceColors,
 } from '../index';
 
-import ConfigContext, { ConfigProvider } from "../config-context";
-import OptionsContext, { OptionsProvider } from "../options-context";
+import {
+  ColorsMasterProvider,
+  PalettesContext
+} from '../../components';
 
-const App = () => {
-  const options = useContext( OptionsContext );
-  const { config, outputSettingID } = useContext( ConfigContext );
+const OutputUpdater = () => {
+  const palettes = useContext( PalettesContext );
 
   useEffect(() => {
-    wp.customize( outputSettingID, setting => {
-      const newPalettes = getPalettesFromColors( config, options );
-      setting.set( JSON.stringify( newPalettes ) );
+    wp.customize( 'sm_advanced_palette_output', setting => {
+      setting.set( JSON.stringify( palettes ) );
     } );
-  }, [ config, options ] );
+  }, [ palettes ] );
+
+  return null;
+}
+
+export const Builder = ( props ) => {
 
   return (
-    <Fragment>
+    <ColorsMasterProvider { ...props }>
+      <OutputUpdater />
       <div className="sm-group">
         <ColorUsageButton />
       </div>
@@ -55,16 +61,6 @@ const App = () => {
           </AccordionSection>
         </Accordion>
       </div>
-    </Fragment>
+    </ColorsMasterProvider>
   );
-}
-
-export const Builder = ( props ) => {
-  return (
-    <ConfigProvider { ...props }>
-      <OptionsProvider>
-        <App />
-      </OptionsProvider>
-    </ConfigProvider>
-  )
 }

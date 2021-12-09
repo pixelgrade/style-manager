@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { getColorOptionsIDs } from "../../utils";
 import { useCustomizeSettingCallback } from "../../hooks";
@@ -9,7 +9,9 @@ export const OptionsProvider = ( props ) => {
   const settingsIDs = useMemo( getColorOptionsIDs, [] );
   const [ options, setOptions ] = useState( {} );
   const nextOptions = useRef( {} );
-  const callback = useRef( null );
+  const callback = useCallback( () => {
+    setOptions( nextOptions.current );
+  }, [ options ] );
 
   useEffect( () => {
     const newOptions = {};
@@ -25,13 +27,10 @@ export const OptionsProvider = ( props ) => {
 
   settingsIDs.forEach( settingID => {
     useCustomizeSettingCallback( settingID, newValue => {
-      callback.current = () => {
-        setOptions( nextOptions.current );
-      }
-      nextOptions.current = { ...nextOptions.current, [settingID]: newValue }
-      cancelIdleCallback( callback.current );
-      requestIdleCallback( callback.current );
-    }, [ nextOptions.current ] )
+      cancelIdleCallback( callback );
+      nextOptions.current = { ...nextOptions.current, [settingID]: newValue };
+      requestIdleCallback( callback );
+    }, [] );
   } );
 
   return (
