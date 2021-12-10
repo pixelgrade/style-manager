@@ -20,63 +20,58 @@ export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) 
   const functionalColors = getFunctionalColors( colorGroups );
   const allColors = colorGroups.concat( functionalColors );
 
-  const palettes = allColors.map( mapColorToPalette( options ) )
-                            .map( mapAddColors( options ) )
-                            .map( mapForceColors( options ) );
-
-  return palettes.map( mapCreateVariations( options, palettes ) )
-                 .map( mapAddSourceIndex( options ) );
+  return allColors.map( mapColorToPalette( options ) )
+                  .map( mapAddColors )
+                  .map( mapForceColors )
+                  .map( mapCreateVariations )
+                  .map( mapAddSourceIndex );
 }
 
-const mapForceColors = ( options ) => {
+const mapForceColors = ( palette ) => {
+  const { options } = palette;
+  const sourceColors = palette.source.map( color => ( { value: color } ) );
+  const forcedColors = [];
 
-  return ( palette ) => {
-    const sourceColors = palette.source.map( color => ( { value: color } ) );
-    const forcedColors = [];
-
-    if ( options.sm_color_promotion_brand ) {
-      forcedColors.push( ...sourceColors );
-    }
-
-    if ( options.sm_color_promotion_white ) {
-      forcedColors.unshift( { value: '#FFFFFF' } );
-    }
-
-    if ( options.sm_color_promotion_black ) {
-      forcedColors.push( { value: '#000000' } );
-    }
-
-    const uniqueForcedColors = forcedColors.filter( ( color, index, self ) => {
-      return self.findIndex( compare => color.value === compare.value ) === index;
-    } );
-
-    uniqueForcedColors.forEach( color => {
-      palette.colors.sort( ( c1, c2 ) => chroma.contrast( c2.value, color.value ) - chroma.contrast( c1.value, color.value ) );
-      palette.colors.pop();
-    } );
-
-    palette.colors.push( ...uniqueForcedColors );
-    palette.colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
-
-    return palette;
+  if ( options.sm_color_promotion_brand ) {
+    forcedColors.push( ...sourceColors );
   }
+
+  if ( options.sm_color_promotion_white ) {
+    forcedColors.unshift( { value: '#FFFFFF' } );
+  }
+
+  if ( options.sm_color_promotion_black ) {
+    forcedColors.push( { value: '#000000' } );
+  }
+
+  const uniqueForcedColors = forcedColors.filter( ( color, index, self ) => {
+    return self.findIndex( compare => color.value === compare.value ) === index;
+  } );
+
+  uniqueForcedColors.forEach( color => {
+    palette.colors.sort( ( c1, c2 ) => chroma.contrast( c2.value, color.value ) - chroma.contrast( c1.value, color.value ) );
+    palette.colors.pop();
+  } );
+
+  palette.colors.push( ...uniqueForcedColors );
+  palette.colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
+
+  return palette;
 }
 
-const mapCreateVariations = ( options, allPalettes ) => {
+const mapCreateVariations = ( palette, index, palettes ) => {
 
-  return ( palette ) => {
-    const { colors, darkColors, source } = palette;
+  const { colors, darkColors, source, options } = palette;
 
-    const otherPalettes = allPalettes.filter( thisPalette => {
-      const thisId = `${ thisPalette.id }`;
-      return thisId !== `${ palette.id }` && thisId.charAt( 0 ) !== '_';
-    } );
+  const otherPalettes = palettes.filter( thisPalette => {
+    const thisId = `${ thisPalette.id }`;
+    return thisId !== `${ palette.id }` && thisId.charAt( 0 ) !== '_';
+  } );
 
-    palette.variations = getVariationsFromColors( colors, source, options, otherPalettes );
-    palette.darkVariations = getVariationsFromColors( darkColors, source, options, otherPalettes );
+  palette.variations = getVariationsFromColors( colors, source, options, otherPalettes );
+  palette.darkVariations = getVariationsFromColors( darkColors, source, options, otherPalettes );
 
-    return palette;
-  }
+  return palette;
 }
 
 const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] ) => {
@@ -163,18 +158,16 @@ const getBestAccentColor = ( background, colors, sources ) => {
   return getBestColor( background, accentColorOptions, accentContrast );;
 }
 
-const mapAddSourceIndex = ( options ) => {
+const mapAddSourceIndex = ( palette ) => {
+  const { source, options } = palette;
 
-  return ( palette, index, palettes ) => {
-    const source = palette.source[0];
-    const colors = palette.variations.map( variation => variation.bg );
-    const sourceIndex = getBestPositionInPalette( source, colors, options );
+  const colors = palette.variations.map( variation => variation.bg );
+  const sourceIndex = getBestPositionInPalette( source[0], colors, options );
 
-    return {
-      sourceIndex,
-      ...palette
-    };
-  }
+  return {
+    sourceIndex,
+    ...palette
+  };
 }
 
 const mapColorToPalette = ( ( options ) => {
@@ -190,29 +183,31 @@ const mapColorToPalette = ( ( options ) => {
       id: id || ( index + 1 ),
       label: label,
       source: sources,
+      options: options,
+      darkOptions: Object.assign( {}, options, {
+        sm_potential_color_contrast: Math.min( 0.25, options.sm_potential_color_contrast ),
+        sm_color_grade_balancer: 1,
+        sm_color_grades_number: options.sm_color_grades_number,
+        sm_color_promotion_brand: true,
+        sm_color_promotion_white: false,
+        sm_color_promotion_black: true,
+      } )
     };
   }
 } );
 
 
-const mapAddColors = options => {
+const mapAddColors = palette => {
 
-  return palette => {
+  const { options, darkOptions } = palette;
 
-    const darkOptions = Object.assign( {}, options, {
-      sm_potential_color_contrast: Math.min( 0.25, options.sm_potential_color_contrast ),
-      sm_color_grade_balancer: 1,
-      sm_color_grades_number: options.sm_color_grades_number,
-    } );
+  palette.colors = createAutoPalette( palette.source, options ).map( color => ( { value: color } ) );
+  palette.darkColors = createAutoPalette( palette.source, darkOptions ).map( color => ( { value: color } ) );
 
-    palette.colors = createAutoPalette( palette.source, options ).map( color => ( { value: color } ) );
-    palette.darkColors = createAutoPalette( palette.source, darkOptions ).map( color => ( { value: color } ) );
-
-    return palette;
-  }
+  return palette;
 }
 
-const getBestPositionInPalette = ( color, colors, attributes ) => {
+const getBestPositionInPalette = ( color, colors ) => {
   const mycolors = colors.map( ( color, index ) => ( { color, index } ) );
   mycolors.sort( ( c1, c2 ) => chroma.contrast( c1.color, color ) - chroma.contrast( c2.color, color ) );
   return mycolors[0].index;
