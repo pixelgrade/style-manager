@@ -46,8 +46,8 @@ export const PaletteListItem = ( props ) => {
       let min1 = 21;
       let min2 = 21;
       sources.forEach( source => {
-        const d1 = chroma.distance( source, c1.value );
-        const d2 = chroma.distance( source, c2.value );
+        const d1 = chroma.distance( source, c1 );
+        const d2 = chroma.distance( source, c2 );
         min1 = d1 < min1 ? d1 : min1;
         min2 = d2 < min2 ? d2 : min2;
       } );
@@ -63,14 +63,14 @@ export const PaletteListItem = ( props ) => {
 
     return stripes.map( ( stripe, index ) => {
       const random = Math.floor( Math.random() * colors.length );
-      const color = index > colors.length - 1 ? colors[ random ].value : colors[ index ].value;
+      const color = index > colors.length - 1 ? colors[ random ] : colors[ index ];
       return { ...stripe, color }
     } );
 
   }, [ stripes, colors ] );
 
   const textColor = useMemo( () => {
-    return getBestColor( colors[0].value, ['#FFFFFF', '#000000'], 4.5, true );
+    return getBestColor( colors[0], ['#FFFFFF', '#000000'], 4.5, true );
   }, [ palettes, colors ] );
 
   return (

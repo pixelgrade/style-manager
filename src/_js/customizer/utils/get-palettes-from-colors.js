@@ -28,33 +28,24 @@ export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) 
 }
 
 const mapForceColors = ( palette ) => {
-  const { options } = palette;
-  const sourceColors = palette.source.map( color => ( { value: color } ) );
+  const { options, source } = palette;
   const forcedColors = [];
 
   if ( options.sm_color_promotion_brand ) {
-    forcedColors.push( ...sourceColors );
-  }
-
-  if ( options.sm_color_promotion_white ) {
-    forcedColors.unshift( { value: '#FFFFFF' } );
-  }
-
-  if ( options.sm_color_promotion_black ) {
-    forcedColors.push( { value: '#000000' } );
+    forcedColors.push( ...source );
   }
 
   const uniqueForcedColors = forcedColors.filter( ( color, index, self ) => {
-    return self.findIndex( compare => color.value === compare.value ) === index;
+    return self.findIndex( compare => color === compare ) === index;
   } );
 
   uniqueForcedColors.forEach( color => {
-    palette.colors.sort( ( c1, c2 ) => chroma.contrast( c2.value, color.value ) - chroma.contrast( c1.value, color.value ) );
+    palette.colors.sort( ( c1, c2 ) => chroma.contrast( c2, color ) - chroma.contrast( c1, color ) );
     palette.colors.pop();
   } );
 
   palette.colors.push( ...uniqueForcedColors );
-  palette.colors.sort( ( c1, c2 ) => chroma( c2.value ).luminance() - chroma( c1.value ).luminance() );
+  palette.colors.sort( ( c1, c2 ) => chroma( c2 ).luminance() - chroma( c1 ).luminance() );
 
   return palette;
 }
@@ -83,7 +74,7 @@ const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] )
   // remove grays that are similar in luminance with the variationColor
   mycolors.forEach( color => {
     grays.sort( ( g1, g2 ) => {
-      return chroma.contrast( g1, color.value ) - chroma.contrast( g2, color.value )
+      return chroma.contrast( g1, color ) - chroma.contrast( g2, color )
     } );
 
     grays.shift();
@@ -92,8 +83,8 @@ const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] )
   grays.forEach( gray => {
 
     mycolors.sort( ( v1, v2 ) => {
-      const contrast1 = chroma.contrast( v1.value, gray );
-      const contrast2 = chroma.contrast( v2.value, gray );
+      const contrast1 = chroma.contrast( v1, gray );
+      const contrast2 = chroma.contrast( v2, gray );
       return contrast1 - contrast2;
     } );
 
@@ -102,7 +93,7 @@ const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] )
   } );
 
   mycolors.sort( ( v1, v2 ) => {
-    return chroma( v2.value ).luminance() - chroma( v1.value ).luminance();
+    return chroma( v2 ).luminance() - chroma( v1 ).luminance();
   } );
 
   return mycolors.map( mycolor => getVariation( colors, sources, mycolor, options, otherPalettes ) );
@@ -110,7 +101,7 @@ const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] )
 
 const getNewContrastArray = ( colors ) => {
   const mycolors = colors.slice();
-  const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c.value ) );
+  const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c ) );
   const minContrast = Math.min( ...contrasts );
   const maxContrast = Math.max( ...contrasts );
   const prevMin = 1;
@@ -124,7 +115,7 @@ const getNewContrastArray = ( colors ) => {
 const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => {
   const darkerContrast = getMinContrast( options );
   const darkContrast = getMinContrast( options, true );
-  const background = color.value;
+  const background = color;
   const accent = getBestAccentColor( background, colors, sources );
   const textReference = ( accent && chroma.contrast( accent, '#FFFFFF' ) > 1 ) ? accent : background;
   const textColors = getTextColors( textReference );
@@ -151,7 +142,7 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
 
 const getBestAccentColor = ( background, colors, sources ) => {
   const accentContrast = 2.5;
-  const accentColorOptions = colors.slice().map( color => color.value );
+  const accentColorOptions = colors.slice().map( color => color );
 
   accentColorOptions.unshift( ...sources );
 
@@ -201,8 +192,8 @@ const mapAddColors = palette => {
 
   const { options, darkOptions } = palette;
 
-  palette.colors = createAutoPalette( palette.source, options ).map( color => ( { value: color } ) );
-  palette.darkColors = createAutoPalette( palette.source, darkOptions ).map( color => ( { value: color } ) );
+  palette.colors = createAutoPalette( palette.source, options );
+  palette.darkColors = createAutoPalette( palette.source, darkOptions );
 
   return palette;
 }
@@ -229,7 +220,7 @@ const createAutoPalette = ( colors, options = {} ) => {
     newColors.push( '#000000' );
   }
 
-  newColors.sort( ( c1, c2 ) => chroma( c2 ).luminance() - chroma( c1 ).luminance() );
+  newColors.sort( ( hex1, hex2 ) => chroma( hex2 ).luminance() - chroma( hex1 ).luminance() );
 
   let scale = bezierInterpolation ? chroma.bezier( newColors ).scale() : chroma.scale( newColors );
 
@@ -257,11 +248,11 @@ export const getFunctionalColors = ( colorGroups ) => {
     return [];
   }
 
-  const color = colorGroups[0].sources[0].value;
-  const blue = blend( '#2E72D2', color );
-  const red = blend( '#D82C0D', color );
-  const yellow = blend( '#FFCC00', color, 0.5 );
-  const green = blend( '#00703c', color, 0.75 );
+  const hex = colorGroups[0].sources[0].value;
+  const blue = blend( '#2E72D2', hex );
+  const red = blend( '#D82C0D', hex );
+  const yellow = blend( '#FFCC00', hex, 0.5 );
+  const green = blend( '#00703c', hex, 0.75 );
 
   return [
     { sources: [ { value: blue, label: 'Info', id: '_info' } ] },
