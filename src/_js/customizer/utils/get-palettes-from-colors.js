@@ -226,8 +226,14 @@ const createAutoPalette = ( colors, options = {} ) => {
   const { mode, bezierInterpolation } = options;
   const newColors = colors.slice();
 
-  newColors.unshift( '#FFFFFF' );
-  newColors.push( '#000000' );
+  if ( options.sm_color_promotion_white ) {
+    newColors.unshift( '#FFFFFF' );
+  }
+
+  if ( options.sm_color_promotion_black ) {
+    newColors.push( '#000000' );
+  }
+
   newColors.sort( ( c1, c2 ) => chroma( c2 ).luminance() - chroma( c1 ).luminance() );
 
   let scale = bezierInterpolation ? chroma.bezier( newColors ).scale() : chroma.scale( newColors );

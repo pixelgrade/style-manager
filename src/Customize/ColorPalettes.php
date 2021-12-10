@@ -747,7 +747,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'setting_id'   => 'sm_color_promotion_white',
 					'label'        => esc_html__( 'Pure white', '__plugin_txtd' ),
 					'live'         => true,
-					'default'      => false,
+					'default'      => true,
 				],
 				'sm_color_promotion_black'    => [
 					'type'         => 'sm_toggle',
@@ -755,7 +755,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'setting_id'   => 'sm_color_promotion_black',
 					'label'        => esc_html__( 'Pure black', '__plugin_txtd' ),
 					'live'         => true,
-					'default'      => false,
+					'default'      => true,
 				],
 				'sm_separator_2_2'            => array( 'type' => 'html', 'html' => '' ),
 			] + $config['sections']['style_manager_section']['options'];
