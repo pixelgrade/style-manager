@@ -2,11 +2,12 @@ import { hexToHpluv, hpluvToRgb } from 'hsluv';
 import chroma from 'chroma-js';
 
 import {
+  contrastArray,
   contrastToLuminance,
+  getBestColor,
   getColorOptionsDefaults,
   getMinContrast,
-  getBestColor,
-  contrastArray, getTextColors,
+  getTextColors,
 } from "./colors";
 
 const defaultOptions = {
@@ -112,15 +113,21 @@ const getNewContrastArray = ( colors ) => {
   } );
 }
 
+const isWhite = ( hex ) => {
+  return chroma.contrast( hex, '#FFFFFF' ) === 1;
+}
+
 const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => {
   const darkerContrast = getMinContrast( options );
   const darkContrast = getMinContrast( options, true );
   const background = color;
-  const accent = getBestAccentColor( background, colors, sources );
-  const textReference = ( accent && chroma.contrast( accent, '#FFFFFF' ) > 1 ) ? accent : background;
+  const accent = getBestAccentColor( background, colors, sources, options );
+  const textReference = ( accent && ! isWhite( accent ) ) ? accent : background;
   const textColors = getTextColors( textReference );
-  const darker = getBestColor( background, textColors, darkerContrast, true );
   const dark = getBestColor( background, textColors, darkContrast, true );
+
+  const darkerTextColors = textColors.filter( color => color !== dark || isWhite( color ) );
+  const darker = getBestColor( background, darkerTextColors, darkerContrast, true );
   const fg1 = darker;
   const fg2 = chroma.contrast( darker, dark ) > contrastArray[4] ? darker : dark;
 
@@ -133,15 +140,15 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
 
   otherPalettes.forEach( ( otherPalette, index ) => {
     const key = `accent${ index + 2 }`;
-    const otherAccent = getBestAccentColor( background, otherPalette.colors, otherPalette.source );
+    const otherAccent = getBestAccentColor( background, otherPalette.colors, otherPalette.source, options );
     variationConfig[ key ] = otherAccent || fg2;
   } );
 
   return variationConfig;
 }
 
-const getBestAccentColor = ( background, colors, sources ) => {
-  const accentContrast = 2.5;
+const getBestAccentColor = ( background, colors, sources, options = {} ) => {
+  const accentContrast = options.sm_elements_color_contrast !== 'maximum' ? 2.5 : getMinContrast( options, true );
   const accentColorOptions = colors.slice().map( color => color );
 
   accentColorOptions.unshift( ...sources );

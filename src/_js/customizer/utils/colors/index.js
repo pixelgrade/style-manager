@@ -25,7 +25,7 @@ export const getTextColors = ( hex ) => {
 
   const textColors = contrastArray.slice( -3 ).map( contrast => {
     const luminance = contrastToLuminance( contrast );
-    return chroma( hex ).luminance( luminance ).hex();
+    return desaturateTextColor( hex, luminance );
   } );
 
   textColors.unshift( '#FFFFFF' );
