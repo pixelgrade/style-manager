@@ -686,8 +686,31 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_black' => true,
 							),
 						),
+						'light' => array(
+							'label' => esc_html__( 'Light', '__plugin_txtd' ),
+							'options' => array(
+								'sm_color_grades_number' => 12,
+								'sm_potential_color_contrast' => 1,
+								'sm_color_grade_balancer' => 1,
+								'sm_color_promotion_brand' => true,
+								'sm_color_promotion_white' => true,
+								'sm_color_promotion_black' => false,
+							),
+						),
+						'dark' => array(
+							'label' => esc_html__( 'Dark', '__plugin_txtd' ),
+							'options' => array(
+								'sm_color_grades_number' => 12,
+								'sm_potential_color_contrast' => 1,
+								'sm_color_grade_balancer' => 1,
+								'sm_color_promotion_brand' => true,
+								'sm_color_promotion_white' => false,
+								'sm_color_promotion_black' => true,
+							),
+						),
 						'custom' => array(
 							'label' => esc_html__( 'Custom', '__plugin_txtd' ),
+							'options' => array()
 						),
 					],
 				],

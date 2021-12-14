@@ -14,15 +14,15 @@ export const OptionsProvider = ( props ) => {
   }, [ options ] );
 
   useEffect( () => {
-    const newOptions = {};
 
     settingsIDs.forEach( settingID => {
       wp.customize( settingID, setting => {
-        newOptions[ settingID ] = setting();
+        nextOptions.current = { ...nextOptions.current, [settingID]: setting() };
       } );
     } );
 
-    setOptions( newOptions );
+    setOptions( nextOptions.current );
+
   }, [] );
 
   settingsIDs.forEach( settingID => {
