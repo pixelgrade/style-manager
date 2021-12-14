@@ -673,6 +673,7 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_brand' => true,
 								'sm_color_promotion_white' => true,
 								'sm_color_promotion_black' => true,
+								'sm_elements_color_contrast' => 'normal',
 							),
 						),
 						'simple' => array(
@@ -684,6 +685,7 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_brand' => true,
 								'sm_color_promotion_white' => true,
 								'sm_color_promotion_black' => true,
+								'sm_elements_color_contrast' => 'normal',
 							),
 						),
 						'light' => array(
@@ -695,6 +697,7 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_brand' => true,
 								'sm_color_promotion_white' => true,
 								'sm_color_promotion_black' => false,
+								'sm_elements_color_contrast' => 'normal',
 							),
 						),
 						'dark' => array(
@@ -706,6 +709,7 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_brand' => true,
 								'sm_color_promotion_white' => false,
 								'sm_color_promotion_black' => true,
+								'sm_elements_color_contrast' => 'normal',
 							),
 						),
 						'custom' => array(
