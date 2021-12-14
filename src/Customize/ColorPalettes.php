@@ -260,6 +260,7 @@ class ColorPalettes extends AbstractHookProvider {
 	protected function add_fine_tune_palette_section( array $config ): array {
 
 		$fine_tune_palette_fields = [
+			'sm_color_fine_tune_presets',
 			'sm_color_grades_number',
 			'sm_potential_color_contrast',
 			'sm_color_grade_balancer',
@@ -654,6 +655,42 @@ class ColorPalettes extends AbstractHookProvider {
 					],
 				],
 
+				'sm_color_fine_tune_presets'  => [
+					'type'         => 'preset',
+					'live'         => true,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_fine_tune_presets',
+					'label'        => esc_html__( 'Presets', '__plugin_txtd' ),
+					'default'      => 'normal',
+					'choices_type' => 'radio',
+					'choices'      => [
+						'normal'  => array(
+							'label' => esc_html__( 'Normal', '__plugin_txtd' ),
+							'options' => array(
+								'sm_color_grades_number' => 12,
+								'sm_potential_color_contrast' => 0.9,
+								'sm_color_grade_balancer' => 0,
+								'sm_color_promotion_brand' => true,
+								'sm_color_promotion_white' => true,
+								'sm_color_promotion_black' => true,
+							),
+						),
+						'simple' => array(
+							'label' => esc_html__( 'Simple', '__plugin_txtd' ),
+							'options' => array(
+								'sm_color_grades_number' => 4,
+								'sm_potential_color_contrast' => 1,
+								'sm_color_grade_balancer' => 0.5,
+								'sm_color_promotion_brand' => true,
+								'sm_color_promotion_white' => true,
+								'sm_color_promotion_black' => true,
+							),
+						),
+						'custom' => array(
+							'label' => esc_html__( 'Custom', '__plugin_txtd' ),
+						),
+					],
+				],
 				'sm_color_grades_number'      => [
 					'type'         => 'range',
 					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 12)' ),
@@ -794,6 +831,7 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_dark_mode_advanced',
 
 			// fine tune palette fields
+			'sm_color_fine_tune_presets',
 			'sm_color_grades_number',
 			'sm_potential_color_contrast',
 			'sm_color_grade_balancer',

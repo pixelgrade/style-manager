@@ -4,9 +4,10 @@ export const handleRangeFields = () => {
 
   const rangeControlSelectors = [
     `.accordion-section-content[id*="${ styleManager.config.options_name }"]`,
-    `#sub-accordion-section-sm_color_palettes_section`,
-    `#sub-accordion-section-sm_color_usage_section`,
-    `#sub-accordion-section-sm_spacing_section`,
+    '#sub-accordion-section-sm_color_palettes_section',
+    '#sub-accordion-section-sm_color_usage_section',
+    '#sub-accordion-section-sm_spacing_section',
+    '#sub-accordion-section-sm_fine_tune_palette_section',
   ];
 
   const rangeControlSelector = rangeControlSelectors.join( ', ' );
