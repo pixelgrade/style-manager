@@ -7,7 +7,7 @@ html {
   --sm-current-fg2-color: var(--sm-fg2-color-1); }
 
 html,
-[class*="sm-variation-"]:not(.sm-color-signal-0) {
+[class*="sm-variation-"]:where(:not(.sm-color-signal-0)) {
   background-color: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color); }
 
