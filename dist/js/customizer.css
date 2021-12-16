@@ -2223,60 +2223,65 @@ and other section use the available space
 /*!*************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/accordion/style.scss ***!
   \*************************************************************************************************************************************************************************/
-[id=customize-control-sm_dark_mode_advanced_control],
-[id=customize-control-sm_coloration_level_control],
-[id=customize-control-sm_elements_color_contrast_control] {
-  border: solid var(--customizer-border-color);
-  border-width: 1px 0;
-  margin-top: 20px;
+:where(#customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
+  #customize-control-sm_color_fine_tune_intro_control,
+  #customize-control-sm_color_fine_tune_presets_control,
+  #customize-control-sm_color_grades_number_control,
+  #customize-control-sm_potential_color_contrast_control,
+  #customize-control-sm_color_grade_balancer_control,
+  #customize-control-sm_site_color_variation_control,
+  #customize-control-sm_elements_color_contrast_control,
+  [id*="customize-control-sm_color_promotion_"]) {
+  border: 0 solid var(--customizer-border-color);
   background: var(--sm-color-palette-accent-color-1);
 }
-[id=customize-control-sm_dark_mode_advanced_control].customize-control[class],
-[id=customize-control-sm_coloration_level_control].customize-control[class],
-[id=customize-control-sm_elements_color_contrast_control].customize-control[class] {
-  padding-bottom: var(--customize-control-spacing-y);
-}
-[id=customize-control-sm_dark_mode_advanced_control] .customize-control-title,
-[id=customize-control-sm_coloration_level_control] .customize-control-title,
-[id=customize-control-sm_elements_color_contrast_control] .customize-control-title {
+:where(#customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
+  #customize-control-sm_color_fine_tune_intro_control,
+  #customize-control-sm_color_fine_tune_presets_control,
+  #customize-control-sm_color_grades_number_control,
+  #customize-control-sm_potential_color_contrast_control,
+  #customize-control-sm_color_grade_balancer_control,
+  #customize-control-sm_site_color_variation_control,
+  #customize-control-sm_elements_color_contrast_control,
+  [id*="customize-control-sm_color_promotion_"]) .customize-control-title {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.02em;
 }
 
-[id=customize-control-sm_color_grades_number_control],
-[id=customize-control-sm_potential_color_contrast_control],
-[id=customize-control-sm_color_grade_balancer_control],
-[id=customize-control-sm_site_color_variation_control] {
-  background: var(--sm-color-palette-accent-color-1);
-}
-[id=customize-control-sm_color_grades_number_control] .customize-control-title,
-[id=customize-control-sm_potential_color_contrast_control] .customize-control-title,
-[id=customize-control-sm_color_grade_balancer_control] .customize-control-title,
-[id=customize-control-sm_site_color_variation_control] .customize-control-title {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-}
-
-[id=customize-control-sm_site_color_variation_control] {
-  border-bottom: 1px solid var(--customizer-border-color);
-}
-[id=customize-control-sm_site_color_variation_control].customize-control[class] {
-  padding-bottom: var(--customize-control-spacing-y);
+:where(#customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
+  #customize-control-sm_color_grades_number_control,
+  #customize-control-sm_elements_color_contrast_control) {
+  border-top-width: 1px;
 }
 
 [id*=customize-control-sm_color_promotion_] {
-  background: var(--sm-color-palette-accent-color-1);
-  border-top: 1px solid var(--customizer-border-color);
+  border-top-width: 1px;
 }
 [id*=customize-control-sm_color_promotion_] + [id*=customize-control-sm_color_promotion_] {
-  border-top: 0;
+  border-top-width: 0;
 }
 
-[id*=customize-control-sm_color_promotion_black].customize-control[class] {
+:where(#customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
+  #customize-control-sm_color_fine_tune_intro_control,
+  #customize-control-sm_color_fine_tune_presets_control,
+  #customize-control-sm_site_color_variation_control,
+  #customize-control-sm_elements_color_contrast_control,
+  [id*="customize-control-sm_color_promotion_black"]) {
+  border-bottom-width: 1px;
+}
+:where(#customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
+  #customize-control-sm_color_fine_tune_intro_control,
+  #customize-control-sm_color_fine_tune_presets_control,
+  #customize-control-sm_site_color_variation_control,
+  #customize-control-sm_elements_color_contrast_control,
+  [id*="customize-control-sm_color_promotion_black"]).customize-control[class] {
   padding-bottom: var(--customize-control-spacing-y);
 }
 

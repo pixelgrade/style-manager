@@ -218,10 +218,9 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
-			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
-			'sm_separator_1_2',
+			'sm_separator_1_1',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 		];
@@ -260,18 +259,20 @@ class ColorPalettes extends AbstractHookProvider {
 	protected function add_fine_tune_palette_section( array $config ): array {
 
 		$fine_tune_palette_fields = [
+			'sm_color_fine_tune_intro',
 			'sm_color_fine_tune_presets',
+			'sm_separator_2_0',
 			'sm_color_grades_number',
 			'sm_potential_color_contrast',
 			'sm_color_grade_balancer',
 			'sm_site_color_variation',
-			'sm_separator_2_0',
-			'sm_elements_color_contrast',
 			'sm_separator_2_1',
+			'sm_elements_color_contrast',
+			'sm_separator_2_2',
 			'sm_color_promotion_brand',
 			'sm_color_promotion_white',
 			'sm_color_promotion_black',
-			'sm_separator_2_2',
+			'sm_separator_2_3',
 		];
 
 		$fine_tune_palette_section = [
@@ -613,7 +614,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'type' => 'html',
 					'html' => 'Manage how to apply <a href="https://pixelgrade.com/docs/rosa2/design-and-style/color-system/#6-manage-how-to-apply-color-to-your-website" target="_blank">the default colors</a> to your website\'s elements.',
 				),
-				'sm_separator_1_0'                 => array( 'type' => 'html', 'html' => '' ),
+				'sm_separator_1_0'                 => [ 'type' => 'html', 'html' => '' ],
 				'sm_text_color_switch_master'      => [
 					'type'             => 'sm_toggle',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -638,7 +639,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'connected_fields' => [],
 					'css'              => [],
 				],
-				'sm_separator_1_1'                 => array( 'type' => 'html', 'html' => '' ),
+				'sm_separator_1_1'                 => [ 'type' => 'html', 'html' => '' ],
 				'sm_coloration_level'              => [
 					'type'         => 'sm_radio',
 					'desc'         => wp_kses( __( 'Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually.', '__plugin_txtd' ), [ 'strong' => [] ] ),
@@ -655,6 +656,13 @@ class ColorPalettes extends AbstractHookProvider {
 					],
 				],
 
+				'sm_color_fine_tune_intro' => [
+					'type'         => 'html',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_color_fine_tune_intro',
+					'html'         => '<div class="customize-control-title">' . esc_html__( 'Palette Configuration', '__plugin_txtd' ) . '</div>' .
+					                  '<span class="description customize-control-description">' . esc_html__( 'Change the structure of the generated palettes while mantaining the underlying principles and guidelines.', '__plugin_txtd' ) . '</span>',
+				],
 				'sm_color_fine_tune_presets'  => [
 					'type'         => 'preset',
 					'live'         => true,
@@ -718,6 +726,7 @@ class ColorPalettes extends AbstractHookProvider {
 						),
 					],
 				],
+				'sm_separator_2_0'            => [ 'type' => 'html', 'html' => '' ],
 				'sm_color_grades_number'      => [
 					'type'         => 'range',
 					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 12)' ),
@@ -781,7 +790,7 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-				'sm_separator_2_0'            => array( 'type' => 'html', 'html' => '' ),
+				'sm_separator_2_1'            => [ 'type' => 'html', 'html' => '' ],
 				'sm_elements_color_contrast'  => [
 					'type'         => 'radio',
 					'desc'         => __( 'Increase or decrease the contrast between the background colors and the elements over them.' ),
@@ -796,7 +805,7 @@ class ColorPalettes extends AbstractHookProvider {
 						'maximum' => esc_html__( 'Maximum', '__plugin_txtd' ),
 					],
 				],
-				'sm_separator_2_1'            => array( 'type' => 'html', 'html' => '' ),
+				'sm_separator_2_2'            => [ 'type' => 'html', 'html' => '' ],
 				'sm_color_promotion_brand'    => [
 					'type'         => 'sm_toggle',
 					'setting_type' => 'option',
@@ -821,7 +830,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'live'         => true,
 					'default'      => true,
 				],
-				'sm_separator_2_2'            => array( 'type' => 'html', 'html' => '' ),
+				'sm_separator_2_3'            => [ 'type' => 'html', 'html' => '' ],
 			] + $config['sections']['style_manager_section']['options'];
 
 		return $config;
@@ -849,27 +858,27 @@ class ColorPalettes extends AbstractHookProvider {
 			'sm_separator_1_0',
 			'sm_text_color_switch_master',
 			'sm_accent_color_switch_master',
-			'sm_site_color_variation',
-			'sm_separator_1_1',
 			'sm_coloration_level',
 			'sm_colorize_elements_button',
-			'sm_separator_1_2',
+			'sm_separator_1_1',
 			'sm_dark_mode',
 			'sm_dark_mode_advanced',
 
 			// fine tune palette fields
+			'sm_color_fine_tune_intro',
+			'sm_separator_2_0',
 			'sm_color_fine_tune_presets',
 			'sm_color_grades_number',
 			'sm_potential_color_contrast',
 			'sm_color_grade_balancer',
 			'sm_site_color_variation',
-			'sm_separator_2_0',
-			'sm_elements_color_contrast',
 			'sm_separator_2_1',
+			'sm_elements_color_contrast',
+			'sm_separator_2_2',
 			'sm_color_promotion_brand',
 			'sm_color_promotion_white',
 			'sm_color_promotion_black',
-			'sm_separator_2_2',
+			'sm_separator_2_3',
 		];
 
 		$color_palettes_section_config = [

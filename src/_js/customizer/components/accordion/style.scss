@@ -1,4 +1,5 @@
 @mixin big-control-title {
+
   .customize-control-title {
     font-size: 18px;
     font-weight: 600;
@@ -7,48 +8,54 @@
   }
 }
 
-[id="customize-control-sm_dark_mode_advanced_control"],
-[id="customize-control-sm_coloration_level_control"],
-[id="customize-control-sm_elements_color_contrast_control"] {
-  border: solid var(--customizer-border-color);
-  border-width: 1px 0;
-  margin-top: 20px;
-  background: var(--sm-color-palette-accent-color-1);
+:where(
+  #customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
 
-  &.customize-control[class] {
-    padding-bottom: var(--customize-control-spacing-y);
-  }
-
-  @include big-control-title;
-}
-
-[id="customize-control-sm_color_grades_number_control"],
-[id="customize-control-sm_potential_color_contrast_control"],
-[id="customize-control-sm_color_grade_balancer_control"],
-[id="customize-control-sm_site_color_variation_control"] {
+  #customize-control-sm_color_fine_tune_intro_control,
+  #customize-control-sm_color_fine_tune_presets_control,
+  #customize-control-sm_color_grades_number_control,
+  #customize-control-sm_potential_color_contrast_control,
+  #customize-control-sm_color_grade_balancer_control,
+  #customize-control-sm_site_color_variation_control,
+  #customize-control-sm_elements_color_contrast_control,
+  [id*="customize-control-sm_color_promotion_"]
+) {
+  border: 0 solid var(--customizer-border-color);
   background: var(--sm-color-palette-accent-color-1);
 
   @include big-control-title;
 }
 
-[id="customize-control-sm_site_color_variation_control"] {
-  border-bottom: 1px solid var(--customizer-border-color);
+:where(
+  #customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
 
-  &.customize-control[class] {
-    padding-bottom: var(--customize-control-spacing-y);
-  }
+  #customize-control-sm_color_grades_number_control,
+  #customize-control-sm_elements_color_contrast_control
+) {
+  border-top-width: 1px;
 }
 
 [id*="customize-control-sm_color_promotion_"] {
-  background: var(--sm-color-palette-accent-color-1);
-  border-top: 1px solid var(--customizer-border-color);
+  border-top-width: 1px;
 
   & + & {
-    border-top: 0;
+    border-top-width: 0;
   }
 }
 
-[id*="customize-control-sm_color_promotion_black"] {
+:where(
+  #customize-control-sm_coloration_level_control,
+  #customize-control-sm_dark_mode_advanced_control,
+
+  #customize-control-sm_color_fine_tune_intro_control,
+  #customize-control-sm_color_fine_tune_presets_control,
+  #customize-control-sm_site_color_variation_control,
+  #customize-control-sm_elements_color_contrast_control,
+  [id*="customize-control-sm_color_promotion_black"]
+) {
+  border-bottom-width: 1px;
 
   &.customize-control[class] {
     padding-bottom: var(--customize-control-spacing-y);
@@ -141,20 +148,6 @@
     width: 24px;
   }
 }
-
-//.customize-control-html[id*="sm-description"] {
-//  margin-top: var(--customize-control-spacing-y);
-//  padding-top: var(--customize-control-spacing-y);
-//  padding-bottom: var(--customize-control-spacing-y);
-//  border: solid var(--customizer-border-color);
-//  border-width: 1px 0;
-//
-//  &:first-child,
-//  .customize-section-description-container:first-child + & {
-//    border-top: 0;
-//    margin-top: 0;
-//  }
-//}
 
 .customize-control-html {
 
