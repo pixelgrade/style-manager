@@ -33,7 +33,7 @@ export const getTextColors = ( hex ) => {
   return textColors;
 }
 
-export const getMinContrast = ( options, largeText = false ) => {
+export const getMinContrast = ( options = {}, largeText = false ) => {
 
   if ( options.sm_elements_color_contrast === 'maximum' ) {
     return largeText ? 4.5 : 7;
@@ -43,7 +43,7 @@ export const getMinContrast = ( options, largeText = false ) => {
     return largeText ? 3 : 4.5;
   }
 
-  return contrastArray[4];
+  return 2.63; // arbitrary value: previously constrastArray[4]
 }
 
 export const desaturateTextColor = ( hex, luminance ) => {
@@ -72,6 +72,21 @@ export const contrastArray = [
   15.92, // fg2
   19 // almost black (21)
 ];
+
+export const myArray = [
+  0,
+  0.0335,
+  0.1046,
+  0.2594,
+  0.3975,
+  0.5356,
+  0.6151,
+  0.6904,
+  0.7657,
+  0.8410,
+  0.9247,
+  1
+]
 
 export const getColorOptionsIDs = () => {
   return [

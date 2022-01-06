@@ -2,7 +2,7 @@ import { hexToHpluv, hpluvToRgb } from 'hsluv';
 import chroma from 'chroma-js';
 
 import {
-  contrastArray,
+  myArray,
   contrastToLuminance,
   getBestColor,
   getColorOptionsDefaults,
@@ -67,50 +67,9 @@ const mapCreateVariations = ( palette, index, palettes ) => {
 }
 
 const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] ) => {
-  const newContrastArray = getNewContrastArray( colors );
-  const mycolors = colors.slice();
-  const grays = newContrastArray.map( contrast => chroma( '#FFFFFF' ).luminance( contrastToLuminance( contrast ) ) );
-
-  // make sure palette colors are used at lease once
-  // remove grays that are similar in luminance with the variationColor
-  mycolors.forEach( color => {
-    grays.sort( ( g1, g2 ) => {
-      return chroma.contrast( g1, color ) - chroma.contrast( g2, color )
-    } );
-
-    grays.shift();
-  } );
-
-  grays.forEach( gray => {
-
-    mycolors.sort( ( v1, v2 ) => {
-      const contrast1 = chroma.contrast( v1, gray );
-      const contrast2 = chroma.contrast( v2, gray );
-      return contrast1 - contrast2;
-    } );
-
-    mycolors.push( mycolors[0] );
-
-  } );
-
-  mycolors.sort( ( v1, v2 ) => {
-    return chroma( v2 ).luminance() - chroma( v1 ).luminance();
-  } );
-
-  return mycolors.map( mycolor => getVariation( colors, sources, mycolor, options, otherPalettes ) );
-}
-
-const getNewContrastArray = ( colors ) => {
-  const mycolors = colors.slice();
-  const contrasts = mycolors.map( c => chroma.contrast( '#FFFFFF', c ) );
-  const minContrast = Math.min( ...contrasts );
-  const maxContrast = Math.max( ...contrasts );
-  const prevMin = 1;
-  const prevMax = contrastArray[ contrastArray.length - 1 ];
-
-  return contrastArray.map( contrast => {
-    return minContrast + maxContrast * ( contrast - prevMin ) / ( prevMax - prevMin );
-  } );
+  const scale = chroma.scale( colors ).classes( colors.length );
+  return scale.colors( 12 )
+              .map( mycolor => getVariation( colors, sources, mycolor, options, otherPalettes ) );
 }
 
 const isWhite = ( hex ) => {
@@ -129,7 +88,8 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
   const darkerTextColors = textColors.filter( color => color !== dark || isWhite( color ) );
   const darker = getBestColor( background, darkerTextColors, darkerContrast, true );
   const fg1 = darker;
-  const fg2 = chroma.contrast( darker, dark ) > contrastArray[4] ? darker : dark;
+  // if there's great contrast between dark and darker, darker is probably white
+  const fg2 = chroma.contrast( darker, dark ) >= getMinContrast() ? darker : dark;
 
   const variationConfig = {
     bg: background,
@@ -229,16 +189,16 @@ const createAutoPalette = ( colors, options = {} ) => {
 
   newColors.sort( ( hex1, hex2 ) => chroma( hex2 ).luminance() - chroma( hex1 ).luminance() );
 
-  let scale = bezierInterpolation ? chroma.bezier( newColors ).scale() : chroma.scale( newColors );
+  const scale = chroma.scale( newColors ).correctLightness();
 
-  scale.correctLightness();
-
-  let paddingLeft = ( 1 - width ) * center;
-  let paddingRight = ( 1 - width ) * ( 1 - center );
+  let paddingLeft = ( 1 - width ) * ( center * 0.5 + 0.5 );
+  let paddingRight = ( 1 - width ) * ( 0.5 - center * 0.5 );
 
   scale.padding( [ paddingLeft, paddingRight ] );
 
-  return scale.colors( count );
+  const tempColors = myArray.map( position => scale( position ).hex() );
+
+  return chroma.scale( tempColors ).colors( count );
 }
 
 const blend = ( functionalColor, brandColor, ratio = 1 ) => {
