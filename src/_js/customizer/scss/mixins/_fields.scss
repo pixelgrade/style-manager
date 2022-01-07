@@ -111,7 +111,7 @@
     margin-right: calc( 0.5 * var(--customizer-spacing) );
     border: var(--customizer-field-border-width) solid var(--customizer-field-border-color);
 
-    background: var(--customizer-field-background-color) center no-repeat;
+    background: var(--customizer-field-background-color) center 60% no-repeat;
   }
 
   &:focus + label:before {
@@ -119,8 +119,8 @@
   }
 
   &:checked + label:before {
-    border-color: var(--customizer-field-focus-border-color);
-    background-color: var(--sm-color-palette-neutral-color-5);
+    border-color: var(--sm-color-palette-accent-color-7);
+    background-color: var(--sm-color-palette-accent-color-7);
     background-image: url($checkmark-svg-white);
   }
 }

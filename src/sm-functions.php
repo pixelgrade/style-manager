@@ -203,28 +203,6 @@ function sm_color_switch_darker_cb( bool $value, string $selector, string $prope
  *
  * @return string
  */
-function sm_advanced_palette_output_cb( string $value ) {
-	return '';
-}
-
-/**
- * @since   2.0.0
- *
- * @param string $value
- *
- * @return string
- */
-function sm_variation_range_cb( string $value ) {
-	return '';
-}
-
-/**
- * @since   2.0.0
- *
- * @param string $value
- *
- * @return string
- */
 function sm_get_palette_output_from_color_config( $value ) {
 	$output = '';
 
@@ -248,30 +226,90 @@ function sm_get_palette_output_from_color_config( $value ) {
  */
 function palettes_output( array $palettes ) {
 	$output = '';
-	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 
 	foreach ( $palettes as $palette ) {
-		$sourceIndex = $palette->sourceIndex;
 
-		$output .= 'html { ' . PHP_EOL;
-		$output .= get_initial_color_variables( $palette );
-		$output .= get_variables_css( $palette, $variation - 1 );
-		$output .= get_variables_css( $palette, $sourceIndex, false, true );
-		$output .= '}' . PHP_EOL;
-
-		$output .= '.is-dark { ' . PHP_EOL;
-		$output .= get_variables_css( $palette, $variation - 1, true );
-		$output .= get_variables_css( $palette, $sourceIndex, true, true );
-		$output .= '}' . PHP_EOL;
-
-		$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
-		$output .= get_apply_palette_variables( $palette->id );
-		$output .= '}' . PHP_EOL;
-
-		$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
-		$output .= get_apply_palette_variables( $palette->id, '-shifted' );
-		$output .= '}' . PHP_EOL;
+		if ( ! empty( $palette->variations ) ) {
+			$output .= get_palette_css( $palette );
+		} else {
+			$output .= get_legacy_palette_css( $palette );
+		}
 	}
+
+	return $output;
+}
+
+function get_palette_css( $palette ) {
+	$output = '';
+	$id = $palette->id;
+	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
+
+	$paletteSelector = '.sm-palette-' . $id;
+	$darkPaletteSelector = '.is-dark .sm-palette-' . $id;
+	$paletteShiftedSelector = '.sm-palette-' . $id . '.sm-palette--shifted';
+
+	if ( ( string ) $id === '1' ) {
+		$paletteSelector = 'html, ' . $paletteSelector;
+		$darkPaletteSelector = 'html.is-dark, ' . $darkPaletteSelector;
+	}
+
+	$output .= $paletteSelector . ' { ' . PHP_EOL;
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= get_variation_css_variables( $palette->variations, $i, $variation - 1 );
+	}
+	$output .= '}' . PHP_EOL;
+
+	$output .= $darkPaletteSelector . ' { ' . PHP_EOL;
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= get_variation_css_variables( $palette->darkVariations, $i, $variation - 1 );
+	}
+	$output .= '}' . PHP_EOL;
+
+	$output .= $paletteShiftedSelector . ' { ' . PHP_EOL;
+	for ( $i = 0; $i < 12; $i++ ) {
+		$output .= get_variation_css_variables( $palette->variations, $i, $palette->sourceIndex );
+	}
+	$output .= '}' . PHP_EOL;
+
+	return $output;
+}
+
+function get_variation_css_variables( $variations, $index, $offset = 0 ) {
+	$output = '';
+
+	$variation = $variations[ ( $index + $offset ) % 12 ];
+
+	foreach ( $variation as $key => $value ) {
+		$output .= '--sm-' . $key . '-color-' . ( $index + 1 ) . ': ' . $value . ';' . PHP_EOL;
+	}
+
+	return $output;
+}
+
+function get_legacy_palette_css( $palette ) {
+	$output = '';
+
+	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
+	$sourceIndex = $palette->sourceIndex;
+
+	$output .= 'html { ' . PHP_EOL;
+	$output .= get_initial_color_variables( $palette );
+	$output .= get_variables_css( $palette, $variation - 1 );
+	$output .= get_variables_css( $palette, $sourceIndex, false, true );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.is-dark { ' . PHP_EOL;
+	$output .= get_variables_css( $palette, $variation - 1, true );
+	$output .= get_variables_css( $palette, $sourceIndex, true, true );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+	$output .= get_apply_palette_variables( $palette->id );
+	$output .= '}' . PHP_EOL;
+
+	$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
+	$output .= get_apply_palette_variables( $palette->id, '-shifted' );
+	$output .= '}' . PHP_EOL;
 
 	return $output;
 }

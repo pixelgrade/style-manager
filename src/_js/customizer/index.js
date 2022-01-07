@@ -11,6 +11,7 @@ import * as resizer from './resizer';
 import { handleColorSelectFields } from './fields/color-select';
 import { handleRangeFields } from './fields/range';
 import { handleTabs } from './fields/tabs';
+import { handlePresets } from './fields/preset';
 
 import { handleFoldingFields } from './folding-fields';
 import { createResetButtons } from './create-reset-buttons';
@@ -28,6 +29,7 @@ wp.customize.bind( 'ready', () => {
   handleRangeFields();
   handleColorSelectFields();
   handleTabs();
+  handlePresets();
 
   // @todo check reason for this timeout
   setTimeout( function () {
@@ -45,6 +47,5 @@ wp.customize.bind( 'ready', () => {
 
 // expose API on sm.customizer global object
 export { getFontDetails, determineFontType, convertFontVariantToFVD } from './fonts/utils';
-export { getCSSFromPalettes } from './colors/components/builder';
-export { maybeFillPalettesArray } from './colors/utils';
+export { maybeFillPalettesArray, getCSSFromPalettes } from './utils';
 export { resizer };
