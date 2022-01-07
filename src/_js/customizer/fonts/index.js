@@ -16,6 +16,7 @@ import {
 } from './utils'
 
 import { getCallback, getSetting, setCallback } from "../global-service";
+import { getConnectedFieldsFontSizeInterval } from "./utils/get-connected-fields-font-size-interval";
 
 const wrapperSelector = '.font-options__wrapper';
 const fontVariantSelector = '.style-manager_font_weight';
@@ -124,27 +125,24 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
   } );
 }
 
-
 const reloadConnectedFields = debounce( () => {
   const settingIDs = styleManager.fontPalettes.masterSettingIds;
 
   globalService.unbindConnectedFields( settingIDs );
 
   settingIDs.forEach( settingID => {
-
     wp.customize( settingID, parentSetting => {
-
-      setCallback( settingID, newValue => {
+      setCallback( settingID, fontsLogic => {
         const settingConfig = getSetting( settingID );
         const connectedFields = settingConfig.connected_fields || {};
+        const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
 
         Object.keys( connectedFields ).forEach( key => {
           const connectedFieldData = connectedFields[key];
           const connectedSettingID = connectedFieldData.setting_id;
-          const callbackFilter = getCallbackFilter( connectedFieldData );
 
           wp.customize( connectedSettingID, connectedSetting => {
-            connectedSetting.set( callbackFilter( newValue ) );
+            connectedSetting.set( getCallbackFilter( fontsLogic, connectedFieldData, fontSizeInterval ) );
           } );
         } );
       } );
