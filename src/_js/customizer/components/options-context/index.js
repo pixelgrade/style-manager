@@ -7,31 +7,26 @@ const OptionsContext = createContext();
 
 export const OptionsProvider = ( props ) => {
   const settingsIDs = useMemo( getColorOptionsIDs, [] );
-  const [ options, setOptions ] = useState( {} );
   const nextOptions = useRef( {} );
-  const callback = useCallback( () => {
-    setOptions( nextOptions.current );
-  }, [ options ] );
-
-  useEffect( () => {
-
-    settingsIDs.forEach( settingID => {
-      wp.customize( settingID, setting => {
-        nextOptions.current = { ...nextOptions.current, [settingID]: setting() };
-      } );
-    } );
-
-    setOptions( nextOptions.current );
-
-  }, [] );
 
   settingsIDs.forEach( settingID => {
+    wp.customize( settingID, setting => {
+      nextOptions.current = { ...nextOptions.current, [settingID]: setting() };
+    } );
+
     useCustomizeSettingCallback( settingID, newValue => {
+      console.log( settingID, newValue );
       cancelIdleCallback( callback );
       nextOptions.current = { ...nextOptions.current, [settingID]: newValue };
       requestIdleCallback( callback );
     }, [] );
   } );
+
+  const [ options, setOptions ] = useState( nextOptions.current );
+
+  const callback = useCallback( () => {
+    setOptions( nextOptions.current );
+  }, [ options ] );
 
   return (
     <OptionsContext.Provider value={ options }>

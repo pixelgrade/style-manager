@@ -14,7 +14,7 @@ export const applyColorationValueToFields = ( colorationLevel ) => {
   Object.keys( settings ).forEach( settingID => {
     const config = getSettingConfig( settingID );
 
-    if ( config?.type === 'sm_toggle' ) {
+    if ( config?.type === 'sm_toggle' && typeof config.coloration !== 'undefined' ) {
       const { coloration } = config;
 
       wp.customize( settingID, setting => {

@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import chroma from 'chroma-js';
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import DarkMode from '../../../dark-mode';
@@ -117,8 +118,8 @@ const PalettePreview = ( props ) => {
             { variations.map( ( variation, index ) => {
 
               const workingIndex = normalize( index );
-              const isSource = palette.source.findIndex( hex => variations[workingIndex].bg === hex ) > -1 &&
-                               variations.findIndex( v => variations[workingIndex].bg === v.bg ) === workingIndex;
+              const isSource = palette.source.findIndex( hex => chroma.distance( variations[workingIndex].bg, hex ) === 0  ) > -1 &&
+                               variations.findIndex( v => chroma.distance( variations[workingIndex].bg, v.bg ) === 0 ) === workingIndex;
 
               const passedProps = {
                 isSource: isSource,

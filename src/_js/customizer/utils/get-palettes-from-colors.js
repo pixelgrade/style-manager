@@ -3,7 +3,6 @@ import chroma from 'chroma-js';
 
 import {
   myArray,
-  contrastToLuminance,
   getBestColor,
   getColorOptionsDefaults,
   getMinContrast,

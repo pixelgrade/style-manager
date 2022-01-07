@@ -2,10 +2,6 @@ import { hexToHpluv, hpluvToHex, hpluvToRgb } from "hsluv";
 import chroma from "chroma-js";
 import { getSettingConfig } from "../../global-service";
 
-export const contrastToLuminance = ( contrast ) => {
-  return 1.05 / contrast - 0.05;
-}
-
 export const getBestColor = ( background, colors, minContrast, please ) => {
   const bestIndex = colors.findIndex( mycolor => chroma.contrast( mycolor, background ) > minContrast );
 
@@ -23,14 +19,15 @@ export const getBestColor = ( background, colors, minContrast, please ) => {
 
 export const getTextColors = ( hex ) => {
 
-  const textColors = contrastArray.slice( -3 ).map( contrast => {
-    const luminance = contrastToLuminance( contrast );
-    return desaturateTextColor( hex, luminance );
-  } );
+  const luminances = [
+    1,
+    0.037,
+    0.016,
+    0.005
+  ];
 
-  textColors.unshift( '#FFFFFF' );
+  return luminances.map( luminance => desaturateTextColor( hex, luminance ) );
 
-  return textColors;
 }
 
 export const getMinContrast = ( options = {}, largeText = false ) => {
@@ -55,23 +52,6 @@ export const desaturateTextColor = ( hex, luminance ) => {
 
   return chroma( hpluvToHex( [ h, p, l ] ) ).luminance( luminance ).hex();
 }
-
-// powers of 21 ^ 1/10 but with small adjustments for the lighter colors
-export const contrastArray = [
-  1,
-  1.07, // 1.32
-  1.25, // 1.74
-  1.8,  // 2.29
-  2.63, // 3.03
-  3.99,
-
-  5.26,
-  6.94,
-  9.15,
-  12.07, // fg1
-  15.92, // fg2
-  19 // almost black (21)
-];
 
 export const myArray = [
   0,
