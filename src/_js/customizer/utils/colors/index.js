@@ -20,10 +20,10 @@ export const getBestColor = ( background, colors, minContrast, please ) => {
 export const getTextColors = ( hex ) => {
 
   const luminances = [
-    1,
-    0.037,
-    0.016,
-    0.005
+    1,     // White
+    0.037, // 10
+    0.016, // 11
+    0.005  // 12
   ];
 
   return luminances.map( luminance => desaturateTextColor( hex, luminance ) );
@@ -55,16 +55,16 @@ export const desaturateTextColor = ( hex, luminance ) => {
 
 export const myArray = [
   0,
-  0.0335,
-  0.1046,
+  0.0335, // 2
+  0.1046, // 3
   0.2594,
   0.3975,
   0.5356,
   0.6151,
   0.6904,
   0.7657,
-  0.8410,
-  0.9247,
+  0.8410, // 10
+  0.9247, // 11
   1
 ]
 
