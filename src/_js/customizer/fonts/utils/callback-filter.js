@@ -86,7 +86,7 @@ export const getCallbackFilter = ( fontsLogic, connectedFieldData, fontSizeInter
   newFontData[ 'font_size' ] = standardizeNumericalValue( connectedFieldData.font_size );
 
   applyFontSizeInterval( newFontData, fontsLogic, connectedFieldData, fontSizeInterval );
-//  applyFontSizeMultiplier( newFontData, fontsLogic.font_size_multiplier );
+  applyFontSizeMultiplier( newFontData, fontsLogic.font_size_multiplier );
 
   if ( typeof connectedFieldData.font_size !== 'undefined' && false !== connectedFieldData.font_size ) {
 
@@ -115,7 +115,7 @@ export const getCallbackFilter = ( fontsLogic, connectedFieldData, fontSizeInter
         newFontData[ 'text_transform' ] = fontsLogic.font_styles_intervals[ idx ].text_transform
       }
 
-//      applyFontSizeMultiplier( fontData, fontsLogic.font_styles_intervals[ idx ].font_size_multiplier );
+      applyFontSizeMultiplier( newFontData, fontsLogic.font_styles_intervals[ idx ].font_size_multiplier );
     }
 
     // The line height is determined by getting the value of the polynomial function determined by points.
