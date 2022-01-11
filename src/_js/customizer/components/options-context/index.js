@@ -15,7 +15,6 @@ export const OptionsProvider = ( props ) => {
     } );
 
     useCustomizeSettingCallback( settingID, newValue => {
-      console.log( settingID, newValue );
       cancelIdleCallback( callback );
       nextOptions.current = { ...nextOptions.current, [settingID]: newValue };
       requestIdleCallback( callback );

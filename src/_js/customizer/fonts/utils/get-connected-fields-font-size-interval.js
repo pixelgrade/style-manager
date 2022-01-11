@@ -36,7 +36,7 @@ export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
   if ( ! hasConsistentFontSizes ||
        minFontSize === Number.MAX_SAFE_INTEGER ||
        maxFontSize === Number.MIN_SAFE_INTEGER ||
-       minFontSize >= maxFontSize ) {
+       minFontSize > maxFontSize ) {
     return false;
   }
 

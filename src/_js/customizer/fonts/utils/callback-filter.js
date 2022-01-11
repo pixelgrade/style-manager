@@ -21,9 +21,13 @@ const applyFontSizeInterval = ( fontData, fontsLogic, connectedFieldData, fontSi
     const fontSize = connectedSettingValue?.font_size?.value;
 
     if ( !! fontSize ) {
-      const newFontSize = ( fontSize - ab[0] ) * ( cd[1] - cd[0] ) / ( ab[1] - ab[0] ) + cd[0];
-      fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
-      console.log( ab, fontSize, cd, fontData.font_size.value );
+
+      if ( ab[1] === ab[0] ) {
+        fontData.font_size.value = Math.max( cd[0], Math.min( cd[1], fontSize ) );
+      } else {
+        const newFontSize = ( fontSize - ab[0] ) * ( cd[1] - cd[0] ) / ( ab[1] - ab[0] ) + cd[0];
+        fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
+      }
     }
   } );
 }
