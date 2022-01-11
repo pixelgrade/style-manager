@@ -1,34 +1,18 @@
-@mixin apply-palette( $id, $isShifted: false ) {
-
-  @for $i from 1 through 12 {
-
-    $suffix: $i;
-
-    @if ( $isShifted ) {
-      $suffix: #{ $i }-shifted;
-    }
-
-    --sm-bg-color-#{ $i }: var(--sm-color-palette-#{ $id }-bg-color-#{ $suffix });
-    --sm-accent-color-#{ $i }: var(--sm-color-palette-#{ $id }-accent-color-#{ $suffix });
-    --sm-fg1-color-#{ $i }: var(--sm-color-palette-#{ $id }-fg1-color-#{ $suffix });
-    --sm-fg2-color-#{ $i }: var(--sm-color-palette-#{ $id }-fg2-color-#{ $suffix });
-  }
-}
-
 @mixin apply-variation($i) {
   --sm-current-bg-color: var(--sm-bg-color-#{ $i });
   --sm-current-accent-color: var(--sm-accent-color-#{ $i });
+  --sm-current-accent2-color: var(--sm-accent2-color-#{ $i }, var(--sm-current-accent-color));
+  --sm-current-accent3-color: var(--sm-accent3-color-#{ $i }, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-#{ $i });
   --sm-current-fg2-color: var(--sm-fg2-color-#{ $i });
 }
 
 html {
-  @include apply-palette(1);
   @include apply-variation(1);
 }
 
 html,
-[class*="sm-variation-"]:not(.sm-color-signal-0) {
+[class*="sm-variation-"]:where(:not(.sm-color-signal-0)) {
   background-color: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color);
 }

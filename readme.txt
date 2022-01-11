@@ -2,7 +2,7 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 5.5.0
-Tested up to: 5.8.2
+Tested up to: 5.8.3
 Stable tag: 2.2.0
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -53,6 +53,10 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.1.1 =
+* 2021-12-14
+* Fixes a CSS selector specificity issue introduced with 2.1.0
 
 = 2.1.0 =
 * 2021-12-06
