@@ -62,7 +62,7 @@
         "path": "^0.12.7",
         "react": "^17.0.2",
         "request": "^2.88.2",
-        "sass": "^1.43.4",
+        "sass": "^1.47.0",
         "sass-loader": "^12.2.0",
         "style-loader": "^3.3.1",
         "svg-inline-loader": "^0.8.2",
@@ -76,10 +76,9 @@
     },
     "dependencies": {
         "lodash-webpack-plugin": "^0.11.6",
-        "node-sass": "^6.0.1",
         "react-color": "^2.19.3",
-        "react-colorful": "^5.5.0",
+        "react-colorful": "^5.5.1",
         "react-dom": "^17.0.2",
-        "use-debounce": "^7.0.0"
+        "use-debounce": "^7.0.1"
     }
 }
