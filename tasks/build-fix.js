@@ -1,11 +1,8 @@
-var gulp = require( 'gulp' ),
-  fs = require( 'fs' ),
+const gulp = require( 'gulp' ),
   cp = require( 'child_process' ),
+  commandExistsSync = require('command-exists').sync,
+  log = require('fancy-log'),
   plugins = require( 'gulp-load-plugins' )();
-
-const gulpconfig = require('./gulpconfig.json');
-
-var slug = gulpconfig.slug;
 
 function maybeFixBuildDirPermissions( done ) {
   cp.execSync( 'find ./../build -type d -exec chmod 755 {} \\;' );
@@ -24,7 +21,13 @@ maybeFixBuildFilePermissions.description = 'Make sure that all files in the buil
 gulp.task( 'build:fix:file-permissions', maybeFixBuildFilePermissions );
 
 function maybeFixIncorrectLineEndings( done ) {
-  cp.execSync( 'find ./../build -type f -print0 | xargs -0 -n 1 -P 4 dos2unix' );
+  if (!commandExistsSync('dos2unix')) {
+    log.error('Could not ensure that line endings are correct on the build files since you are missing the "dos2unix" utility! You should install it.')
+    log.error('However, this is not a very big deal. The build task will continue.')
+  } else {
+    cp.execSync('find ./../build -type f -print0 | xargs -0 -n 1 -P 4 dos2unix');
+  }
+
   return done();
 }
 
