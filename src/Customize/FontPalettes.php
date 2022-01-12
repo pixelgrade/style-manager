@@ -567,7 +567,7 @@ class FontPalettes extends AbstractHookProvider {
 			'options' => [
 				'sm_fonts_connected_fields_preset' => array(
 					'type'         => 'preset',
-					'label'        => __( 'Connected Fields Preset', '__theme_txtd' ),
+					'label'        => __( 'Connected Fields Presets', '__theme_txtd' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_fonts_connected_fields_preset',
@@ -579,8 +579,8 @@ class FontPalettes extends AbstractHookProvider {
 							'options' => array(),
 							'config' => array(
 								'sm_font_primary' => array(
-									'super_dislplay_font',
-									'dislplay_font',
+									'super_display_font',
+									'display_font',
 									'heading_1_font',
 									'heading_2_font',
 									'heading_3_font',
@@ -592,12 +592,12 @@ class FontPalettes extends AbstractHookProvider {
 								'sm_font_secondary' => array(
 									'buttons_font',
 									'meta_font',
+									'lead_font',
 								),
 								'sm_font_body' => array(
 									'navigation_font',
 									'body_font',
 									'content_font',
-									'lead_font',
 									'cite_font',
 									'input_font',
 								),
@@ -607,12 +607,12 @@ class FontPalettes extends AbstractHookProvider {
 							),
 						),
 						'preset-2' => array(
-							'label' => __( 'Preset 2', '__theme_txtd' ),
+							'label' => __( 'Preset 2 (Default)', '__theme_txtd' ),
 							'options' => array(),
 							'config' => array(
 								'sm_font_primary' => array(
-									'super_dislplay_font',
-									'dislplay_font',
+									'super_display_font',
+									'display_font',
 									'heading_1_font',
 									'heading_2_font',
 									'heading_3_font',
@@ -643,8 +643,8 @@ class FontPalettes extends AbstractHookProvider {
 							'options' => array(),
 							'config' => array(
 								'sm_font_primary' => array(
-									'super_dislplay_font',
-									'dislplay_font',
+									'super_display_font',
+									'display_font',
 									'heading_1_font',
 									'heading_2_font',
 								),
@@ -670,6 +670,70 @@ class FontPalettes extends AbstractHookProvider {
 								),
 							),
 						),
+						'preset-body' => array(
+							'label' => __( 'Misc: All Body', '__theme_txtd' ),
+							'options' => array(),
+							'config' => array(
+								'sm_font_primary' => array(
+								),
+								'sm_font_secondary' => array(
+								),
+								'sm_font_body' => array(
+									'super_display_font',
+									'display_font',
+									'heading_1_font',
+									'heading_2_font',
+									'heading_3_font',
+									'heading_4_font',
+									'heading_5_font',
+									'heading_6_font',
+									'quote_font',
+									'buttons_font',
+									'meta_font',
+									'navigation_font',
+									'body_font',
+									'content_font',
+									'lead_font',
+									'cite_font',
+									'input_font',
+									'accent_font'
+								),
+								'sm_font_accent' => array(
+								),
+							),
+						),
+						'preset-accent' => array(
+							'label' => __( 'Misc: All Accent', '__theme_txtd' ),
+							'options' => array(),
+							'config' => array(
+								'sm_font_primary' => array(
+								),
+								'sm_font_secondary' => array(
+								),
+								'sm_font_body' => array(
+								),
+								'sm_font_accent' => array(
+									'super_display_font',
+									'display_font',
+									'heading_1_font',
+									'heading_2_font',
+									'heading_3_font',
+									'heading_4_font',
+									'heading_5_font',
+									'heading_6_font',
+									'quote_font',
+									'buttons_font',
+									'meta_font',
+									'navigation_font',
+									'body_font',
+									'content_font',
+									'lead_font',
+									'cite_font',
+									'input_font',
+									'accent_font'
+								),
+							),
+						)
 					),
 				),
 			]
