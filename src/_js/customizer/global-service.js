@@ -25,6 +25,10 @@ export const getSettingConfig = ( settingID ) => {
   return styleManager.config.settings[ settingID ];
 }
 
+export const setSettingConfig = ( settingID, newConfig ) => {
+  styleManager.config.settings[ settingID ] = newConfig;
+}
+
 export const setSetting = ( settingID, value ) => {
   settings[settingID] = value;
 }
@@ -95,6 +99,7 @@ export const bindConnectedFields = function( settingIDs, filter = noop ) {
 
         Object.keys( connectedFields ).map( key => connectedFields[key].setting_id ).forEach( connectedSettingID => {
           wp.customize( connectedSettingID, connectedSetting => {
+            console.log( settingID, connectedSettingID );
             connectedSetting.set( filter( newValue ) );
           } );
         } );

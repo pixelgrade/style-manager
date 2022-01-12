@@ -16,6 +16,7 @@ import { handlePresets } from './fields/preset';
 import { handleFoldingFields } from './folding-fields';
 import { createResetButtons } from './create-reset-buttons';
 import { initializeFeedbackModal } from './feedback-modal';
+import { getSettingConfig } from "./global-service";
 
 wp.customize.bind( 'ready', () => {
   globalService.loadSettings();

@@ -84,6 +84,7 @@ class FontPalettes extends AbstractHookProvider {
 		 * Handle the Customizer Style Manager section config.
 		 */
 		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_master_fonts_config', 12, 1 );
+		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_connected_fields_preset_control', 12, 1 );
 		$this->add_filter( 'style_manager/sm_panel_config', 'reorganize_customizer_controls', 20, 2 );
 
 		// This needs to come after the external theme config has been applied
@@ -544,6 +545,141 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	/**
+	 * Add a preset control to the Style Manager fonts section
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'.
+	 *
+	 * @return array
+	 */
+	protected function add_style_manager_section_connected_fields_preset_control( array $config ): array {
+		// If there is no style manager support, bail early.
+		if ( ! $this->is_supported() ) {
+			return $config;
+		}
+
+		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
+			$config['sections']['style_manager_section'] = [];
+		}
+
+		// The section might be already defined, thus we merge, not replace the entire section config.
+		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
+			'options' => [
+				'sm_fonts_connected_fields_preset' => array(
+					'type'         => 'preset',
+					'label'        => __( 'Connected Fields Preset', '__theme_txtd' ),
+					'live'         => true,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_fonts_connected_fields_preset',
+					'choices_type' => 'radio',
+					'default'      => 'preset-1',
+					'choices'      => array(
+						'preset-1' => array(
+							'label' => __( 'Preset 1', '__theme_txtd' ),
+							'options' => array(),
+							'config' => array(
+								'sm_font_primary' => array(
+									'super_dislplay_font',
+									'dislplay_font',
+									'heading_1_font',
+									'heading_2_font',
+									'heading_3_font',
+									'heading_4_font',
+									'heading_5_font',
+									'heading_6_font',
+									'quote_font',
+								),
+								'sm_font_secondary' => array(
+									'buttons_font',
+									'meta_font',
+								),
+								'sm_font_body' => array(
+									'navigation_font',
+									'body_font',
+									'content_font',
+									'lead_font',
+									'cite_font',
+									'input_font',
+								),
+								'sm_font_accent' => array(
+									'accent_font'
+								),
+							),
+						),
+						'preset-2' => array(
+							'label' => __( 'Preset 2', '__theme_txtd' ),
+							'options' => array(),
+							'config' => array(
+								'sm_font_primary' => array(
+									'super_dislplay_font',
+									'dislplay_font',
+									'heading_1_font',
+									'heading_2_font',
+									'heading_3_font',
+									'heading_4_font',
+									'quote_font',
+								),
+								'sm_font_secondary' => array(
+									'heading_5_font',
+									'heading_6_font',
+									'navigation_font',
+									'buttons_font',
+									'meta_font',
+								),
+								'sm_font_body' => array(
+									'body_font',
+									'content_font',
+									'lead_font',
+									'cite_font',
+									'input_font',
+								),
+								'sm_font_accent' => array(
+									'accent_font'
+								),
+							),
+						),
+						'preset-3' => array(
+							'label' => __( 'Preset 3', '__theme_txtd' ),
+							'options' => array(),
+							'config' => array(
+								'sm_font_primary' => array(
+									'super_dislplay_font',
+									'dislplay_font',
+									'heading_1_font',
+									'heading_2_font',
+								),
+								'sm_font_secondary' => array(
+									'heading_3_font',
+									'heading_4_font',
+									'heading_5_font',
+									'heading_6_font',
+									'quote_font',
+								),
+								'sm_font_body' => array(
+									'buttons_font',
+									'meta_font',
+									'navigation_font',
+									'body_font',
+									'content_font',
+									'lead_font',
+									'cite_font',
+									'input_font',
+								),
+								'sm_font_accent' => array(
+									'accent_font'
+								),
+							),
+						),
+					),
+				),
+			]
+		] );
+
+		return $config;
+	}
+
+	/**
 	 * Reorganize the Customizer controls.
 	 *
 	 * @since 2.0.0
@@ -562,6 +698,7 @@ class FontPalettes extends AbstractHookProvider {
 			'sm_font_secondary',
 			'sm_font_body',
 			'sm_font_accent',
+			'sm_fonts_connected_fields_preset',
 			'sm_swap_fonts',
 			'sm_swap_primary_secondary_fonts',
 			'sm_font_palettes_spacing_bottom',

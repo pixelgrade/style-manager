@@ -558,7 +558,8 @@ input.font-options__checkbox {
 [id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_primary_control],
 [id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_secondary_control],
 [id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_accent_control],
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_body_control] {
+[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_body_control],
+[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_fonts_connected_fields_preset_control] {
   display: block !important;
 }
 

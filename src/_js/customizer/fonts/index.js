@@ -32,8 +32,38 @@ export const initializeFonts = function() {
   } );
 
   handleFontPopupToggle();
+  initializeConnectedFieldsPresets();
 
   reloadConnectedFields();
+}
+
+const initializeConnectedFieldsPresets = () => {
+
+  wp.customize( 'sm_fonts_connected_fields_preset', setting => {
+    const settingIDs = styleManager.fontPalettes.masterSettingIds;
+    const config = globalService.getSettingConfig( 'sm_fonts_connected_fields_preset' );
+
+    setting.bind( newValue => {
+      const newValueConfig = config.choices[ newValue ].config;
+
+      Object.keys( newValueConfig ).forEach( settingID => {
+        const masterFontConfig = globalService.getSettingConfig( settingID );
+        const newMasterFontConfig = Object.assign( {}, masterFontConfig, {
+          connected_fields: newValueConfig[ settingID ]
+        } );
+        globalService.setSettingConfig( settingID, newMasterFontConfig );
+      } );
+
+      reloadConnectedFields();
+
+      settingIDs.forEach( settingID => {
+        wp.customize( settingID, setting => {
+          const value = setting();
+          setting.callbacks.fireWith( setting, [ value, value ] );
+        } );
+      } )
+    } );
+  } )
 }
 
 const initializeFontFamilyField = ( $fontField ) => {
@@ -133,7 +163,10 @@ const reloadConnectedFields = debounce( () => {
   settingIDs.forEach( settingID => {
     wp.customize( settingID, parentSetting => {
       setCallback( settingID, fontsLogic => {
-        const settingConfig = getSetting( settingID );
+        const settingConfig = globalService.getSettingConfig( settingID );
+        console.log( globalService.getSetting( settingID ) );
+        console.log( globalService.getSettingConfig( settingID ) );
+
         const connectedFields = settingConfig.connected_fields || {};
         const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
 
@@ -142,6 +175,7 @@ const reloadConnectedFields = debounce( () => {
           const connectedSettingID = connectedFieldData.setting_id;
 
           wp.customize( connectedSettingID, connectedSetting => {
+            console.log( settingID, connectedSettingID );
             connectedSetting.set( getCallbackFilter( fontsLogic, connectedFieldData, fontSizeInterval ) );
           } );
         } );
