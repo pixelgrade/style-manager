@@ -14,9 +14,10 @@ export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
     const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
 
     wp.customize( connectedSettingID, connectedSetting => {
+      const connectedSettingConfig = getSettingConfig( connectedSettingID );
       const connectedSettingValue = connectedSetting();
-      const fontSize = connectedSettingValue?.font_size?.value;
-      const unit = connectedSettingValue?.font_size?.unit;
+      const fontSize = connectedSettingConfig?.default?.font_size?.value;
+      const unit = connectedSettingConfig?.default?.font_size?.unit;
 
       if ( fontSizeUnitSet ) {
         if ( unit !== fontSizeUnit ) {
