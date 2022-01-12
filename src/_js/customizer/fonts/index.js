@@ -166,12 +166,17 @@ const reloadConnectedFields = debounce( () => {
         const settingConfig = globalService.getSettingConfig( settingID );
         const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
 
+        console.group( settingID );
+        console.log( fontSizeInterval, '→', fontsLogic.font_size_interval );
+
         settingConfig.connected_fields.forEach( key => {
           const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
           wp.customize( connectedSettingID, connectedSetting => {
             connectedSetting.set( getCallbackFilter( connectedSettingID, connectedSetting, fontsLogic, fontSizeInterval ) );
           } );
         } );
+
+        console.groupEnd( settingID );
       } );
 
       parentSetting.bind( getCallback( settingID ) );

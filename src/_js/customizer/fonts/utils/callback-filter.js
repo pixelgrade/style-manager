@@ -10,6 +10,7 @@ const applyFontSizeInterval = ( fontData, fontsLogic, connectedSettingData, font
 
   const ab = fontSizeInterval;
   const cd = fontsLogic?.font_size_interval;
+  const initialValue = fontData.font_size.value;
 
   if ( ! Array.isArray( ab ) || ! Array.isArray( cd ) || cd[0] >= cd[1] ) {
     return;
@@ -26,6 +27,8 @@ const applyFontSizeInterval = ( fontData, fontsLogic, connectedSettingData, font
       fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
     }
   }
+
+  console.log( `${ initialValue } → ${ fontData.font_size.value }` );
 }
 
 const applyFontSizeMultiplier = ( fontData, fontSizeMultiplier ) => {
@@ -101,6 +104,7 @@ export const getCallbackFilter = ( connectedSettingID, connectedSetting, fontsLo
   newFontData[ 'font_family' ] = fontsLogic.font_family
   newFontData[ 'font_size' ] = standardizeNumericalValue( connectedSettingData.font_size );
 
+  console.log( connectedSettingID );
   applyFontSizeInterval( newFontData, fontsLogic, connectedSettingData, fontSizeInterval );
 //  applyFontSizeMultiplier( newFontData, fontsLogic.font_size_multiplier );
   applyFontStyleIntervals( newFontData, fontsLogic, connectedSettingData );

@@ -1,8 +1,8 @@
-import { getSetting } from "../../global-service";
+import { getSettingConfig } from "../../global-service";
 
 export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
-  const settingConfig = getSetting( settingID );
-  const connectedFields = settingConfig.connected_fields || {};
+  const settingConfig = getSettingConfig( settingID );
+  const connectedFields = settingConfig.connected_fields || [];
 
   let minFontSize = Number.MAX_SAFE_INTEGER;
   let maxFontSize = Number.MIN_SAFE_INTEGER;
@@ -10,9 +10,8 @@ export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
   let fontSizeUnitSet = false;
   let hasConsistentFontSizes = true;
 
-  Object.keys( connectedFields ).forEach( key => {
-    const connectedFieldData = connectedFields[key];
-    const connectedSettingID = connectedFieldData.setting_id;
+  connectedFields.forEach( key => {
+    const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
 
     wp.customize( connectedSettingID, connectedSetting => {
       const connectedSettingValue = connectedSetting();
