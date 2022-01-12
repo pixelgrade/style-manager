@@ -89,7 +89,6 @@ class FontPalettes extends AbstractHookProvider {
 
 		// This needs to come after the external theme config has been applied
 		$this->add_filter( 'style_manager/filter_fields', 'add_current_palette_control', 110, 1 );
-		$this->add_filter( 'style_manager/final_config', 'standardize_connected_fields', 10, 1 );
 
 		/*
 		 * Handle the logic on settings update/save.
@@ -761,65 +760,6 @@ class FontPalettes extends AbstractHookProvider {
 						'</div>',
 				],
 			] + $config['sections']['style_manager_section']['options'];
-
-		return $config;
-	}
-
-	/**
-	 * Process any configured connected fields that relate to fonts and standardize their config.
-	 *
-	 * Think things like filling up the default font_size if not present.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $config
-	 *
-	 * @return array
-	 */
-	protected function standardize_connected_fields( array $config ): array {
-		// If there is no style manager support, bail early.
-		if ( ! $this->is_supported() ) {
-			return $config;
-		}
-
-		$style_manager_options    = $config['sections']['style_manager_section']['options'];
-		$master_font_controls_ids = $this->get_all_master_font_controls_ids( $style_manager_options );
-		if ( empty( $master_font_controls_ids ) ) {
-			return $config;
-		}
-
-		foreach ( $master_font_controls_ids as $id ) {
-			if ( ! empty( $style_manager_options[ $id ]['connected_fields'] ) ) {
-				$connected_fields_config = [];
-				foreach ( $style_manager_options[ $id ]['connected_fields'] as $key => $value ) {
-					// If we have a shorthand connected field config, change it to a standard one.
-					if ( ! is_array( $value ) ) {
-						$key   = $value;
-						$value = [];
-					}
-
-					$option_config = $this->get_option_config( $key, $config );
-					if ( empty( $option_config ) ) {
-						continue;
-					}
-
-					// If we didn't get a font_size we will try and grab the default value for the connected field.
-					if ( ! isset( $value['font_size'] ) ) {
-						if ( isset( $option_config['default']['font-size'] ) ) {
-							$value['font_size'] = $option_config['default']['font-size'];
-						} else {
-							$value['font_size'] = false;
-						}
-					}
-					// Finally, standardize it.
-					$value['font_size'] = FontsHelper::standardizeNumericalValue( $value['font_size'], 'font-size', $option_config );
-
-					$connected_fields_config[ $key ] = $value;
-				}
-
-				$config['sections']['style_manager_section']['options'][ $id ]['connected_fields'] = $connected_fields_config;
-			}
-		}
 
 		return $config;
 	}

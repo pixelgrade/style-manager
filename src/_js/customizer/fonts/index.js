@@ -164,19 +164,12 @@ const reloadConnectedFields = debounce( () => {
     wp.customize( settingID, parentSetting => {
       setCallback( settingID, fontsLogic => {
         const settingConfig = globalService.getSettingConfig( settingID );
-        console.log( globalService.getSetting( settingID ) );
-        console.log( globalService.getSettingConfig( settingID ) );
-
-        const connectedFields = settingConfig.connected_fields || {};
         const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
 
-        Object.keys( connectedFields ).forEach( key => {
-          const connectedFieldData = connectedFields[key];
-          const connectedSettingID = connectedFieldData.setting_id;
-
+        settingConfig.connected_fields.forEach( key => {
+          const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
           wp.customize( connectedSettingID, connectedSetting => {
-            console.log( settingID, connectedSettingID );
-            connectedSetting.set( getCallbackFilter( fontsLogic, connectedFieldData, fontSizeInterval ) );
+            connectedSetting.set( getCallbackFilter( connectedSettingID, connectedSetting, fontsLogic, fontSizeInterval ) );
           } );
         } );
       } );
