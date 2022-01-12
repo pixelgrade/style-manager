@@ -101,7 +101,7 @@ export const getCallbackFilter = ( connectedSettingID, connectedSetting, fontsLo
   newFontData[ 'font_family' ] = fontsLogic.font_family
   newFontData[ 'font_size' ] = standardizeNumericalValue( connectedSettingData.font_size );
 
-  applyFontSizeInterval( newFontData, fontsLogic, connectedSetting, fontSizeInterval );
+  applyFontSizeInterval( newFontData, fontsLogic, connectedSettingData, fontSizeInterval );
 //  applyFontSizeMultiplier( newFontData, fontsLogic.font_size_multiplier );
   applyFontStyleIntervals( newFontData, fontsLogic, connectedSettingData );
   applyLineHeight( newFontData, fontsLogic );
