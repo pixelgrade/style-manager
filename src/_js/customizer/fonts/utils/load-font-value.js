@@ -8,6 +8,7 @@ import { standardizeNumericalValue } from './standardize-numerical-value';
  * based on the setting value.
  */
 export const loadFontValue = function( wrapper, value, settingID ) {
+
   // If we are already loading this setting value and haven't finished, there is no point in starting again.
   if ( fontsService.isLoading( settingID ) ) {
     return
@@ -73,7 +74,8 @@ export const loadFontValue = function( wrapper, value, settingID ) {
     // Mark this input as not touched by the user.
     $input.data( 'touched', false )
 
-    $input.trigger( 'change', ['style-manager'] )
+    $input.trigger( 'input', [ 'style-manager' ] )
+    $input.trigger( 'change', [ 'style-manager' ] )
   } )
 
   // Finished with the field value loading.
