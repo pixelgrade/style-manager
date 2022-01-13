@@ -1,5 +1,6 @@
-var gulp = require( 'gulp' ),
-	sass = require( 'gulp-sass' )(require( 'node-sass' )),
+const gulp = require( 'gulp' ),
+  dartSass = require('sass'),
+	sass = require( 'gulp-sass' )(dartSass),
 	sassUnicode = require('gulp-sass-unicode'),
 	rtlcss = require( 'gulp-rtlcss' ),
 	rename = require( 'gulp-rename' ),

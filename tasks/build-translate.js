@@ -1,18 +1,27 @@
-var gulp = require('gulp'),
+const gulp = require('gulp'),
+  fs = require( 'fs' ),
   cp = require( 'child_process' ),
+  log = require('fancy-log'),
   plugins = require('gulp-load-plugins')()
 
 const gulpconfig = require('./gulpconfig.json');
+const {sync: commandExistsSync} = require('command-exists')
 
-var slug = gulpconfig.slug
-var packageName = gulpconfig.packagename
-var textdomain = gulpconfig.textdomain
-var bugReport = gulpconfig.bugreport
+const slug = gulpconfig.slug,
+  packageName = gulpconfig.packagename,
+  textdomain = gulpconfig.textdomain,
+  bugReport = gulpconfig.bugreport
 
 // -----------------------------------------------------------------------------
 // Replace the plugin's text domain with the actual text domain.
 // -----------------------------------------------------------------------------
-function pluginTextdomainReplace () {
+function pluginTextdomainReplace (done) {
+  if (!fs.existsSync('../build/' + slug)) {
+    log.error('The build folder (`'+'../build/' + slug+'`) is missing!')
+    log.error('Aborting...')
+    done(new Error('missing_build_folder'))
+  }
+
   return gulp.src([
     '../build/' + slug + '/**/*.php',
     '../build/' + slug + '/**/*.js',
@@ -26,12 +35,23 @@ function pluginTextdomainReplace () {
 pluginTextdomainReplace.description = 'Replace the __plugin_txtd text-domain placeholder with the actual text-domain, in the build files.'
 gulp.task('build:translate:replacetxtdomain', pluginTextdomainReplace)
 
-function generatePotFile ( done ) {
-  cp.execSync( 'wp i18n make-pot ../build/' + slug + '/ ../build/' + slug + '/languages/' + slug + '.pot --skip-js',
-    {
-      stdio: 'inherit' // Use the same console as the io for the child process.
-    }
-  );
+function generatePotFile (done) {
+  if (!fs.existsSync('../build/' + slug)) {
+    log.error('The build folder (`'+'../build/' + slug+'`) is missing!')
+    log.error('Aborting...')
+    done(new Error('missing_build_folder'))
+  }
+
+  if (!commandExistsSync('wp')) {
+    log.error('Could not generate the pot file since the wp command is missing. Please install the WP CLI!')
+    log.error('The build task will continue.')
+  } else {
+    cp.execSync('wp i18n make-pot ../build/' + slug + '/ ../build/' + slug + '/languages/' + slug + '.pot --skip-js',
+      {
+        stdio: 'inherit' // Use the same console as the io for the child process.
+      }
+    );
+  }
 
   return done();
 }

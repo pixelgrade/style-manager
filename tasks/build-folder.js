@@ -1,17 +1,17 @@
-var gulp = require( 'gulp' ),
+const gulp = require( 'gulp' ),
   plugins = require( 'gulp-load-plugins' )(),
   fs = require( 'fs' ),
   del = require( 'del' );
 
 const gulpconfig = require('./gulpconfig.json');
 
-var slug = gulpconfig.slug;
+const slug = gulpconfig.slug;
 
 // -----------------------------------------------------------------------------
 // Copy plugin folder outside in a build folder.
 // -----------------------------------------------------------------------------
 function copyFolder() {
-  var dir = process.cwd();
+  const dir = process.cwd();
   return gulp.src( './*' )
              .pipe( plugins.exec( 'rm -Rf ./../build; mkdir -p ./../build/' + slug + ';', {
                silent: true,

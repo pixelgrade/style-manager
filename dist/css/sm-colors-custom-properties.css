@@ -4,12 +4,14 @@ html {
   --sm-current-accent2-color: var(--sm-accent2-color-1, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-1, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-1);
-  --sm-current-fg2-color: var(--sm-fg2-color-1); }
+  --sm-current-fg2-color: var(--sm-fg2-color-1);
+}
 
 html,
-[class*="sm-variation-"]:where(:not(.sm-color-signal-0)) {
+[class*=sm-variation-]:where(:not(.sm-color-signal-0)) {
   background-color: var(--sm-current-bg-color);
-  color: var(--sm-current-fg1-color); }
+  color: var(--sm-current-fg1-color);
+}
 
 .sm-variation-1 {
   --sm-current-bg-color: var(--sm-bg-color-1);
@@ -17,7 +19,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-1, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-1, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-1);
-  --sm-current-fg2-color: var(--sm-fg2-color-1); }
+  --sm-current-fg2-color: var(--sm-fg2-color-1);
+}
 
 .sm-variation-2 {
   --sm-current-bg-color: var(--sm-bg-color-2);
@@ -25,7 +28,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-2, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-2, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-2);
-  --sm-current-fg2-color: var(--sm-fg2-color-2); }
+  --sm-current-fg2-color: var(--sm-fg2-color-2);
+}
 
 .sm-variation-3 {
   --sm-current-bg-color: var(--sm-bg-color-3);
@@ -33,7 +37,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-3, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-3, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-3);
-  --sm-current-fg2-color: var(--sm-fg2-color-3); }
+  --sm-current-fg2-color: var(--sm-fg2-color-3);
+}
 
 .sm-variation-4 {
   --sm-current-bg-color: var(--sm-bg-color-4);
@@ -41,7 +46,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-4, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-4, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-4);
-  --sm-current-fg2-color: var(--sm-fg2-color-4); }
+  --sm-current-fg2-color: var(--sm-fg2-color-4);
+}
 
 .sm-variation-5 {
   --sm-current-bg-color: var(--sm-bg-color-5);
@@ -49,7 +55,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-5, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-5, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-5);
-  --sm-current-fg2-color: var(--sm-fg2-color-5); }
+  --sm-current-fg2-color: var(--sm-fg2-color-5);
+}
 
 .sm-variation-6 {
   --sm-current-bg-color: var(--sm-bg-color-6);
@@ -57,7 +64,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-6, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-6, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-6);
-  --sm-current-fg2-color: var(--sm-fg2-color-6); }
+  --sm-current-fg2-color: var(--sm-fg2-color-6);
+}
 
 .sm-variation-7 {
   --sm-current-bg-color: var(--sm-bg-color-7);
@@ -65,7 +73,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-7, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-7, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-7);
-  --sm-current-fg2-color: var(--sm-fg2-color-7); }
+  --sm-current-fg2-color: var(--sm-fg2-color-7);
+}
 
 .sm-variation-8 {
   --sm-current-bg-color: var(--sm-bg-color-8);
@@ -73,7 +82,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-8, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-8, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-8);
-  --sm-current-fg2-color: var(--sm-fg2-color-8); }
+  --sm-current-fg2-color: var(--sm-fg2-color-8);
+}
 
 .sm-variation-9 {
   --sm-current-bg-color: var(--sm-bg-color-9);
@@ -81,7 +91,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-9, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-9, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-9);
-  --sm-current-fg2-color: var(--sm-fg2-color-9); }
+  --sm-current-fg2-color: var(--sm-fg2-color-9);
+}
 
 .sm-variation-10 {
   --sm-current-bg-color: var(--sm-bg-color-10);
@@ -89,7 +100,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-10, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-10, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-10);
-  --sm-current-fg2-color: var(--sm-fg2-color-10); }
+  --sm-current-fg2-color: var(--sm-fg2-color-10);
+}
 
 .sm-variation-11 {
   --sm-current-bg-color: var(--sm-bg-color-11);
@@ -97,7 +109,8 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-11, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-11, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-11);
-  --sm-current-fg2-color: var(--sm-fg2-color-11); }
+  --sm-current-fg2-color: var(--sm-fg2-color-11);
+}
 
 .sm-variation-12 {
   --sm-current-bg-color: var(--sm-bg-color-12);
@@ -105,4 +118,5 @@ html,
   --sm-current-accent2-color: var(--sm-accent2-color-12, var(--sm-current-accent-color));
   --sm-current-accent3-color: var(--sm-accent3-color-12, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-12);
-  --sm-current-fg2-color: var(--sm-fg2-color-12); }
+  --sm-current-fg2-color: var(--sm-fg2-color-12);
+}
