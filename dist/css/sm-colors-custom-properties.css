@@ -1,3 +1,7 @@
+.wp-block {
+  --force: editor ;
+}
+
 html {
   --sm-current-bg-color: var(--sm-bg-color-1);
   --sm-current-accent-color: var(--sm-accent-color-1);

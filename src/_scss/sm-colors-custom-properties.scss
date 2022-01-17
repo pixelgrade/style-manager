@@ -1,3 +1,7 @@
+// This dummy rule makes the editor script to copy this stylesheet
+// inside iframes generated to preview a BlockList
+.wp-block { --force: editor }
+
 @mixin apply-variation($i) {
   --sm-current-bg-color: var(--sm-bg-color-#{ $i });
   --sm-current-accent-color: var(--sm-accent-color-#{ $i });
@@ -23,3 +27,4 @@ html,
     @include apply-variation($i);
   }
 }
+
