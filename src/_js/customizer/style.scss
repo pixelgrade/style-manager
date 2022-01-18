@@ -84,4 +84,12 @@ and other section use the available space
   }
 }
 
+// remove margin when block editor is displayed inside the customizer sidebar
+@media (min-width: 782px) {
+
+  .customize-control-sidebar_block_editor .customize-widgets-header {
+    margin-bottom: 0;
+  }
+}
+
 @import 'scss/theme';
