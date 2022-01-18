@@ -400,7 +400,7 @@ function get_color_variables( object $palette, int $newColorIndex, int $oldColor
 	$colors = $palette->colors;
 	$id = $palette->id;
 	$count = count( $colors );
-	$lightColorsCount = isset( $palette->lightColorsCount ) ? $palette->lightColorsCount : $count / 2;
+	$lightColorsCount = $palette->lightColorsCount ?? $count / 2;
 
 	$accentColorIndex = ( $oldColorIndex + $count / 2 ) % $count;
 	$prefix = '--sm-color-palette-';
@@ -429,25 +429,25 @@ function get_color_variables( object $palette, int $newColorIndex, int $oldColor
  */
 function get_fallback_palettes() {
 
-	$order = array(
-		"primary",
-		"secondary",
-		"tertiary",
-		"quinary",
-		"senary",
-		"septenary",
-		"octonary",
-		"nonary",
-		"denary"
-	);
+	$order = [
+		'primary',
+		'secondary',
+		'tertiary',
+		'quinary',
+		'senary',
+		'septenary',
+		'octonary',
+		'nonary',
+		'denary'
+	];
 
 	$options_details = \Pixelgrade\StyleManager\get_option_details_all();
 
-	$color_control_ids = array(
+	$color_control_ids = [
 		'sm_color_primary',
 		'sm_color_secondary',
 		'sm_color_tertiary',
-	);
+	];
 
 	$lighter = get_fallback_color_value( 'sm_light_primary' );
 	$light = get_fallback_color_value( 'sm_light_tertiary' );
@@ -455,7 +455,7 @@ function get_fallback_palettes() {
 	$dark = get_fallback_color_value( 'sm_dark_primary' );
 	$darker = get_fallback_color_value( 'sm_dark_tertiary' );
 
-	$palettes = array();
+	$palettes = [];
 
 	foreach ( $color_control_ids as $index => $control_id ) {
 
@@ -465,7 +465,7 @@ function get_fallback_palettes() {
 
 		$color = get_fallback_color_value( $control_id );
 
-		$colors = array(
+		$colors = [
 			$lighter,
 			$light,
 			$light,
@@ -478,29 +478,29 @@ function get_fallback_palettes() {
 			$dark,
 			$darker,
 			'#000000',
-		);
+		];
 
-		$color_objects = array();
+		$color_objects = [];
 
 		foreach ( $colors as $color ) {
-			$obj = ( object ) array(
+			$obj = ( object ) [
 				'value' => $color
-			);
+			];
 
 			$color_objects[] = $obj;
 		}
 
-		$textColors = array(
+		$textColors = [
 			$text_color,
 			$text_color,
-		);
+		];
 
-		$textColor_objects = array();
+		$textColor_objects = [];
 
 		foreach ( $textColors as $color ) {
-			$obj = ( object ) array(
+			$obj = ( object ) [
 				'value' => $color
-			);
+			];
 
 			$textColor_objects[] = $obj;
 		}
@@ -513,14 +513,14 @@ function get_fallback_palettes() {
 			$label = ucfirst( $label );
 		}
 
-		$palettes[] = ( object ) array(
+		$palettes[] = ( object ) [
 			'colors'      => $color_objects,
 			'textColors'  => $textColor_objects,
 			'source'      => $color,
 			'sourceIndex' => 6,
 			'label'       => $label,
 			'id'          => $index + 1
-		);
+		];
 	}
 
 	return $palettes;
@@ -563,6 +563,6 @@ if ( ! function_exists( 'pixelgrade_option' ) ) {
 if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
 	function sm_filter_user_palettes( $palette ) {
 		$id = (string) $palette->id;
-		return substr( $id, 0, 1 ) !== "_";
+		return substr( $id, 0, 1 ) !== '_';
 	}
 }

@@ -38,10 +38,10 @@ define( 'WP_DEBUG', true );
 // These tests will DROP ALL TABLES in the database with the prefix named below.
 // DO NOT use a production database or one that is shared with something else.
 
-define( 'DB_NAME', isset( $_ENV['WP_TESTS_DB_NAME'] ) ? $_ENV['WP_TESTS_DB_NAME'] : 'wordpress_test' );
-define( 'DB_USER', isset( $_ENV['WP_TESTS_DB_USER'] ) ? $_ENV['WP_TESTS_DB_USER'] : 'root' );
-define( 'DB_PASSWORD', isset( $_ENV['WP_TESTS_DB_PASSWORD'] ) ? $_ENV['WP_TESTS_DB_PASSWORD'] : '' );
-define( 'DB_HOST', isset( $_ENV['WP_TESTS_DB_HOST'] ) ? $_ENV['WP_TESTS_DB_HOST'] : 'localhost' );
+define( 'DB_NAME', $_ENV['WP_TESTS_DB_NAME'] ?? 'wordpress_test' );
+define( 'DB_USER', $_ENV['WP_TESTS_DB_USER'] ?? 'root' );
+define( 'DB_PASSWORD', $_ENV['WP_TESTS_DB_PASSWORD'] ?? '' );
+define( 'DB_HOST', $_ENV['WP_TESTS_DB_HOST'] ?? 'localhost' );
 define( 'DB_CHARSET', 'utf8mb4' );
 define( 'DB_COLLATE', '' );
 

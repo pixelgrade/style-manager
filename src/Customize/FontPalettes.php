@@ -565,14 +565,14 @@ class FontPalettes extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
-				'sm_fonts_connected_fields_preset' => array(
+				'sm_fonts_connected_fields_preset' => [
 					'type'         => 'preset',
 					'label'        => __( 'Connected Fields Presets', '__theme_txtd' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_fonts_connected_fields_preset',
 					'choices_type' => 'radio'
-				),
+				],
 			]
 		] );
 

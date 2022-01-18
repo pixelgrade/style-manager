@@ -152,7 +152,7 @@ class Font extends BaseControl {
 			foreach ( $this->recommended as $font_family ) {
 				$this->output_font_family_option( $font_family, $active_font_family );
 			}
-			echo "</optgroup>";
+			echo '</optgroup>';
 		}
 
 		// Allow others to add options here.

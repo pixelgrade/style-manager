@@ -605,15 +605,15 @@ class ColorPalettes extends AbstractHookProvider {
 						],
 					],
 				],
-				'NOT_sm_description_color_system_intro'     => array(
+				'NOT_sm_description_color_system_intro'     => [
 					'type' => 'html',
 					'html' => 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System for your website.',
-				),
+				],
 
-				'sm_description_color_usage_intro' => array(
+				'sm_description_color_usage_intro' => [
 					'type' => 'html',
 					'html' => 'Manage how to apply <a href="https://pixelgrade.com/docs/rosa2/design-and-style/color-system/#6-manage-how-to-apply-color-to-your-website" target="_blank">the default colors</a> to your website\'s elements.',
-				),
+				],
 				'sm_separator_1_0'                 => [ 'type' => 'html', 'html' => '' ],
 				'sm_text_color_switch_master'      => [
 					'type'             => 'sm_toggle',
@@ -672,9 +672,9 @@ class ColorPalettes extends AbstractHookProvider {
 					'default'      => 'normal',
 					'choices_type' => 'radio',
 					'choices'      => [
-						'normal'  => array(
+						'normal'  => [
 							'label' => esc_html__( 'Normal', '__plugin_txtd' ),
-							'options' => array(
+							'options' => [
 								'sm_color_grades_number' => 12,
 								'sm_potential_color_contrast' => 0.9,
 								'sm_color_grade_balancer' => 0,
@@ -682,11 +682,11 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_white' => true,
 								'sm_color_promotion_black' => true,
 								'sm_elements_color_contrast' => 'normal',
-							),
-						),
-						'simple' => array(
+							],
+						],
+						'simple' => [
 							'label' => esc_html__( 'Simple', '__plugin_txtd' ),
-							'options' => array(
+							'options' => [
 								'sm_color_grades_number' => 4,
 								'sm_potential_color_contrast' => 1,
 								'sm_color_grade_balancer' => 0.5,
@@ -694,11 +694,11 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_white' => true,
 								'sm_color_promotion_black' => true,
 								'sm_elements_color_contrast' => 'normal',
-							),
-						),
-						'light' => array(
+							],
+						],
+						'light' => [
 							'label' => esc_html__( 'Light', '__plugin_txtd' ),
-							'options' => array(
+							'options' => [
 								'sm_color_grades_number' => 12,
 								'sm_potential_color_contrast' => 1,
 								'sm_color_grade_balancer' => 1,
@@ -706,11 +706,11 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_white' => true,
 								'sm_color_promotion_black' => false,
 								'sm_elements_color_contrast' => 'normal',
-							),
-						),
-						'dark' => array(
+							],
+						],
+						'dark' => [
 							'label' => esc_html__( 'Dark', '__plugin_txtd' ),
-							'options' => array(
+							'options' => [
 								'sm_color_grades_number' => 12,
 								'sm_potential_color_contrast' => 1,
 								'sm_color_grade_balancer' => 1,
@@ -718,12 +718,12 @@ class ColorPalettes extends AbstractHookProvider {
 								'sm_color_promotion_white' => false,
 								'sm_color_promotion_black' => true,
 								'sm_elements_color_contrast' => 'normal',
-							),
-						),
-						'custom' => array(
+							],
+						],
+						'custom' => [
 							'label' => esc_html__( 'Custom', '__plugin_txtd' ),
-							'options' => array()
-						),
+							'options' => []
+						],
 					],
 				],
 				'sm_separator_2_0'            => [ 'type' => 'html', 'html' => '' ],

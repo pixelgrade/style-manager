@@ -216,7 +216,7 @@ class FrontendOutput extends AbstractHookProvider {
 				}
 
 				if ( ! empty( $media_query_custom_css ) ) {
-					$media_query_custom_css = "\n" . '@media ' . $media_query . " { " . "\n" . "\n" . $media_query_custom_css . "}" . "\n";
+					$media_query_custom_css = "\n" . '@media ' . $media_query . ' { ' . "\n" . "\n" . $media_query_custom_css . '}' . "\n";
 				}
 
 				if ( ! empty( $media_query_custom_css ) ) {
@@ -274,7 +274,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 * @return false|mixed|string
 	 */
 	protected function process_css_property( array $css_property, $value ) {
-		$unit = isset( $css_property['unit'] ) ? $css_property['unit'] : '';
+		$unit = $css_property['unit'] ?? '';
 		// If the unit is empty (string, not boolean false) but the property should have a unit force 'px' as it
 		if ( '' === $unit && in_array( $css_property['property'], self::PIXEL_DEPENDENT_CSS_PROPS ) ) {
 			$unit = 'px';
@@ -285,7 +285,7 @@ class FrontendOutput extends AbstractHookProvider {
 			return '';
 		}
 
-		$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $value . $unit . "; }" . "\n";
+		$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $value . $unit . '; }' . "\n";
 
 		// Handle the value filter callback.
 		if ( isset( $css_property['filter_value_cb'] ) ) {
@@ -366,27 +366,27 @@ class FrontendOutput extends AbstractHookProvider {
 		// Loose the ton of tabs.
 		$selector = trim( preg_replace( '/\t+/', '', $selector ) );
 
-		$output .= $selector . " {";
+		$output .= $selector . ' {';
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
-			$output .= "background-image: url( " . $value['background-image'] . ");";
+			$output .= 'background-image: url( ' . $value['background-image'] . ');';
 		} else {
-			$output .= "background-image: none;";
+			$output .= 'background-image: none;';
 		}
 
 		if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
-			$output .= "background-repeat:" . $value['background-repeat'] . ";";
+			$output .= 'background-repeat:' . $value['background-repeat'] . ';';
 		}
 
 		if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
-			$output .= "background-position:" . $value['background-position'] . ";";
+			$output .= 'background-position:' . $value['background-position'] . ';';
 		}
 
 		if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
-			$output .= "background-size:" . $value['background-size'] . ";";
+			$output .= 'background-size:' . $value['background-size'] . ';';
 		}
 
 		if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
-			$output .= "background-attachment:" . $value['background-attachment'] . ";";
+			$output .= 'background-attachment:' . $value['background-attachment'] . ';';
 		}
 		$output .= "}\n";
 

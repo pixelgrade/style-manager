@@ -79,7 +79,7 @@ class SpacingSection extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
-				'sm_site_container_width' => array(
+				'sm_site_container_width' => [
 					'type'         => 'range',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
@@ -89,21 +89,21 @@ class SpacingSection extends AbstractHookProvider {
 					'label'        => esc_html__( 'Site Container', '__theme_txtd' ),
 					'desc'         => esc_html__( 'Adjust the maximum amount of width where your site content extends.', '__theme_txtd' ),
 					'default'      => 75,
-					'input_attrs'  => array(
+					'input_attrs'  => [
 						'min'          => 60,
 						'max'          => 100,
 						'step'         => 1,
 						'data-preview' => true,
-					),
-					'css'          => array(
-						array(
+					],
+					'css'          => [
+						[
 							'property' => '--sm-site-container-width',
 							'selector' => ':root',
 							'unit'     => '',
-						),
-					),
-				),
-				'sm_content_inset'        => array(
+						],
+					],
+				],
+				'sm_content_inset'        => [
 					'type'         => 'range',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
@@ -113,21 +113,21 @@ class SpacingSection extends AbstractHookProvider {
 					'label'        => esc_html__( 'Content Inset', '__theme_txtd' ),
 					'desc'         => esc_html__( 'Adjust how much the content is visually inset within the Site Container.', '__theme_txtd' ),
 					'default'      => 230,
-					'input_attrs'  => array(
+					'input_attrs'  => [
 						'min'          => 100,
 						'max'          => 300,
 						'step'         => 10,
 						'data-preview' => true,
-					),
-					'css'          => array(
-						array(
+					],
+					'css'          => [
+						[
 							'property' => '--sm-content-inset',
 							'selector' => ':root',
 							'unit'     => '',
-						),
-					),
-				),
-				'sm_spacing_level'        => array(
+						],
+					],
+				],
+				'sm_spacing_level'        => [
 					'type'         => 'range',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
@@ -137,20 +137,20 @@ class SpacingSection extends AbstractHookProvider {
 					'label'        => esc_html__( 'Spacing Level', '__theme_txtd' ),
 					'desc'         => esc_html__( 'Adjust the multiplication factor of the distance between elements.', '__theme_txtd' ),
 					'default'      => 1,
-					'input_attrs'  => array(
+					'input_attrs'  => [
 						'min'          => 0,
 						'max'          => 2,
 						'step'         => 0.1,
 						'data-preview' => true,
-					),
-					'css'          => array(
-						array(
+					],
+					'css'          => [
+						[
 							'property' => '--sm-spacing-level',
 							'selector' => ':root',
 							'unit'     => '',
-						),
-					),
-				),
+						],
+					],
+				],
 			],
 		] );
 

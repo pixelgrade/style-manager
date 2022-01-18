@@ -196,7 +196,7 @@ class GeneralAdmin extends AbstractHookProvider {
 		}
 
 		// Migrate theme mods
-		$parent_theme_mods = get_option( "theme_mods_" . $parent_theme->get_stylesheet() );
+		$parent_theme_mods = get_option( 'theme_mods_' . $parent_theme->get_stylesheet() );
 		// We need to exclude certain theme_mods since they are not needed by the child theme.
 		$excluded = [
 			'pixcare_license',
@@ -207,7 +207,7 @@ class GeneralAdmin extends AbstractHookProvider {
 			unset( $parent_theme_mods[ $exclude ] );
 		}
 		// Finally, write the new theme mods for the active child theme.
-		if ( ! update_option( "theme_mods_" . get_option( 'stylesheet' ), $parent_theme_mods ) ) {
+		if ( ! update_option( 'theme_mods_' . get_option( 'stylesheet' ), $parent_theme_mods ) ) {
 			wp_send_json_error( esc_html__( 'Could not update the child theme theme_mods.', '__plugin_txtd' ) );
 		}
 

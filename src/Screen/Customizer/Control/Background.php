@@ -84,14 +84,14 @@ class Background extends BaseControl {
 			$hide = 'hide ';
 
 			if ( ( isset( $this->field['preview_media'] ) && $this->field['preview_media'] === false ) ) {
-				$this->field['class'] .= " noPreview";
+				$this->field['class'] .= ' noPreview';
 			}
 
 			if ( ( ! empty( $this->field['background-image'] ) && $this->field['background-image'] === true ) || isset( $this->field['preview'] ) && $this->field['preview'] === false ) {
 				$hide = '';
 			}
 
-			$placeholder = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : __( 'No media selected', '__plugin_txtd' );
+			$placeholder = $this->field['placeholder'] ?? __( 'No media selected', '__plugin_txtd' );
 
 			echo '<input type="text" 
 				class="style-manager_background_input background-image ' . $hide . 'upload ' . $this->field['class'] . '" 

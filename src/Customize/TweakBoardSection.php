@@ -82,7 +82,7 @@ class TweakBoardSection extends AbstractHookProvider {
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct(
 			$config['sections']['style_manager_section'], [
 				'options'   => [
-					'sm_collection_title_position' => array(
+					'sm_collection_title_position' => [
 						'type'         => 'radio',
 						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 						'setting_type' => 'option',
@@ -91,12 +91,12 @@ class TweakBoardSection extends AbstractHookProvider {
 						'label'        => esc_html__( 'Collections titles position', '__plugin_txtd' ),
 						'desc'         => esc_html__( 'Display the Collection block titles at 90-degrees and align them along the left of content rather than at the top.', '__plugin_txtd' ),
 						'default'      => 'above',
-						'choices'      => array(
+						'choices'      => [
 							'above'    => esc_html__( 'Above', '__plugin_txtd' ),
 							'sideways' => esc_html__( 'Sideways', '__plugin_txtd' ),
-						),
-					),
-					'sm_blog_layout_style'         => array(
+						],
+					],
+					'sm_blog_layout_style'         => [
 						'type'         => 'radio',
 						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 						'setting_type' => 'option',
@@ -105,11 +105,11 @@ class TweakBoardSection extends AbstractHookProvider {
 						'label'        => esc_html__( 'Archive Style', '__plugin_txtd' ),
 						'desc'         => esc_html__( 'Display your blog archive in a way that matches your style.', '__plugin_txtd' ),
 						'default'      => 'rosa2',
-						'choices'      => array(
+						'choices'      => [
 							'rosa2' => esc_html__( 'Rosa2', '__plugin_txtd' ),
 							'felt'  => esc_html__( 'Felt', '__plugin_txtd' ),
-						),
-					),
+						],
+					],
 				]
 			]
 		);

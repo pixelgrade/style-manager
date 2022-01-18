@@ -548,7 +548,7 @@ class Fonts extends AbstractHookProvider {
 					$this->output_font_family_option( $font['family'], $active_font_family );
 				}
 			}
-			echo "</optgroup>";
+			echo '</optgroup>';
 		}
 
 		// Allow others to add options here
@@ -567,7 +567,7 @@ class Fonts extends AbstractHookProvider {
 					$this->output_font_family_option( $font['family'], $active_font_family );
 				}
 			}
-			echo "</optgroup>";
+			echo '</optgroup>';
 		}
 
 		// Allow others to add options here
@@ -586,7 +586,7 @@ class Fonts extends AbstractHookProvider {
 					$this->output_font_family_option( $font['family'], $active_font_family );
 				}
 			}
-			echo "</optgroup>";
+			echo '</optgroup>';
 		}
 
 		// Allow others to add options here
@@ -606,7 +606,7 @@ class Fonts extends AbstractHookProvider {
 					$this->output_font_family_option( $font['family'], $active_font_family );
 				}
 			}
-			echo "</optgroup>";
+			echo '</optgroup>';
 		}
 
 		// Allow others to add options here
@@ -726,7 +726,7 @@ class Fonts extends AbstractHookProvider {
 				foreach ( $group_fonts as $font_details ) {
 					$this->output_font_family_option( $font_details['family'] );
 				}
-				echo "</optgroup>";
+				echo '</optgroup>';
 			}
 
 		} else {
@@ -734,7 +734,7 @@ class Fonts extends AbstractHookProvider {
 			foreach ( $this->get_google_fonts() as $font_details ) {
 				$this->output_font_family_option( $font_details['family'] );
 			}
-			echo "</optgroup>";
+			echo '</optgroup>';
 		}
 
 		return ob_get_clean();
@@ -816,7 +816,7 @@ class Fonts extends AbstractHookProvider {
 				// If there is a selected font variant and we haven't been instructed to load all, load only that,
 				// otherwise load all the available variants.
 				if ( ! empty( $value['font_variant'] ) && empty( $font['fields']['font-weight']['loadAllVariants'] ) ) {
-					$font_family .= ":" . join( ',', FontsHelper::convertFontVariantsToFvds( $value['font_variant'] ) );
+					$font_family .= ':' . join( ',', FontsHelper::convertFontVariantsToFvds( $value['font_variant'] ) );
 				} elseif ( ! empty( $font_details['variants'] ) ) {
 					$font_family .= ':' . join( ',', FontsHelper::convertFontVariantsToFvds( $font_details['variants'] ) );
 				}
@@ -834,12 +834,12 @@ class Fonts extends AbstractHookProvider {
 				// We need to make sure that we don't load a non-existent variant.
 				// In that case we will load all available variants.
 				if ( ! empty( $font_details['variants'] ) && is_array( $font_details['variants'] ) && ! in_array( $value['font_variant'], $font_details['variants'] ) ) {
-					$font_family .= ":" . FontsHelper::maybeImplodeList( $font_details['variants'] );
+					$font_family .= ':' . FontsHelper::maybeImplodeList( $font_details['variants'] );
 				} else {
-					$font_family .= ":" . FontsHelper::maybeImplodeList( $value['font_variant'] );
+					$font_family .= ':' . FontsHelper::maybeImplodeList( $value['font_variant'] );
 				}
 			} elseif ( ! empty( $font_details['variants'] ) ) {
-				$font_family .= ":" . FontsHelper::maybeImplodeList( $font_details['variants'] );
+				$font_family .= ':' . FontsHelper::maybeImplodeList( $font_details['variants'] );
 			}
 
 			$args['google_families'][] = "'" . $font_family . "'";
@@ -1148,14 +1148,14 @@ class Fonts extends AbstractHookProvider {
 		$output = '';
 
 		if ( ! empty( $simple_css_selectors ) ) {
-			$output .= "\n" . join( ', ', $simple_css_selectors ) . " {" . "\n";
+			$output .= "\n" . join( ', ', $simple_css_selectors ) . ' {' . "\n";
 			$output .= $this->getCSSProperties( $cssValue, $subFieldsCSSAllowedProperties, $propertiesPrefix );
 			$output .= "}\n";
 		}
 
 		if ( ! empty( $complex_css_selectors ) ) {
 			foreach ( $complex_css_selectors as $selector => $details ) {
-				$output .= "\n" . $selector . " {" . "\n";
+				$output .= "\n" . $selector . ' {' . "\n";
 				$output .= $this->getCSSProperties( $cssValue, $details['properties'], $propertiesPrefix );
 				$output .= "}\n";
 			}
@@ -1302,7 +1302,7 @@ class Fonts extends AbstractHookProvider {
 				continue;
 			}
 
-			$output .= $propertiesPrefix . $property . ": " . $propertyValue . ";\n";
+			$output .= $propertiesPrefix . $property . ': ' . $propertyValue . ";\n";
 		}
 
 		return $output;
