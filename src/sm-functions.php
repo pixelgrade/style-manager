@@ -161,7 +161,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $colorati
 /**
  * @since   2.0.0
  *
- * @param string $value
+ * @param bool $value
  * @param string $selector
  * @param string $property
  *
@@ -180,7 +180,7 @@ function sm_color_switch_dark_cb( bool $value, string $selector, string $propert
 /**
  * @since   2.0.0
  *
- * @param string $value
+ * @param bool $value
  * @param string $selector
  * @param string $property
  *
@@ -203,7 +203,7 @@ function sm_color_switch_darker_cb( bool $value, string $selector, string $prope
  *
  * @return string
  */
-function sm_get_palette_output_from_color_config( $value ) {
+function sm_get_palette_output_from_color_config( string $value ): string {
 	$output = '';
 
 	$palettes = json_decode( $value );
@@ -220,11 +220,11 @@ function sm_get_palette_output_from_color_config( $value ) {
 /**
  * @since   2.0.0
  *
- * @param array $palettes
+ * @param object[] $palettes
  *
  * @return string
  */
-function palettes_output( array $palettes ) {
+function palettes_output( array $palettes ): string {
 	$output = '';
 
 	foreach ( $palettes as $palette ) {
@@ -239,7 +239,12 @@ function palettes_output( array $palettes ) {
 	return $output;
 }
 
-function get_palette_css( $palette ) {
+/**
+ * @param object $palette
+ *
+ * @return string
+ */
+function get_palette_css( $palette ): string {
 	$output = '';
 	$id = $palette->id;
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
@@ -274,7 +279,7 @@ function get_palette_css( $palette ) {
 	return $output;
 }
 
-function get_variation_css_variables( $variations, $index, $offset = 0 ) {
+function get_variation_css_variables( $variations, $index, $offset = 0 ): string {
 	$output = '';
 
 	$variation = $variations[ ( $index + $offset ) % 12 ];
@@ -286,7 +291,12 @@ function get_variation_css_variables( $variations, $index, $offset = 0 ) {
 	return $output;
 }
 
-function get_legacy_palette_css( $palette ) {
+/**
+ * @param object $palette
+ *
+ * @return string
+ */
+function get_legacy_palette_css( $palette ): string {
 	$output = '';
 
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
@@ -314,7 +324,7 @@ function get_legacy_palette_css( $palette ) {
 	return $output;
 }
 
-function get_apply_palette_variables( $id, $suffix = '' ) {
+function get_apply_palette_variables( $id, $suffix = '' ): string {
 	$output = '';
 
 	for ( $i = 1; $i <= 12; $i++ ) {
@@ -334,7 +344,7 @@ function get_apply_palette_variables( $id, $suffix = '' ) {
  *
  * @return string
  */
-function get_initial_color_variables( object $palette ) {
+function get_initial_color_variables( $palette ): string {
 	$colors = $palette->colors;
 	$textColors = $palette->textColors;
 	$id = $palette->id;
@@ -363,7 +373,7 @@ function get_initial_color_variables( object $palette ) {
  *
  * @return string
  */
-function get_variables_css( object $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ) {
+function get_variables_css( $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ): string {
 	$colors = $palette->colors;
 	$count = count( $colors );
 
@@ -396,7 +406,7 @@ function get_variables_css( object $palette, int $offset = 0, bool $isDark = fal
  *
  * @return string
  */
-function get_color_variables( object $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ) {
+function get_color_variables( $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ): string {
 	$colors = $palette->colors;
 	$id = $palette->id;
 	$count = count( $colors );
@@ -427,7 +437,7 @@ function get_color_variables( object $palette, int $newColorIndex, int $oldColor
  *
  * @return array
  */
-function get_fallback_palettes() {
+function get_fallback_palettes(): array {
 
 	$order = [
 		'primary',
@@ -561,7 +571,7 @@ if ( ! function_exists( 'pixelgrade_option' ) ) {
 }
 
 if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
-	function sm_filter_user_palettes( $palette ) {
+	function sm_filter_user_palettes( $palette ): bool {
 		$id = (string) $palette->id;
 		return substr( $id, 0, 1 ) !== '_';
 	}
