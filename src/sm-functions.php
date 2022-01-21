@@ -209,10 +209,10 @@ function sm_get_palette_output_from_color_config( string $value ): string {
 	$palettes = json_decode( $value );
 
 	if ( empty( $palettes ) ) {
-		$palettes = get_fallback_palettes();
+		$palettes = sm_get_fallback_palettes();
 	}
 
-	$output .= palettes_output( $palettes );
+	$output .= sm_palettes_output( $palettes );
 
 	return $output;
 }
@@ -224,15 +224,15 @@ function sm_get_palette_output_from_color_config( string $value ): string {
  *
  * @return string
  */
-function palettes_output( array $palettes ): string {
+function sm_palettes_output( array $palettes ): string {
 	$output = '';
 
 	foreach ( $palettes as $palette ) {
 
 		if ( ! empty( $palette->variations ) ) {
-			$output .= get_palette_css( $palette );
+			$output .= sm_get_palette_css( $palette );
 		} else {
-			$output .= get_legacy_palette_css( $palette );
+			$output .= sm_get_legacy_palette_css( $palette );
 		}
 	}
 
@@ -244,7 +244,7 @@ function palettes_output( array $palettes ): string {
  *
  * @return string
  */
-function get_palette_css( $palette ): string {
+function sm_get_palette_css( $palette ): string {
 	$output = '';
 	$id = $palette->id;
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
@@ -260,26 +260,26 @@ function get_palette_css( $palette ): string {
 
 	$output .= $paletteSelector . ' { ' . PHP_EOL;
 	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= get_variation_css_variables( $palette->variations, $i, $variation - 1 );
+		$output .= sm_get_variation_css_variables( $palette->variations, $i, $variation - 1 );
 	}
 	$output .= '}' . PHP_EOL;
 
 	$output .= $darkPaletteSelector . ' { ' . PHP_EOL;
 	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= get_variation_css_variables( $palette->darkVariations, $i, $variation - 1 );
+		$output .= sm_get_variation_css_variables( $palette->darkVariations, $i, $variation - 1 );
 	}
 	$output .= '}' . PHP_EOL;
 
 	$output .= $paletteShiftedSelector . ' { ' . PHP_EOL;
 	for ( $i = 0; $i < 12; $i++ ) {
-		$output .= get_variation_css_variables( $palette->variations, $i, $palette->sourceIndex );
+		$output .= sm_get_variation_css_variables( $palette->variations, $i, $palette->sourceIndex );
 	}
 	$output .= '}' . PHP_EOL;
 
 	return $output;
 }
 
-function get_variation_css_variables( $variations, $index, $offset = 0 ): string {
+function sm_get_variation_css_variables( $variations, $index, $offset = 0 ): string {
 	$output = '';
 
 	$variation = $variations[ ( $index + $offset ) % 12 ];
@@ -296,35 +296,35 @@ function get_variation_css_variables( $variations, $index, $offset = 0 ): string
  *
  * @return string
  */
-function get_legacy_palette_css( $palette ): string {
+function sm_get_legacy_palette_css( $palette ): string {
 	$output = '';
 
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 	$sourceIndex = $palette->sourceIndex;
 
 	$output .= 'html { ' . PHP_EOL;
-	$output .= get_initial_color_variables( $palette );
-	$output .= get_variables_css( $palette, $variation - 1 );
-	$output .= get_variables_css( $palette, $sourceIndex, false, true );
+	$output .= sm_get_initial_color_variables( $palette );
+	$output .= sm_get_variables_css( $palette, $variation - 1 );
+	$output .= sm_get_variables_css( $palette, $sourceIndex, false, true );
 	$output .= '}' . PHP_EOL;
 
 	$output .= '.is-dark { ' . PHP_EOL;
-	$output .= get_variables_css( $palette, $variation - 1, true );
-	$output .= get_variables_css( $palette, $sourceIndex, true, true );
+	$output .= sm_get_variables_css( $palette, $variation - 1, true );
+	$output .= sm_get_variables_css( $palette, $sourceIndex, true, true );
 	$output .= '}' . PHP_EOL;
 
 	$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
-	$output .= get_apply_palette_variables( $palette->id );
+	$output .= sm_get_apply_palette_variables( $palette->id );
 	$output .= '}' . PHP_EOL;
 
 	$output .= '.sm-palette-' . $palette->id . '.sm-palette--shifted { ' . PHP_EOL;
-	$output .= get_apply_palette_variables( $palette->id, '-shifted' );
+	$output .= sm_get_apply_palette_variables( $palette->id, '-shifted' );
 	$output .= '}' . PHP_EOL;
 
 	return $output;
 }
 
-function get_apply_palette_variables( $id, $suffix = '' ): string {
+function sm_get_apply_palette_variables( $id, $suffix = '' ): string {
 	$output = '';
 
 	for ( $i = 1; $i <= 12; $i++ ) {
@@ -344,7 +344,7 @@ function get_apply_palette_variables( $id, $suffix = '' ): string {
  *
  * @return string
  */
-function get_initial_color_variables( $palette ): string {
+function sm_get_initial_color_variables( $palette ): string {
 	$colors = $palette->colors;
 	$textColors = $palette->textColors;
 	$id = $palette->id;
@@ -373,7 +373,7 @@ function get_initial_color_variables( $palette ): string {
  *
  * @return string
  */
-function get_variables_css( $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ): string {
+function sm_get_variables_css( $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ): string {
 	$colors = $palette->colors;
 	$count = count( $colors );
 
@@ -390,7 +390,7 @@ function get_variables_css( $palette, int $offset = 0, bool $isDark = false, boo
 			}
 		}
 
-		$output .= get_color_variables( $palette, $index, $oldColorIndex, $isShifted );
+		$output .= sm_get_color_variables( $palette, $index, $oldColorIndex, $isShifted );
 	}
 
 	return $output;
@@ -406,7 +406,7 @@ function get_variables_css( $palette, int $offset = 0, bool $isDark = false, boo
  *
  * @return string
  */
-function get_color_variables( $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ): string {
+function sm_get_color_variables( $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ): string {
 	$colors = $palette->colors;
 	$id = $palette->id;
 	$count = count( $colors );
@@ -437,7 +437,7 @@ function get_color_variables( $palette, int $newColorIndex, int $oldColorIndex, 
  *
  * @return array
  */
-function get_fallback_palettes(): array {
+function sm_get_fallback_palettes(): array {
 
 	$order = [
 		'primary',
@@ -459,11 +459,11 @@ function get_fallback_palettes(): array {
 		'sm_color_tertiary',
 	];
 
-	$lighter = get_fallback_color_value( 'sm_light_primary' );
-	$light = get_fallback_color_value( 'sm_light_tertiary' );
-	$text_color = get_fallback_color_value( 'sm_dark_secondary' );
-	$dark = get_fallback_color_value( 'sm_dark_primary' );
-	$darker = get_fallback_color_value( 'sm_dark_tertiary' );
+	$lighter = sm_get_fallback_color_value( 'sm_light_primary' );
+	$light = sm_get_fallback_color_value( 'sm_light_tertiary' );
+	$text_color = sm_get_fallback_color_value( 'sm_dark_secondary' );
+	$dark = sm_get_fallback_color_value( 'sm_dark_primary' );
+	$darker = sm_get_fallback_color_value( 'sm_dark_tertiary' );
 
 	$palettes = [];
 
@@ -473,7 +473,7 @@ function get_fallback_palettes(): array {
 			continue;
 		}
 
-		$color = get_fallback_color_value( $control_id );
+		$color = sm_get_fallback_color_value( $control_id );
 
 		$colors = [
 			$lighter,
@@ -536,7 +536,7 @@ function get_fallback_palettes(): array {
 	return $palettes;
 }
 
-function get_fallback_color_value( $id ) {
+function sm_get_fallback_color_value( $id ) {
 
 	$color = \Pixelgrade\StyleManager\get_option( $id . '_final' );
 

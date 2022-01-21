@@ -60,7 +60,7 @@ class Preview extends AbstractHookProvider {
 	}
 
 	protected function sm_advanced_palette_output_cb_customizer_preview() {
-		$fallback_palettes  = get_fallback_palettes();
+		$fallback_palettes  = sm_get_fallback_palettes();
 		$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
 		$palettes = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
 		$user_palettes = array_filter( $palettes, 'sm_filter_user_palettes' );
