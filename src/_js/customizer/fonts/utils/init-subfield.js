@@ -9,15 +9,15 @@ import {
 export const initSubfield = function( $subField, select2 = false ) {
 
   // Mark these as not touched by the user.
-  $subField.data( 'touched', false )
+  $subField.data( 'touched', false );
 
-  $subField.on( 'input change', onSubfieldChange )
+  $subField.on( 'input change', onSubfieldChange );
 
   // If we've been instructed, initialize a select2.
   if ( true === select2 ) {
     $subField.select2();
   }
-}
+};
 
 const onSubfieldChange = ( event, who ) => {
   const $subField = $( event.target );
@@ -36,4 +36,4 @@ const onSubfieldChange = ( event, who ) => {
 
   // Gather subfield values and trigger refresh of the fonts in the preview window.
   selfUpdateValue( wrapper, settingID );
-}
+};

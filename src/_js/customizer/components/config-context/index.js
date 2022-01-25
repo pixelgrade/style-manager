@@ -20,7 +20,7 @@ const useConfig = ( sourceSettingID ) => {
 
   }, [] );
 
-}
+};
 
 export const ConfigProvider = ( props ) => {
   const { sourceSettingID } = props;
@@ -44,7 +44,7 @@ export const ConfigProvider = ( props ) => {
       { props.children }
     </ConfigContext.Provider>
   )
-}
+};
 
 export const withConfigProvider = Component => {
   return ( props ) => {
@@ -54,6 +54,6 @@ export const withConfigProvider = Component => {
       </ConfigProvider>
     )
   }
-}
+};
 
 export default ConfigContext;

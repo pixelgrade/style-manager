@@ -31,6 +31,6 @@ const ColorsStyleTag = props => {
   return (
     <style>{ CSS }</style>
   )
-}
+};
 
 export default ColorsStyleTag;

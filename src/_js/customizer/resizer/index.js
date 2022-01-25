@@ -40,7 +40,7 @@ wp.customize.bind( 'ready', () => {
 
 export const setOffset = ( newOffset ) => {
   offset = Object.assign( {}, newOffset );
-}
+};
 
 export const resize = () => {
   const preview = document.querySelector( '.wp-full-overlay' );
@@ -96,4 +96,4 @@ export const resize = () => {
 
   iframe.style.marginTop = `${ offset.top }px`;
   iframe.style.marginLeft = `${ offset.left }px`;
-}
+};

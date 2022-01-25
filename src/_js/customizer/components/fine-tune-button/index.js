@@ -22,6 +22,6 @@ const FineTuneButton = () => {
       </div>
     </div>
   )
-}
+};
 
 export default FineTuneButton;

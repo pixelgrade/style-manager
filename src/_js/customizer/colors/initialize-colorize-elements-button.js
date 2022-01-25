@@ -16,4 +16,4 @@ export const initializeColorizeElementsButton = () => {
   target.insertAdjacentElement( 'afterend', button );
 
   ReactDOM.render( <ColorizeElementsButton />, button );
-}
+};

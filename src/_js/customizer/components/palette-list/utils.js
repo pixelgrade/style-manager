@@ -41,6 +41,6 @@ const normalizeCloudPresets = ( presets ) => {
       quote: preset?.description
     }
   } );
-}
+};
 
 export { normalizeCloudPresets }

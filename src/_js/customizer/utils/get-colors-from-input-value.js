@@ -8,4 +8,4 @@ export const getColorsFromInputValue = ( value ) => {
   }
 
   return colors;
-}
+};

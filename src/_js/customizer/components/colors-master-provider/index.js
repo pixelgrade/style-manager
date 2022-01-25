@@ -13,6 +13,6 @@ const ColorsMasterProvider = ( props ) => {
       </OptionsProvider>
     </ConfigProvider>
   )
-}
+};
 
 export default ColorsMasterProvider;

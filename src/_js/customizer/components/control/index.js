@@ -13,6 +13,6 @@ const Control = ( props ) => {
       { children && <div className="sm-control__body">{ children }</div> }
     </div>
   )
-}
+};
 
 export default Control;

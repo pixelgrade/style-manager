@@ -3,18 +3,18 @@
  * @link https://github.com/typekit/fvd
  */
 export const convertFontVariantToFVD = function( variant ) {
-  variant = String( variant )
+  variant = String( variant );
 
-  let fontStyle = 'n' // normal
+  let fontStyle = 'n'; // normal
   if ( - 1 !== variant.indexOf( 'italic' ) ) {
-    fontStyle = 'i'
+    fontStyle = 'i';
     variant = variant.replace( 'italic', '' )
   } else if ( - 1 !== variant.indexOf( 'oblique' ) ) {
-    fontStyle = 'o'
+    fontStyle = 'o';
     variant = variant.replace( 'oblique', '' )
   }
 
-  let fontWeight
+  let fontWeight;
 
 //  The equivalence:
 //
@@ -30,34 +30,34 @@ export const convertFontVariantToFVD = function( variant ) {
 
   switch ( variant ) {
     case '100':
-      fontWeight = '1'
-      break
+      fontWeight = '1';
+      break;
     case '200':
-      fontWeight = '2'
-      break
+      fontWeight = '2';
+      break;
     case '300':
-      fontWeight = '3'
-      break
+      fontWeight = '3';
+      break;
     case '500':
-      fontWeight = '5'
-      break
+      fontWeight = '5';
+      break;
     case '600':
-      fontWeight = '6'
-      break
+      fontWeight = '6';
+      break;
     case '700':
     case 'bold':
-      fontWeight = '7'
-      break
+      fontWeight = '7';
+      break;
     case '800':
-      fontWeight = '8'
-      break
+      fontWeight = '8';
+      break;
     case '900':
-      fontWeight = '9'
-      break
+      fontWeight = '9';
+      break;
     default:
-      fontWeight = '4'
+      fontWeight = '4';
       break
   }
 
   return fontStyle + fontWeight
-}
+};

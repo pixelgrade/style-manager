@@ -4,14 +4,14 @@ import _ from 'lodash';
 // Mirror logic of server-side Utils\Fonts::getCSSValue()
 export const getFontFieldCSSValue = ( settingID, value ) => {
 
-  const CSSValue = {}
+  const CSSValue = {};
 
   if ( typeof value.font_family !== 'undefined' && !_.includes( ['', 'false', false], value.font_family ) ) {
-    CSSValue['font-family'] = value.font_family
+    CSSValue['font-family'] = value.font_family;
     // "Expand" the font family by appending the fallback stack, if any is available.
     // But only do this, if the value is not already a font stack!
     if ( CSSValue['font-family'].indexOf( ',' ) === - 1 ) {
-      const fallbackStack = getFontFamilyFallbackStack( CSSValue['font-family'] )
+      const fallbackStack = getFontFamilyFallbackStack( CSSValue['font-family'] );
       if ( fallbackStack.length ) {
         CSSValue['font-family'] += ',' + fallbackStack
       }
@@ -21,15 +21,15 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
   }
 
   if ( typeof value.font_variant !== 'undefined' && !_.includes( ['', 'false', false], value.font_variant ) ) {
-    let variant = value.font_variant
+    let variant = value.font_variant;
 
     if ( _.isString( variant ) ) {
       // We may have a style in the variant; attempt to split.
       if ( variant.indexOf( 'italic' ) !== - 1 ) {
-        CSSValue['font-style'] = 'italic'
+        CSSValue['font-style'] = 'italic';
         variant = variant.replace( 'italic', '' )
       } else if ( variant.indexOf( 'oblique' ) !== - 1 ) {
-        CSSValue['font-style'] = 'oblique'
+        CSSValue['font-style'] = 'oblique';
         variant = variant.replace( 'oblique', '' )
       }
 
@@ -47,14 +47,14 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
   }
 
   if ( typeof value.font_size !== 'undefined' && !_.includes( ['', 'false', false], value.font_size ) ) {
-    let fontSizeUnit = false
+    let fontSizeUnit = false;
 
-    CSSValue['font-size'] = value.font_size
+    CSSValue['font-size'] = value.font_size;
     // If the value already contains a unit (is not numeric), go with that.
     if ( isNaN( value.font_size ) ) {
       // If we have a standardized value field (as array), use that.
       if ( typeof value.font_size.value !== 'undefined' ) {
-        CSSValue['font-size'] = value.font_size.value
+        CSSValue['font-size'] = value.font_size.value;
         if ( typeof value.font_size.unit !== 'undefined' ) {
           fontSizeUnit = value.font_size.unit
         }
@@ -71,14 +71,14 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
   }
 
   if ( typeof value.letter_spacing !== 'undefined' && !_.includes( ['', 'false', false], value.letter_spacing ) ) {
-    let letterSpacingUnit = false
+    let letterSpacingUnit = false;
 
-    CSSValue['letter-spacing'] = value.letter_spacing
+    CSSValue['letter-spacing'] = value.letter_spacing;
     // If the value already contains a unit (is not numeric), go with that.
     if ( isNaN( value.letter_spacing ) ) {
       // If we have a standardized value field (as array), use that.
       if ( typeof value.letter_spacing.value !== 'undefined' ) {
-        CSSValue['letter-spacing'] = value.letter_spacing.value
+        CSSValue['letter-spacing'] = value.letter_spacing.value;
         if ( typeof value.letter_spacing.unit !== 'undefined' ) {
           letterSpacingUnit = value.letter_spacing.unit
         }
@@ -95,14 +95,14 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
   }
 
   if ( typeof value.line_height !== 'undefined' && !_.includes( ['', 'false', false], value.line_height ) ) {
-    let lineHeightUnit = false
+    let lineHeightUnit = false;
 
-    CSSValue['line-height'] = value.line_height
+    CSSValue['line-height'] = value.line_height;
     // If the value already contains a unit (is not numeric), go with that.
     if ( isNaN( value.line_height ) ) {
       // If we have a standardized value field (as array), use that.
       if ( typeof value.line_height.value !== 'undefined' ) {
-        CSSValue['line-height'] = value.line_height.value
+        CSSValue['line-height'] = value.line_height.value;
         if ( typeof value.line_height.unit !== 'undefined' ) {
           lineHeightUnit = value.line_height.unit
         }
@@ -131,26 +131,26 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
   }
 
   return CSSValue
-}
+};
 
 
 // Mirror logic of server-side Utils\Fonts::getFontStyle()
 export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
   const styleManager = styleManager || parent.styleManager;
   const fontConfig = styleManager.config.settings[settingID];
-  const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix
+  const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix;
 
-  let output = ''
+  let output = '';
 
   if (typeof window !== 'undefined' && typeof fontConfig.callback !== 'undefined' && typeof window[fontConfig.callback] === 'function') {
     // The callbacks expect a string selector right now, not a standardized list.
     // @todo Maybe migrate all callbacks to the new standardized data and remove all this.
-    const plainSelectors = []
+    const plainSelectors = [];
     _.each(fontConfig.selector, function (details, selector) {
       plainSelectors.push(selector)
-    })
-    const adjustedFontConfig = $.extend(true,{},fontConfig)
-    adjustedFontConfig.selector = plainSelectors.join(', ')
+    });
+    const adjustedFontConfig = $.extend(true,{},fontConfig);
+    adjustedFontConfig.selector = plainSelectors.join(', ');
 
     // Also, "kill" all fields unit since we pass final CSS values.
     // @todo For some reason, the client-side Typeline cbs are not consistent and expect the font-size value with unit.
@@ -158,14 +158,14 @@ export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
       if (typeof fieldValue.unit !== 'undefined') {
         adjustedFontConfig['fields'][fieldKey]['unit'] = false;
       }
-    })
+    });
 
     // Callbacks want the value keys with underscores, not dashes.
     // We will provide them in both versions for a smoother transition.
     _.each(cssValue, function (propertyValue, property) {
-      const newKey = property.replace(regexForMultipleReplace, '_')
+      const newKey = property.replace(regexForMultipleReplace, '_');
       cssValue[newKey] = propertyValue
-    })
+    });
 
     return window[fontConfig.callback](cssValue, adjustedFontConfig)
   }
@@ -175,7 +175,7 @@ export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
   }
 
   // The general CSS allowed properties.
-  const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(fontConfig['fields'])
+  const subFieldsCSSAllowedProperties = extractAllowedCSSPropertiesFromFontFields(fontConfig['fields']);
 
   // The selector is standardized to a list of simple string selectors, or a list of complex selectors with details.
   // In either case, the actual selector is in the key, and the value is an array (possibly empty).
@@ -184,8 +184,8 @@ export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
   // for cleanliness we will group the simple ones under a single CSS rule,
   // and output individual CSS rules for complex ones.
   // Right now, for complex CSS selectors we are only interested in the `properties` sub-entry.
-  const simpleCSSSelectors = []
-  const complexCSSSelectors = {}
+  const simpleCSSSelectors = [];
+  const complexCSSSelectors = {};
 
   _.each(fontConfig.selector, function (details, selector) {
     if (_.isEmpty(details.properties)) {
@@ -194,24 +194,24 @@ export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
     } else {
       complexCSSSelectors[selector] = details
     }
-  })
+  });
 
   if (!_.isEmpty(simpleCSSSelectors)) {
-    output += '\n' + simpleCSSSelectors.join(', ') + ' {\n'
-    output += getFontFieldCSSProperties(cssValue, subFieldsCSSAllowedProperties, prefix)
+    output += '\n' + simpleCSSSelectors.join(', ') + ' {\n';
+    output += getFontFieldCSSProperties(cssValue, subFieldsCSSAllowedProperties, prefix);
     output += '}\n'
   }
 
   if (!_.isEmpty(complexCSSSelectors)) {
     _.each(complexCSSSelectors, function (details, selector) {
-      output += '\n' + selector + ' {\n'
-      output += getFontFieldCSSProperties(cssValue, details.properties, prefix)
+      output += '\n' + selector + ' {\n';
+      output += getFontFieldCSSProperties(cssValue, details.properties, prefix);
       output += '}\n'
     })
   }
 
   return output
-}
+};
 
 // This is a mirror logic of the server-side Utils\Fonts::getSubFieldUnit()
 export const getFieldUnit = ( settingID, field ) => {
@@ -252,11 +252,11 @@ export const getFieldUnit = ( settingID, field ) => {
   }
 
   return 'px'
-}
+};
 
 // Mirror logic of server-side Utils\Fonts::getCSSProperties()
 const getFontFieldCSSProperties = function (cssValue, allowedProperties = false, prefix = '') {
-  let output = ''
+  let output = '';
 
   $.each(cssValue, function (property, propertyValue) {
     // We don't want to output empty CSS rules.
@@ -270,10 +270,10 @@ const getFontFieldCSSProperties = function (cssValue, allowedProperties = false,
     }
 
     output += prefix + property + ': ' + propertyValue + ';\n'
-  })
+  });
 
   return output
-}
+};
 
 // Mirror logic of server-side Utils\Fonts::isCSSPropertyAllowed()
 const isCSSPropertyAllowed = function( property, allowedProperties = false ) {
@@ -299,7 +299,7 @@ const isCSSPropertyAllowed = function( property, allowedProperties = false ) {
   }
 
   return false
-}
+};
 
 const extractAllowedCSSPropertiesFromFontFields = ( subfields ) => {
 
@@ -314,7 +314,7 @@ const extractAllowedCSSPropertiesFromFontFields = ( subfields ) => {
     'text-align': false,
     'text-transform': false,
     'text-decoration': false,
-  }
+  };
 
   if ( _.isEmpty( subfields ) ) {
     return allowedProperties
@@ -325,7 +325,7 @@ const extractAllowedCSSPropertiesFromFontFields = ( subfields ) => {
   _.each(subfields, function (value, key) {
     if (typeof allowedProperties[key] !== 'undefined') {
       // Convert values to boolean.
-      allowedProperties[key] = !!value
+      allowedProperties[key] = !!value;
 
       // For font-weight we want font-style to go the same way,
       // since these two are generated from the same subfield: font-weight (actually holding the font variant value).
@@ -333,10 +333,10 @@ const extractAllowedCSSPropertiesFromFontFields = ( subfields ) => {
         allowedProperties['font-style'] = allowedProperties[key]
       }
     }
-  })
+  });
 
   return allowedProperties
-}
+};
 
 export const maybeLoadFontFamily = function (font, settingID) {
 
@@ -348,16 +348,16 @@ export const maybeLoadFontFamily = function (font, settingID) {
 
   const fontConfig = styleManager.config.settings[settingID];
 
-  let family = font.font_family
+  let family = font.font_family;
   // The font family may be a comma separated list like "Roboto, sans"
-  const fontType = parent.sm.customizer.determineFontType(family)
+  const fontType = parent.sm.customizer.determineFontType(family);
 
   if ('system_font' === fontType) {
     // Nothing to do for standard fonts
     return
   }
 
-  const fontDetails = parent.sm.customizer.getFontDetails(family, fontType)
+  const fontDetails = parent.sm.customizer.getFontDetails(family, fontType);
 
   // Handle theme defined fonts and cloud fonts together since they are very similar.
   if (fontType === 'theme_font' || fontType === 'cloud_font') {
@@ -376,10 +376,10 @@ export const maybeLoadFontFamily = function (font, settingID) {
         && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants'])
         && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
         && _.includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
-      ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+      ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
 
     if (!_.isEmpty(variants)) {
-      variants = standardizeToArray(variants)
+      variants = standardizeToArray(variants);
 
       if (!_.isEmpty(variants)) {
         family = family + ':' + variants.map(function (variant) {
@@ -396,7 +396,7 @@ export const maybeLoadFontFamily = function (font, settingID) {
         },
         classes: false,
         events: false,
-      })
+      });
 
       // Remember we've loaded this family (with it's variants) so we don't load it again.
       fontsCache.push(family)
@@ -414,10 +414,10 @@ export const maybeLoadFontFamily = function (font, settingID) {
         && (typeof fontConfig['fields']['font-weight']['loadAllVariants'] === 'undefined' || !fontConfig['fields']['font-weight']['loadAllVariants'])
         && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
         && _.includes(fontDetails.variants, font.font_variant) // If the value variant is not amongst the available ones, load all available variants.
-      ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : []
+      ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
 
     if (!_.isEmpty(variants)) {
-      variants = standardizeToArray(variants)
+      variants = standardizeToArray(variants);
 
       if (!_.isEmpty(variants)) {
         family = family + ':' + variants.join(',')
@@ -429,7 +429,7 @@ export const maybeLoadFontFamily = function (font, settingID) {
         google: {families: [family]},
         classes: false,
         events: false,
-      })
+      });
 
       // Remember we've loaded this family (with it's variants) so we don't load it again.
       fontsCache.push(family)
@@ -438,18 +438,18 @@ export const maybeLoadFontFamily = function (font, settingID) {
   } else {
     // Maybe Typekit, Fonts.com or Fontdeck fonts
   }
-}
+};
 
 // This is a mirror logic of the server-side Utils\Fonts::getFontFamilyFallbackStack()
 const getFontFamilyFallbackStack = function (fontFamily) {
   const styleManager = styleManager || parent.styleManager;
   let fallbackStack = '';
 
-  const fontDetails = parent.sm.customizer.getFontDetails(fontFamily)
+  const fontDetails = parent.sm.customizer.getFontDetails(fontFamily);
   if (typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty(fontDetails.fallback_stack)) {
     fallbackStack = fontDetails.fallback_stack
   } else if (typeof fontDetails.category !== 'undefined' && !_.isEmpty(fontDetails.category)) {
-    const category = fontDetails.category
+    const category = fontDetails.category;
     // Search in the available categories for a match.
     if (typeof styleManager.fonts.categories[category] !== 'undefined') {
       // Matched by category ID/key
@@ -458,10 +458,10 @@ const getFontFamilyFallbackStack = function (fontFamily) {
       // We need to search for aliases.
       _.find(styleManager.fonts.categories, function (categoryDetails) {
         if (typeof categoryDetails.aliases !== 'undefined') {
-          const aliases = maybeImplodeList(categoryDetails.aliases)
+          const aliases = maybeImplodeList(categoryDetails.aliases);
           if (aliases.indexOf(category) !== -1) {
             // Found it.
-            fallbackStack = typeof categoryDetails.fallback_stack !== 'undefined' ? categoryDetails.fallback_stack : ''
+            fallbackStack = typeof categoryDetails.fallback_stack !== 'undefined' ? categoryDetails.fallback_stack : '';
             return true
           }
         }
@@ -472,24 +472,24 @@ const getFontFamilyFallbackStack = function (fontFamily) {
   }
 
   return fallbackStack
-}
+};
 
 // Mirror logic of server-side Utils\Fonts::sanitizeFontFamilyCSSValue()
 const sanitizeFontFamilyCSSValue = function (value) {
   // Since we might get a stack, attempt to treat is a comma-delimited list.
-  let fontFamilies = maybeExplodeList(value)
+  let fontFamilies = maybeExplodeList(value);
   if (!fontFamilies.length) {
     return ''
   }
 
   _.each(fontFamilies, function (fontFamily, key) {
     // Make sure that the font family is free from " or ' or whitespace, at the front.
-    fontFamily = fontFamily.replace(new RegExp(/^\s*["'‘’“”]*\s*/), '')
+    fontFamily = fontFamily.replace(new RegExp(/^\s*["'‘’“”]*\s*/), '');
     // Make sure that the font family is free from " or ' or whitespace, at the back.
-    fontFamily = fontFamily.replace(new RegExp(/\s*["'‘’“”]*\s*$/), '')
+    fontFamily = fontFamily.replace(new RegExp(/\s*["'‘’“”]*\s*$/), '');
 
     if ('' === fontFamily) {
-      delete fontFamilies[key]
+      delete fontFamilies[key];
       return;
     }
 
@@ -500,10 +500,10 @@ const sanitizeFontFamilyCSSValue = function (value) {
 
     // Finally, put it back.
     fontFamilies[key] = fontFamily
-  })
+  });
 
   return maybeImplodeList( fontFamilies );
-}
+};
 
 const standardizeToArray = function (value) {
   if (typeof value === 'string' || typeof value === 'number') {
@@ -513,7 +513,7 @@ const standardizeToArray = function (value) {
   }
 
   return value
-}
+};
 
 const maybeExplodeList = function(str, delimiter = ',') {
   if (typeof str === 'object') {
@@ -545,7 +545,7 @@ const maybeExplodeList = function(str, delimiter = ',') {
 
   // Explode it and return it
   return explode(delimiter, str);
-}
+};
 
 const maybeImplodeList = function(value, glue = ',') {
   // If by any chance we are given a string, just return it
@@ -563,7 +563,7 @@ const maybeImplodeList = function(value, glue = ',') {
 
   // For anything else we return an empty string.
   return ''
-}
+};
 
 const explode = function (delimiter, string, limit) {
   //  discuss at: https://locutus.io/php/explode/
@@ -594,15 +594,15 @@ const explode = function (delimiter, string, limit) {
   }
 
   // Here we go...
-  delimiter += ''
-  string += ''
+  delimiter += '';
+  string += '';
 
-  let s = string.split(delimiter)
+  let s = string.split(delimiter);
 
-  if (typeof limit === 'undefined') return s
+  if (typeof limit === 'undefined') return s;
 
   // Support for limit
-  if (limit === 0) limit = 1
+  if (limit === 0) limit = 1;
 
   // Positive limit
   if (limit > 0) {
@@ -621,9 +621,9 @@ const explode = function (delimiter, string, limit) {
     return []
   }
 
-  s.splice(s.length + limit)
+  s.splice(s.length + limit);
   return s
-}
+};
 
 const implode = function (glue, pieces) {
   //  discuss at: https://locutus.io/php/implode/
@@ -636,12 +636,12 @@ const implode = function (glue, pieces) {
   //   example 2: implode(' ', {first:'Kevin', last: 'van Zonneveld'})
   //   returns 2: 'Kevin van Zonneveld'
 
-  let i = ''
-  let retVal = ''
-  let tGlue = ''
+  let i = '';
+  let retVal = '';
+  let tGlue = '';
 
   if (arguments.length === 1) {
-    pieces = glue
+    pieces = glue;
     glue = ''
   }
 
@@ -650,14 +650,14 @@ const implode = function (glue, pieces) {
       return pieces.join(glue)
     }
     for (i in pieces) {
-      retVal += tGlue + pieces[i]
+      retVal += tGlue + pieces[i];
       tGlue = glue
     }
     return retVal
   }
 
   return pieces
-}
+};
 
 export const inPreviewIframe = () => {
   try {

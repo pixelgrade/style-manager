@@ -11,14 +11,14 @@ export const getNewColor = ( label = '' ) => {
     label: label,
     value: getNewColorHex()
   }
-}
+};
 
 export const getNewColorGroup = () => {
   return {
     uid: `color_group_${ new Date().getTime() }`,
     sources: [ getNewColor( styleManager.l10n.colorPalettes.sourceColorsDefaultLabel ) ]
   }
-}
+};
 
 export const addNewColorGroup = ( config, groupIndex = 0 ) => {
   const newConfig = deepCopy( config ).map( group => {
@@ -38,7 +38,7 @@ export const addNewColorToGroup = ( config, groupIndex, index ) => {
   const newConfig = deepCopy( config );
   newConfig[groupIndex].sources.splice( index + 1, 0, getNewColor( styleManager.l10n.colorPalettes.sourceColorsDefaultLabel ) );
   return newConfig;
-}
+};
 
 export const deleteColor = ( config, groupIndex, index ) => {
   const newConfig = deepCopy( config );
@@ -49,10 +49,10 @@ export const deleteColor = ( config, groupIndex, index ) => {
   }
 
   return newConfig;
-}
+};
 
 export const updateColor = ( config, groupIndex, index, newValue ) => {
   const newConfig = deepCopy( config );
   newConfig[groupIndex].sources[index] = Object.assign( {}, newConfig[groupIndex].sources[index], newValue );
   return newConfig;
-}
+};

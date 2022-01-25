@@ -25,7 +25,7 @@ export const getPalettesFromColors = ( colorGroups, opts = {}, simple = false ) 
                   .map( mapForceColors )
                   .map( mapCreateVariations )
                   .map( mapAddSourceIndex );
-}
+};
 
 const mapForceColors = ( palette ) => {
   const { options, source } = palette;
@@ -48,7 +48,7 @@ const mapForceColors = ( palette ) => {
   palette.colors.sort( ( c1, c2 ) => chroma( c2 ).luminance() - chroma( c1 ).luminance() );
 
   return palette;
-}
+};
 
 const mapCreateVariations = ( palette, index, palettes ) => {
 
@@ -63,17 +63,17 @@ const mapCreateVariations = ( palette, index, palettes ) => {
   palette.darkVariations = getVariationsFromColors( darkColors, source, options, otherPalettes );
 
   return palette;
-}
+};
 
 const getVariationsFromColors = ( colors, sources, options, otherPalettes = [] ) => {
   const scale = chroma.scale( colors ).classes( colors.length );
   return scale.colors( 12 )
               .map( mycolor => getVariation( colors, sources, mycolor, options, otherPalettes ) );
-}
+};
 
 const isWhite = ( hex ) => {
   return chroma.contrast( hex, '#FFFFFF' ) === 1;
-}
+};
 
 const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => {
   const darkerContrast = getMinContrast( options );
@@ -95,7 +95,7 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
     accent: accent || fg2,
     fg1: fg1,
     fg2: fg2,
-  }
+  };
 
   otherPalettes.forEach( ( otherPalette, index ) => {
     const key = `accent${ index + 2 }`;
@@ -104,7 +104,7 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
   } );
 
   return variationConfig;
-}
+};
 
 const getBestAccentColor = ( background, colors, sources, options = {} ) => {
   const accentContrast = 'maximum' !== options.sm_elements_color_contrast ? 2.5 : getMinContrast( options, true );
@@ -113,7 +113,7 @@ const getBestAccentColor = ( background, colors, sources, options = {} ) => {
   accentColorOptions.unshift( ...sources );
 
   return getBestColor( background, accentColorOptions, accentContrast );
-}
+};
 
 const mapAddSourceIndex = ( palette ) => {
   const { source, options } = palette;
@@ -125,7 +125,7 @@ const mapAddSourceIndex = ( palette ) => {
     sourceIndex,
     ...palette
   };
-}
+};
 
 const mapColorToPalette = ( ( options ) => {
 
@@ -162,13 +162,13 @@ const mapAddColors = palette => {
   palette.darkColors = createAutoPalette( palette.source, darkOptions );
 
   return palette;
-}
+};
 
 const getBestPositionInPalette = ( color, colors ) => {
   const mycolors = colors.map( ( color, index ) => ( { color, index } ) );
   mycolors.sort( ( c1, c2 ) => chroma.contrast( c1.color, color ) - chroma.contrast( c2.color, color ) );
   return mycolors[0].index;
-}
+};
 
 const createAutoPalette = ( colors, options = {} ) => {
   const width = parseFloat( options.sm_potential_color_contrast );
@@ -198,7 +198,7 @@ const createAutoPalette = ( colors, options = {} ) => {
   const tempColors = myArray.map( position => scale( position ).hex() );
 
   return chroma.scale( tempColors ).colors( count );
-}
+};
 
 const blend = ( functionalColor, brandColor, ratio = 1 ) => {
   const l1 = chroma( functionalColor ).get( 'hsl.s' );
@@ -206,7 +206,7 @@ const blend = ( functionalColor, brandColor, ratio = 1 ) => {
   const l3 = l1 * ( 1 - 0.8 * ratio ) + l2 * 0.8 * ratio;
 
   return chroma( functionalColor ).mix( brandColor, 0.1 * ratio ).set( 'hsl.s', l3 ).hex();
-}
+};
 
 export const getFunctionalColors = ( colorGroups ) => {
 
@@ -226,4 +226,4 @@ export const getFunctionalColors = ( colorGroups ) => {
     { sources: [ { value: yellow, label: 'Warning', id: '_warning' } ] },
     { sources: [ { value: green, label: 'Success', id: '_success' } ] },
   ];
-}
+};

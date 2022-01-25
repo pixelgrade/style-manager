@@ -22,6 +22,6 @@ const ColorUsageButton = () => {
       </div>
     </div>
   )
-}
+};
 
 export default ColorUsageButton;

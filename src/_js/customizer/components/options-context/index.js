@@ -32,6 +32,6 @@ export const OptionsProvider = ( props ) => {
       { props.children }
     </OptionsContext.Provider>
   )
-}
+};
 
 export default OptionsContext;

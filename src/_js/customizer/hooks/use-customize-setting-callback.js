@@ -10,7 +10,7 @@ const useCustomizeSettingCallback = ( settingID, callback, deps = [] ) => {
 
     wp.customize( settingID, setting => {
       setting.bind( callback );
-    } )
+    } );
 
     return () => {
       wp.customize( settingID, setting => {
@@ -20,6 +20,6 @@ const useCustomizeSettingCallback = ( settingID, callback, deps = [] ) => {
 
   }, deps );
 
-}
+};
 
 export default useCustomizeSettingCallback;

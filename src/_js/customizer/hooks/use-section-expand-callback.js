@@ -14,6 +14,6 @@ const useSectionExpandCallback = ( sectionID, callback ) => {
     }
 
   }, [] );
-}
+};
 
 export default useSectionExpandCallback;

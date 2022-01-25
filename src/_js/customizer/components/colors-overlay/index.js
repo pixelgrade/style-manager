@@ -10,7 +10,7 @@ const ColorsOverlay = ( props ) => {
 
   const changeListener = ( newValue ) => {
     setPalettes( JSON.parse( newValue ) );
-  }
+  };
 
   useEffect( () => {
     // Attach the listeners on component mount.
@@ -27,6 +27,6 @@ const ColorsOverlay = ( props ) => {
       <Preview />
     </Overlay>
   )
-}
+};
 
 export default ColorsOverlay;

@@ -19,4 +19,4 @@ export const initializePaletteBuilder = ( sourceSettingID ) => {
   container.insertBefore( target, container.firstChild );
 
   ReactDOM.render( <Builder sourceSettingID={ sourceSettingID } />, target );
-}
+};

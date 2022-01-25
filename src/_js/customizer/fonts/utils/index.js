@@ -17,9 +17,9 @@ const valueHolderSelector = '.style-manager_font_values';
 
 export const getSettingID = ( $element ) => {
   return getWrapper( $element ).find( valueHolderSelector ).data( 'customize-setting-link' );
-}
+};
 
 export const getWrapper = ( $element ) => {
   return $element.closest( wrapperSelector );
-}
+};
 

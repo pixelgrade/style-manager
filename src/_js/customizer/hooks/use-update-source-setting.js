@@ -6,6 +6,6 @@ const useUpdateSourceSetting = () => {
       setting.set( JSON.stringify( newValue ) );
     } );
   }, [] );
-}
+};
 
 export default useUpdateSourceSetting;

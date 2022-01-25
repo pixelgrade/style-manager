@@ -17,7 +17,7 @@ export const handleRangeFields = () => {
 
     // For each range input add a number field (for preview mainly - but it can also be used for input)
     $rangeFields.each( function( i, obj ) {
-      const $range = $( obj )
+      const $range = $( obj );
       const settingID = $range.data( 'customize-setting-link' );
       const $number = $range.clone();
 
@@ -48,7 +48,7 @@ export const handleRangeFields = () => {
 
     } );
   } );
-}
+};
 
 function onRangePreviewBlur( event ) {
   const $number = $( event.target );
@@ -89,7 +89,7 @@ function hasValidValue( $input ) {
 }
 
 function shake( $field ) {
-  $field.addClass( 'input-shake input-error' )
+  $field.addClass( 'input-shake input-error' );
   $field.one( 'animationend', function() {
     $field.removeClass( 'input-shake input-error' )
   } )

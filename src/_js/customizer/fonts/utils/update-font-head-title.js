@@ -7,12 +7,12 @@ import $ from "jquery";
  * @param wrapper
  */
 export const updateFontHeadTitle = function( newFontDetails, wrapper ) {
-  const fontTitleElement = wrapper.find( '.font-options__head .font-options__font-title' )
+  const fontTitleElement = wrapper.find( '.font-options__head .font-options__font-title' );
 
-  let fontFamilyDisplay = newFontDetails.family
+  let fontFamilyDisplay = newFontDetails.family;
   if ( typeof newFontDetails.family_display === 'string' && newFontDetails.family_display.length ) {
     fontFamilyDisplay = newFontDetails.family_display
   }
 
   $( fontTitleElement ).html( fontFamilyDisplay )
-}
+};

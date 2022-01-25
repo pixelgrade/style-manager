@@ -4,7 +4,7 @@ export const handleColorSelectFields = () => {
   $( '.js-color-select' ).each( function( i, obj ) {
     convertToColorSelect( obj );
   } );
-}
+};
 
 export const convertToColorSelect = ( element ) => {
   const $select = $( element );
@@ -56,7 +56,7 @@ export const convertToColorSelect = ( element ) => {
 
   wp.customize( settingID, ( setting ) => {
     updateColorSelect( setting() );
-    
+
     setting.bind( updateColorSelect );
   } );
-}
+};

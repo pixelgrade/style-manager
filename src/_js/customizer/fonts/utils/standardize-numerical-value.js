@@ -10,7 +10,7 @@ import $ from "jquery";
  * @param valueFirst Optional. Whether to give higher priority to value related data, or to input related one.
  */
 export const standardizeNumericalValue = function( value, input = false, valueFirst = true ) {
-  const standardValue = {value: false, unit: false}
+  const standardValue = {value: false, unit: false};
 
   if ( _.includes( ['', 'false', false], value ) ) {
     return standardValue
@@ -19,20 +19,20 @@ export const standardizeNumericalValue = function( value, input = false, valueFi
   if ( !isNaN( value ) ) {
     standardValue.value = value
   } else if ( typeof value.value !== 'undefined' ) {
-    standardValue.value = value.value
+    standardValue.value = value.value;
     if ( typeof value.unit !== 'undefined' ) {
       standardValue.unit = value.unit
     }
   } else if ( typeof value[0] !== 'undefined' ) {
-    standardValue.value = value[0]
+    standardValue.value = value[0];
     if ( typeof value[1] !== 'undefined' ) {
       standardValue.unit = value[1]
     }
   } else if ( typeof value === 'string' ) {
     // We will get everything in front that is a valid part of a number (float including).
-    const matches = value.match( /^([\d.\-+]+)(.+)/i )
+    const matches = value.match( /^([\d.\-+]+)(.+)/i );
     if ( matches !== null && typeof matches[1] !== 'undefined' ) {
-      standardValue.value = matches[1]
+      standardValue.value = matches[1];
       if ( !_.isEmpty( matches[2] ) ) {
         standardValue.unit = matches[2]
       }
@@ -46,8 +46,8 @@ export const standardizeNumericalValue = function( value, input = false, valueFi
     false === standardValue.unit || _.isEmpty( standardValue.unit )
   ) ) {
     // If we are given an input, we will attempt to extract the unit from its attributes.
-    let fallbackInputUnit = ''
-    const $input = $( input )
+    let fallbackInputUnit = '';
+    const $input = $( input );
 
     if ( valueFirst ) {
       if ( !_.isEmpty( $input.data( 'value_unit' ) ) ) {
@@ -71,4 +71,4 @@ export const standardizeNumericalValue = function( value, input = false, valueFi
   }
 
   return standardValue
-}
+};

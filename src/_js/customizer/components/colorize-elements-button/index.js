@@ -20,7 +20,7 @@ const ColorizeElementsButton = ( props ) => {
           } );
         }
       }
-    }
+    };
 
     const targetSection = wp.customize.section( targetSectionID );
 
@@ -55,6 +55,6 @@ const ColorizeElementsButton = ( props ) => {
       </div>
     </div>
   )
-}
+};
 
 export default ColorizeElementsButton;

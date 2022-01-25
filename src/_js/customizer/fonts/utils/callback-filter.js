@@ -26,7 +26,7 @@ const applyFontSizeInterval = ( fontData, fontsLogic, connectedSettingID, connec
       fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
     }
   }
-}
+};
 
 const applyFontSizeMultiplier = ( fontData, fontSizeMultiplier ) => {
 
@@ -38,7 +38,7 @@ const applyFontSizeMultiplier = ( fontData, fontSizeMultiplier ) => {
   multiplier = multiplier <= 0 ? 1 : multiplier;
 
   fontData.font_size.value = round( parseFloat( fontData.font_size.value ) * multiplier, styleManager.fonts.floatPrecision )
-}
+};
 
 // The line height is determined by getting the value of the polynomial function determined by points.
 export const applyFontStyleIntervals = ( newFontData, fontsLogic ) => {
@@ -68,7 +68,7 @@ export const applyFontStyleIntervals = ( newFontData, fontsLogic ) => {
 
 //    applyFontSizeMultiplier( newFontData, fontsLogic.font_styles_intervals[ idx ].font_size_multiplier );
   }
-}
+};
 
 export const applyLineHeight = ( newFontData, fontsLogic ) => {
   if ( Array.isArray( fontsLogic.font_size_to_line_height_points ) ) {
@@ -76,7 +76,7 @@ export const applyLineHeight = ( newFontData, fontsLogic ) => {
     const lineHeight = result.predict( newFontData[ 'font_size' ].value )[ 1 ];
     newFontData[ 'line_height' ] = standardizeNumericalValue( lineHeight );
   }
-}
+};
 
 export const getCallbackFilter = ( connectedSettingID, connectedSetting, fontsLogic, fontSizeInterval ) => {
 
@@ -98,7 +98,7 @@ export const getCallbackFilter = ( connectedSettingID, connectedSetting, fontsLo
 
   const connectedSettingData = connectedSetting();
 
-  newFontData[ 'font_family' ] = fontsLogic.font_family
+  newFontData[ 'font_family' ] = fontsLogic.font_family;
   newFontData[ 'font_size' ] = standardizeNumericalValue( connectedSettingData.font_size );
 
   applyFontSizeInterval( newFontData, fontsLogic, connectedSettingID, connectedSettingData, fontSizeInterval );
@@ -107,4 +107,4 @@ export const getCallbackFilter = ( connectedSettingID, connectedSetting, fontsLo
   applyLineHeight( newFontData, fontsLogic );
 
   return newFontData;
-}
+};

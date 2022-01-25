@@ -17,6 +17,6 @@ export const PalettesProvider = ( props ) => {
       { props.children }
     </PalettesContext.Provider>
   )
-}
+};
 
 export default PalettesContext;

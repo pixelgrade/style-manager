@@ -37,7 +37,7 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
       }
     `;
   }, '');
-}
+};
 
 const getVariationsCSS = ( variations, offset ) => {
 
@@ -47,7 +47,7 @@ const getVariationsCSS = ( variations, offset ) => {
             ${ getVariationCSS( variations, index, offset ) }  
         `, '' ) }
         `
-}
+};
 
 const getVariationCSS = ( variations, index, offset ) => {
   const variation = variations[ ( index + offset ) % 12 ];
@@ -57,6 +57,6 @@ const getVariationCSS = ( variations, index, offset ) => {
     --sm-${ key }-color-${ index + 1 }: ${ variation[ key ] };`
   }, '' );
 
-}
+};
 
 export default getCSSFromPalettes;

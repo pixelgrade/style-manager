@@ -29,7 +29,7 @@ const OutputUpdater = () => {
   }, [ palettes ] );
 
   return null;
-}
+};
 
 export const Builder = ( props ) => {
 
@@ -63,4 +63,4 @@ export const Builder = ( props ) => {
       </div>
     </ColorsMasterProvider>
   );
-}
+};

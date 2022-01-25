@@ -30,9 +30,9 @@ export const selfUpdateValue = function( wrapper, settingID ) {
     newFontData = $.extend( true, {}, setting() );
 
     inputs.each( function( key, input ) {
-      const $input = $( input )
-      const valueEntry = $input.data( 'value_entry' )
-      let value = $input.val()
+      const $input = $( input );
+      const valueEntry = $input.data( 'value_entry' );
+      let value = $input.val();
 
       // We only pick up subfields values that have been touched by the user, that are enabled (visible) or values that are missing in the oldValue.
       if ( _.isUndefined( valueEntry ) || $input.data( 'disabled' ) || (
@@ -43,7 +43,7 @@ export const selfUpdateValue = function( wrapper, settingID ) {
 
       if ( 'font_family' === valueEntry ) {
         // Get the src of the selected option.
-        const src = $( input.options[input.selectedIndex] ).data( 'src' )
+        const src = $( input.options[input.selectedIndex] ).data( 'src' );
 
         if ( src ) {
           newFontData['src'] = src
@@ -62,20 +62,20 @@ export const selfUpdateValue = function( wrapper, settingID ) {
       } else {
         delete newFontData[valueEntry]
       }
-    } )
+    } );
 
     // We don't need to store font variants or subsets list in the value
     // since we will get those from the global font details.
-    delete newFontData['variants']
-    delete newFontData['subsets']
+    delete newFontData['variants'];
+    delete newFontData['subsets'];
 
     // We need to make sure that we don't "use" any variants not supported by the new font (values passed over from the old value).
     // Get the new font details
-    const newFontDetails = getFontDetails( newFontData['font_family'] )
+    const newFontDetails = getFontDetails( newFontData['font_family'] );
     // Check the font variant
     if ( typeof newFontData['font_variant'] !== 'undefined' && typeof newFontDetails.variants !== 'undefined' && Object.keys( newFontDetails.variants ).length > 0 ) {
       // Make sure that the font_variant is a string, not a number.
-      newFontData['font_variant'] = String( newFontData['font_variant'] )
+      newFontData['font_variant'] = String( newFontData['font_variant'] );
 
       if ( !_.includes( newFontDetails.variants, newFontData['font_variant'] ) ) {
         // The new font doesn't have this variant. Nor should the value.
@@ -93,4 +93,4 @@ export const selfUpdateValue = function( wrapper, settingID ) {
 
   // Finished with the field value self-updating.
   fontsService.setUpdating( settingID, false );
-}
+};

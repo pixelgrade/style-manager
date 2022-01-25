@@ -28,4 +28,4 @@ export const handleTabs = () => {
 
     setActiveTab( $tabs.first() );
   } );
-}
+};

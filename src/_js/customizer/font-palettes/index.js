@@ -24,7 +24,7 @@ export const initializeFontPalettes = () => {
       hideAdvancedFontPaletteControls();
     }
   } );
-}
+};
 
 const applyFontPalette = ( fontsLogic ) => {
   $.each( fontsLogic, ( settingID, config ) => {
@@ -32,14 +32,14 @@ const applyFontPalette = ( fontsLogic ) => {
       setting.set( config );
     } );
   } );
-}
+};
 
 const advancedTabSelector = '#sub-accordion-section-sm_font_palettes_section .sm-tabs__item[data-target="advanced"]';
 
 const hideAdvancedFontPaletteControls = () => {
   $( advancedTabSelector ).css( 'visibility', 'hidden' );
-}
+};
 
 const showAdvancedFontPaletteControls = () => {
   $( advancedTabSelector ).css( 'visibility', 'visible' );
-}
+};

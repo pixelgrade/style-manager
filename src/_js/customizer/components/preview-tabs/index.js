@@ -39,7 +39,7 @@ const PreviewTabs = ( props ) => {
         section.expanded.unbind( callback );
       }
     } )
-  } )
+  } );
 
   useEffect( () => {
 
@@ -70,7 +70,7 @@ const PreviewTabs = ( props ) => {
 
     const callback = ( previewdDevice ) => {
       setVisible( previewdDevice === 'desktop' );
-    }
+    };
 
     wp.customize.previewedDevice.bind( callback );
 
@@ -103,6 +103,6 @@ const PreviewTabs = ( props ) => {
       </div>
     </div>
   );
-}
+};
 
 export default PreviewTabs;

@@ -10,11 +10,11 @@ const usePopFromBackArray = ( sectionID ) => {
       if ( ! isExpanded ) {
         popFromBackArray();
       }
-    }
+    };
 
     wp.customize.section( sectionID, section => {
       section.expanded.bind( callback );
-    } )
+    } );
 
     return () => {
       wp.customize.section( sectionID, section => {
@@ -22,6 +22,6 @@ const usePopFromBackArray = ( sectionID ) => {
       } )
     }
   }, [] );
-}
+};
 
 export default usePopFromBackArray;

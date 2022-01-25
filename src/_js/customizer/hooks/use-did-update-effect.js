@@ -10,6 +10,6 @@ const useDidUpdateEffect = ( fn, inputs ) => {
       didMountRef.current = true;
     }
   }, inputs );
-}
+};
 
 export default useDidUpdateEffect;

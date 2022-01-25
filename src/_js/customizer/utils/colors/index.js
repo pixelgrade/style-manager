@@ -15,7 +15,7 @@ export const getBestColor = ( background, colors, minContrast, please ) => {
   }
 
   return false;
-}
+};
 
 export const getTextColors = ( hex ) => {
 
@@ -28,7 +28,7 @@ export const getTextColors = ( hex ) => {
 
   return luminances.map( luminance => desaturateTextColor( hex, luminance ) );
 
-}
+};
 
 export const getMinContrast = ( options = {}, largeText = false ) => {
 
@@ -41,7 +41,7 @@ export const getMinContrast = ( options = {}, largeText = false ) => {
   }
 
   return 2.63; // arbitrary value: previously constrastArray[4]
-}
+};
 
 export const desaturateTextColor = ( hex, luminance ) => {
   const hpluv = hexToHpluv( hex );
@@ -51,7 +51,7 @@ export const desaturateTextColor = ( hex, luminance ) => {
   const l = Math.min( Math.max( hpluv[ 2 ], 0 ), 100 );
 
   return chroma( hpluvToHex( [ h, p, l ] ) ).luminance( luminance ).hex();
-}
+};
 
 export const myArray = [
   0,
@@ -66,7 +66,7 @@ export const myArray = [
   0.8410, // 10
   0.9247, // 11
   1
-]
+];
 
 export const getColorOptionsIDs = () => {
   return [
@@ -79,7 +79,7 @@ export const getColorOptionsIDs = () => {
     'sm_color_promotion_white',
     'sm_color_promotion_black',
   ];
-}
+};
 
 export const getColorOptionsDefaults = () => {
   const settingsIDs = getColorOptionsIDs();
@@ -91,4 +91,4 @@ export const getColorOptionsDefaults = () => {
   } );
 
   return defaults;
-}
+};

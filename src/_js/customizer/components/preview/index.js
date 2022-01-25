@@ -34,7 +34,7 @@ const Preview = ( props ) => {
       <PalettePreviewList { ...props } isDark={ isDark } />
     </div>
   )
-}
+};
 
 const PalettePreviewList = ( props ) => {
 
@@ -60,7 +60,7 @@ const PalettePreviewList = ( props ) => {
     if ( userPalettes.length ) {
       setActive( userPalettes[0].id );
     }
-  }, [ userPalettes ] )
+  }, [ userPalettes ] );
 
   useCustomizeSettingCallback( 'sm_advanced_palette_output', newValue => {
     setPalettes( JSON.parse( newValue ) );
@@ -79,7 +79,7 @@ const PalettePreviewList = ( props ) => {
       />
     );
   } )
-}
+};
 
 const PalettePreview = ( props ) => {
   const { palette, isActive, setActivePalette, isDark } = props;
@@ -124,7 +124,7 @@ const PalettePreview = ( props ) => {
               const passedProps = {
                 isSource: isSource,
                 showCard: isActive && index + 1 === lastHover,
-              }
+              };
 
               return (
                 <div key={ index + 1 } className={ `palette-preview-swatches sm-variation-${ index + 1 }` }
@@ -141,11 +141,11 @@ const PalettePreview = ( props ) => {
       </div>
     </div>
   )
-}
+};
 
 const getStarVariation = ( variation ) => {
   return ( variation + 6 - 1 ) % 12 + 1;
-}
+};
 
 const PalettePreviewGrade = ( props ) => {
 
@@ -160,7 +160,7 @@ const PalettePreviewGrade = ( props ) => {
       'is-source': isSource,
       'show-card': showCard,
     }
-  )
+  );
 
   return (
     <div className={ className }>
@@ -178,7 +178,7 @@ const PalettePreviewGrade = ( props ) => {
       </div>
     </div>
   );
-}
+};
 
 const PalettePreviewGradeCard = () => {
 
@@ -199,6 +199,6 @@ const PalettePreviewGradeCard = () => {
       </div>
     </div>
   )
-}
+};
 
 export default Preview;

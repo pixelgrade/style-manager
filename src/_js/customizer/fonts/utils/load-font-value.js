@@ -18,11 +18,11 @@ export const loadFontValue = function( wrapper, value, settingID ) {
   fontsService.setLoading( settingID, true );
 
   const optionsList = $( wrapper ).find( '.font-options__options-list' ),
-    inputs = optionsList.find( '[data-value_entry]' )
+    inputs = optionsList.find( '[data-value_entry]' );
 
   inputs.each( function( key, input ) {
-    const $input = $( input )
-    const valueEntry = $input.data( 'value_entry' )
+    const $input = $( input );
+    const valueEntry = $input.data( 'value_entry' );
 
     // In the case of select2, only the original selects have the data field, thus excluding select2 created select DOM elements
     if ( typeof valueEntry === 'undefined' || valueEntry === '' || typeof value[valueEntry] === 'undefined' ) {
@@ -31,11 +31,11 @@ export const loadFontValue = function( wrapper, value, settingID ) {
 
     // We will do this only for numerical sub-fields.
     if ( _.includes( ['letter_spacing', 'line_height', 'font_size'], valueEntry ) ) {
-      const subfieldValue = standardizeNumericalValue( value[valueEntry], input )
+      const subfieldValue = standardizeNumericalValue( value[valueEntry], input );
 
       // Make sure that the unit and value_unit attributes are in place.
       if ( subfieldValue.unit !== '' ) {
-        $input.data( 'value_unit', subfieldValue.unit )
+        $input.data( 'value_unit', subfieldValue.unit );
         if ( _.isEmpty( $input.attr( 'unit' ) ) ) {
           $input.attr( 'unit', subfieldValue.unit )
         }
@@ -44,9 +44,9 @@ export const loadFontValue = function( wrapper, value, settingID ) {
       // If the field unit and value unit differ, we have some conversion to do.
       // We will convert the received value to the appropriate unit declared by the input.
       // We will use a guessed base size of 16px. Not an exact conversion, but it will have to do.
-      const baseSize = 16
-      const subfieldUnit = $input.attr( 'unit' ).trim().toLowerCase()
-      const subfieldValueUnit = $input.data( 'value_unit' ).trim().toLowerCase()
+      const baseSize = 16;
+      const subfieldUnit = $input.attr( 'unit' ).trim().toLowerCase();
+      const subfieldValueUnit = $input.data( 'value_unit' ).trim().toLowerCase();
       // The comparison is intentionally loose.
       if ( subfieldUnit != subfieldValueUnit ) {
         if ( _.includes( ['em', 'rem'], subfieldValueUnit ) && 'px' === subfieldUnit ) {
@@ -72,12 +72,12 @@ export const loadFontValue = function( wrapper, value, settingID ) {
     }
 
     // Mark this input as not touched by the user.
-    $input.data( 'touched', false )
+    $input.data( 'touched', false );
 
-    $input.trigger( 'input', [ 'style-manager' ] )
+    $input.trigger( 'input', [ 'style-manager' ] );
     $input.trigger( 'change', [ 'style-manager' ] )
-  } )
+  } );
 
   // Finished with the field value loading.
   fontsService.setLoading( settingID, false );
-}
+};

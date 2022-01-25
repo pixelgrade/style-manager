@@ -9,7 +9,7 @@ export const handlePresets = () => {
     }
 
   } );
-}
+};
 
 export const handleRadioPreset = preset => {
   const inputs = Array.from( preset.querySelectorAll( '[data-customize-setting-link]' ) );
@@ -36,14 +36,14 @@ export const handleRadioPreset = preset => {
         let sameValue = true;
         wp.customize( optionId, optionSetting => {
           sameValue = currentInputOptions[ optionId ] === optionSetting();
-        } )
+        } );
         return sameValue;
-      } )
+      } );
 
       if ( ! isPreset ) {
         setting.set( 'custom' );
       }
-    }
+    };
 
     // to aboid binding same callback multiple times to the same setting
     // we build an array of settingIds and then bind / unbind the callback
@@ -65,7 +65,7 @@ export const handleRadioPreset = preset => {
           connectedSetting.bind( onConnectedSettingChange );
         } );
       } );
-    }
+    };
 
     const unbindAll = () => {
       linkedSettingsIds.forEach( connectedSettingId => {
@@ -73,7 +73,7 @@ export const handleRadioPreset = preset => {
           connectedSetting.unbind( onConnectedSettingChange );
         } );
       } );
-    }
+    };
 
     setting.bind( newValue => {
 
@@ -96,4 +96,4 @@ export const handleRadioPreset = preset => {
 
     } );
   } );
-}
+};

@@ -35,7 +35,7 @@ export const initializeFonts = function() {
   initializeConnectedFieldsPresets();
 
   reloadConnectedFields();
-}
+};
 
 const initializeConnectedFieldsPresets = () => {
 
@@ -64,7 +64,7 @@ const initializeConnectedFieldsPresets = () => {
       } )
     } );
   } )
-}
+};
 
 const initializeFontFamilyField = ( $fontField ) => {
   const $fontFamilyField = $fontField.find( '.style-manager_font_family' );
@@ -80,7 +80,7 @@ const initializeFontFamilyField = ( $fontField ) => {
 
   $fontFamilyField.on( 'change', onFontFamilyChange );
   bindFontFamilySettingChange( $fontFamilyField );
-}
+};
 
 const initializeSubfields = ( $fontField ) => {
   const $variant = $fontField.find( fontVariantSelector );
@@ -88,14 +88,14 @@ const initializeSubfields = ( $fontField ) => {
   const $range = $fontField.find( 'input[type="range"]' );
 
   // Initialize the select2 field for the font variant
-  initSubfield( $variant, true )
+  initSubfield( $variant, true );
 
   // Initialize all the regular selects in the font subfields
   initSubfield( $select, false );
 
   // Initialize the all the range fields in the font subfields
   initSubfield( $range, false );
-}
+};
 
 const addGoogleFontsToFontFamilyField = ( $fontFamilyField ) => {
   const googleFontsOptions = wp.customize.settings[ 'google_fonts_opts' ];
@@ -113,7 +113,7 @@ const addGoogleFontsToFontFamilyField = ( $fontFamilyField ) => {
       $fontFamilyField.val( activeFontFamily );
     }
   }
-}
+};
 
 const onFontFamilyChange = ( event ) => {
   const newFontFamily = event.target.value;
@@ -121,25 +121,25 @@ const onFontFamilyChange = ( event ) => {
   const $wrapper = $target.closest( wrapperSelector );
 
   // Get the new font details
-  const newFontDetails = getFontDetails( newFontFamily )
+  const newFontDetails = getFontDetails( newFontFamily );
 
   // Update the font field head title (with the new font family name).
-  updateFontHeadTitle( newFontDetails, $wrapper )
+  updateFontHeadTitle( newFontDetails, $wrapper );
 
   // Update the variant subfield with the new options given by the selected font family.
-  updateVariantField( newFontDetails, $wrapper )
+  updateVariantField( newFontDetails, $wrapper );
 
   if ( typeof who !== 'undefined' && who === 'style-manager' ) {
     // The change was triggered programmatically by Style Manager.
     // No need to self-update the value.
   } else {
     // Mark this input as touched by the user.
-    $( event.target ).data( 'touched', true )
+    $( event.target ).data( 'touched', true );
 
     // Serialize subfield values and refresh the fonts in the preview window.
     selfUpdateValue( $wrapper, getSettingID( $target ) );
   }
-}
+};
 
 const bindFontFamilySettingChange = ( $fontFamilyField ) => {
   const $wrapper = $fontFamilyField.closest( wrapperSelector );
@@ -153,7 +153,7 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
       }
     } );
   } );
-}
+};
 
 const reloadConnectedFields = debounce( () => {
   const settingIDs = styleManager.fontPalettes.masterSettingIds;

@@ -17,7 +17,7 @@ const PresetsList = ( props ) => {
       { presets.map( preset => <PaletteListItem preset={ preset } key={ preset.uid } /> ) }
     </div>
   )
-}
+};
 
 export const PaletteListItem = ( props ) => {
   const { preset } = props;
@@ -91,6 +91,6 @@ export const PaletteListItem = ( props ) => {
       </div>
     </div>
   )
-}
+};
 
 export default PresetsList;

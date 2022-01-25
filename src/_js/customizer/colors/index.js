@@ -13,4 +13,4 @@ export const initializeColors = () => {
 
   initializeColorizeElementsButton();
   initializeColorPalettesPreview();
-}
+};

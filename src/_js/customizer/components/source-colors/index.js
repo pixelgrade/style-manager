@@ -54,7 +54,7 @@ export const SourceColors = ( props ) => {
       } ) }
     </div>
   )
-}
+};
 
 const SourceColorsGroup = ( props ) => {
   const { uid, sources } = props;
@@ -62,7 +62,7 @@ const SourceColorsGroup = ( props ) => {
 
   const style = {
     '--sm-source-main-color': sources[0].value,
-  }
+  };
 
   return (
     <div key={ uid } className="c-palette-builder__source-group" style={ style }>
@@ -77,7 +77,7 @@ const SourceColorsGroup = ( props ) => {
       ) ) }
     </div>
   )
-}
+};
 
 const SourceColorControl = ( props ) => {
 
@@ -145,7 +145,7 @@ const SourceColorControl = ( props ) => {
 
   useEffect( () => {
     setActive( hover || menuIsOpen );
-  }, [ hover, menuIsOpen ] )
+  }, [ hover, menuIsOpen ] );
 
   useEffect( () => {
     if ( editable ) {
@@ -180,4 +180,4 @@ const SourceColorControl = ( props ) => {
       } } />
     </div>
   );
-}
+};

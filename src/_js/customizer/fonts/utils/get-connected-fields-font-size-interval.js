@@ -41,4 +41,4 @@ export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
   }
 
   return [ minFontSize, maxFontSize ];
-}
+};

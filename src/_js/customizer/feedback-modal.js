@@ -13,11 +13,11 @@ export const initializeFeedbackModal = () => {
     $userFeedbackFirstStep = $userFeedbackModal.find( '.first-step' ),
     $userFeedbackSecondStep = $userFeedbackModal.find( '.second-step' ),
     $userFeedbackThanksStep = $userFeedbackModal.find( '.thanks-step' ),
-    $userFeedbackErrorStep = $userFeedbackModal.find( '.error-step' )
+    $userFeedbackErrorStep = $userFeedbackModal.find( '.error-step' );
 
   let userFeedbackModalShown = false,
     colorPaletteChanged = false,
-    fontPaletteChanged = false
+    fontPaletteChanged = false;
 
   // Handle when to open the modal.
   wp.customize.bind( 'saved', function() {
@@ -26,7 +26,7 @@ export const initializeFeedbackModal = () => {
       $( 'body' ).addClass( 'feedback-modal-open modal-open' );
       userFeedbackModalShown = true;
     }
-  } )
+  } );
 
   // Handle the color palette changed info update.
   wp.customize( 'sm_advanced_palette_output', setting => {
@@ -50,9 +50,9 @@ export const initializeFeedbackModal = () => {
 
   // Handle the modal submit.
   $userFeedbackForm.on( 'submit', function( event ) {
-    event.preventDefault()
+    event.preventDefault();
 
-    let $form = $( event.target )
+    let $form = $( event.target );
 
     let data = {
       action: 'style_manager_user_feedback',
@@ -60,49 +60,49 @@ export const initializeFeedbackModal = () => {
       type: $form.find( 'input[name=type]' ).val(),
       rating: $form.find( 'input[name=rating]:checked' ).val(),
       message: $form.find( 'textarea[name=message]' ).val()
-    }
+    };
 
     $.post(
       styleManager.config.ajax_url,
       data,
       function( response ) {
         if ( true === response.success ) {
-          $userFeedbackFirstStep.hide()
-          $userFeedbackSecondStep.hide()
-          $userFeedbackThanksStep.show()
+          $userFeedbackFirstStep.hide();
+          $userFeedbackSecondStep.hide();
+          $userFeedbackThanksStep.show();
           $userFeedbackErrorStep.hide()
         } else {
-          $userFeedbackFirstStep.hide()
-          $userFeedbackSecondStep.hide()
-          $userFeedbackThanksStep.hide()
+          $userFeedbackFirstStep.hide();
+          $userFeedbackSecondStep.hide();
+          $userFeedbackThanksStep.hide();
           $userFeedbackErrorStep.show()
         }
       }
     )
-  } )
+  } );
 
   $userFeedbackForm.find( 'input[name=rating]' ).on( 'change', function( event ) {
     // Leave everything in working order
     setTimeout( function() {
       $userFeedbackSecondStep.show()
-    }, 300 )
+    }, 300 );
 
-    let rating = $userFeedbackForm.find( 'input[name=rating]:checked' ).val()
+    let rating = $userFeedbackForm.find( 'input[name=rating]:checked' ).val();
 
     $userFeedbackForm.find( '.rating-placeholder' ).text( rating )
-  } )
+  } );
 
   $userFeedbackCloseBtn.on( 'click', function( event ) {
-    event.preventDefault()
+    event.preventDefault();
 
-    $( 'body' ).removeClass( 'feedback-modal-open modal-open' )
+    $( 'body' ).removeClass( 'feedback-modal-open modal-open' );
 
     // Leave everything in working order
     setTimeout( function() {
-      $userFeedbackFirstStep.show()
-      $userFeedbackSecondStep.hide()
-      $userFeedbackThanksStep.hide()
+      $userFeedbackFirstStep.show();
+      $userFeedbackSecondStep.hide();
+      $userFeedbackThanksStep.hide();
       $userFeedbackErrorStep.hide()
     }, 300 )
   } )
-}
+};

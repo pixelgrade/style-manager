@@ -10,6 +10,6 @@ const Overlay = ( props ) => {
       { props.children }
     </div>
   )
-}
+};
 
 export default Overlay;

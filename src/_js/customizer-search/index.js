@@ -19,14 +19,14 @@ window.styleManager = window.styleManager || parent.styleManager || {};
   }
 
   _.extend(styleManager.search, function () {
-    const api = wp.customize
+    const api = wp.customize;
 
-    const searchWrapperSelector = '#accordion-section-style-manager-customizer-search'
-    const searchInputSelector = '#style-manager-customizer-search-input'
+    const searchWrapperSelector = '#accordion-section-style-manager-customizer-search';
+    const searchInputSelector = '#style-manager-customizer-search-input';
 
-    let customizePanelsParent = null
+    let customizePanelsParent = null;
 
-    let fuse = null
+    let fuse = null;
 
     const init = function () {
 
@@ -37,7 +37,7 @@ window.styleManager = window.styleManager || parent.styleManager || {};
         // Determine if the control should be excluded from search results.
         const excluded = _.find( styleManager.search.excludedControls, function (partial) {
           return controlId.indexOf(partial) !== -1;
-        })
+        });
         if (excluded !== undefined) {
           return
         }
@@ -49,7 +49,7 @@ window.styleManager = window.styleManager || parent.styleManager || {};
           "sectionName": '',
           "panel": null,
           "section": control.section, // This is to know what section to expand when clicking on this result.
-        }
+        };
 
         _.map(api.settings.sections, function (section, index) {
           if (control.section === section.id) {
@@ -59,18 +59,18 @@ window.styleManager = window.styleManager || parent.styleManager || {};
               }
 
               if (section.panel === panel.id) {
-                searchableControl.sectionName = section.title
-                searchableControl.panel = section.panel
+                searchableControl.sectionName = section.title;
+                searchableControl.panel = section.panel;
                 searchableControl.panelName = panel.title
               }
             })
           }
-        })
+        });
 
         return searchableControl
       }).filter(function(item){ // Make sure that we remove excluded controls entries.
         return item !== undefined;
-      })
+      });
 
       // Initialize the FuseJS search
       const fuseOptions = {
@@ -97,20 +97,20 @@ window.styleManager = window.styleManager || parent.styleManager || {};
             weight: 0.4
           }
         ]
-      }
+      };
 
       // Create a new instance of Fuse
-      fuse = new Fuse(searchableControls, fuseOptions)
+      fuse = new Fuse(searchableControls, fuseOptions);
 
-      const $customizeInfo = $('#customize-info')
+      const $customizeInfo = $('#customize-info');
 
-      customizePanelsParent = $('#customize-theme-controls')
-      customizePanelsParent.after('<div id="style-manager-search-results"></div>')
+      customizePanelsParent = $('#customize-theme-controls');
+      customizePanelsParent.after('<div id="style-manager-search-results"></div>');
 
       $customizeInfo.on('keyup', searchInputSelector, function (event) {
-        event.preventDefault()
+        event.preventDefault();
 
-        const searchString = $(searchInputSelector).val()
+        const searchString = $(searchInputSelector).val();
 
         // At least 3 characters required for search.
         if (searchString.length > 2) {
@@ -118,44 +118,44 @@ window.styleManager = window.styleManager || parent.styleManager || {};
         } else if (searchString.length === 0) {
           clearSearch()
         }
-      })
+      });
 
       $customizeInfo.on('click', '.clear-search', function (event) {
         clearSearch()
-      })
+      });
 
       $customizeInfo.on('click', '.close-search', function (event) {
         toggleDisplaySearchForm()
-      })
+      });
 
       $customizeInfo.on('click', '.customize-search-toggle', function (event) {
         toggleDisplaySearchForm()
-      })
+      });
 
-      api.previewer.targetWindow.bind(showSearchButtonToggle)
+      api.previewer.targetWindow.bind(showSearchButtonToggle);
 
       // Handle showing the current search results when returning to the top pane.
-      api.state( 'expandedSection' ).bind(showSearchResultsWhenTopPaneVisible)
+      api.state( 'expandedSection' ).bind(showSearchResultsWhenTopPaneVisible);
       api.state( 'expandedPanel' ).bind(showSearchResultsWhenTopPaneVisible)
-    }
+    };
 
     const showSearchResultsWhenTopPaneVisible = function() {
       if (!api.state( 'expandedSection' ).get() && !api.state( 'expandedPanel' ).get()) {
-        const searchString = $(searchInputSelector).val()
+        const searchString = $(searchInputSelector).val();
         if (searchString?.length > 2) {
           setTimeout( function() {
             displayResults(searchString)
           }, 400)
         }
       }
-    }
+    };
 
     const displayResults = function (stringToSearch) {
-      const resultsArray = fuse.search(stringToSearch)
+      const resultsArray = fuse.search(stringToSearch);
 
       // Bail if no results.
       if (0 === resultsArray.length) {
-        customizePanelsParent.removeClass('search-found')
+        customizePanelsParent.removeClass('search-found');
         return
       }
 
@@ -178,10 +178,10 @@ window.styleManager = window.styleManager || parent.styleManager || {};
 
           // The key is like `label` or `sectionName`.
           highlightedResult.item[match.key] = generateHighlightedText(match.value, match.indices)
-        })
+        });
 
         // Construct the control trail with panel > section.
-        let controlTrail = highlightedResult.item.panelName
+        let controlTrail = highlightedResult.item.panelName;
         if ('' !== highlightedResult.item.sectionName) {
           controlTrail = `${controlTrail} ▸ ${highlightedResult.item.sectionName}`
         }
@@ -195,14 +195,14 @@ window.styleManager = window.styleManager || parent.styleManager || {};
                     <span class="search-setting-path">${controlTrail}</i></span>
                 </li>
                 `
-      }).join('')
+      }).join('');
 
-      customizePanelsParent.addClass('search-found')
-      document.getElementById('style-manager-search-results').innerHTML = `<ul>${html}</ul>`
+      customizePanelsParent.addClass('search-found');
+      document.getElementById('style-manager-search-results').innerHTML = `<ul>${html}</ul>`;
 
-      const searchSettings = document.querySelectorAll('#style-manager-search-results .accordion-section')
+      const searchSettings = document.querySelectorAll('#style-manager-search-results .accordion-section');
       searchSettings.forEach(setting => setting.addEventListener('click', expandSection))
-    }
+    };
 
     // Does not account for overlapping highlighted regions, if that exists at all O_o..
     const generateHighlightedText = function (text, regions) {
@@ -210,90 +210,90 @@ window.styleManager = window.styleManager || parent.styleManager || {};
         return text;
       }
 
-      const highlightedText = []
-      let pair = regions.shift()
+      const highlightedText = [];
+      let pair = regions.shift();
       // Build the formatted string
       for (let i = 0; i < text.length; i++) {
-        const char = text.charAt(i)
+        const char = text.charAt(i);
         if (pair && i == pair[0]) {
           highlightedText.push('<span class="hl">')
         }
-        highlightedText.push(char)
+        highlightedText.push(char);
         if (pair && i == pair[1]) {
-          highlightedText.push('</span>')
+          highlightedText.push('</span>');
           pair = regions.shift()
         }
       }
 
       return highlightedText.join('')
-    }
+    };
 
     /**
      * Shows the message that is shown for when a header
      * or footer is already set for this page.
      */
     const showSearchButtonToggle = function () {
-      let template = wp.template('style-manager-search-button')
+      let template = wp.template('style-manager-search-button');
       if ($('#customize-info .accordion-section-title .customize-search-toggle').length === 0) {
         $('#customize-info .accordion-section-title').append(template())
       }
 
-      template = wp.template('style-manager-search-form')
+      template = wp.template('style-manager-search-form');
       if ($('#customize-info '+searchWrapperSelector).length === 0) {
         $('#customize-info .customize-panel-description').after(template())
       }
-    }
+    };
 
     const toggleDisplaySearchForm = function () {
-      const $wrapper = $(searchWrapperSelector)
+      const $wrapper = $(searchWrapperSelector);
 
       if ($wrapper.hasClass('open')) {
         // Close it
-        $wrapper.removeClass('open')
-        $wrapper.slideUp('fast')
+        $wrapper.removeClass('open');
+        $wrapper.slideUp('fast');
 
         // Also clear the search.
         clearSearch()
       } else {
         // Open it
-        $('.customize-panel-description').removeClass('open')
-        $('.customize-panel-description').slideUp('fast')
+        $('.customize-panel-description').removeClass('open');
+        $('.customize-panel-description').slideUp('fast');
 
-        $wrapper.addClass('open')
-        $wrapper.slideDown('fast')
+        $wrapper.addClass('open');
+        $wrapper.slideDown('fast');
 
         $(searchInputSelector).focus()
       }
-    }
+    };
 
     const expandSection = function (event) {
-      const sectionName = this.getAttribute('data-section')
-      const section = api.section(sectionName)
+      const sectionName = this.getAttribute('data-section');
+      const section = api.section(sectionName);
 
-      customizePanelsParent.removeClass('search-found')
-      document.getElementById('style-manager-search-results').innerHTML = ''
-      $(searchInputSelector).focus()
+      customizePanelsParent.removeClass('search-found');
+      document.getElementById('style-manager-search-results').innerHTML = '';
+      $(searchInputSelector).focus();
 
       section.expand()
-    }
+    };
 
     /**
      * Clear Search input and display all the options.
      */
     const clearSearch = function () {
-      customizePanelsParent.removeClass('search-found')
-      document.getElementById('style-manager-search-results').innerHTML = ''
-      document.getElementById('style-manager-customizer-search-input').value = ''
+      customizePanelsParent.removeClass('search-found');
+      document.getElementById('style-manager-search-results').innerHTML = '';
+      document.getElementById('style-manager-customizer-search-input').value = '';
 
       $(searchInputSelector).focus()
-    }
+    };
 
     // When the customizer is ready prepare the search logic.
-    api.bind('ready', init)
+    api.bind('ready', init);
 
     return {
       init: init,
     }
   }())
 
-})(jQuery, styleManager, wp)
+})(jQuery, styleManager, wp);

@@ -17,4 +17,4 @@ export const maybeFillPalettesArray = ( arr, minLength ) => {
       }
     }
   }
-}
+};

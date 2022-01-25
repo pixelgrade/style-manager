@@ -74,17 +74,17 @@ const maybeLoadWebfontloaderScript = function() {
     let s = document.getElementsByTagName( 'script' )[0];
     s.parentNode.insertBefore( tk, s );
   }
-}
+};
 
 const defaultCallbackFilter = ( value, selector, property, unit = '' ) => {
   return `${ selector } { ${ property }: ${ value }${ unit }; }`;
-}
+};
 
 const getSettingCSS = ( settingID, newValue, settingConfig ) => {
 
   if ( settingConfig.type === 'font' ) {
-    maybeLoadFontFamily( newValue, settingID )
-    const cssValue = getFontFieldCSSValue( settingID, newValue )
+    maybeLoadFontFamily( newValue, settingID );
+    const cssValue = getFontFieldCSSValue( settingID, newValue );
     return getFontFieldCSSCode( settingID, cssValue, newValue );
   }
 
@@ -103,4 +103,4 @@ const getSettingCSS = ( settingID, newValue, settingConfig ) => {
     return `${ acc }
       ${ settingCallback( newValue, selector, property, unit ) }`
   }, '' );
-}
+};

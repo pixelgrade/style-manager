@@ -29,9 +29,9 @@ const useActivePreset = () => {
     setActivePreset( newValue );
   } );
 
-  useCustomizeSettingCallback( 'sm_color_palette_in_use', onActivePresetChange )
+  useCustomizeSettingCallback( 'sm_color_palette_in_use', onActivePresetChange );
 
   return [ activePreset, updateSettings ];
-}
+};
 
 export default useActivePreset;

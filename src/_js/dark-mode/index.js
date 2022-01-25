@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 const COLOR_SCHEME_BUTTON_SELECTOR = '.js-sm-dark-mode-toggle';
 const STORAGE_ITEM = 'color-scheme-dark';
-const TEMP_STORAGE_ITEM = 'color-scheme-dark-temp'
+const TEMP_STORAGE_ITEM = 'color-scheme-dark-temp';
 
 class DarkMode {
 
@@ -114,7 +114,7 @@ class DarkMode {
 
     this.callbacks.forEach( callback => {
       callback( isDark );
-    } )
+    } );
 
     if ( isDark ) {
       window.document.documentElement.classList.add( 'is-dark' );

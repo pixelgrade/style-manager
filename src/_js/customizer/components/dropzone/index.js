@@ -16,7 +16,7 @@ const canInterpolate = ( color1, color2 ) => {
   const luminance2 = chroma( color2 ).luminance();
 
   return Math.abs( luminance1 - luminance2 ) > 0.3;
-}
+};
 
 const maybeInterpolateColors = ( colors ) => {
 
@@ -40,7 +40,7 @@ const maybeInterpolateColors = ( colors ) => {
   }
 
   return [ [ colors[0] ], [ colors[1] ], [ colors[2] ] ];
-}
+};
 
 const DropZone = ( props ) => {
   const updateSourceSetting = useUpdateSourceSetting();
@@ -72,25 +72,25 @@ const DropZone = ( props ) => {
 
   const dragOver = ( e ) => {
     e.preventDefault();
-  }
+  };
 
   const dragEnter = ( e ) => {
     e.preventDefault();
-  }
+  };
 
   const dragLeave = ( e ) => {
     e.preventDefault();
-  }
+  };
 
   const fileDrop = ( e ) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     setFiles( files );
-  }
+  };
 
   const onClick = () => {
     inputFile.current.click();
-  }
+  };
 
   const onFileChange = e => {
     setFiles( e.target.files );
@@ -167,7 +167,7 @@ const DropZone = ( props ) => {
       fr.onload = function() {
         imgSource.src = fr.result;
         imgPreview.src = fr.result;
-      }
+      };
       fr.readAsDataURL( files[0] );
     }
   }, [ files ] );
@@ -227,6 +227,6 @@ const DropZone = ( props ) => {
       <canvas className="dropzone-canvas" ref={ canvasRef } />
     </div>
   )
-}
+};
 
 export default DropZone;

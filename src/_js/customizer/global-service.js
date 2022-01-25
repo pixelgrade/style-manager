@@ -7,61 +7,61 @@ let overrideCustomizerBack = [];
 
 export const loadSettings = () => {
   settings = JSON.parse( JSON.stringify( wp.customize.settings.settings ) );
-}
+};
 
 export const getSettings = () => {
   return settings;
-}
+};
 
 export const setSettings = ( newSettings ) => {
   settings = newSettings;
-}
+};
 
 export const getSetting = ( settingID ) => {
   return settings[settingID];
-}
+};
 
 export const getSettingConfig = ( settingID ) => {
   return styleManager.config.settings[ settingID ];
-}
+};
 
 export const setSettingConfig = ( settingID, newConfig ) => {
   styleManager.config.settings[ settingID ] = newConfig;
-}
+};
 
 export const setSetting = ( settingID, value ) => {
   settings[settingID] = value;
-}
+};
 
 export const getCallback = ( settingID ) => {
   return callbacks[settingID];
-}
+};
 
 export const setCallback = ( settingID, callback ) => {
   callbacks[settingID] = callback;
-}
+};
 
 export const getCallbacks = () => {
   return callbacks;
-}
+};
 
 export const deleteCallbacks = ( settingIDs ) => {
   settingIDs.forEach( settingID => {
     delete callbacks[settingID];
   } );
-}
+};
 
 export const getBackArray = () => {
   return overrideCustomizerBack;
-}
+};
 
 export const addToBackArray = ( section ) => {
   overrideCustomizerBack.push( section );
-}
+};
 
 export const setBackArray = ( newArray ) => {
   overrideCustomizerBack = newArray.slice();
-}
+};
 
 export const pushToBackArray = ( targetSection, section ) => {
   const backArray = getBackArray();
@@ -70,7 +70,7 @@ export const pushToBackArray = ( targetSection, section ) => {
   targetSection.focus();
   setBackArray( backArray );
   addToBackArray( section );
-}
+};
 
 export const popFromBackArray = () => {
   const backArray = getBackArray();
@@ -86,7 +86,7 @@ export const popFromBackArray = () => {
       }
     } );
   }
-}
+};
 
 export const bindConnectedFields = function( settingIDs, filter = noop ) {
 
@@ -107,7 +107,7 @@ export const bindConnectedFields = function( settingIDs, filter = noop ) {
       parentSetting.bind( getCallback( settingID ) );
     } );
   } );
-}
+};
 
 export const unbindConnectedFields = function( settingIDs ) {
   const globalCallbacks = _.pick( getCallbacks(), settingIDs );
@@ -119,6 +119,6 @@ export const unbindConnectedFields = function( settingIDs ) {
   } );
 
   deleteCallbacks( settingIDs );
-}
+};
 
 const noop = x => x;

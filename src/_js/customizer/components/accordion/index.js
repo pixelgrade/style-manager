@@ -34,8 +34,8 @@ export const Accordion = ( props ) => {
       </div>
     )
   } )
-}
+};
 
 export const AccordionSection = ( props ) => {
   return null;
-}
+};

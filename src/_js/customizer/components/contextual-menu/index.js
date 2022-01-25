@@ -13,7 +13,7 @@ const ContextualMenu = ( props ) => {
 
   useEffect( () => {
     onToggle( isOpen );
-  }, [ isOpen ] )
+  }, [ isOpen ] );
 
   const ref = useRef( null );
 
@@ -46,6 +46,6 @@ const ContextualMenu = ( props ) => {
       </div>
     </div>
   )
-}
+};
 
 export default ContextualMenu;

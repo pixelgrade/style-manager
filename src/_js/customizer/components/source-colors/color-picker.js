@@ -41,4 +41,4 @@ export const ColorPicker = ( props ) => {
       </div>
     </div>
   )
-}
+};
