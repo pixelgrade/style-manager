@@ -1755,6 +1755,11 @@ and other section use the available space
   opacity: 0 !important;
 }
 
+@media (min-width: 782px) {
+  .customize-control-sidebar_block_editor .customize-widgets-header {
+    margin-bottom: 0;
+  }
+}
 #customize-theme-controls .control-section[class] .accordion-section-title {
   font-weight: normal;
   padding: calc(0.5 * var(--customizer-spacing)) var(--customizer-spacing);

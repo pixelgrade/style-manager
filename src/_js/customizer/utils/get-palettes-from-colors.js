@@ -56,7 +56,7 @@ const mapCreateVariations = ( palette, index, palettes ) => {
 
   const otherPalettes = palettes.filter( thisPalette => {
     const thisId = `${ thisPalette.id }`;
-    return thisId !== `${ palette.id }` && thisId.charAt( 0 ) !== '_';
+    return `${palette.id}` !== thisId && '_' !== thisId.charAt( 0 );
   } );
 
   palette.variations = getVariationsFromColors( colors, source, options, otherPalettes );
@@ -107,12 +107,12 @@ const getVariation = ( colors, sources, color, options, otherPalettes = [] ) => 
 }
 
 const getBestAccentColor = ( background, colors, sources, options = {} ) => {
-  const accentContrast = options.sm_elements_color_contrast !== 'maximum' ? 2.5 : getMinContrast( options, true );
+  const accentContrast = 'maximum' !== options.sm_elements_color_contrast ? 2.5 : getMinContrast( options, true );
   const accentColorOptions = colors.slice().map( color => color );
 
   accentColorOptions.unshift( ...sources );
 
-  return getBestColor( background, accentColorOptions, accentContrast );;
+  return getBestColor( background, accentColorOptions, accentContrast );
 }
 
 const mapAddSourceIndex = ( palette ) => {
