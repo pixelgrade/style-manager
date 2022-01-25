@@ -79,15 +79,6 @@ class GeneralAssets extends AbstractHookProvider {
 			[ 'jquery' ],
 			VERSION
 		);
-
-		$advanced_palettes_output = $this->options->get( 'sm_advanced_palette_output' );
-
-		if ( $advanced_palettes_output !== null ) {
-			wp_add_inline_style(
-				'pixelgrade_style_manager-sm-colors-custom-properties',
-				sm_get_palette_output_from_color_config( $advanced_palettes_output )
-			);
-		}
 	}
 
 	protected function print_inline_scripts() {

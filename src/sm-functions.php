@@ -576,3 +576,7 @@ if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
 		return substr( $id, 0, 1 ) !== '_';
 	}
 }
+
+function sm_advanced_palette_output_cb( string $value, string $selector, string $property ): string {
+	return sm_get_palette_output_from_color_config( $value );
+}
