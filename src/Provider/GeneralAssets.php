@@ -74,6 +74,14 @@ class GeneralAssets extends AbstractHookProvider {
 			VERSION
 		);
 
+		// Allow the frontend style to be inlined by WP 5.8+
+		// @see https://make.wordpress.org/core/2021/07/01/block-styles-loading-enhancements-in-wordpress-5-8/
+		wp_style_add_data(
+			'pixelgrade_style_manager-sm-colors-custom-properties',
+			'path',
+			$this->plugin->get_path( 'dist/css/sm-colors-custom-properties.css' )
+		);
+
 		wp_register_script(
 			'pixelgrade_style_manager-dark-mode',
 			$this->plugin->get_url( 'dist/js/dark-mode.js' ),
