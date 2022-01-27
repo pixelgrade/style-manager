@@ -285,7 +285,7 @@ function sm_get_variation_css_variables( $variations, $index, $offset = 0 ): str
 	$variation = $variations[ ( $index + $offset ) % 12 ];
 
 	foreach ( $variation as $key => $value ) {
-		$output .= '--sm-' . $key . '-color-' . ( $index + 1 ) . ': ' . $value . ';' . PHP_EOL;
+		$output .= '--sm-' . $key . '-color-' . ( $index + 1 ) . ': ' . $value . '; ';
 	}
 
 	return $output;

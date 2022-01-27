@@ -12,6 +12,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Provider;
 
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use function Pixelgrade\StyleManager\is_customizer;
 use const Pixelgrade\StyleManager\VERSION;
 
 /**
@@ -83,20 +84,21 @@ class GeneralAssets extends AbstractHookProvider {
 
 	protected function print_inline_scripts() {
 		$advanced_palettes_output = $this->options->get( 'sm_advanced_palette_output' );
+		if ( function_exists( '\get_current_screen' ) ) {
+			$screen = \get_current_screen();
+		}
 
 		ob_start(); ?>
 
-		<script id="style-manager-colors-config">
-			window.styleManager = window.styleManager || {};
-			window.styleManager.colorsConfig = JSON.parse( <?php echo json_encode( $advanced_palettes_output ); ?> );
-			window.styleManager.siteColorVariation = <?php echo $this->options->get( 'sm_site_color_variation' ) ?>;
-			window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
-			window.styleManager.frontendOutput = <?php echo json_encode( $this->frontend_output->get_dynamic_style() ); ?>;
-			<?php if ( $advanced_palettes_output !== null ) { ?>
-			window.styleManager.palettes = <?php echo $advanced_palettes_output; ?>;
-			window.styleManager.smAdvancedPalettesOutput = <?php echo json_encode( sm_get_palette_output_from_color_config( $advanced_palettes_output ) ); ?>;
-			<?php } ?>
-		</script>
+<script id="style-manager-colors-config">
+	window.styleManager = window.styleManager || {};
+	window.styleManager.colorsConfig = JSON.parse( <?php echo json_encode( $advanced_palettes_output ); ?> );
+	window.styleManager.siteColorVariation = <?php echo $this->options->get( 'sm_site_color_variation' ) ?>;
+	window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
+	<?php if ( ( ! empty( $screen ) && $screen->is_block_editor() ) || is_customizer()) { ?>
+ 	window.styleManager.frontendOutput = <?php echo json_encode( $this->frontend_output->get_dynamic_style() ); ?>;
+	 <?php } ?>
+</script>
 
 		<?php echo ob_get_clean();
 	}
