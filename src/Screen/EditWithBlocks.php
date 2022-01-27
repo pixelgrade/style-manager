@@ -194,6 +194,9 @@ class EditWithBlocks extends AbstractHookProvider {
 		// Styles and scripts when editing.
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
 		$this->add_action( 'enqueue_block_editor_assets', 'dynamic_styles_scripts', 999 );
+
+		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
+		$this->add_action( 'admin_enqueue_scripts', 'print_script_to_move_dark_classname_to_html' );
 	}
 
 	/**
@@ -305,6 +308,27 @@ class EditWithBlocks extends AbstractHookProvider {
 
 	protected function enqueue_style_manager_scripts() {
 		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
+	}
+
+	public function add_sm_dark_classname_to_body( $classname ) {
+		$dark_mode = \Pixelgrade\StyleManager\get_option( 'sm_dark_mode_advanced', 'off' );
+
+		if ( $dark_mode === 'on' ) {
+			$classname = $classname . ' dark-mode-advanced';
+		}
+
+		return $classname;
+	}
+
+	public function print_script_to_move_dark_classname_to_html() {
+		$data = 'wp.domReady( function() {
+					if ( document.body.classList.contains( "dark-mode-advanced" ) ) {
+						document.documentElement.classList.add( "is-dark" );
+					}
+				} );';
+
+		wp_enqueue_script( 'wp-dom-ready' );
+		wp_add_inline_script( 'wp-dom-ready', $data );
 	}
 
 	/**
