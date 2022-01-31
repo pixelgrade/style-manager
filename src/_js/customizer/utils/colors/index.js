@@ -1,4 +1,4 @@
-import { hexToHpluv, hpluvToHex, hpluvToRgb } from "hsluv";
+import { hexToHpluv, hpluvToHex } from "hsluv";
 import chroma from "chroma-js";
 import { getSettingConfig } from "../../global-service";
 
@@ -87,6 +87,12 @@ export const getColorOptionsDefaults = () => {
 
   settingsIDs.forEach( settingID => {
     const config = getSettingConfig( settingID );
+
+    if ( typeof config === 'undefined' || typeof config.default === 'undefined' ) {
+      defaults[ settingID ] = '#000';
+      return;
+    }
+
     defaults[ settingID ] = config.default;
   } );
 
