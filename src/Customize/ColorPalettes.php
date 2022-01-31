@@ -88,8 +88,6 @@ class ColorPalettes extends AbstractHookProvider {
 		$this->add_filter( 'style_manager/localized_js_settings', 'add_to_localized_data', 10, 1 );
 
 		$this->add_filter( 'language_attributes', 'add_dark_mode_data_attribute', 10, 2 );
-
-		$this->add_action( 'admin_init', 'editor_color_palettes', 20 );
 	}
 
 	/**
@@ -102,33 +100,6 @@ class ColorPalettes extends AbstractHookProvider {
 	public function is_supported(): bool {
 		// For now we will only use the fact that Style Manager is supported.
 		return apply_filters( 'style_manager/color_palettes_are_supported', is_sm_supported() );
-	}
-
-	/**
-	 * Add the SM Color Palettes to the editor sidebar.
-	 *
-	 * @since 2.0.0
-	 */
-	public function editor_color_palettes() {
-
-		// Bail if Color Palettes are not supported
-		if ( ! $this->is_supported() ) {
-			return;
-		}
-
-		$editor_color_palettes = [];
-
-		if ( ! empty( $editor_color_palettes ) ) {
-			/**
-			 * Custom colors for use in the editor.
-			 *
-			 * @link https://wordpress.org/gutenberg/handbook/reference/theme-support/
-			 */
-			add_theme_support(
-				'editor-color-palette',
-				$editor_color_palettes
-			);
-		}
 	}
 
 	/**
