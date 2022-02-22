@@ -45,26 +45,3 @@
     }
   }
 }
-
-[id="sub-accordion-section-sm_font_palettes_section"] {
-
-  [id="customize-control-sm_current_font_palette_control"] ~ * {
-    display: none !important;
-  }
-
-  &.sm-view-palettes {
-    [id="customize-control-sm_font_palette_control"] {
-      display: block !important;
-    }
-  }
-
-  &.sm-view-advanced {
-    [id="customize-control-sm_font_primary_control"],
-    [id="customize-control-sm_font_secondary_control"],
-    [id="customize-control-sm_font_accent_control"],
-    [id="customize-control-sm_font_body_control"],
-    [id="customize-control-sm_fonts_connected_fields_preset_control"] {
-      display: block !important;
-    }
-  }
-}

@@ -771,8 +771,6 @@ class Fonts extends AbstractHookProvider {
 			'sm_font_body',
 			'sm_font_accent',
 			'sm_fonts_connected_fields_preset',
-			'sm_swap_fonts',
-			'sm_swap_primary_secondary_fonts',
 		];
 
 		foreach ( $font_fields as $id => $font ) {
@@ -880,8 +878,6 @@ class Fonts extends AbstractHookProvider {
 			'sm_font_body',
 			'sm_font_accent',
 			'sm_fonts_connected_fields_preset',
-			'sm_swap_fonts',
-			'sm_swap_primary_secondary_fonts',
 		];
 
 		// We will gather Google Fonts and make a single request to the Google Fonts API.

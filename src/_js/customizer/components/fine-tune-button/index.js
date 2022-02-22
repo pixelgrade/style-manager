@@ -3,11 +3,11 @@ import fineTunePaletteIcon from "../../svg/fine-tune-palette.svg";
 import { usePopFromBackArray } from "../../hooks";
 
 const FineTuneButton = () => {
-  usePopFromBackArray( 'sm_fine_tune_palette_section' );
+  usePopFromBackArray( 'sm_fine_tune_color_palette_section' );
 
   return (
     <div className="sm-panel-toggle" onClick={ () => {
-      wp.customize.section( 'sm_fine_tune_palette_section', ( fineTuneSection ) => {
+      wp.customize.section( 'sm_fine_tune_color_palette_section', ( fineTuneSection ) => {
         pushToBackArray( fineTuneSection, 'sm_color_palettes_section' );
       } );
     } }>

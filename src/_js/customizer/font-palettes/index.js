@@ -12,17 +12,8 @@ export const initializeFontPalettes = () => {
       const $input = $( `#${ forID }` );
       const fontsLogic = $input.data( 'fonts_logic' );
 
-      showAdvancedFontPaletteControls();
       applyFontPalette( fontsLogic );
     } );
-  } );
-
-  // Handle the case when there is no selected font palette (like on a fresh installation without any demo data import).
-  // In this case we want to hide the advanced tab.
-  wp.customize( 'sm_font_palette', setting => {
-    if ( ! setting() ) {
-      hideAdvancedFontPaletteControls();
-    }
   } );
 };
 
@@ -32,14 +23,4 @@ const applyFontPalette = ( fontsLogic ) => {
       setting.set( config );
     } );
   } );
-};
-
-const advancedTabSelector = '#sub-accordion-section-sm_font_palettes_section .sm-tabs__item[data-target="advanced"]';
-
-const hideAdvancedFontPaletteControls = () => {
-  $( advancedTabSelector ).css( 'visibility', 'hidden' );
-};
-
-const showAdvancedFontPaletteControls = () => {
-  $( advancedTabSelector ).css( 'visibility', 'visible' );
 };

@@ -25,11 +25,11 @@
   }
 
   input[type="range"] {
-    flex-grow: 1;
+    flex: 1 1 0;
   }
 
   .range-value {
-    flex-basis: 4em;
+    flex: 0 0 4em;
     text-align: center;
   }
 }

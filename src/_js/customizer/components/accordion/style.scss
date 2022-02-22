@@ -19,7 +19,30 @@
   #customize-control-sm_color_grade_balancer_control,
   #customize-control-sm_site_color_variation_control,
   #customize-control-sm_elements_color_contrast_control,
-  [id*="customize-control-sm_color_promotion_"]
+  [id*="customize-control-sm_color_promotion_"],
+
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+
+  #customize-control-sm_font_primary_intro_control,
+  #customize-control-sm_font_primary_control,
+  #customize-control-sm_font_primary_elevation_control,
+  #customize-control-sm_font_primary_pitch_control,
+
+  #customize-control-sm_font_secondary_intro_control,
+  #customize-control-sm_font_secondary_control,
+  #customize-control-sm_font_secondary_elevation_control,
+  #customize-control-sm_font_secondary_pitch_control,
+
+  #customize-control-sm_font_body_intro_control,
+  #customize-control-sm_font_body_control,
+  #customize-control-sm_font_body_elevation_control,
+  #customize-control-sm_font_body_pitch_control,
+
+  #customize-control-sm_font_accent_intro_control,
+  #customize-control-sm_font_accent_control,
+
+  #customize-control-sm_fonts_connected_fields_preset_control
 ) {
   border: 0 solid var(--customizer-border-color);
   background: var(--sm-color-palette-accent-color-1);
@@ -32,7 +55,17 @@
   #customize-control-sm_dark_mode_advanced_control,
 
   #customize-control-sm_color_grades_number_control,
-  #customize-control-sm_elements_color_contrast_control
+  #customize-control-sm_elements_color_contrast_control,
+
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+
+  #customize-control-sm_font_primary_intro_control,
+  #customize-control-sm_font_secondary_intro_control,
+  #customize-control-sm_font_body_intro_control,
+  #customize-control-sm_font_accent_intro_control,
+
+  #customize-control-sm_fonts_connected_fields_preset_control
 ) {
   border-top-width: 1px;
 }
@@ -53,13 +86,30 @@
   #customize-control-sm_color_fine_tune_presets_control,
   #customize-control-sm_site_color_variation_control,
   #customize-control-sm_elements_color_contrast_control,
-  [id*="customize-control-sm_color_promotion_black"]
+  [id*="customize-control-sm_color_promotion_black"],
+
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+
+  #customize-control-sm_font_primary_pitch_control,
+  #customize-control-sm_font_secondary_pitch_control,
+  #customize-control-sm_font_body_pitch_control,
+  #customize-control-sm_font_accent_control
 ) {
   border-bottom-width: 1px;
 
   &.customize-control[class] {
     padding-bottom: var(--customize-control-spacing-y);
   }
+}
+
+:is(
+  #customize-control-sm_font_primary_control,
+  #customize-control-sm_font_secondary_control,
+  #customize-control-sm_font_body_control,
+  #customize-control-sm_font_accent_control
+) {
+  padding-top: 0;
 }
 
 [id="customize-control-sm_colorize_elements_button_control"] {

@@ -1,9 +1,7 @@
 import $ from "jquery";
-import { debounce } from '../../utils';
 import * as globalService from "../global-service";
 
 import {
-  getCallbackFilter,
   getFontDetails,
   getSettingID,
   handleFontPopupToggle,
@@ -15,8 +13,9 @@ import {
   fontsService,
 } from './utils'
 
-import { getCallback, getSetting, setCallback } from "../global-service";
-import { getConnectedFieldsFontSizeInterval } from "./utils/get-connected-fields-font-size-interval";
+import { reloadConnectedFields } from "./connected-fields";
+
+import { getCallback, getSetting, getSettingConfig, setCallback } from "../global-service";
 
 const wrapperSelector = '.font-options__wrapper';
 const fontVariantSelector = '.style-manager_font_weight';
@@ -71,7 +70,7 @@ const initializeFontFamilyField = ( $fontField ) => {
   const familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText;
 
   // Add the Google Fonts opts to each control
-  addGoogleFontsToFontFamilyField( $fontFamilyField );
+//  addGoogleFontsToFontFamilyField( $fontFamilyField );
 
   // Initialize the select2 field for the font family
   $fontFamilyField.select2( {
@@ -154,28 +153,3 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
     } );
   } );
 };
-
-const reloadConnectedFields = debounce( () => {
-  const settingIDs = styleManager.fontPalettes.masterSettingIds;
-
-  globalService.unbindConnectedFields( settingIDs );
-
-  settingIDs.forEach( settingID => {
-    wp.customize( settingID, parentSetting => {
-      setCallback( settingID, fontsLogic => {
-        const settingConfig = globalService.getSettingConfig( settingID );
-        const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
-
-        settingConfig.connected_fields.forEach( key => {
-          const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
-          wp.customize( connectedSettingID, connectedSetting => {
-            connectedSetting.set( getCallbackFilter( connectedSettingID, connectedSetting, fontsLogic, fontSizeInterval ) );
-          } );
-        } );
-      } );
-
-      parentSetting.bind( getCallback( settingID ) );
-    } );
-  } );
-
-}, 30 );

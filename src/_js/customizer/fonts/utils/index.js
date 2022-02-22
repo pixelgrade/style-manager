@@ -1,4 +1,3 @@
-export { getCallbackFilter } from './callback-filter';
 export { convertFontVariantToFVD } from './convert-font-variant';
 export { determineFontType } from './determine-font-type';
 export { getFontDetails } from './get-font-details';

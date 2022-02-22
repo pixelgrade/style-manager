@@ -247,8 +247,8 @@ class ColorPalettes extends AbstractHookProvider {
 		];
 
 		$fine_tune_palette_section = [
-			'title'      => esc_html__( 'Fine-tune palette', '__plugin_txtd' ),
-			'section_id' => 'sm_fine_tune_palette_section',
+			'title'      => esc_html__( 'Fine-tune color palette', '__plugin_txtd' ),
+			'section_id' => 'sm_fine_tune_color_palette_section',
 			'priority'   => 20,
 			'options'    => [],
 		];
@@ -272,7 +272,7 @@ class ColorPalettes extends AbstractHookProvider {
 			}
 		}
 
-		$config['panels']['theme_options_panel']['sections']['sm_fine_tune_palette_section'] = $fine_tune_palette_section;
+		$config['panels']['theme_options_panel']['sections']['sm_fine_tune_color_palette_section'] = $fine_tune_palette_section;
 
 		return $config;
 	}
