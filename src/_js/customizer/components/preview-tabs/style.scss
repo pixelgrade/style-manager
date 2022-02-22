@@ -43,7 +43,6 @@
 
 .sm-preview__tabs {
   display: flex;
-
   border: 2px solid var(--sm-color-palette-accent-color-6);
   color: var(--sm-color-palette-accent-color-10);
   border-radius: 4px;
@@ -52,6 +51,10 @@
 .sm-preview__tab {
   padding: 0.3em 1.2em 0.35em;
   cursor: pointer;
+
+  & + & {
+    border-left: 2px solid var(--sm-color-palette-accent-color-6);
+  }
 }
 
 .sm-preview__tab--active {

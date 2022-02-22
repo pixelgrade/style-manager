@@ -2,7 +2,7 @@ import './style.scss';
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ColorsOverlay } from '../../components';
+import { ColorsOverlay, TypographyOverlay } from '../../components';
 
 const PreviewTabs = ( props ) => {
   const [ active, setActive ] = useState( 'site' );
@@ -12,15 +12,18 @@ const PreviewTabs = ( props ) => {
   const previewRef = useRef();
   const previewHeaderRef = useRef();
 
-  const setting = wp.customize( 'sm_advanced_palette_output' );
-
   const tabs = [
-    { id: 'site', label: styleManager.l10n.colorPalettes.previewTabLiveSiteLabel },
+    { id: 'typography', label: styleManager.l10n.colorPalettes.previewTabTypographyLabel, callback: () => {
+        wp.customize.section( 'sm_font_palettes_section', section => {
+          section.focus();
+        } )
+      } },
     { id: 'colors', label: styleManager.l10n.colorPalettes.previewTabColorSystemLabel, callback: () => {
         wp.customize.section( 'sm_color_palettes_section', section => {
           section.focus();
         } )
-      } }
+      } },
+    { id: 'site', label: styleManager.l10n.colorPalettes.previewTabLiveSiteLabel },
   ];
 
   wp.customize.section( 'sm_color_palettes_section', section => {
@@ -99,7 +102,8 @@ const PreviewTabs = ( props ) => {
         </div>
       </div>
       <div className="sm-preview__content">
-        <ColorsOverlay show={ active === 'colors' } setting={ setting } />
+        <ColorsOverlay show={ active === 'colors' } />
+        <TypographyOverlay show={ active === 'typography' } />
       </div>
     </div>
   );

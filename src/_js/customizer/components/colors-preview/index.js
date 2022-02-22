@@ -7,7 +7,7 @@ import { useCustomizeSettingCallback } from "../../hooks";
 
 import './style.scss';
 
-const Preview = ( props ) => {
+const ColorsPreview = ( props ) => {
 
   const [ isDark, setDark ] = useState( DarkMode.isCompiledDark() );
 
@@ -201,4 +201,4 @@ const PalettePreviewGradeCard = () => {
   )
 };
 
-export default Preview;
+export default ColorsPreview;

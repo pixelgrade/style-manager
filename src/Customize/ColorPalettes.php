@@ -1020,8 +1020,9 @@ class ColorPalettes extends AbstractHookProvider {
 				'<span class="dropzone-info-anchor">',
 				'</span>'
 			),
+			'previewTabTypographyLabel'          => esc_html__( 'Typography', '__plugin_txtd' ),
+			'previewTabColorSystemLabel'         => esc_html__( 'Colors', '__plugin_txtd' ),
 			'previewTabLiveSiteLabel'            => esc_html__( 'Live site', '__plugin_txtd' ),
-			'previewTabColorSystemLabel'         => esc_html__( 'Color system', '__plugin_txtd' ),
 			'palettePreviewTitle'                => esc_html__( 'The color system', '__plugin_txtd' ),
 			'palettePreviewDesc'                 => wp_kses( __( 'The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.', '__plugin_txtd' ), wp_kses_allowed_html() ),
 			'palettePreviewListDesc'             => wp_kses( __( 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.', '__plugin_txtd' ), wp_kses_allowed_html() ),
@@ -1030,6 +1031,15 @@ class ColorPalettes extends AbstractHookProvider {
 			'palettePreviewSwatchForegroundText' => esc_html__( 'Text', '__plugin_txtd' ),
 			'sourceColorsDefaultLabel'           => esc_html__( 'Color', '__plugin_txtd' ),
 			'sourceColorsInterpolatedLabel'      => esc_html__( 'Interpolated Color', '__plugin_txtd' ),
+
+			'typographyPreviewPrimaryShortLabel'   => esc_html__( 'Primary', '__plugin_txtd' ),
+			'typographyPreviewSecondaryShortLabel' => esc_html__( 'Secondary', '__plugin_txtd' ),
+			'typographyPreviewBodyShortLabel'      => esc_html__( 'Body', '__plugin_txtd' ),
+			'typographyPreviewAccentShortLabel'    => esc_html__( 'Accent', '__plugin_txtd' ),
+
+			'typographyPreviewHeadCategoryLabel' => esc_html__( 'Category', '__plugin_txtd' ),
+			'typographyPreviewHeadPreviewLabel'  => esc_html__( 'Preview', '__plugin_txtd' ),
+			'typographyPreviewHeadSizeLabel'     => esc_html__( 'Size', '__plugin_txtd' ),
 		];
 
 		return $localized;

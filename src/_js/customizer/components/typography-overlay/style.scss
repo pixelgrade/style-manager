@@ -1,0 +1,51 @@
+.sm-typography-preview {
+  max-width: 1000px;
+  margin: 50px auto;
+
+  display: grid;
+  gap: 25px;
+  grid-template-columns: max-content 1fr max-content;
+}
+
+.sm-typography-preview__separator {
+  grid-column-end: span 3;
+  border: 0 dashed var(--sm-color-palette-accent-color-4);
+  border-top-width: 2px;
+}
+
+.sm-typography-preview__separator--head {
+  border-style: solid;
+}
+
+.sm-typography-preview__cell--category {
+
+  span {
+    display: block;
+    background: #777;
+    border-radius: 9999em;
+    color: #FFF;
+    padding: 0.25em 1em 0.32em;
+    text-align: center;
+    text-transform: uppercase;
+
+    &.primary {
+      background: #de1651;
+    }
+
+    &.secondary {
+      background: #1bb1a1;
+    }
+
+    &.body {
+      background: #485675;
+    }
+
+    &.accent {
+      background: #5c6ac4;
+    }
+  }
+}
+
+.sm-typography-preview__cell--size {
+  text-align: right;
+}

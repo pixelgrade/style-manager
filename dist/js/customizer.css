@@ -2727,6 +2727,9 @@ img:not([src]) {
   padding: 0.3em 1.2em 0.35em;
   cursor: pointer;
 }
+.sm-preview__tab + .sm-preview__tab {
+  border-left: 2px solid var(--sm-color-palette-accent-color-6);
+}
 
 .sm-preview__tab--active {
   color: var(--sm-color-palette-accent-color-1);
@@ -2769,9 +2772,9 @@ img:not([src]) {
   max-width: 1080px;
   margin: 0 auto;
 }
-/*!***********************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/preview/style.scss ***!
-  \***********************************************************************************************************************************************************************/
+/*!******************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/colors-preview/style.scss ***!
+  \******************************************************************************************************************************************************************************/
 .palette-preview-header {
   padding: 1.5em 0;
   background: var(--sm-current-bg-color);
@@ -3015,4 +3018,50 @@ img:not([src]) {
   top: 50%;
   right: 50%;
   transform: translate(50%, -50%);
+}
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/typography-overlay/style.scss ***!
+  \**********************************************************************************************************************************************************************************/
+.sm-typography-preview {
+  max-width: 1000px;
+  margin: 50px auto;
+  display: grid;
+  gap: 25px;
+  grid-template-columns: max-content 1fr max-content;
+}
+
+.sm-typography-preview__separator {
+  grid-column-end: span 3;
+  border: 0 dashed var(--sm-color-palette-accent-color-4);
+  border-top-width: 2px;
+}
+
+.sm-typography-preview__separator--head {
+  border-style: solid;
+}
+
+.sm-typography-preview__cell--category span {
+  display: block;
+  background: #777;
+  border-radius: 9999em;
+  color: #FFF;
+  padding: 0.25em 1em 0.32em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.sm-typography-preview__cell--category span.primary {
+  background: #de1651;
+}
+.sm-typography-preview__cell--category span.secondary {
+  background: #1bb1a1;
+}
+.sm-typography-preview__cell--category span.body {
+  background: #485675;
+}
+.sm-typography-preview__cell--category span.accent {
+  background: #5c6ac4;
+}
+
+.sm-typography-preview__cell--size {
+  text-align: right;
 }
