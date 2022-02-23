@@ -3028,6 +3028,7 @@ img:not([src]) {
   display: grid;
   gap: 25px;
   grid-template-columns: max-content 1fr max-content;
+  line-height: 1.25;
 }
 
 .sm-typography-preview__separator {
@@ -3040,6 +3041,16 @@ img:not([src]) {
   border-style: solid;
 }
 
+.sm-typography-preview__cell--head {
+  font-family: SF Mono, monospace;
+  font-size: 14px;
+  font-feature-settings: "calt" off;
+  color: var(--sm-color-palette-accent-text-color-2);
+}
+
+.sm-typography-preview__cell--category {
+  align-self: center;
+}
 .sm-typography-preview__cell--category span {
   display: block;
   background: #777;
@@ -3049,19 +3060,30 @@ img:not([src]) {
   text-align: center;
   text-transform: uppercase;
 }
-.sm-typography-preview__cell--category span.primary {
+.sm-typography-preview__cell--category span.sm_font_primary {
   background: #de1651;
 }
-.sm-typography-preview__cell--category span.secondary {
+.sm-typography-preview__cell--category span.sm_font_secondary {
   background: #1bb1a1;
 }
-.sm-typography-preview__cell--category span.body {
+.sm-typography-preview__cell--category span.sm_font_body {
   background: #485675;
 }
-.sm-typography-preview__cell--category span.accent {
+.sm-typography-preview__cell--category span.sm_font_accent {
   background: #5c6ac4;
 }
 
+.sm-typography-preview__cell--preview p {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+.sm-typography-preview__cell--preview p + p {
+  margin-top: 1.5em;
+}
+
 .sm-typography-preview__cell--size {
+  align-self: center;
   text-align: right;
 }

@@ -5,6 +5,8 @@
   display: grid;
   gap: 25px;
   grid-template-columns: max-content 1fr max-content;
+
+  line-height: 1.25;
 }
 
 .sm-typography-preview__separator {
@@ -17,7 +19,15 @@
   border-style: solid;
 }
 
+.sm-typography-preview__cell--head {
+  font-family: SF Mono, monospace;
+  font-size: 14px;
+  font-feature-settings: 'calt' off;
+  color: var( --sm-color-palette-accent-text-color-2);
+}
+
 .sm-typography-preview__cell--category {
+  align-self: center;
 
   span {
     display: block;
@@ -28,24 +38,40 @@
     text-align: center;
     text-transform: uppercase;
 
-    &.primary {
+    &.sm_font_primary {
       background: #de1651;
     }
 
-    &.secondary {
+    &.sm_font_secondary {
       background: #1bb1a1;
     }
 
-    &.body {
+    &.sm_font_body {
       background: #485675;
     }
 
-    &.accent {
+    &.sm_font_accent {
       background: #5c6ac4;
     }
   }
 }
 
+.sm-typography-preview__cell--preview {
+
+  p {
+    margin: 0;
+
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  p + p {
+    margin-top: 1.5em;
+  }
+}
+
 .sm-typography-preview__cell--size {
+  align-self: center;
   text-align: right;
 }

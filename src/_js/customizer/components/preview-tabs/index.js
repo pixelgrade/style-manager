@@ -14,9 +14,9 @@ const PreviewTabs = ( props ) => {
 
   const tabs = [
     { id: 'typography', label: styleManager.l10n.colorPalettes.previewTabTypographyLabel, callback: () => {
-        wp.customize.section( 'sm_font_palettes_section', section => {
-          section.focus();
-        } )
+//        wp.customize.section( 'sm_font_palettes_section', section => {
+//          section.focus();
+//        } )
       } },
     { id: 'colors', label: styleManager.l10n.colorPalettes.previewTabColorSystemLabel, callback: () => {
         wp.customize.section( 'sm_color_palettes_section', section => {

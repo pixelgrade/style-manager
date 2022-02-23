@@ -7,9 +7,9 @@ import {
 
 ;(function ($, window, document) {
 
-  if ( ! inPreviewIframe() ) {
-    return;
-  }
+//  if ( ! inPreviewIframe() ) {
+//    return;
+//  }
 
   $( window ).on( 'load', function() {
     // We need to do this on window.load because on document.ready might be too early.
@@ -18,7 +18,7 @@ import {
 
   window.fontsCache = [];
 
-  const settings = window?.parent?.styleManager?.config?.settings;
+  const settings = window?.top?.styleManager?.config?.settings;
   const getStyleTagID = ( settingID => `dynamic_style_${ settingID.replace( /\\W/g, '_' ) }` );
 
   const properKeys = Object.keys( settings ).filter( settingID => {
@@ -84,6 +84,7 @@ const getSettingCSS = ( settingID, newValue, settingConfig ) => {
 
   if ( settingConfig.type === 'font' ) {
     maybeLoadFontFamily( newValue, settingID );
+    console.log( newValue, settingID );
     const cssValue = getFontFieldCSSValue( settingID, newValue );
     return getFontFieldCSSCode( settingID, cssValue, newValue );
   }

@@ -1,54 +1,55 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState, useMemo, useCallback } from "react";
+import * as globalService from "../../global-service";
 import { Overlay } from "../index";
 import './style.scss';
+import elements from "./elements";
+import useCustomizeSettingCallback from "../../hooks/use-customize-setting-callback";
+import { getConnectedFieldFontData } from "../../fonts/connected-fields";
+import { getFontFieldCSSValue } from "../../../customizer-preview/utils";
+import { getConnectedFieldsIDs, getSetting } from "../../global-service";
 
-const elements = [ {
-  category: 'primary',
-  children: 'Display Heading',
-  size: 20,
-}, {
-  category: 'primary',
-  children: 'Main Heading One',
-  size: 20,
-}, {
-  category: 'primary',
-  children: 'Secondary Heading',
-  size: 20,
-}, {
-  category: 'primary',
-  children: 'Heading Three',
-  size: 20,
-}, {
-  category: 'secondary',
-  children: 'Heading Four',
-  size: 20,
-}, {
-  category: 'secondary',
-  children: 'Heading Five & Six',
-  size: 20,
-}, {
-  category: 'secondary',
-  children: 'Primary Button',
-  size: 20,
-}, {
-  category: 'body',
-  children: 'Opening paragraphs often deserve some form of decorative type treatment to help draw the reader in. These special type treatments serve to mark a clear beginning to an article.',
-  size: 20,
-}, {
-  category: 'body',
-  children: (
-    <Fragment>
-      <p>Paragraphs only need enough space below them to let the reader know they are starting on a new paragraph. Any more space than that is distracting and breaks up the flow of reading. White space is important, but you don’t want huge gaps all down your page.</p>
-      <p>Typography is more than just what fonts you use. Typography is everything that has to do with how the text looks—such as font size, line length, color, and even more subtle things like the whitespace around a text. Good typography sets the tone of your written message and helps to reinforce its meaning and context.</p>
-    </Fragment>
-  ),
-  size: 20,
-}, {
-  category: 'accent',
-  children: (
-    <p>Discover our story</p>
-  ),
-} ]
+const TypographyOverlay = ( props ) => {
+  const { show } = props;
+
+  return (
+    <Overlay show={ show }>
+      <TypographyPreview />
+    </Overlay>
+  )
+}
+
+const TypographyPreview = () => {
+  const settingIDs = styleManager.fontPalettes.masterSettingIds;
+
+  return (
+    <div className="sm-typography-preview">
+      <Cell name="category" isHead>
+        { styleManager.l10n.colorPalettes.typographyPreviewHeadCategoryLabel }
+      </Cell>
+      <Cell name="preview" isHead>
+        { styleManager.l10n.colorPalettes.typographyPreviewHeadPreviewLabel }
+      </Cell>
+      <Cell name="size" isHead>
+        { styleManager.l10n.colorPalettes.typographyPreviewHeadSizeLabel }
+      </Cell>
+      { elements.map( ( element, index ) => {
+        const classNameBase = 'sm-typography-preview__separator';
+        const classNames = [ classNameBase ];
+
+        if ( index === 0 ) {
+          classNames.push( `${ classNameBase }--head` );
+        }
+
+        return (
+          <Fragment>
+            <div className={ classNames.join( '  ' ) } />
+            <Element { ...element } />
+          </Fragment>
+        )
+      } ) }
+    </div>
+  )
+}
 
 const Cell = ( props ) => {
   const { isHead, name, children } = props;
@@ -67,42 +68,87 @@ const Cell = ( props ) => {
   )
 }
 
-const TypographyPreview = ( props ) => {
-  const { show } = props;
-  return (
-    <Overlay show={ show }>
-      <div className="sm-typography-preview">
-        <Cell name="category" isHead>
-          { styleManager.l10n.colorPalettes.typographyPreviewHeadCategoryLabel }
-        </Cell>
-        <Cell name="preview" isHead>
-          { styleManager.l10n.colorPalettes.typographyPreviewHeadPreviewLabel }
-        </Cell>
-        <Cell name="size" isHead>
-          { styleManager.l10n.colorPalettes.typographyPreviewHeadSizeLabel }
-        </Cell>
-        { elements.map( ( element, index ) => {
-          const classNameBase = 'sm-typography-preview__separator';
-          const classNames = [ classNameBase ];
-
-          if ( index === 0 ) {
-            classNames.push( `${ classNameBase }--head` );
-          }
-
-          return (
-            <Fragment>
-              <div className={ classNames.join( '  ' ) } />
-              <Element { ...element } />
-            </Fragment>
-          )
-        } ) }
-      </div>
-    </Overlay>
-  )
+const convertCSSValuesToStrings = style => {
+  return Object.keys( style ).reduce( ( obj, key ) => {
+    const value = `${ style[ key ] }`;
+    const alteredValue = key === 'font-size' ? `${ value }px` : value;
+    return { ...obj, [key]: alteredValue };
+  }, {} )
 }
 
 const Element = ( props ) => {
-  const { category, children, size } = props;
+  const { children, id } = props;
+  const [ size, setSize ] = useState( null );
+  const [ category, setCategory ] = useState( null );
+  const config = globalService.getSettingConfig( 'sm_fonts_connected_fields_preset' );
+  const connectedSettingID = useMemo( () => `${ styleManager.config.options_name }[${ id }]`, [ id ] );
+  const [ style, setStyle ] = useState( {} );
+
+  const onConnectedFieldsPresetChange = useCallback( newValue => {
+    const newValueConfig = config.choices[ newValue ].config;
+
+    Object.keys( newValueConfig ).forEach( settingID => {
+      const connectedFields = newValueConfig[ settingID ];
+
+      if ( connectedFields.some( connectedField => connectedField.includes( id ) ) ) {
+        setCategory( settingID );
+      }
+    } );
+  }, [] )
+
+  const updateSize = useCallback( () => {
+    wp.customize( category, setting => {
+      const fontsLogic = setting();
+      const styles = {};
+
+      wp.customize( connectedSettingID, connectedSetting => {
+        const value = connectedSetting();
+        const FontFieldCSSValue = getFontFieldCSSValue( connectedSettingID, value );
+        const StringCSSValue = convertCSSValuesToStrings( FontFieldCSSValue );
+
+        Object.assign( styles, StringCSSValue );
+      } );
+
+      wp.customize( `${ category }_elevation`, elevationSetting => {
+        wp.customize( `${ category }_pitch`, pitchSetting => {
+          const elevation = elevationSetting();
+          const pitch = pitchSetting();
+          const connectedFieldFontData = getConnectedFieldFontData( connectedSettingID, category, fontsLogic, elevation, pitch );
+          const FontFieldCSSValue = getFontFieldCSSValue( connectedSettingID, connectedFieldFontData );
+          const StringCSSValue = convertCSSValuesToStrings( FontFieldCSSValue );
+
+          setSize( parseInt( connectedFieldFontData?.font_size?.value, 10 ) );
+
+          Object.assign( styles, StringCSSValue );
+        } );
+      } );
+
+      if ( category === 'sm_font_accent' ) {
+        Object.assign( styles, {
+          'font-size': '60px'
+        } );
+      }
+
+      setStyle( styles );
+    } );
+  }, [ category ] );
+
+  useEffect( () => {
+    const settingIDs = styleManager.fontPalettes.masterSettingIds;
+
+    settingIDs.forEach( settingID => {
+      const connectedFields = getConnectedFieldsIDs( settingID );
+
+      if ( connectedFields.some( connectedFieldID => connectedFieldID.includes( id ) ) ) {
+        setCategory( settingID );
+      }
+    } );
+
+  }, [ id ] );
+
+  useCustomizeSettingCallback( 'sm_fonts_connected_fields_preset', onConnectedFieldsPresetChange, [] );
+  useCustomizeSettingCallback( connectedSettingID, updateSize, [ category ] );
+  useEffect( updateSize, [ category ] );
 
   return (
     <Fragment>
@@ -110,10 +156,12 @@ const Element = ( props ) => {
         <Category id={ category } />
       </Cell>
       <Cell name="preview">
-        { children }
+        <div style={ style }>
+          { children }
+        </div>
       </Cell>
       <Cell name="size">
-        { size }
+        { ! isNaN( size ) ? size : null }
       </Cell>
     </Fragment>
   )
@@ -123,16 +171,16 @@ const Category = ( props ) => {
   const { id } = props;
 
   const categories = [ {
-    id: 'primary',
+    id: 'sm_font_primary',
     label: styleManager.l10n.colorPalettes.typographyPreviewPrimaryShortLabel,
   }, {
-    id: 'secondary',
+    id: 'sm_font_secondary',
     label: styleManager.l10n.colorPalettes.typographyPreviewSecondaryShortLabel,
   }, {
-    id: 'body',
+    id: 'sm_font_body',
     label: styleManager.l10n.colorPalettes.typographyPreviewBodyShortLabel,
   }, {
-    id: 'accent',
+    id: 'sm_font_accent',
     label: styleManager.l10n.colorPalettes.typographyPreviewAccentShortLabel,
   } ];
 
@@ -147,4 +195,4 @@ const Category = ( props ) => {
   )
 }
 
-export default TypographyPreview;
+export default TypographyOverlay;

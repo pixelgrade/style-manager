@@ -543,7 +543,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_primary_elevation',
 					'label'        => esc_html__( 'Font Sizing: Elevation', '__plugin_txtd' ),
-					'default'      => 0,
+					'default'      => 24,
 					'input_attrs'  => [
 						'min'  => 0,
 						'max'  => 100,
@@ -558,10 +558,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_primary_pitch',
 					'label'        => esc_html__( 'Font Sizing: Pitch', '__plugin_txtd' ),
-					'default'      => 0,
+					'default'      => 141,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 100,
+						'max'  => 200,
 						'step' => 1,
 					],
 				],
@@ -608,7 +608,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_secondary_elevation',
 					'label'        => esc_html__( 'Elevation', '__plugin_txtd' ),
-					'default'      => 0,
+					'default'      => 16,
 					'input_attrs'  => [
 						'min'  => 0,
 						'max'  => 100,
@@ -622,10 +622,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_secondary_pitch',
 					'label'        => esc_html__( 'Pitch', '__plugin_txtd' ),
-					'default'      => 0,
+					'default'      => 2,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 100,
+						'max'  => 200,
 						'step' => 1,
 					],
 				],
@@ -672,7 +672,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_body_elevation',
 					'label'        => esc_html__( 'Elevation', '__plugin_txtd' ),
-					'default'      => 0,
+					'default'      => 17,
 					'input_attrs'  => [
 						'min'  => 0,
 						'max'  => 100,
@@ -686,7 +686,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_body_pitch',
 					'label'        => esc_html__( 'Pitch', '__plugin_txtd' ),
-					'default'      => 0,
+					'default'      => 7,
 					'input_attrs'  => [
 						'min'  => 0,
 						'max'  => 100,

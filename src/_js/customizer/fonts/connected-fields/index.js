@@ -16,16 +16,19 @@ export const reloadConnectedFields = debounce( () => {
     const pitchSettingID = `${ settingID }_pitch`;
 
     wp.customize( settingID, setting => {
+      let fontsLogic = setting();
+
+      setCallback( settingID, newValue => {
+        fontsLogic = newValue;
+        alterConnectedFields( settingID, fontsLogic )
+      } );
+
+      setting.bind( getCallback( settingID ) );
+
       wp.customize( elevationSettingID, elevationSetting => {
         wp.customize( pitchSettingID, pitchSetting => {
-          let fontsLogic = setting();
           let elevation = elevationSetting();
           let pitch = pitchSetting();
-
-          setCallback( settingID, newValue => {
-            fontsLogic = newValue;
-            alterConnectedFields( settingID, fontsLogic, elevation, pitch )
-          } );
 
           setCallback( elevationSettingID, newValue => {
             elevation = newValue;
@@ -37,7 +40,6 @@ export const reloadConnectedFields = debounce( () => {
             alterConnectedFields( settingID, fontsLogic, elevation, pitch )
           } );
 
-          setting.bind( getCallback( settingID ) );
           elevationSetting.bind( getCallback( elevationSettingID ) );
           pitchSetting.bind( getCallback( pitchSettingID ) );
         } );
@@ -47,41 +49,48 @@ export const reloadConnectedFields = debounce( () => {
 
 }, 30 );
 
-const alterConnectedFields = ( settingID, fontsLogic, elevation, pitch ) => {
+export const getConnectedFieldFontData = ( connectedSettingID, settingID, fontsLogic ) => {
+  const newFontData = {};
+
+  if ( typeof fontsLogic.reset !== 'undefined' ) {
+    return getSettingConfig( connectedSettingID ).default;
+  }
+
+  // The font family is straight forward as it comes directly from the parent field font logic configuration.
+  if ( typeof fontsLogic.font_family === 'undefined' ) {
+    return null;
+  }
+
+  const connectedSetting = wp.customize( connectedSettingID, connectedSetting => {
+    const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
+    const connectedSettingData = connectedSetting();
+
+    newFontData[ 'font_family' ] = fontsLogic.font_family;
+    newFontData[ 'font_size' ] = standardizeNumericalValue( connectedSettingData.font_size );
+
+    const targetFontSizeInterval = getFontSizeInterval( settingID );
+
+    if ( targetFontSizeInterval ) {
+      const connectedSettingConfig = getSettingConfig( connectedSettingID );
+      const fontSize = connectedSettingConfig?.default?.font_size?.value;
+      applyFontSizeInterval( newFontData, fontSize, fontSizeInterval, targetFontSizeInterval );
+    }
+
+    applyFontStyleIntervals( newFontData, fontsLogic, connectedSettingData );
+    applyLineHeight( newFontData, fontsLogic );
+  } );
+
+  return newFontData;
+}
+
+const alterConnectedFields = ( settingID, fontsLogic ) => {
   const settingConfig = getSettingConfig( settingID );
-  const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
 
   settingConfig.connected_fields.forEach( key => {
     const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
 
     wp.customize( connectedSettingID, connectedSetting => {
-      const newFontData = {};
-
-      if ( typeof fontsLogic.reset !== 'undefined' ) {
-        return getSettingConfig( connectedSettingID ).default;
-      }
-
-      // The font family is straight forward as it comes directly from the parent field font logic configuration.
-      if ( typeof fontsLogic.font_family === 'undefined' ) {
-        return;
-      }
-
-      const connectedSettingData = connectedSetting();
-
-      newFontData[ 'font_family' ] = fontsLogic.font_family;
-      newFontData[ 'font_size' ] = standardizeNumericalValue( connectedSettingData.font_size );
-
-      const targetFontSizeInterval = getFontSizeInterval( settingID );
-
-      if ( targetFontSizeInterval ) {
-        const connectedSettingConfig = getSettingConfig( connectedSettingID );
-        const fontSize = connectedSettingConfig?.default?.font_size?.value;
-        applyFontSizeInterval( newFontData, fontSize, fontSizeInterval, targetFontSizeInterval );
-      }
-
-      applyFontStyleIntervals( newFontData, fontsLogic, connectedSettingData );
-      applyLineHeight( newFontData, fontsLogic );
-
+      const newFontData = getConnectedFieldFontData( connectedSettingID, settingID, fontsLogic );
       connectedSetting.set( newFontData );
     } );
   } );
@@ -103,12 +112,13 @@ const getFontSizeInterval = ( settingID ) => {
 }
 
 const getInterval = ( elevation, pitch ) => {
-  const elevationInterval = [ 8, 120 ];
-  const pitchInterval = [ 0, 120 ];
-  const min = elevationInterval[ 0 ] + elevationInterval[ 1 ] * elevation / 100;
-  const max = min + pitchInterval[ 0 ] + pitchInterval[ 1 ] * pitch / 100;
+//  const elevationInterval = [ 8, 120 ];
+//  const pitchInterval = [ 0, 120 ];
+//  const min = elevationInterval[ 0 ] + elevationInterval[ 1 ] * elevation / 100;
+//  const max = min + pitchInterval[ 0 ] + pitchInterval[ 1 ] * pitch / 100;
+//  return [ min, max ];
 
-  return [ min, max ];
+  return [ elevation, elevation + pitch ];
 }
 
 export const applyFontSizeInterval = ( fontData, fontSize, fontSizeInterval, targetFontSizeInterval ) => {

@@ -103,7 +103,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
       // If we have a standardized value field (as array), use that.
       if ( typeof value.line_height.value !== 'undefined' ) {
         CSSValue['line-height'] = value.line_height.value;
-        if ( typeof value.line_height.unit !== 'undefined' ) {
+        if ( !! value.line_height.unit !== 'undefined' ) {
           lineHeightUnit = value.line_height.unit
         }
       } else {

@@ -16,6 +16,7 @@ use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 use \Pixelgrade\StyleManager\Utils\Fonts as FontsHelper;
+use function Pixelgrade\StyleManager\is_customizer;
 
 /**
  * Provides the fonts logic.
@@ -225,6 +226,9 @@ class Fonts extends AbstractHookProvider {
 			$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ), [], null, ! ( 'wp_head' === $load_location ) );
 		add_action( 'wp_enqueue_scripts', [ $this, 'add_webfont_loader_inline_scripts' ], -1 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts_styles' ], 0 );
+
+		add_action( 'customize_controls_print_scripts', [ $this, 'add_webfont_loader_inline_scripts' ], -1 );
+		add_action( 'customize_controls_print_scripts', [ $this, 'enqueue_frontend_scripts_styles' ], 0 );
 		// @todo Not sure this is needed anymore!
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_frontend_scripts_styles' ], 0 );
 		add_action( $load_location, [ $this, 'outputFontsDynamicStyle' ], 100 );
@@ -1007,13 +1011,11 @@ class Fonts extends AbstractHookProvider {
 			}
 		}
 
-		// In the front-end we need to print CSS rules in bulk.
-		if ( ! empty( $output ) && ! is_customize_preview() ) { ?>
+		// In the front-end we need to print CSS rules in bulk. ?>
 			<style id="style-manager_fonts_output">
 				<?php echo $output; ?>
 			</style>
 			<?php
-		}
 	}
 
 	/**
@@ -1365,7 +1367,7 @@ class Fonts extends AbstractHookProvider {
 	 */
 	public function enqueue_frontend_scripts_styles() {
 		// If we are in the Customizer preview, we will always use the WebFontLoader.
-		if ( is_customize_preview() ) {
+		if ( is_customize_preview() || is_customizer() ) {
 			// Always enqueue the WebFontLoader script.
 			wp_enqueue_script( 'pixelgrade_style_manager-web-font-loader' );
 			return;
