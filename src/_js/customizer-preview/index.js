@@ -84,7 +84,6 @@ const getSettingCSS = ( settingID, newValue, settingConfig ) => {
 
   if ( settingConfig.type === 'font' ) {
     maybeLoadFontFamily( newValue, settingID );
-    console.log( newValue, settingID );
     const cssValue = getFontFieldCSSValue( settingID, newValue );
     return getFontFieldCSSCode( settingID, cssValue, newValue );
   }

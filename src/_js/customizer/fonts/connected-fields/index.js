@@ -32,12 +32,12 @@ export const reloadConnectedFields = debounce( () => {
 
           setCallback( elevationSettingID, newValue => {
             elevation = newValue;
-            alterConnectedFields( settingID, fontsLogic, elevation, pitch )
+            alterConnectedFields( settingID, fontsLogic )
           } );
 
           setCallback( pitchSettingID, newValue => {
             pitch = newValue;
-            alterConnectedFields( settingID, fontsLogic, elevation, pitch )
+            alterConnectedFields( settingID, fontsLogic )
           } );
 
           elevationSetting.bind( getCallback( elevationSettingID ) );
@@ -101,8 +101,8 @@ const getFontSizeInterval = ( settingID ) => {
 
   wp.customize( `${ settingID }_elevation`, elevationSetting => {
     wp.customize( `${ settingID }_pitch`, pitchSetting => {
-      const elevation = elevationSetting();
-      const pitch = pitchSetting();
+      const elevation = parseInt( elevationSetting(), 10 );
+      const pitch = parseInt( pitchSetting(), 10 );
 
       fontSizeInterval = getInterval( elevation, pitch );
     } );
