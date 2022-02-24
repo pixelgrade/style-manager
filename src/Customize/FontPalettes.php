@@ -501,7 +501,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 21.1,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_primary_intro',
-					'html'         => '<div class="customize-control-title">' . esc_html__( 'Font Primary', '__plugin_txtd' ) . '</div>' .
+					'html'         => '<div class="customize-control-title font_primary">' . esc_html__( 'Font Primary', '__plugin_txtd' ) . '</div>' .
 					                  '<span class="description customize-control-description">' . esc_html__( 'Adjust the font family and sizing of all the elements from the Font Primary category.', '__plugin_txtd' ) . '</span>',
 				],
 				'sm_font_primary'                 => [
@@ -542,7 +542,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 21.3,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_primary_elevation',
-					'label'        => esc_html__( 'Font Sizing: Elevation', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Font Sizing: Elevation ↑↓', '__plugin_txtd' ),
 					'default'      => 24,
 					'input_attrs'  => [
 						'min'  => 0,
@@ -571,7 +571,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 22.1,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_secondary_intro',
-					'html'         => '<div class="customize-control-title">' . esc_html__( 'Font Secondary', '__plugin_txtd' ) . '</div>',
+					'html'         => '<div class="customize-control-title font_secondary">' . esc_html__( 'Font Secondary', '__plugin_txtd' ) . '</div>',
 				],
 				'sm_font_secondary'               => [
 					'type'             => 'font',
@@ -607,7 +607,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 22.3,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_secondary_elevation',
-					'label'        => esc_html__( 'Elevation', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Elevation ↑↓', '__plugin_txtd' ),
 					'default'      => 16,
 					'input_attrs'  => [
 						'min'  => 0,
@@ -635,7 +635,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 23.1,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_body_intro',
-					'html'         => '<div class="customize-control-title">' . esc_html__( 'Font Body', '__plugin_txtd' ) . '</div>',
+					'html'         => '<div class="customize-control-title font_body">' . esc_html__( 'Font Body', '__plugin_txtd' ) . '</div>',
 				],
 				'sm_font_body'                    => [
 					'type'             => 'font',
@@ -671,7 +671,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 23.3,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_body_elevation',
-					'label'        => esc_html__( 'Elevation', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Elevation ↑↓', '__plugin_txtd' ),
 					'default'      => 17,
 					'input_attrs'  => [
 						'min'  => 0,
@@ -699,7 +699,7 @@ class FontPalettes extends AbstractHookProvider {
 					'priority'     => 24.1,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_accent_intro',
-					'html'         => '<div class="customize-control-title">' . esc_html__( 'Font Accent', '__plugin_txtd' ) . '</div>',
+					'html'         => '<div class="customize-control-title font_accent">' . esc_html__( 'Font Accent', '__plugin_txtd' ) . '</div>',
 				],
 				'sm_font_accent' => [
 					'type'             => 'font',

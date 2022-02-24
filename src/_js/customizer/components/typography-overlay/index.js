@@ -52,11 +52,12 @@ const TypographyPreview = () => {
 }
 
 const Cell = ( props ) => {
-  const { isHead, name, children } = props;
+  const { isHead, name, children, id} = props;
   const classNameBase = 'sm-typography-preview__cell';
   const classNames = [
     classNameBase,
     `${ classNameBase }--${ name }`,
+    id
   ]
 
   if ( isHead ) {
@@ -155,7 +156,7 @@ const Element = ( props ) => {
       <Cell name="category">
         <Category id={ category } />
       </Cell>
-      <Cell name="preview">
+      <Cell name="preview" id={ id }>
         <div style={ style }>
           { children }
         </div>

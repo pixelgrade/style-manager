@@ -20,6 +20,10 @@
   .ui-sortable & {
     --customize-control-spacing-x: 0px;
   }
+
+  label.sm-group__title {
+    font-weight: 600;
+  }
 }
 
 .customize-section-description-container {
