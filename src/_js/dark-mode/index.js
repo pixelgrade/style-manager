@@ -40,6 +40,8 @@ class DarkMode {
     }
 
     api( 'sm_dark_mode_advanced', setting => {
+      this.darkModeSetting = setting();
+
       setting.bind( ( newValue ) => {
         this.darkModeSetting = newValue;
         localStorage.removeItem( TEMP_STORAGE_ITEM );
