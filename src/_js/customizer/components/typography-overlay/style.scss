@@ -6,6 +6,34 @@ $badge-font-secondary: #E06749;
 $badge-font-body: #1D7E70;
 $badge-font-accent: #9C9CDD;
 
+
+// Customizer color variables 
+* {--theme-super-display-color: var(--sm-current-fg2-color); }
+* {--theme-display-color: var(--sm-current-fg2-color); }
+* {--theme-heading-1-color: var(--sm-current-fg2-color); }
+* {--theme-heading-2-color: var(--sm-current-fg2-color); }
+* {--theme-heading-3-color: var(--sm-current-fg2-color); }
+* {--theme-heading-4-color: var(--sm-current-fg2-color); }
+* {--theme-heading-5-color: var(--sm-current-fg2-color); }
+* {--theme-heading-6-color: var(--sm-current-fg2-color); }
+* {--sm-button-background-color: var(--sm-current-accent-color); }
+
+* {
+  --theme-button-x-padding: 1.35em;
+  --theme-button-y-padding: .7em;
+  --theme-button-padding: calc(var(--theme-button-y-padding) - var(--theme-button-border-width)) var(--theme-button-x-padding);
+}
+
+.wp-block-button * {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+
 .sm-typography-preview {
   max-width: 1000px;
   margin: 0 auto;
