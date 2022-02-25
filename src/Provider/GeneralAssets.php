@@ -98,7 +98,7 @@ class GeneralAssets extends AbstractHookProvider {
 	 * @return void
 	 */
 	protected function print_inline_scripts() {
-		$advanced_palettes_output = $this->options->get( 'sm_advanced_palette_output', wp_json_encode( new \stdClass() ) );
+		$advanced_palettes_output = $this->options->get( 'sm_advanced_palette_output', wp_json_encode( [] ) );
 		if ( function_exists( '\get_current_screen' ) ) {
 			$screen = \get_current_screen();
 		}
