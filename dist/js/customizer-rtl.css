@@ -87,10 +87,13 @@
   margin: 0;
 }
 .customize-control:not(:last-child) {
-  padding-bottom: 0;
+  padding-bottom: 1px;
 }
 .ui-sortable .customize-control {
   --customize-control-spacing-x: 0px;
+}
+.customize-control label.sm-group__title {
+  font-weight: 600;
 }
 
 .customize-section-description-container {
@@ -549,20 +552,6 @@ input.font-options__checkbox {
   border-color: var(--sm-color-palette-neutral-color-5);
 }
 
-[id=sub-accordion-section-sm_font_palettes_section] [id=customize-control-sm_current_font_palette_control] ~ * {
-  display: none !important;
-}
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-palettes [id=customize-control-sm_font_palette_control] {
-  display: block !important;
-}
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_primary_control],
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_secondary_control],
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_accent_control],
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_font_body_control],
-[id=sub-accordion-section-sm_font_palettes_section].sm-view-advanced [id=customize-control-sm_fonts_connected_fields_preset_control] {
-  display: block !important;
-}
-
 .sm-radio-group {
   position: relative;
   overflow: hidden;
@@ -720,11 +709,15 @@ input.font-options__checkbox {
   width: 100%;
 }
 .customize-control-range input[type=range] {
-  flex-grow: 1;
+  flex: 1 1 0;
 }
 .customize-control-range .range-value {
-  flex-basis: 4em;
+  flex: 0 0 4em;
   text-align: center;
+}
+.customize-control-range label {
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .customize-control-sm_switch {
@@ -1975,8 +1968,6 @@ and other section use the available space
 .customize-section-description[class] {
   margin-top: 0;
   padding: var(--customizer-spacing);
-  background: var(--sm-color-palette-neutral-color-1);
-  border-bottom: 1px solid var(--customizer-border-color);
 }
 
 #customize-controls[id] {
@@ -2238,7 +2229,24 @@ and other section use the available space
   #customize-control-sm_color_grade_balancer_control,
   #customize-control-sm_site_color_variation_control,
   #customize-control-sm_elements_color_contrast_control,
-  [id*="customize-control-sm_color_promotion_"]) {
+  [id*="customize-control-sm_color_promotion_"],
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+  #customize-control-sm_font_primary_intro_control,
+  #customize-control-sm_font_primary_control,
+  #customize-control-sm_font_primary_elevation_control,
+  #customize-control-sm_font_primary_pitch_control,
+  #customize-control-sm_font_secondary_intro_control,
+  #customize-control-sm_font_secondary_control,
+  #customize-control-sm_font_secondary_elevation_control,
+  #customize-control-sm_font_secondary_pitch_control,
+  #customize-control-sm_font_body_intro_control,
+  #customize-control-sm_font_body_control,
+  #customize-control-sm_font_body_elevation_control,
+  #customize-control-sm_font_body_pitch_control,
+  #customize-control-sm_font_accent_intro_control,
+  #customize-control-sm_font_accent_control,
+  #customize-control-sm_fonts_connected_fields_preset_control) {
   border: 0 solid var(--customizer-border-color);
   background: var(--sm-color-palette-accent-color-1);
 }
@@ -2251,7 +2259,24 @@ and other section use the available space
   #customize-control-sm_color_grade_balancer_control,
   #customize-control-sm_site_color_variation_control,
   #customize-control-sm_elements_color_contrast_control,
-  [id*="customize-control-sm_color_promotion_"]) .customize-control-title {
+  [id*="customize-control-sm_color_promotion_"],
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+  #customize-control-sm_font_primary_intro_control,
+  #customize-control-sm_font_primary_control,
+  #customize-control-sm_font_primary_elevation_control,
+  #customize-control-sm_font_primary_pitch_control,
+  #customize-control-sm_font_secondary_intro_control,
+  #customize-control-sm_font_secondary_control,
+  #customize-control-sm_font_secondary_elevation_control,
+  #customize-control-sm_font_secondary_pitch_control,
+  #customize-control-sm_font_body_intro_control,
+  #customize-control-sm_font_body_control,
+  #customize-control-sm_font_body_elevation_control,
+  #customize-control-sm_font_body_pitch_control,
+  #customize-control-sm_font_accent_intro_control,
+  #customize-control-sm_font_accent_control,
+  #customize-control-sm_fonts_connected_fields_preset_control) .customize-control-title {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.3;
@@ -2261,7 +2286,14 @@ and other section use the available space
 :where(#customize-control-sm_coloration_level_control,
   #customize-control-sm_dark_mode_advanced_control,
   #customize-control-sm_color_grades_number_control,
-  #customize-control-sm_elements_color_contrast_control) {
+  #customize-control-sm_elements_color_contrast_control,
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+  #customize-control-sm_font_primary_intro_control,
+  #customize-control-sm_font_secondary_intro_control,
+  #customize-control-sm_font_body_intro_control,
+  #customize-control-sm_font_accent_intro_control,
+  #customize-control-sm_fonts_connected_fields_preset_control) {
   border-top-width: 1px;
 }
 
@@ -2278,7 +2310,13 @@ and other section use the available space
   #customize-control-sm_color_fine_tune_presets_control,
   #customize-control-sm_site_color_variation_control,
   #customize-control-sm_elements_color_contrast_control,
-  [id*="customize-control-sm_color_promotion_black"]) {
+  [id*="customize-control-sm_color_promotion_black"],
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+  #customize-control-sm_font_primary_pitch_control,
+  #customize-control-sm_font_secondary_pitch_control,
+  #customize-control-sm_font_body_pitch_control,
+  #customize-control-sm_font_accent_control) {
   border-bottom-width: 1px;
 }
 :where(#customize-control-sm_coloration_level_control,
@@ -2287,8 +2325,21 @@ and other section use the available space
   #customize-control-sm_color_fine_tune_presets_control,
   #customize-control-sm_site_color_variation_control,
   #customize-control-sm_elements_color_contrast_control,
-  [id*="customize-control-sm_color_promotion_black"]).customize-control[class] {
+  [id*="customize-control-sm_color_promotion_black"],
+  #customize-control-sm_font_sizing_control,
+  #customize-control-sm_font_palette_control,
+  #customize-control-sm_font_primary_pitch_control,
+  #customize-control-sm_font_secondary_pitch_control,
+  #customize-control-sm_font_body_pitch_control,
+  #customize-control-sm_font_accent_control).customize-control[class] {
   padding-bottom: var(--customize-control-spacing-y);
+}
+
+:is(#customize-control-sm_font_primary_control,
+#customize-control-sm_font_secondary_control,
+#customize-control-sm_font_body_control,
+#customize-control-sm_font_accent_control) {
+  padding-top: 0;
 }
 
 [id=customize-control-sm_colorize_elements_button_control] {
@@ -2683,6 +2734,9 @@ img:not([src]) {
   padding: 0.3em 1.2em 0.35em;
   cursor: pointer;
 }
+.sm-preview__tab + .sm-preview__tab {
+  border-right: 2px solid var(--sm-color-palette-accent-color-6);
+}
 
 .sm-preview__tab--active {
   color: var(--sm-color-palette-accent-color-1);
@@ -2713,10 +2767,6 @@ img:not([src]) {
   opacity: 0;
   pointer-events: none;
 }
-.sm-overlay, .sm-overlay * {
-  font-family: system-ui;
-}
-
 .sm-overlay__container {
   padding: 0 80px;
 }
@@ -2725,9 +2775,9 @@ img:not([src]) {
   max-width: 1080px;
   margin: 0 auto;
 }
-/*!***********************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/preview/style.scss ***!
-  \***********************************************************************************************************************************************************************/
+/*!******************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/colors-preview/style.scss ***!
+  \******************************************************************************************************************************************************************************/
 .palette-preview-header {
   padding: 1.5em 0;
   background: var(--sm-current-bg-color);
@@ -2971,4 +3021,169 @@ img:not([src]) {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js!./src/_js/customizer/components/typography-overlay/style.scss ***!
+  \**********************************************************************************************************************************************************************************/
+/*------------------------------------*\
+  #TYPE SYSTEM PREVIEW
+\*------------------------------------*/
+* {
+  --theme-super-display-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-display-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-heading-1-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-heading-2-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-heading-3-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-heading-4-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-heading-5-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --theme-heading-6-color: var(--sm-current-fg2-color);
+}
+
+* {
+  --sm-button-background-color: var(--sm-current-accent-color);
+}
+
+* {
+  --theme-button-x-padding: 1.35em;
+  --theme-button-y-padding: .7em;
+  --theme-button-padding: calc(var(--theme-button-y-padding) - var(--theme-button-border-width)) var(--theme-button-x-padding);
+}
+
+.wp-block-button * {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.sm-typography-preview {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px;
+  display: grid;
+  gap: 25px;
+  grid-template-columns: min-content auto min-content;
+  line-height: 1.25;
+}
+
+.sm-typography-preview__separator {
+  grid-column-end: span 3;
+  border: 0 dashed var(--sm-color-palette-accent-color-4);
+  border-top-width: 1px;
+}
+
+.sm-typography-preview__separator--head {
+  border-style: solid;
+  border-top-width: 2px;
+}
+
+.sm-typography-preview__cell--head {
+  font-family: SF Mono, monospace;
+  font-size: 14px;
+  font-weight: 600;
+  font-feature-settings: "calt" off;
+  color: var(--sm-color-palette-accent-text-color-2);
+}
+
+.sm-typography-preview__cell--category {
+  align-self: center;
+}
+.sm-typography-preview__cell--category span {
+  display: block;
+  background: #777;
+  border-radius: 9999em;
+  padding: 0.35em 0.8em 0.2em;
+  font-family: SF Mono, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #FFF;
+}
+.sm-typography-preview__cell--category span.sm_font_primary {
+  background: var(--sm-color-palette-accent-color-6, #5c6ac4);
+}
+.sm-typography-preview__cell--category span.sm_font_secondary {
+  background: #E06749;
+}
+.sm-typography-preview__cell--category span.sm_font_body {
+  background: #1D7E70;
+}
+.sm-typography-preview__cell--category span.sm_font_accent {
+  background: #9C9CDD;
+}
+
+.sm-typography-preview__cell--preview {
+  min-width: 0;
+}
+.sm-typography-preview__cell--preview:is(.display_font, .heading_1_font, .heading_2_font, .accent_font) > div {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow-x: clip;
+  text-overflow: ellipsis;
+}
+.sm-typography-preview__cell--preview p {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+.sm-typography-preview__cell--preview p + p {
+  margin-top: 1.5em;
+}
+
+.sm-typography-preview__cell--size {
+  align-self: center;
+  text-align: left;
+  font-family: SF Mono, monospace;
+  font-size: 14px;
+}
+
+/*------------------------------------*\
+  #TYPE SYSTEM OPTIONS
+\*------------------------------------*/
+.customize-control-title:is(.font_primary, .font_secondary, .font_body, .font_accent) {
+  display: inline-block;
+  padding: 0.25em 0.75em 0.25em;
+  background: #777;
+  border-radius: 9999em;
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 500;
+}
+.customize-control-title.font_primary {
+  background: var(--sm-color-palette-accent-color-6, #5c6ac4);
+}
+.customize-control-title.font_secondary {
+  background: #E06749;
+}
+.customize-control-title.font_body {
+  background: #1D7E70;
+}
+.customize-control-title.font_accent {
+  background: #9C9CDD;
 }

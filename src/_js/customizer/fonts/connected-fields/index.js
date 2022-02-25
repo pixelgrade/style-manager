@@ -2,6 +2,7 @@ import { debounce } from "../../../utils";
 import { getCallback, getSettingConfig, setCallback, unbindConnectedFields } from "../../global-service";
 import { getConnectedFieldsFontSizeInterval } from "./get-connected-fields-font-size-interval";
 import { standardizeNumericalValue } from "../utils";
+import { round } from '../utils/round';
 
 export const reloadConnectedFields = debounce( () => {
   const settingIDs = styleManager.fontPalettes.masterSettingIds;
@@ -76,6 +77,7 @@ export const getConnectedFieldFontData = ( connectedSettingID, settingID, fontsL
       applyFontSizeInterval( newFontData, fontSize, fontSizeInterval, targetFontSizeInterval );
     }
 
+    applyFontSizeMultiplier( newFontData, fontsLogic.font_size_multiplier );
     applyFontStyleIntervals( newFontData, fontsLogic, connectedSettingData );
     applyLineHeight( newFontData, fontsLogic );
   } );
@@ -170,6 +172,8 @@ export const applyFontStyleIntervals = ( newFontData, fontsLogic ) => {
     if ( !_.isEmpty( fontsLogic.font_styles_intervals[ idx ].text_transform ) ) {
       newFontData[ 'text_transform' ] = fontsLogic.font_styles_intervals[ idx ].text_transform
     }
+
+     applyFontSizeMultiplier( newFontData, fontsLogic.font_styles_intervals[ idx ].font_size_multiplier );
   }
 };
 
@@ -179,4 +183,18 @@ export const applyLineHeight = ( newFontData, fontsLogic ) => {
     const lineHeight = result.predict( newFontData[ 'font_size' ].value )[ 1 ];
     newFontData[ 'line_height' ] = standardizeNumericalValue( lineHeight );
   }
+};
+
+
+// Use 'font_size_multiplier' in font palette declaration to resize individual fonts 
+const applyFontSizeMultiplier = ( fontData, fontSizeMultiplier ) => {
+
+  if ( typeof fontSizeMultiplier === "undefined" ) {
+    return
+  }
+
+  let multiplier = parseFloat( fontSizeMultiplier );
+  multiplier = multiplier <= 0 ? 1 : multiplier;
+
+  fontData.font_size.value = round( parseFloat( fontData.font_size.value ) * multiplier, styleManager.fonts.floatPrecision )
 };
