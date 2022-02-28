@@ -1,4 +1,4 @@
-import { debounce } from "../../../utils";
+import { debounce, maybeLoadFontFamily } from "../../../utils";
 import { getCallback, getSettingConfig, setCallback, unbindConnectedFields } from "../../global-service";
 import { getConnectedFieldsFontSizeInterval } from "./get-connected-fields-font-size-interval";
 import { standardizeNumericalValue } from "../utils";
@@ -20,6 +20,7 @@ export const reloadConnectedFields = debounce( () => {
 
       setCallback( settingID, newValue => {
         fontsLogic = newValue;
+        maybeLoadFontFamily( newValue, settingID );
         alterConnectedFields( settingID, fontsLogic )
       } );
 

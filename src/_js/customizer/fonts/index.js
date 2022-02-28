@@ -13,6 +13,11 @@ import {
   fontsService,
 } from './utils'
 
+import {
+  maybeLoadWebfontloaderScript,
+  maybeLoadFontFamily,
+} from "../../utils";
+
 import { reloadConnectedFields } from "./connected-fields";
 
 import { getCallback, getSetting, getSettingConfig, setCallback } from "../global-service";
@@ -28,6 +33,10 @@ export const initializeFonts = function() {
 
     initializeFontFamilyField( $fontField );
     initializeSubfields( $fontField );
+  } );
+
+  window.addEventListener( 'pageshow', () => {
+    maybeLoadWebfontloaderScript();
   } );
 
   handleFontPopupToggle();

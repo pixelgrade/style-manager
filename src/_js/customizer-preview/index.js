@@ -2,21 +2,23 @@ import {
   getFontFieldCSSValue,
   getFontFieldCSSCode,
   maybeLoadFontFamily,
+  maybeLoadWebfontloaderScript,
+} from "../utils";
+
+import {
   inPreviewIframe
 } from './utils';
 
 ;(function ($, window, document) {
 
-//  if ( ! inPreviewIframe() ) {
-//    return;
-//  }
+  if ( ! inPreviewIframe() ) {
+    return;
+  }
 
   $( window ).on( 'load', function() {
     // We need to do this on window.load because on document.ready might be too early.
     maybeLoadWebfontloaderScript();
   } );
-
-  window.fontsCache = [];
 
   const settings = window?.top?.styleManager?.config?.settings;
   const getStyleTagID = ( settingID => `dynamic_style_${ settingID.replace( /\\W/g, '_' ) }` );
@@ -64,17 +66,6 @@ import {
   } );
 
 })(jQuery, window, document);
-
-const maybeLoadWebfontloaderScript = function() {
-
-  if ( typeof WebFont === 'undefined' ) {
-    let tk = document.createElement( 'script' );
-    tk.src = parent.styleManager.config.webfontloader_url;
-    tk.type = 'text/javascript';
-    let s = document.getElementsByTagName( 'script' )[0];
-    s.parentNode.insertBefore( tk, s );
-  }
-};
 
 const defaultCallbackFilter = ( value, selector, property, unit = '' ) => {
   return `${ selector } { ${ property }: ${ value }${ unit }; }`;

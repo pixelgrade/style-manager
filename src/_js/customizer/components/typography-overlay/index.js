@@ -1,12 +1,15 @@
 import { Fragment, useEffect, useState, useMemo, useCallback } from "react";
+
+import { getFontFieldCSSValue } from "../../../utils";
+
 import * as globalService from "../../global-service";
+
+import useCustomizeSettingCallback from "../../hooks/use-customize-setting-callback";
+import { getConnectedFieldFontData } from "../../fonts/connected-fields";
+import { getConnectedFieldsIDs, getSetting } from "../../global-service";
 import { Overlay } from "../index";
 import './style.scss';
 import elements from "./elements";
-import useCustomizeSettingCallback from "../../hooks/use-customize-setting-callback";
-import { getConnectedFieldFontData } from "../../fonts/connected-fields";
-import { getFontFieldCSSValue } from "../../../customizer-preview/utils";
-import { getConnectedFieldsIDs, getSetting } from "../../global-service";
 
 const TypographyOverlay = ( props ) => {
   const { show } = props;
