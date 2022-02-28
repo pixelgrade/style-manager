@@ -107,21 +107,26 @@ const getFontSizeInterval = ( settingID ) => {
       const elevation = parseInt( elevationSetting(), 10 );
       const pitch = parseInt( pitchSetting(), 10 );
 
-      fontSizeInterval = getInterval( elevation, pitch );
+      fontSizeInterval = getInterval( settingID, elevation, pitch );
     } );
   } );
 
   return fontSizeInterval;
 }
 
-const getInterval = ( elevation, pitch ) => {
-//  const elevationInterval = [ 8, 120 ];
-//  const pitchInterval = [ 0, 120 ];
-//  const min = elevationInterval[ 0 ] + elevationInterval[ 1 ] * elevation / 100;
-//  const max = min + pitchInterval[ 0 ] + pitchInterval[ 1 ] * pitch / 100;
-//  return [ min, max ];
+const getInterval = ( settingID, elevation, pitch ) => {
 
-  return [ elevation, elevation + pitch ];
+  const bounds = {
+    sm_font_primary: [ 18, 200 ],
+    sm_font_secondary: [ 12, 48 ],
+    sm_font_body: [ 14, 32 ]
+  }
+
+  const settingBounds = bounds[ settingID ];
+  const min = settingBounds[0] + ( settingBounds[1] - settingBounds[0] ) * elevation / 100;
+  const max = min + ( settingBounds[1] - min ) * pitch / 100;
+
+  return [ min, max ];
 }
 
 export const applyFontSizeInterval = ( fontData, fontSize, fontSizeInterval, targetFontSizeInterval ) => {
