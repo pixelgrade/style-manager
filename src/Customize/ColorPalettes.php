@@ -1003,7 +1003,7 @@ class ColorPalettes extends AbstractHookProvider {
 		$localized['l10n']['colorPalettes'] = [
 			'colorizeElementsPanelLabel'         => esc_html__( 'Colorize elements one by one', '__plugin_txtd' ),
 			'builderColorUsagePanelLabel'        => esc_html__( 'Customize colors usage', '__plugin_txtd' ),
-			'builderFineTunePanelLabel'          => esc_html__( 'Fine-tune generated palette', '__plugin_txtd' ),
+			'builderFineTuneColorsLabel'          => esc_html__( 'Fine-tune generated palette', '__plugin_txtd' ),
 			'builderBrandColorsLabel'            => esc_html__( 'Brand Colors', '__plugin_txtd' ),
 			'builderColorPresetsTitle'           => esc_html__( 'Explore colors', '__plugin_txtd' ),
 			'builderColorPresetsDesc'            => esc_html__( 'Curated color presets to help you lay the foundations of the color system and make it easy to get started.', '__plugin_txtd' ),
@@ -1040,6 +1040,9 @@ class ColorPalettes extends AbstractHookProvider {
 			'typographyPreviewHeadCategoryLabel' => esc_html__( 'Category', '__plugin_txtd' ),
 			'typographyPreviewHeadPreviewLabel'  => esc_html__( 'Preview', '__plugin_txtd' ),
 			'typographyPreviewHeadSizeLabel'     => esc_html__( 'Size', '__plugin_txtd' ),
+
+			'builderFineTuneTypographyLabel'     => esc_html__( 'Fine-tune the type system', '__plugin_txtd' ),
+
 		];
 
 		return $localized;
