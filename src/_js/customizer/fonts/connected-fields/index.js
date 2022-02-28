@@ -123,7 +123,10 @@ const getInterval = ( settingID, elevation, pitch ) => {
   }
 
   const settingBounds = bounds[ settingID ];
-  const min = settingBounds[0] + ( settingBounds[1] - settingBounds[0] ) * elevation / 100;
+
+  // Elevation can move the minimum value only halfway to the end of the interval
+  // leaving space for the pitch control to have effect
+  const min = settingBounds[0] + ( settingBounds[1] - settingBounds[0] ) * ( elevation / 100 ) * 0.5;
   const max = min + ( settingBounds[1] - min ) * pitch / 100;
 
   return [ min, max ];

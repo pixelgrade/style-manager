@@ -561,7 +561,7 @@ class FontPalettes extends AbstractHookProvider {
 					'default'      => 141,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 200,
+						'max'  => 100,
 						'step' => 1,
 					],
 				],
@@ -625,7 +625,7 @@ class FontPalettes extends AbstractHookProvider {
 					'default'      => 2,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 200,
+						'max'  => 100,
 						'step' => 1,
 					],
 				],
