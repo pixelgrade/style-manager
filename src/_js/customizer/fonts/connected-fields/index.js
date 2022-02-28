@@ -118,7 +118,7 @@ const getInterval = ( settingID, elevation, pitch ) => {
 
   const bounds = {
     sm_font_primary: [ 18, 200 ],
-    sm_font_secondary: [ 12, 48 ],
+    sm_font_secondary: [ 12, 36 ],
     sm_font_body: [ 14, 32 ]
   }
 

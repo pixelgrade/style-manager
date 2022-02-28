@@ -35,20 +35,20 @@ export const initializeConnectedFieldsPresets = () => {
     const configs = {
       // Felt
       smaller: {
-        sm_font_primary: [ 21, 115 ],
-        sm_font_secondary: [ 14, 17 ],
-        sm_font_body: [ 17, 20 ],
+        sm_font_primary: [ 6, 40 ],
+        sm_font_secondary: [ 16, 16 ],
+        sm_font_body: [ 24, 45 ],
       },
       // Rosa2
       regular: {
-        sm_font_primary: [ 24, 165 ],
-        sm_font_secondary: [ 16, 18 ],
-        sm_font_body: [ 17, 24 ],
+        sm_font_primary: [ 7, 80 ],
+        sm_font_secondary: [ 24, 16 ],
+        sm_font_body: [ 45, 45 ],
       },
       larger: {
-        sm_font_primary: [ 28, 180 ],
-        sm_font_secondary: [ 17, 22 ],
-        sm_font_body: [ 18, 24 ],
+        sm_font_primary: [ 18, 100 ],
+        sm_font_secondary: [ 20, 45 ],
+        sm_font_body: [ 80, 30 ],
       },
     }
 
@@ -63,7 +63,7 @@ export const initializeConnectedFieldsPresets = () => {
         wp.customize( `${ settingID }_elevation`, elevationSetting => {
           wp.customize( `${ settingID }_pitch`, pitchSetting => {
             elevationSetting.set( config[ settingID ][0] );
-            pitchSetting.set( config[ settingID ][1] - config[ settingID ][0] );
+            pitchSetting.set( config[ settingID ][1] );
           } );
         } );
       } );
