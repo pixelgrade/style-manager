@@ -12,13 +12,17 @@
   }
 
   &:not(:last-child) {
-    padding-bottom: 0;
+    padding-bottom: 1px;
   }
   
   // When UI is sortable (eg. Menus), we will
   // rely more on WordPress default styling.
   .ui-sortable & {
     --customize-control-spacing-x: 0px;
+  }
+
+  label.sm-group__title {
+    font-weight: 600;
   }
 }
 

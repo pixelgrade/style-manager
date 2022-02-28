@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { Overlay, Preview } from "../../components";
+import { Overlay, ColorsPreview } from "../../components";
 
 import { OptionsProvider } from '../options-context';
 
 const ColorsOverlay = ( props ) => {
-  const { setting, show } = props;
+  const { show } = props;
+  const setting = wp.customize( 'sm_advanced_palette_output' );
   const [ palettes, setPalettes ] = useState( JSON.parse( setting() ) );
 
   const changeListener = ( newValue ) => {
@@ -24,7 +25,7 @@ const ColorsOverlay = ( props ) => {
 
   return (
     <Overlay show={ show }>
-      <Preview />
+      <ColorsPreview />
     </Overlay>
   )
 };

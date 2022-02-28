@@ -151,8 +151,6 @@ class Search extends AbstractHookProvider {
 			'sm_font_body',
 			'sm_font_accent',
 			'sm_fonts_connected_fields_preset',
-			'sm_swap_fonts',
-			'sm_swap_primary_secondary_fonts',
 		];
 
 		if ( empty( $localized['l10n'] ) ) {

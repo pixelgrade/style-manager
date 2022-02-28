@@ -7,8 +7,8 @@ import {
   AccordionSection,
   DropZone,
   PaletteList,
-  FineTuneButton,
-  ColorUsageButton,
+  FineTuneColorsShortcut,
+  ColorsUsageShortcut,
   ColorsStyleTag,
   Control,
   SourceColors,
@@ -36,9 +36,7 @@ export const Builder = ( props ) => {
   return (
     <ColorsMasterProvider { ...props }>
       <OutputUpdater />
-      <div className="sm-group">
-        <ColorUsageButton />
-      </div>
+      <ColorsUsageShortcut />
       <div className="sm-group">
         <div className="sm-group__body">
           <Control label={ styleManager.l10n.colorPalettes.builderBrandColorsLabel }>
@@ -46,8 +44,8 @@ export const Builder = ( props ) => {
             <ColorsStyleTag />
           </Control>
         </div>
-        <FineTuneButton />
       </div>
+      <FineTuneColorsShortcut />
       <div className="sm-group">
         <Accordion>
           <AccordionSection title={ styleManager.l10n.colorPalettes.builderColorPresetsTitle } open={ true }>

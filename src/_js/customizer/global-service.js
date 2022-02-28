@@ -88,16 +88,29 @@ export const popFromBackArray = () => {
   }
 };
 
-export const bindConnectedFields = function( settingIDs, filter = noop ) {
+export const getConnectedFields = ( settingID ) => {
+  const settingConfig = getSetting( settingID );
+  const connectedFields = settingConfig.connected_fields || {};
+
+  return connectedFields;
+}
+
+export const getConnectedFieldsIDs = ( settingID ) => {
+  const connectedFields = getConnectedFields( settingID );
+  const connectedFieldsIDs = Object.keys( connectedFields ).map( key => connectedFields[key].setting_id );
+
+  return connectedFieldsIDs;
+}
+
+export const bindConnectedFields = ( settingIDs, filter = noop ) => {
 
   settingIDs.forEach( settingID => {
     wp.customize( settingID, parentSetting => {
 
       setCallback( settingID, newValue => {
-        const settingConfig = getSetting( settingID );
-        const connectedFields = settingConfig.connected_fields || {};
+        const connectedFields = getConnectedFieldsIDs( settingID );
 
-        Object.keys( connectedFields ).map( key => connectedFields[key].setting_id ).forEach( connectedSettingID => {
+        connectedFields.forEach( connectedSettingID => {
           wp.customize( connectedSettingID, connectedSetting => {
             connectedSetting.set( filter( newValue ) );
           } );

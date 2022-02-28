@@ -247,8 +247,8 @@ class ColorPalettes extends AbstractHookProvider {
 		];
 
 		$fine_tune_palette_section = [
-			'title'      => esc_html__( 'Fine-tune palette', '__plugin_txtd' ),
-			'section_id' => 'sm_fine_tune_palette_section',
+			'title'      => esc_html__( 'Fine-tune color palette', '__plugin_txtd' ),
+			'section_id' => 'sm_fine_tune_color_palette_section',
 			'priority'   => 20,
 			'options'    => [],
 		];
@@ -272,7 +272,7 @@ class ColorPalettes extends AbstractHookProvider {
 			}
 		}
 
-		$config['panels']['theme_options_panel']['sections']['sm_fine_tune_palette_section'] = $fine_tune_palette_section;
+		$config['panels']['theme_options_panel']['sections']['sm_fine_tune_color_palette_section'] = $fine_tune_palette_section;
 
 		return $config;
 	}
@@ -1003,7 +1003,7 @@ class ColorPalettes extends AbstractHookProvider {
 		$localized['l10n']['colorPalettes'] = [
 			'colorizeElementsPanelLabel'         => esc_html__( 'Colorize elements one by one', '__plugin_txtd' ),
 			'builderColorUsagePanelLabel'        => esc_html__( 'Customize colors usage', '__plugin_txtd' ),
-			'builderFineTunePanelLabel'          => esc_html__( 'Fine-tune generated palette', '__plugin_txtd' ),
+			'builderFineTuneColorsLabel'          => esc_html__( 'Fine-tune generated palette', '__plugin_txtd' ),
 			'builderBrandColorsLabel'            => esc_html__( 'Brand Colors', '__plugin_txtd' ),
 			'builderColorPresetsTitle'           => esc_html__( 'Explore colors', '__plugin_txtd' ),
 			'builderColorPresetsDesc'            => esc_html__( 'Curated color presets to help you lay the foundations of the color system and make it easy to get started.', '__plugin_txtd' ),
@@ -1020,8 +1020,9 @@ class ColorPalettes extends AbstractHookProvider {
 				'<span class="dropzone-info-anchor">',
 				'</span>'
 			),
+			'previewTabTypographyLabel'          => esc_html__( 'Typography', '__plugin_txtd' ),
+			'previewTabColorSystemLabel'         => esc_html__( 'Colors', '__plugin_txtd' ),
 			'previewTabLiveSiteLabel'            => esc_html__( 'Live site', '__plugin_txtd' ),
-			'previewTabColorSystemLabel'         => esc_html__( 'Color system', '__plugin_txtd' ),
 			'palettePreviewTitle'                => esc_html__( 'The color system', '__plugin_txtd' ),
 			'palettePreviewDesc'                 => wp_kses( __( 'The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.', '__plugin_txtd' ), wp_kses_allowed_html() ),
 			'palettePreviewListDesc'             => wp_kses( __( 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.', '__plugin_txtd' ), wp_kses_allowed_html() ),
@@ -1030,6 +1031,18 @@ class ColorPalettes extends AbstractHookProvider {
 			'palettePreviewSwatchForegroundText' => esc_html__( 'Text', '__plugin_txtd' ),
 			'sourceColorsDefaultLabel'           => esc_html__( 'Color', '__plugin_txtd' ),
 			'sourceColorsInterpolatedLabel'      => esc_html__( 'Interpolated Color', '__plugin_txtd' ),
+
+			'typographyPreviewPrimaryShortLabel'   => esc_html__( 'Primary', '__plugin_txtd' ),
+			'typographyPreviewSecondaryShortLabel' => esc_html__( 'Secondary', '__plugin_txtd' ),
+			'typographyPreviewBodyShortLabel'      => esc_html__( 'Body', '__plugin_txtd' ),
+			'typographyPreviewAccentShortLabel'    => esc_html__( 'Accent', '__plugin_txtd' ),
+
+			'typographyPreviewHeadCategoryLabel' => esc_html__( 'Category', '__plugin_txtd' ),
+			'typographyPreviewHeadPreviewLabel'  => esc_html__( 'Preview', '__plugin_txtd' ),
+			'typographyPreviewHeadSizeLabel'     => esc_html__( 'Size', '__plugin_txtd' ),
+
+			'builderFineTuneTypographyLabel'     => esc_html__( 'Fine-tune the type system', '__plugin_txtd' ),
+
 		];
 
 		return $localized;

@@ -1,9 +1,7 @@
 import $ from "jquery";
-import { debounce } from '../../utils';
 import * as globalService from "../global-service";
 
 import {
-  getCallbackFilter,
   getFontDetails,
   getSettingID,
   handleFontPopupToggle,
@@ -15,8 +13,18 @@ import {
   fontsService,
 } from './utils'
 
-import { getCallback, getSetting, setCallback } from "../global-service";
-import { getConnectedFieldsFontSizeInterval } from "./utils/get-connected-fields-font-size-interval";
+import {
+  maybeLoadWebfontloaderScript,
+  maybeLoadFontFamily,
+} from "../../utils";
+
+import { reloadConnectedFields } from "./connected-fields";
+import { initializeConnectedFieldsPresets } from "./initialize-connected-fields-presets";
+import { initializeTypographyShortcuts } from "./initialize-typography-shortcuts";
+
+import { getCallback, getSetting, getSettingConfig, setCallback } from "../global-service";
+import ReactDOM from "react-dom";
+import { FineTuneTypographyShortcut } from "../components";
 
 const wrapperSelector = '.font-options__wrapper';
 const fontVariantSelector = '.style-manager_font_weight';
@@ -31,39 +39,15 @@ export const initializeFonts = function() {
     initializeSubfields( $fontField );
   } );
 
+  window.addEventListener( 'pageshow', () => {
+    maybeLoadWebfontloaderScript();
+  } );
+
   handleFontPopupToggle();
   initializeConnectedFieldsPresets();
+  initializeTypographyShortcuts();
 
   reloadConnectedFields();
-};
-
-const initializeConnectedFieldsPresets = () => {
-
-  wp.customize( 'sm_fonts_connected_fields_preset', setting => {
-    const settingIDs = styleManager.fontPalettes.masterSettingIds;
-    const config = globalService.getSettingConfig( 'sm_fonts_connected_fields_preset' );
-
-    setting.bind( newValue => {
-      const newValueConfig = config.choices[ newValue ].config;
-
-      Object.keys( newValueConfig ).forEach( settingID => {
-        const masterFontConfig = globalService.getSettingConfig( settingID );
-        const newMasterFontConfig = Object.assign( {}, masterFontConfig, {
-          connected_fields: newValueConfig[ settingID ]
-        } );
-        globalService.setSettingConfig( settingID, newMasterFontConfig );
-      } );
-
-      reloadConnectedFields();
-
-      settingIDs.forEach( settingID => {
-        wp.customize( settingID, setting => {
-          const value = setting();
-          setting.callbacks.fireWith( setting, [ value, value ] );
-        } );
-      } )
-    } );
-  } )
 };
 
 const initializeFontFamilyField = ( $fontField ) => {
@@ -71,7 +55,7 @@ const initializeFontFamilyField = ( $fontField ) => {
   const familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText;
 
   // Add the Google Fonts opts to each control
-  addGoogleFontsToFontFamilyField( $fontFamilyField );
+//  addGoogleFontsToFontFamilyField( $fontFamilyField );
 
   // Initialize the select2 field for the font family
   $fontFamilyField.select2( {
@@ -154,28 +138,3 @@ const bindFontFamilySettingChange = ( $fontFamilyField ) => {
     } );
   } );
 };
-
-const reloadConnectedFields = debounce( () => {
-  const settingIDs = styleManager.fontPalettes.masterSettingIds;
-
-  globalService.unbindConnectedFields( settingIDs );
-
-  settingIDs.forEach( settingID => {
-    wp.customize( settingID, parentSetting => {
-      setCallback( settingID, fontsLogic => {
-        const settingConfig = globalService.getSettingConfig( settingID );
-        const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
-
-        settingConfig.connected_fields.forEach( key => {
-          const connectedSettingID = `${ styleManager.config.options_name }[${ key }]`;
-          wp.customize( connectedSettingID, connectedSetting => {
-            connectedSetting.set( getCallbackFilter( connectedSettingID, connectedSetting, fontsLogic, fontSizeInterval ) );
-          } );
-        } );
-      } );
-
-      parentSetting.bind( getCallback( settingID ) );
-    } );
-  } );
-
-}, 30 );

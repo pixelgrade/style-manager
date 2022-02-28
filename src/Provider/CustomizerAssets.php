@@ -12,6 +12,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Provider;
 
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use Pixelgrade\StyleManager\Customize\Fonts;
 use const Pixelgrade\StyleManager\VERSION;
 
 /**
@@ -98,6 +99,15 @@ class CustomizerAssets extends AbstractHookProvider {
 		/**
 		 * FONT PALETTES RELATED
 		 */
+		wp_register_script( 'pixelgrade_style_manager-previewer',
+			$this->plugin->get_url( 'dist/js/customizer-preview.js' ),
+			[
+				'jquery',
+				'lodash',
+				'customize-preview',
+				'underscore',
+			],
+			VERSION, true );
 
 		/**
 		 * CONTROLS SEARCH FIELD RELATED

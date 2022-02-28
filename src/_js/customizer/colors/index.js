@@ -1,6 +1,7 @@
+import { insertShortcutAfter } from "../utils";
+import { ColorizeElementsButton } from "../components";
 import { applyColorationValueToFields } from './apply-coloration-value-to-fields';
 import { initializePaletteBuilder } from './initialize-palette-builder';
-import { initializeColorizeElementsButton } from './initialize-colorize-elements-button';
 import { initializeColorPalettesPreview } from './initialize-color-palettes-preview';
 
 export const initializeColors = () => {
@@ -11,6 +12,7 @@ export const initializeColors = () => {
     setting.bind( applyColorationValueToFields );
   } );
 
-  initializeColorizeElementsButton();
+  insertShortcutAfter( 'customize-control-sm_coloration_level_control', ColorizeElementsButton );
+
   initializeColorPalettesPreview();
 };

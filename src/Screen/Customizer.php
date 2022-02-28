@@ -100,6 +100,11 @@ class Customizer extends AbstractHookProvider {
 		$this->add_action( 'init', 'setup', 15 );
 
 		$this->add_filter( 'style_manager/filter_fields', 'default_options', 5, 1 );
+		$this->add_filter( 'customize_controls_print_styles', 'outputFontsDynamicStyle', 5, 1 );
+	}
+
+	public function outputFontsDynamicStyle() {
+		$this->sm_fonts->outputFontsDynamicStyle();
 	}
 
 	/**

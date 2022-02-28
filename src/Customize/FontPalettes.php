@@ -84,11 +84,9 @@ class FontPalettes extends AbstractHookProvider {
 		 * Handle the Customizer Style Manager section config.
 		 */
 		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_master_fonts_config', 12, 1 );
-		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_connected_fields_preset_control', 12, 1 );
 		$this->add_filter( 'style_manager/sm_panel_config', 'reorganize_customizer_controls', 20, 2 );
-
-		// This needs to come after the external theme config has been applied
-		$this->add_filter( 'style_manager/filter_fields', 'add_current_palette_control', 110, 1 );
+		
+		$this->add_filter( 'style_manager/final_config', 'add_fine_tune_palette_section', 120, 1 );
 
 		/*
 		 * Handle the logic on settings update/save.
@@ -113,6 +111,62 @@ class FontPalettes extends AbstractHookProvider {
 	 */
 	public function is_supported(): bool {
 		return apply_filters( 'style_manager/font_palettes_are_supported', current_theme_supports( 'style_manager_font_palettes' ) );
+	}
+
+	protected function add_fine_tune_palette_section( array $config ): array {
+
+		$fine_tune_palette_fields = [
+			'sm_fine_tune_intro',
+			'sm_font_primary_intro',
+			'sm_font_primary',
+			'sm_font_primary_elevation',
+			'sm_font_primary_pitch',
+			'sm_separator_0_1',
+			'sm_font_secondary_intro',
+			'sm_font_secondary',
+			'sm_font_secondary_elevation',
+			'sm_font_secondary_pitch',
+			'sm_separator_0_2',
+			'sm_font_body_intro',
+			'sm_font_body',
+			'sm_font_body_elevation',
+			'sm_font_body_pitch',
+			'sm_separator_0_3',
+			'sm_font_accent_intro',
+			'sm_font_accent',
+			'sm_separator_0_4',
+			'sm_fonts_connected_fields_preset',
+		];
+
+		$fine_tune_palette_section = [
+			'title'      => esc_html__( 'Fine-tune font palette', '__plugin_txtd' ),
+			'section_id' => 'sm_fine_tune_font_palette_section',
+			'priority'   => 20,
+			'options'    => [],
+		];
+
+		if ( ! isset( $config['panels']['style_manager_panel']['sections']['sm_font_palettes_section']['options'] ) ) {
+			return $config;
+		}
+
+		$sm_colors_options = $config['panels']['style_manager_panel']['sections']['sm_font_palettes_section']['options'];
+
+		foreach ( $fine_tune_palette_fields as $field_id ) {
+
+			if ( ! isset( $sm_colors_options[ $field_id ] ) ) {
+				continue;
+			}
+
+			if ( empty( $fine_tune_palette_section['options'] ) ) {
+				$fine_tune_palette_section['options'] = [ $field_id => $sm_colors_options[ $field_id ] ];
+			} else {
+				$fine_tune_palette_section['options'] = array_merge( $fine_tune_palette_section['options'], [ $field_id => $sm_colors_options[ $field_id ] ] );
+			}
+		}
+
+		$config['panels']['theme_options_panel']['sections']['sm_fine_tune_font_palette_section'] = $fine_tune_palette_section;
+
+		return $config;
 	}
 
 	/**
@@ -398,6 +452,22 @@ class FontPalettes extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
+				'sm_font_sizing'              => [
+					'type'         => 'sm_radio',
+					'desc'         => wp_kses( __( 'Adjust the overall font sizing you want to use on your site. For advanced controls over elements, enter the section below.', '__plugin_txtd' ), [ 'strong' => [] ] ),
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_sizing',
+					'label'        => esc_html__( 'Font Sizing', '__plugin_txtd' ),
+					'default'      => 'regular',
+					'live'         => true,
+					'priority'     => 3,
+					'choices' => [
+						'smaller' => esc_html__( 'Smaller', '__plugin_txtd' ),
+						'regular' => esc_html__( 'Regular', '__plugin_txtd' ),
+						'larger'  => esc_html__( 'Larger', '__plugin_txtd' ),
+					],
+				],
+				'sm_separator_0_0' => [ 'type' => 'html', 'html' => '', 'priority' => 4 ],
 				self::SM_FONT_PALETTE_OPTION_KEY => [
 					'type'         => 'preset',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -413,6 +483,27 @@ class FontPalettes extends AbstractHookProvider {
 					'choices_type' => 'font_palette',
 					'choices'      => $this->get_palettes(),
 				],
+				'sm_font_palettes_spacing_bottom' => [
+					'type'       => 'html',
+					'html'       => '',
+					'setting_id' => 'sm_font_palettes_spacing_bottom',
+					'priority'   => 31,
+				],
+				'sm_fine_tune_intro' => [
+					'type'         => 'html',
+					'priority'     => 10,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_fine_tune_intro',
+					'html'         => '<span class="description customize-control-description">' . esc_html__( 'Adjust the font family and sizing for each category of fonts while maintaining the hierarchy relation between them.', '__plugin_txtd' ) . '</span>',
+				],
+				'sm_font_primary_intro' => [
+					'type'         => 'html',
+					'priority'     => 21.1,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_primary_intro',
+					'html'         => '<div class="customize-control-title font_primary">' . esc_html__( 'Font Primary', '__plugin_txtd' ) . '</div>' .
+					                  '<span class="description customize-control-description">' . esc_html__( 'Adjust the font family and sizing of all the elements from the Font Primary category.', '__plugin_txtd' ) . '</span>',
+				],
 				'sm_font_primary'                 => [
 					'type'             => 'font',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -421,7 +512,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_id'       => 'sm_font_primary',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
-					'priority'         => 7,
+					'priority'         => 21.2,
 					'label'            => esc_html__( 'Font Primary', '__plugin_txtd' ),
 					'default'          => [
 						'font-family'    => 'Montserrat',
@@ -444,12 +535,50 @@ class FontPalettes extends AbstractHookProvider {
 					],
 					'connected_fields' => [],
 				],
+				'sm_font_primary_elevation' => [
+					'type'         => 'range',
+					'desc'         => __( 'Change all the font sizes of the elements in this category by a fixed amount.', '__plugin_txtd' ),
+					'live'         => true,
+					'priority'     => 21.3,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_primary_elevation',
+					'label'        => esc_html__( 'Font Sizing: Elevation ↑↓', '__plugin_txtd' ),
+					'default'      => 24,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'sm_font_primary_pitch'      => [
+					'type'         => 'range',
+					'desc'         => __( 'Adjust the rising angle for elements in this category. A flat ‘0’ degree Pitch makes all elements equal to the Elevation, removing the hierarchy between them.', '__plugin_txtd' ),
+					'live'         => true,
+					'priority'     => 21.4,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_primary_pitch',
+					'label'        => esc_html__( 'Font Sizing: Pitch', '__plugin_txtd' ),
+					'default'      => 141,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'sm_separator_0_1' => [ 'type' => 'html', 'html' => '', 'priority' => 22 ],
+				'sm_font_secondary_intro' => [
+					'type'         => 'html',
+					'priority'     => 22.1,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_secondary_intro',
+					'html'         => '<div class="customize-control-title font_secondary">' . esc_html__( 'Font Secondary', '__plugin_txtd' ) . '</div>',
+				],
 				'sm_font_secondary'               => [
 					'type'             => 'font',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_font_secondary',
 					'live'             => true,
-					'priority'         => 7.1,
+					'priority'         => 22.2,
 					'label'            => esc_html__( 'Font Secondary', '__plugin_txtd' ),
 					'default'          => [
 						'font-family'    => 'Montserrat',
@@ -472,12 +601,48 @@ class FontPalettes extends AbstractHookProvider {
 					],
 					'connected_fields' => [],
 				],
+				'sm_font_secondary_elevation' => [
+					'type'         => 'range',
+					'live'         => true,
+					'priority'     => 22.3,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_secondary_elevation',
+					'label'        => esc_html__( 'Elevation ↑↓', '__plugin_txtd' ),
+					'default'      => 16,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'sm_font_secondary_pitch'      => [
+					'type'         => 'range',
+					'live'         => true,
+					'priority'     => 22.4,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_secondary_pitch',
+					'label'        => esc_html__( 'Pitch', '__plugin_txtd' ),
+					'default'      => 2,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'sm_separator_0_2' => [ 'type' => 'html', 'html' => '', 'priority' => 23 ],
+				'sm_font_body_intro' => [
+					'type'         => 'html',
+					'priority'     => 23.1,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_body_intro',
+					'html'         => '<div class="customize-control-title font_body">' . esc_html__( 'Font Body', '__plugin_txtd' ) . '</div>',
+				],
 				'sm_font_body'                    => [
 					'type'             => 'font',
 					'setting_type'     => 'option',
 					'setting_id'       => 'sm_font_body',
 					'live'             => true,
-					'priority'         => 7.2,
+					'priority'         => 23.2,
 					'label'            => esc_html__( 'Font Body', '__plugin_txtd' ),
 					'default'          => [
 						'font-family'    => 'Montserrat',
@@ -500,7 +665,43 @@ class FontPalettes extends AbstractHookProvider {
 					],
 					'connected_fields' => [],
 				],
-				'sm_font_accent'                  => [
+				'sm_font_body_elevation' => [
+					'type'         => 'range',
+					'live'         => true,
+					'priority'     => 23.3,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_body_elevation',
+					'label'        => esc_html__( 'Elevation ↑↓', '__plugin_txtd' ),
+					'default'      => 17,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'sm_font_body_pitch'      => [
+					'type'         => 'range',
+					'live'         => true,
+					'priority'     => 23.4,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_body_pitch',
+					'label'        => esc_html__( 'Pitch', '__plugin_txtd' ),
+					'default'      => 7,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'sm_separator_0_3' => [ 'type' => 'html', 'html' => '', 'priority' => 24 ],
+				'sm_font_accent_intro' => [
+					'type'         => 'html',
+					'priority'     => 24.1,
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_accent_intro',
+					'html'         => '<div class="customize-control-title font_accent">' . esc_html__( 'Font Accent', '__plugin_txtd' ) . '</div>',
+				],
+				'sm_font_accent' => [
 					'type'             => 'font',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type'     => 'option',
@@ -508,7 +709,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_id'       => 'sm_font_accent',
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'             => true,
-					'priority'         => 7,
+					'priority'         => 24.2,
 					'label'            => esc_html__( 'Font Accent', '__plugin_txtd' ),
 					'default'          => [
 						'font-family'    => 'Montserrat',
@@ -531,49 +732,17 @@ class FontPalettes extends AbstractHookProvider {
 					],
 					'connected_fields' => [],
 				],
-				'sm_font_palettes_spacing_bottom' => [
-					'type'       => 'html',
-					'html'       => '',
-					'setting_id' => 'sm_font_palettes_spacing_bottom',
-					'priority'   => 31,
-				],
-			],
-		] );
-
-		return $config;
-	}
-
-	/**
-	 * Add a preset control to the Style Manager fonts section
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $config This holds required keys for the plugin config like 'opt-name', 'panels', 'settings'.
-	 *
-	 * @return array
-	 */
-	protected function add_style_manager_section_connected_fields_preset_control( array $config ): array {
-		// If there is no style manager support, bail early.
-		if ( ! $this->is_supported() ) {
-			return $config;
-		}
-
-		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
-			$config['sections']['style_manager_section'] = [];
-		}
-
-		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
-			'options' => [
+				'sm_separator_0_4' => [ 'type' => 'html', 'html' => '', 'priority' => 25 ],
 				'sm_fonts_connected_fields_preset' => [
 					'type'         => 'preset',
 					'label'        => __( 'Connected Fields Presets', '__theme_txtd' ),
 					'live'         => true,
+					'priority'     => 25,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_fonts_connected_fields_preset',
-					'choices_type' => 'radio'
+					'choices_type' => 'radio',
 				],
-			]
+			],
 		] );
 
 		return $config;
@@ -591,24 +760,41 @@ class FontPalettes extends AbstractHookProvider {
 	 */
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 		$font_palettes_fields = [
+			'sm_font_sizing',
+			'sm_separator_0_0',
 			'sm_current_font_palette',
 			self::SM_FONT_PALETTE_OPTION_KEY,
 			self::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
+			'sm_fine_tune_intro',
+			'sm_font_primary_intro',
 			'sm_font_primary',
+			'sm_font_primary_elevation',
+			'sm_font_primary_pitch',
+			'sm_separator_0_1',
+			'sm_font_secondary_intro',
 			'sm_font_secondary',
+			'sm_font_secondary_elevation',
+			'sm_font_secondary_pitch',
+			'sm_separator_0_2',
+			'sm_font_body_intro',
 			'sm_font_body',
+			'sm_font_body_elevation',
+			'sm_font_body_pitch',
+			'sm_separator_0_3',
+			'sm_font_accent_intro',
 			'sm_font_accent',
+			'sm_separator_0_4',
 			'sm_fonts_connected_fields_preset',
-			'sm_swap_fonts',
-			'sm_swap_primary_secondary_fonts',
+			'sm_separator_0_5',
 			'sm_font_palettes_spacing_bottom',
 		];
 
 		$font_palettes_section_config = [
-			'title'      => esc_html__( 'Fonts', '__plugin_txtd' ),
-			'section_id' => 'sm_font_palettes_section',
-			'priority'   => 20,
-			'options'    => [],
+			'title'       => esc_html__( 'Typography', '__plugin_txtd' ),
+			'description' => wp_kses( __( 'Setting up the <a href="#">Typography system</a> for your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html( 'post' ) ),
+			'section_id'  => 'sm_font_palettes_section',
+			'priority'    => 20,
+			'options'     => [],
 		];
 
 		foreach ( $font_palettes_fields as $field_id ) {
@@ -626,43 +812,6 @@ class FontPalettes extends AbstractHookProvider {
 		$sm_panel_config['sections']['sm_font_palettes_section'] = $font_palettes_section_config;
 
 		return $sm_panel_config;
-	}
-
-	/**
-	 * Add the current font palette control to the Style Manager section.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $config
-	 *
-	 * @return array
-	 */
-	protected function add_current_palette_control( array $config ): array {
-		// If there is no style manager support, bail early.
-		if ( ! $this->is_supported() ) {
-			return $config;
-		}
-
-		if ( ! isset( $config['sections']['style_manager_section'] ) ) {
-			$config['sections']['style_manager_section'] = [];
-		}
-
-		// The section might be already defined, thus we merge, not replace the entire section config.
-		$config['sections']['style_manager_section']['options'] =
-			[
-				'sm_current_font_palette' => [
-					'type'       => 'html',
-					'setting_id' => 'sm_current_font_palette',
-					'priority'   => 3,
-					'html'       =>
-						'<div class="sm-tabs">' . "\n" .
-						'<div class="sm-tabs__item" data-target="palettes">' . esc_html__( 'Palettes', '__plugin_txtd' ) . '</div>' . "\n" .
-						'<div class="sm-tabs__item" data-target="advanced">' . esc_html__( 'Advanced', '__plugin_txtd' ) . '</div>' . "\n" .
-						'</div>',
-				],
-			] + $config['sections']['style_manager_section']['options'];
-
-		return $config;
 	}
 
 	/**
