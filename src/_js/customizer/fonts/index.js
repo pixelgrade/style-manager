@@ -80,7 +80,7 @@ const initializeConnectedFieldsPresets = () => {
       // Felt
       smaller: {
         sm_font_primary: [ 21, 115 ],
-        sm_font_secondary: [ 12, 21 ],
+        sm_font_secondary: [ 14, 17 ],
         sm_font_body: [ 17, 20 ],
       },
       // Rosa2
@@ -91,8 +91,8 @@ const initializeConnectedFieldsPresets = () => {
       },
       larger: {
         sm_font_primary: [ 28, 180 ],
-        sm_font_secondary: [ 16, 28 ],
-        sm_font_body: [ 17, 24 ],
+        sm_font_secondary: [ 17, 22 ],
+        sm_font_body: [ 18, 24 ],
       },
     }
 

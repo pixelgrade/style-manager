@@ -19,7 +19,15 @@ const elements = [ {
   children: 'Heading Five & Six',
   id: 'heading_5_font',
 }, {
-  children: 'Primary Button',
+  children: (
+    <Fragment>
+      <div className="wp-container-62179af27eb4e wp-block-buttons" style={{display: 'flex', gap: '2em', flexWrap: 'wrap', alignItems: 'center'}}>
+        <div className="wp-block-button"><a className="wp-block-button__link">Primary Button</a></div>
+        <div className="wp-block-button is-style-secondary"><a className="wp-block-button__link">Secondary</a></div>
+        <div className="wp-block-button is-style-text"><a className="wp-block-button__link">Text Button</a></div>
+      </div>
+</Fragment>
+  ),
   id: 'buttons_font',
 }, {
   children: 'Opening paragraphs often deserve some form of decorative type treatment to help draw the reader in. These special type treatments serve to mark a clear beginning to an article.',
@@ -34,7 +42,9 @@ const elements = [ {
   id: 'body_font',
 }, {
   children: (
-    <p>Discover our story</p>
+    <Fragment>
+      <h2>Discover our story</h2>
+    </Fragment>
   ),
   id: 'accent_font',
 } ];
