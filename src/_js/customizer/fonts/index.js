@@ -55,7 +55,7 @@ const initializeFontFamilyField = ( $fontField ) => {
   const familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText;
 
   // Add the Google Fonts opts to each control
-//  addGoogleFontsToFontFamilyField( $fontFamilyField );
+  addGoogleFontsToFontFamilyField( $fontFamilyField );
 
   // Initialize the select2 field for the font family
   $fontFamilyField.select2( {
