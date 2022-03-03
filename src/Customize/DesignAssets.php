@@ -123,7 +123,7 @@ class DesignAssets extends AbstractHookProvider {
 	/**
 	 * Fetch the design assets data from the Pixelgrade Cloud.
 	 *
-	 * Caches the data for 12 hours. Use local defaults if not available.
+	 * Caches the data for 6 hours. Use local defaults if not available.
 	 *
 	 * @since 2.0.0
 	 *
