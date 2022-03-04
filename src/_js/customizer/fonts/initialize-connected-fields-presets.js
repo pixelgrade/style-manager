@@ -37,18 +37,20 @@ export const initializeConnectedFieldsPresets = () => {
       smaller: {
         sm_font_primary: [ 6, 40 ],
         sm_font_secondary: [ 16, 16 ],
-        sm_font_body: [ 24, 45 ],
+        sm_font_body: [ 0, 45 ],
       },
       // Rosa2
       regular: {
         sm_font_primary: [ 7, 80 ],
         sm_font_secondary: [ 24, 16 ],
-        sm_font_body: [ 45, 45 ],
+        sm_font_body: [ 24, 45 ],
+        // sm_font_body: [ 45, 45 ],
       },
       larger: {
         sm_font_primary: [ 18, 100 ],
         sm_font_secondary: [ 20, 45 ],
-        sm_font_body: [ 80, 30 ],
+        // sm_font_body: [ 80, 30 ],
+        sm_font_body: [ 70, 30 ],
       },
     }
 
