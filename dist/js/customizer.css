@@ -709,7 +709,7 @@ input.font-options__checkbox {
   width: 100%;
 }
 .customize-control-range .customize-control-description {
-  flex-basis: 0 0 100%;
+  flex: 0 0 100%;
 }
 .customize-control-range input[type=range] {
   flex: 1 1 0;
