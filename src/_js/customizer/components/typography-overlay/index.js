@@ -150,6 +150,13 @@ const Element = ( props ) => {
 
   }, [ id ] );
 
+  useEffect( () => {
+    wp.customize( 'sm_fonts_connected_fields_preset', setting => {
+      const value = setting();
+      onConnectedFieldsPresetChange( value );
+      updateSize();
+    } );
+  }, [] );
   useCustomizeSettingCallback( 'sm_fonts_connected_fields_preset', onConnectedFieldsPresetChange, [] );
   useCustomizeSettingCallback( connectedSettingID, updateSize, [ category ] );
   useEffect( updateSize, [ category ] );

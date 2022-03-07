@@ -20,12 +20,14 @@ export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
       const unit = connectedSettingConfig?.default?.font_size?.unit;
 
       if ( fontSizeUnitSet ) {
-        if ( unit !== fontSizeUnit ) {
+        if ( !! unit && unit !== fontSizeUnit ) {
           hasConsistentFontSizes = false;
         }
       } else {
-        fontSizeUnit = unit;
-        fontSizeUnitSet = true;
+        if ( !! unit ) {
+          fontSizeUnit = unit;
+          fontSizeUnitSet = true;
+        }
       }
 
       minFontSize = fontSize < minFontSize ? fontSize : minFontSize;

@@ -6,8 +6,9 @@ export const initializeConnectedFieldsPresets = () => {
   wp.customize( 'sm_fonts_connected_fields_preset', setting => {
     const settingIDs = styleManager.fontPalettes.masterSettingIds;
     const config = globalService.getSettingConfig( 'sm_fonts_connected_fields_preset' );
+    const value = setting();
 
-    setting.bind( newValue => {
+    const updateConnectedSettingsConfigs = ( newValue ) => {
       const newValueConfig = config.choices[ newValue ].config;
 
       Object.keys( newValueConfig ).forEach( settingID => {
@@ -17,6 +18,12 @@ export const initializeConnectedFieldsPresets = () => {
         } );
         globalService.setSettingConfig( settingID, newMasterFontConfig );
       } );
+    }
+
+    updateConnectedSettingsConfigs( value );
+
+    setting.bind( newValue => {
+      updateConnectedSettingsConfigs( newValue );
 
       reloadConnectedFields();
 
@@ -28,7 +35,6 @@ export const initializeConnectedFieldsPresets = () => {
       } )
     } );
   } );
-
 
   wp.customize( 'sm_font_sizing', setting => {
 

@@ -63,7 +63,7 @@ export const getConnectedFieldFontData = ( connectedSettingID, settingID, fontsL
     return null;
   }
 
-  const connectedSetting = wp.customize( connectedSettingID, connectedSetting => {
+  wp.customize( connectedSettingID, connectedSetting => {
     const fontSizeInterval = getConnectedFieldsFontSizeInterval( settingID );
     const connectedSettingData = connectedSetting();
 
