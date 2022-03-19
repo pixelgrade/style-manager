@@ -467,9 +467,9 @@ class Fonts {
 			],
 			'text_transform'  => [
 				'none'       => esc_html__( 'None', '__plugin_txtd' ),
-				'capitalize' => esc_html__( 'Capitalize', '__plugin_txtd' ),
-				'uppercase'  => esc_html__( 'Uppercase', '__plugin_txtd' ),
-				'lowercase'  => esc_html__( 'Lowercase', '__plugin_txtd' ),
+				'capitalize' => esc_html__( 'Title Case', '__plugin_txtd' ),
+				'uppercase'  => esc_html__( 'UPPERCASE', '__plugin_txtd' ),
+				'lowercase'  => esc_html__( 'lowercase', '__plugin_txtd' ),
 			],
 			'text_decoration' => [
 				'none'         => esc_html__( 'None', '__plugin_txtd' ),
