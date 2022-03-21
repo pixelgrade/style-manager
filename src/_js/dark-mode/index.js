@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import { delegateEvent } from "./utils";
 
 const COLOR_SCHEME_BUTTON_SELECTOR = '.js-sm-dark-mode-toggle';
 const STORAGE_ITEM = 'color-scheme-dark';
@@ -52,11 +52,9 @@ class DarkMode {
   }
 
   bindEvents() {
-    const toggles = window.document.querySelectorAll( COLOR_SCHEME_BUTTON_SELECTOR );
 
-    toggles.forEach( toggle => {
-      toggle.addEventListener( 'click', this.onClick.bind( this ) );
-    } );
+    delegateEvent( document.documentElement, 'click', COLOR_SCHEME_BUTTON_SELECTOR, this.onClick.bind( this ) );
+
 
     this.matchMedia.addEventListener( 'change', () => {
       localStorage.removeItem( TEMP_STORAGE_ITEM );
