@@ -116,8 +116,10 @@ const getFontSizeInterval = ( settingID ) => {
 
 const getInterval = ( settingID, elevation, pitch ) => {
 
+  // The limits within which an element font-size can be included
+  // using the Elevation and Pitch settings.
   const bounds = {
-    sm_font_primary: [ 18, 200 ],
+    sm_font_primary: [ 16, 200 ],
     sm_font_secondary: [ 12, 36 ],
     sm_font_body: [ 14, 32 ]
   }
