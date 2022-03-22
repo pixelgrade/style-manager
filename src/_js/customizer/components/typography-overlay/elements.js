@@ -47,6 +47,17 @@ const elements = [ {
     </Fragment>
   ),
   id: 'accent_font',
-} ];
+}, {
+  children: 'Navigation Items',
+  id: 'navigation_font',
+}, {
+  children: 'Input Text',
+  id: 'input_font',
+}, {
+  children: 'Meta Details',
+  id: 'meta_font',
+}
+
+];
 
 export default elements;
