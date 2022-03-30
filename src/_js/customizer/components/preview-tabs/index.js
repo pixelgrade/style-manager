@@ -17,12 +17,12 @@ const PreviewTabs = ( props ) => {
     { id: 'site', label: styleManager.l10n.colorPalettes.previewTabLiveSiteLabel },
     { id: 'typography', label: styleManager.l10n.colorPalettes.previewTabTypographyLabel, callback: () => {
        wp.customize.section( 'sm_font_palettes_section', section => {
-         section.focus();
+         // section.focus();
        } )
       } },
     { id: 'colors', label: styleManager.l10n.colorPalettes.previewTabColorSystemLabel, callback: () => {
         wp.customize.section( 'sm_color_palettes_section', section => {
-          section.focus();
+          // section.focus();
         } )
       } },
   ];
