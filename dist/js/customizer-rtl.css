@@ -708,6 +708,9 @@ input.font-options__checkbox {
 .customize-control-range .customize-control-notifications-container {
   width: 100%;
 }
+.customize-control-range .customize-control-description {
+  flex: 0 0 100%;
+}
 .customize-control-range input[type=range] {
   flex: 1 1 0;
 }
