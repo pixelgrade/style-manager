@@ -10,13 +10,14 @@ import { getConnectedFieldsIDs, getSetting } from "../../global-service";
 import { Overlay } from "../index";
 import './style.scss';
 import elements from "./elements";
+import _ from "lodash";
 
 const TypographyOverlay = ( props ) => {
   const { show } = props;
 
   return (
     <Overlay show={ show }>
-      <TypographyPreview />
+      <TypographyPreview key={'overlay_typography_preview'} />
     </Overlay>
   )
 }
@@ -26,13 +27,13 @@ const TypographyPreview = () => {
 
   return (
     <div className="sm-typography-preview">
-      <Cell name="category" isHead>
+      <Cell name="category" isHead key={'typography_preview_category'}>
         { styleManager.l10n.colorPalettes.typographyPreviewHeadCategoryLabel }
       </Cell>
-      <Cell name="preview" isHead>
+      <Cell name="preview" isHead key={'typography_preview_preview'}>
         { styleManager.l10n.colorPalettes.typographyPreviewHeadPreviewLabel }
       </Cell>
-      <Cell name="size" isHead>
+      <Cell name="size" isHead key={'typography_preview_size'}>
         { styleManager.l10n.colorPalettes.typographyPreviewHeadSizeLabel }
       </Cell>
       { elements.map( ( element, index ) => {
@@ -44,7 +45,7 @@ const TypographyPreview = () => {
         }
 
         return (
-          <Fragment>
+          <Fragment key={'typography_preview_element_' + index}>
             <div className={ classNames.join( '  ' ) } />
             <Element { ...element } />
           </Fragment>
@@ -161,13 +162,19 @@ const Element = ( props ) => {
   useCustomizeSettingCallback( connectedSettingID, updateSize, [ category ] );
   useEffect( updateSize, [ category ] );
 
+  const camelCasedStyleRules = {};
+  Object.keys( style ).map( key => {
+    const camelCaseKey = _.camelCase(key);
+    camelCasedStyleRules[camelCaseKey] = style[key];
+  })
+
   return (
     <Fragment>
       <Cell name="category">
         <Category id={ category } />
       </Cell>
       <Cell name="preview" id={ id }>
-        <div style={ style }>
+        <div style={ camelCasedStyleRules }>
           { children }
         </div>
       </Cell>

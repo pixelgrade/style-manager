@@ -12,7 +12,7 @@ import $ from "jquery";
 export const standardizeNumericalValue = function( value, input = false, valueFirst = true ) {
   const standardValue = {value: false, unit: false};
 
-  if ( _.includes( ['', 'false', false], value ) ) {
+  if ( _.isUndefined(value) || _.includes( ['', 'false', false], value ) ) {
     return standardValue
   }
 
