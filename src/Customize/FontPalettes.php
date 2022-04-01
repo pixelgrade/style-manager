@@ -85,7 +85,7 @@ class FontPalettes extends AbstractHookProvider {
 		 */
 		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_master_fonts_config', 12, 1 );
 		$this->add_filter( 'style_manager/sm_panel_config', 'reorganize_customizer_controls', 20, 2 );
-		
+
 		$this->add_filter( 'style_manager/final_config', 'add_fine_tune_palette_section', 120, 1 );
 
 		/*
@@ -791,7 +791,7 @@ class FontPalettes extends AbstractHookProvider {
 
 		$font_palettes_section_config = [
 			'title'       => esc_html__( 'Typography', '__plugin_txtd' ),
-			'description' => wp_kses( __( 'Setting up the <a href="#">Typography system</a> for your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html( 'post' ) ),
+			'description' => wp_kses( __( 'Set up the <a href="https://pixelgrade.com/docs/design-and-style/typography-system/">Typography system</a> of your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html( 'post' ) ),
 			'section_id'  => 'sm_font_palettes_section',
 			'priority'    => 20,
 			'options'     => [],

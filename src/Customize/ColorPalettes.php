@@ -578,7 +578,7 @@ class ColorPalettes extends AbstractHookProvider {
 				],
 				'NOT_sm_description_color_system_intro'     => [
 					'type' => 'html',
-					'html' => 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System for your website.',
+					'html' => 'Set up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System of your website.',
 				],
 
 				'sm_description_color_usage_intro' => [
