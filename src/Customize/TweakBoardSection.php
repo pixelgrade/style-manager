@@ -96,6 +96,20 @@ class TweakBoardSection extends AbstractHookProvider {
 							'sideways' => esc_html__( 'Sideways', '__plugin_txtd' ),
 						],
 					],
+					'sm_collection_hover_effect' => [
+						'type'         => 'radio',
+						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+						'setting_type' => 'option',
+						// We will force this setting id preventing prefixing and other regular processing.
+						'setting_id'   => 'sm_collection_hover_effect',
+						'label'        => esc_html__( 'Collections hover effect', '__plugin_txtd' ),
+						'desc'         => esc_html__( "Choose the effect triggered when an user moves the cursor above a post collection card's media.", '__plugin_txtd' ),
+						'default'      => 'dropcap',
+						'choices'      => [
+							'none'    => esc_html__( 'None', '__plugin_txtd' ),
+							'dropcap' => esc_html__( 'Dropcap', '__plugin_txtd' ),
+						],
+					],
 					'sm_blog_layout_style'         => [
 						'type'         => 'radio',
 						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -131,7 +145,8 @@ class TweakBoardSection extends AbstractHookProvider {
 
 		$tweak_board_section_fields = [
 			'sm_collection_title_position',
-			'sm_blog_layout_style'
+			'sm_blog_layout_style',
+			'sm_collection_hover_effect'
 		];
 
 		$tweak_board_section_config = [
