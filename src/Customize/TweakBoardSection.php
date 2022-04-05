@@ -106,8 +106,9 @@ class TweakBoardSection extends AbstractHookProvider {
 						'desc'         => esc_html__( "Choose the effect triggered when an user moves the cursor above a post collection card's media.", '__plugin_txtd' ),
 						'default'      => 'dropcap',
 						'choices'      => [
-							'none'    => esc_html__( 'None', '__plugin_txtd' ),
-							'dropcap' => esc_html__( 'Dropcap', '__plugin_txtd' ),
+							'none' => esc_html__( 'None', '__plugin_txtd' ),
+							'hive' => esc_html__( 'Hive', '__plugin_txtd' ),
+							'felt' => esc_html__( 'Felt', '__plugin_txtd' ),
 						],
 					],
 				]
