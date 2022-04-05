@@ -110,20 +110,6 @@ class TweakBoardSection extends AbstractHookProvider {
 							'dropcap' => esc_html__( 'Dropcap', '__plugin_txtd' ),
 						],
 					],
-					'sm_blog_layout_style'         => [
-						'type'         => 'radio',
-						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-						'setting_type' => 'option',
-						// We will force this setting id preventing prefixing and other regular processing.
-						'setting_id'   => 'sm_blog_layout_style',
-						'label'        => esc_html__( 'Archive Style', '__plugin_txtd' ),
-						'desc'         => esc_html__( 'Display your blog archive in a way that matches your style.', '__plugin_txtd' ),
-						'default'      => 'rosa2',
-						'choices'      => [
-							'rosa2' => esc_html__( 'Rosa2', '__plugin_txtd' ),
-							'felt'  => esc_html__( 'Felt', '__plugin_txtd' ),
-						],
-					],
 				]
 			]
 		);
@@ -145,7 +131,6 @@ class TweakBoardSection extends AbstractHookProvider {
 
 		$tweak_board_section_fields = [
 			'sm_collection_title_position',
-			'sm_blog_layout_style',
 			'sm_collection_hover_effect'
 		];
 
