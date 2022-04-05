@@ -5,6 +5,9 @@ import { maybeExplodeList } from "./maybe-explode-list";
 import { maybeImplodeList } from "./maybe-implode-list";
 
 export const sanitizeFontFamilyCSSValue = ( value ) => {
+  if ( _.isUndefined( value ) ) {
+    return ''
+  }
   // Since we might get a stack, attempt to treat is a comma-delimited list.
   let fontFamilies = maybeExplodeList( value );
   if ( !fontFamilies.length ) {

@@ -33,7 +33,7 @@ export const maybeExplodeList = ( str, delimiter = ',' ) => {
   return explode( delimiter, str );
 };
 
-const explode = ( delimiter, string, limit ) => {
+const explode = function( delimiter, string, limit ) {
   //  discuss at: https://locutus.io/php/explode/
   // original by: Kevin van Zonneveld (https://kvz.io)
   //   example 1: explode(' ', 'Kevin van Zonneveld')

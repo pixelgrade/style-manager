@@ -18,7 +18,7 @@ export const maybeImplodeList = ( value, glue = ',' ) => {
   return ''
 };
 
-const implode = ( glue, pieces ) => {
+const implode = function( glue, pieces ) {
   //  discuss at: https://locutus.io/php/implode/
   // original by: Kevin van Zonneveld (https://kvz.io)
   // improved by: Waldo Malqui Silva (https://waldo.malqui.info)
