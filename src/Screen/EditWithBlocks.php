@@ -197,6 +197,18 @@ class EditWithBlocks extends AbstractHookProvider {
 
 		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
 		$this->add_action( 'admin_enqueue_scripts', 'print_script_to_move_dark_classname_to_html' );
+		$this->add_filter( 'block_editor_settings_all', 'alter_editor_settings' );
+	}
+
+	public function alter_editor_settings( $settings ) {
+		ob_start(); ?>
+		<style id="style-manager_output_style">
+			<?php echo $this->frontend_output->get_dynamic_style(); ?>
+			<?php echo $this->sm_fonts->getFontsDynamicStyle(); ?>
+		</style>
+		<?php $styles = ob_get_clean();
+		$settings['__unstableResolvedAssets']['styles'] .= $styles;
+		return $settings;
 	}
 
 	/**
