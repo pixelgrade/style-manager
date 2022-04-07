@@ -60,6 +60,17 @@ class GeneralAssets extends AbstractHookProvider {
 	public function register_hooks() {
 		$this->add_action( 'init', 'register_assets', 1 );
 		$this->add_action( 'wp_print_scripts', 'print_inline_scripts', 1 );
+		$this->add_filter( 'block_editor_settings_all', 'alter_editor_settings' );
+	}
+
+	public function alter_editor_settings( $settings ) {
+		ob_start(); ?>
+		<style id="style-manager_output_style">
+			<?php echo $this->frontend_output->get_dynamic_style(); ?>
+		</style>
+		<?php $styles = ob_get_clean();
+		$settings['__unstableResolvedAssets']['styles'] .= $styles;
+		return $settings;
 	}
 
 	/**
