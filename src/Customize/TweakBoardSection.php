@@ -89,7 +89,7 @@ class TweakBoardSection extends AbstractHookProvider {
 						// We will force this setting id preventing prefixing and other regular processing.
 						'setting_id'   => 'sm_collection_title_position',
 						'label'        => esc_html__( 'Collections titles position', '__plugin_txtd' ),
-						'desc'         => esc_html__( 'Display the Collection block titles at 90-degrees and align them along the left of content rather than at the top.', '__plugin_txtd' ),
+						'desc'         => esc_html__( 'Choose "Sideways" to rotate the Collection block titles 90-degrees and align them along the left side of the content rather than at the top of it.', '__plugin_txtd' ),
 						'default'      => 'above',
 						'choices'      => [
 							'above'    => esc_html__( 'Above', '__plugin_txtd' ),
@@ -137,7 +137,7 @@ class TweakBoardSection extends AbstractHookProvider {
 
 		$tweak_board_section_config = [
 			'title'      => esc_html__( 'Tweak Board', '__plugin_txtd' ),
-			'description'=> esc_html__( 'A collection of visual effects with the goal of giving your brand a bolder voice.', '__plugin_txtd' ),
+			'description'=> esc_html__( 'Control visual effects whose aim is to give your site a bolder voice.', '__plugin_txtd' ),
 			'section_id' => 'sm_tweak_board_section',
 			'priority'   => 40,
 			'options'    => [],

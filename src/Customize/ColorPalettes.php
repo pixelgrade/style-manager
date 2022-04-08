@@ -897,7 +897,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'label'        => esc_html__( 'Appearance', '__plugin_txtd' ),
 					'live'         => true,
 					'default'      => 'off',
-					'desc'         => wp_kses( __( "<strong>Auto</strong> activates dark mode automatically, according to the visitor's system-wide setting", '__plugin_txtd' ), [ 'strong' => [] ] ),
+					'desc'         => wp_kses( __( 'Choose between light or dark color schemes or set it to <strong>"Auto"</strong> to activate dark mode automatically, according to your visitors\' system-wide setting.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'choices'      => [
 						'off'  => esc_html__( 'Light', '__plugin_txtd' ),
 						'on'   => esc_html__( 'Dark', '__plugin_txtd' ),

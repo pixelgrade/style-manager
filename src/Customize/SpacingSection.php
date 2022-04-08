@@ -87,7 +87,7 @@ class SpacingSection extends AbstractHookProvider {
 					'setting_id'   => 'sm_site_container_width',
 					'live'         => true,
 					'label'        => esc_html__( 'Site Container', '__theme_txtd' ),
-					'desc'         => esc_html__( 'Adjust the maximum amount of width where your site content extends.', '__theme_txtd' ),
+					'desc'         => esc_html__( 'Adjust the maximum amount of width your site content extends to.', '__theme_txtd' ),
 					'default'      => 75,
 					'input_attrs'  => [
 						'min'          => 60,
