@@ -848,7 +848,7 @@ class ColorPalettes extends AbstractHookProvider {
 		$color_palettes_section_config = [
 			'title'       => esc_html__( 'Color System', '__plugin_txtd' ),
 			'section_id'  => 'sm_color_palettes_section',
-			'description' => wp_kses( __( 'Setting up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System</a> for your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html( 'post' ) ),
+			'description' => wp_kses( __( 'Set up the <a href="https://pixelgrade.com/docs/design-and-style/color-system/" target="_blank">Color System</a> for your website using the tools below.', '__plugin_txtd' ), wp_kses_allowed_html( 'post' ) ),
 			'priority'    => 10,
 			'options'     => [],
 		];
