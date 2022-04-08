@@ -376,9 +376,9 @@ class ColorPalettes extends AbstractHookProvider {
 					'setting_id'   => self::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
 				],
 				'sm_advanced_palette_output'                => [
-					'type'    => 'text',
-					'live'    => true,
-					'default' => json_encode(
+					'type'         => 'text',
+					'live'         => true,
+					'default'      => json_encode(
 						[
 							[
 								'sourceIndex'      => 5,
@@ -627,12 +627,12 @@ class ColorPalettes extends AbstractHookProvider {
 					],
 				],
 
-				'sm_color_fine_tune_intro' => [
+				'sm_color_fine_tune_intro'    => [
 					'type'         => 'html',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_color_fine_tune_intro',
 					'html'         => '<div class="customize-control-title">' . esc_html__( 'Palette Configuration', '__plugin_txtd' ) . '</div>' .
-					                  '<span class="description customize-control-description">' . esc_html__( 'Change the structure of the generated palettes while mantaining the underlying principles and guidelines.', '__plugin_txtd' ) . '</span>',
+					                  '<span class="description customize-control-description">' . esc_html__( 'Change the structure of the generated palette while maintaining the underlying principles and guidelines.', '__plugin_txtd' ) . '</span>',
 				],
 				'sm_color_fine_tune_presets'  => [
 					'type'         => 'preset',
@@ -643,57 +643,57 @@ class ColorPalettes extends AbstractHookProvider {
 					'default'      => 'normal',
 					'choices_type' => 'radio',
 					'choices'      => [
-						'normal'  => [
-							'label' => esc_html__( 'Normal', '__plugin_txtd' ),
+						'normal' => [
+							'label'   => esc_html__( 'Normal', '__plugin_txtd' ),
 							'options' => [
-								'sm_color_grades_number' => 12,
+								'sm_color_grades_number'      => 12,
 								'sm_potential_color_contrast' => 0.9,
-								'sm_color_grade_balancer' => 0,
-								'sm_color_promotion_brand' => true,
-								'sm_color_promotion_white' => true,
-								'sm_color_promotion_black' => true,
-								'sm_elements_color_contrast' => 'normal',
+								'sm_color_grade_balancer'     => 0,
+								'sm_color_promotion_brand'    => true,
+								'sm_color_promotion_white'    => true,
+								'sm_color_promotion_black'    => true,
+								'sm_elements_color_contrast'  => 'normal',
 							],
 						],
 						'simple' => [
-							'label' => esc_html__( 'Simple', '__plugin_txtd' ),
+							'label'   => esc_html__( 'Simple', '__plugin_txtd' ),
 							'options' => [
-								'sm_color_grades_number' => 4,
+								'sm_color_grades_number'      => 4,
 								'sm_potential_color_contrast' => 1,
-								'sm_color_grade_balancer' => 0.5,
-								'sm_color_promotion_brand' => true,
-								'sm_color_promotion_white' => true,
-								'sm_color_promotion_black' => true,
-								'sm_elements_color_contrast' => 'normal',
+								'sm_color_grade_balancer'     => 0.5,
+								'sm_color_promotion_brand'    => true,
+								'sm_color_promotion_white'    => true,
+								'sm_color_promotion_black'    => true,
+								'sm_elements_color_contrast'  => 'normal',
 							],
 						],
-						'light' => [
-							'label' => esc_html__( 'Light', '__plugin_txtd' ),
+						'light'  => [
+							'label'   => esc_html__( 'Light', '__plugin_txtd' ),
 							'options' => [
-								'sm_color_grades_number' => 12,
+								'sm_color_grades_number'      => 12,
 								'sm_potential_color_contrast' => 1,
-								'sm_color_grade_balancer' => 1,
-								'sm_color_promotion_brand' => true,
-								'sm_color_promotion_white' => true,
-								'sm_color_promotion_black' => false,
-								'sm_elements_color_contrast' => 'normal',
+								'sm_color_grade_balancer'     => 1,
+								'sm_color_promotion_brand'    => true,
+								'sm_color_promotion_white'    => true,
+								'sm_color_promotion_black'    => false,
+								'sm_elements_color_contrast'  => 'normal',
 							],
 						],
-						'dark' => [
-							'label' => esc_html__( 'Dark', '__plugin_txtd' ),
+						'dark'   => [
+							'label'   => esc_html__( 'Dark', '__plugin_txtd' ),
 							'options' => [
-								'sm_color_grades_number' => 12,
+								'sm_color_grades_number'      => 12,
 								'sm_potential_color_contrast' => 1,
-								'sm_color_grade_balancer' => 1,
-								'sm_color_promotion_brand' => true,
-								'sm_color_promotion_white' => false,
-								'sm_color_promotion_black' => true,
-								'sm_elements_color_contrast' => 'normal',
+								'sm_color_grade_balancer'     => 1,
+								'sm_color_promotion_brand'    => true,
+								'sm_color_promotion_white'    => false,
+								'sm_color_promotion_black'    => true,
+								'sm_elements_color_contrast'  => 'normal',
 							],
 						],
 						'custom' => [
-							'label' => esc_html__( 'Custom', '__plugin_txtd' ),
-							'options' => []
+							'label'   => esc_html__( 'Custom', '__plugin_txtd' ),
+							'options' => [],
 						],
 					],
 				],
@@ -735,7 +735,7 @@ class ColorPalettes extends AbstractHookProvider {
 					'label'        => esc_html__( 'Color grade balancer', '__plugin_txtd' ),
 					'default'      => 0,
 					'input_attrs'  => [
-						'min'  => -1,
+						'min'  => - 1,
 						'max'  => 1,
 						'step' => 0.01,
 					],
@@ -757,7 +757,7 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_separator_2_1'            => [ 'type' => 'html', 'html' => '' ],
 				'sm_elements_color_contrast'  => [
 					'type'         => 'radio',
-					'desc'         => __( 'Increase or decrease the contrast between the background colors and the elements over them.' ),
+					'desc'         => __( 'Increase or decrease the contrast between the background colors and the colors of elements on top.' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_elements_color_contrast',
@@ -1003,8 +1003,9 @@ class ColorPalettes extends AbstractHookProvider {
 		$localized['l10n']['colorPalettes'] = [
 			'colorizeElementsPanelLabel'         => esc_html__( 'Colorize elements one by one', '__plugin_txtd' ),
 			'builderColorUsagePanelLabel'        => esc_html__( 'Customize colors usage', '__plugin_txtd' ),
-			'builderFineTuneColorsLabel'          => esc_html__( 'Fine-tune generated palette', '__plugin_txtd' ),
+			'builderFineTuneColorsLabel'         => esc_html__( 'Fine-tune generated palette', '__plugin_txtd' ),
 			'builderBrandColorsLabel'            => esc_html__( 'Brand Colors', '__plugin_txtd' ),
+			'builderBrandColorsDesc'             => wp_kses( __( 'Adjust the main brand colors you want to use on your site. Provide <strong>only the main colors</strong> since the Color System will <strong>generate an entire palette</strong> from these. For advanced controls of generated color palette, see the section below.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 			'builderColorPresetsTitle'           => esc_html__( 'Explore colors', '__plugin_txtd' ),
 			'builderColorPresetsDesc'            => esc_html__( 'Curated color presets to help you lay the foundations of the color system and make it easy to get started.', '__plugin_txtd' ),
 			'builderImageExtractTitle'           => esc_html__( 'Extract from Image', '__plugin_txtd' ),
@@ -1024,8 +1025,8 @@ class ColorPalettes extends AbstractHookProvider {
 			'previewTabColorSystemLabel'         => esc_html__( 'Colors', '__plugin_txtd' ),
 			'previewTabLiveSiteLabel'            => esc_html__( 'Live site', '__plugin_txtd' ),
 			'palettePreviewTitle'                => esc_html__( 'The color system', '__plugin_txtd' ),
-			'palettePreviewDesc'                 => wp_kses( __( 'The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.', '__plugin_txtd' ), wp_kses_allowed_html() ),
-			'palettePreviewListDesc'             => wp_kses( __( 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.', '__plugin_txtd' ), wp_kses_allowed_html() ),
+			'palettePreviewDesc'                 => esc_html__( 'The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks.', '__plugin_txtd' ),
+			'palettePreviewListDesc'             => esc_html__( 'Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content.', '__plugin_txtd' ),
 			'palettePreviewSwatchSurfaceText'    => esc_html__( 'Surface', '__plugin_txtd' ),
 			'palettePreviewSwatchAccentText'     => esc_html__( 'Accent', '__plugin_txtd' ),
 			'palettePreviewSwatchForegroundText' => esc_html__( 'Text', '__plugin_txtd' ),
@@ -1041,7 +1042,7 @@ class ColorPalettes extends AbstractHookProvider {
 			'typographyPreviewHeadPreviewLabel'  => esc_html__( 'Preview', '__plugin_txtd' ),
 			'typographyPreviewHeadSizeLabel'     => esc_html__( 'Size', '__plugin_txtd' ),
 
-			'builderFineTuneTypographyLabel'     => esc_html__( 'Fine-tune the type system', '__plugin_txtd' ),
+			'builderFineTuneTypographyLabel' => esc_html__( 'Fine-tune the type system', '__plugin_txtd' ),
 
 		];
 

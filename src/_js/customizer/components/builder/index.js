@@ -1,6 +1,4 @@
-import React, { Fragment, createContext, useContext, useEffect, useMemo } from 'react';
-
-import { getPalettesFromColors } from "../../utils";
+import React, { useContext, useEffect } from 'react';
 
 import {
   Accordion,
@@ -39,7 +37,10 @@ export const Builder = ( props ) => {
       <ColorsUsageShortcut />
       <div className="sm-group">
         <div className="sm-group__body">
-          <Control label={ styleManager.l10n.colorPalettes.builderBrandColorsLabel }>
+          <Control
+            label={ styleManager.l10n.colorPalettes.builderBrandColorsLabel }
+            description={ styleManager.l10n.colorPalettes.builderBrandColorsDesc }
+          >
             <SourceColors />
             <ColorsStyleTag />
           </Control>

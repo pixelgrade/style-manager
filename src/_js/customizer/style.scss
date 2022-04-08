@@ -25,6 +25,10 @@
     margin-top: var(--customizer-spacing);
   }
 
+  &__body + &__footer {
+    margin-top: var(--customizer-spacing);
+  }
+
   &__label {
     font-size: 16px;
     font-weight: 500;
