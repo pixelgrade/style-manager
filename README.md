@@ -62,7 +62,7 @@ After you have updated the version, added the changelog, blessed everything, **y
 **From the newly cloned, temporary directory,** run this from the command line:
 
 ```shell
-composer run zip
+npm run zip
 ```
 
 ## Running Unit Tests
@@ -74,7 +74,7 @@ To run the PHPUnit tests, in the root directory of the plugin, run something lik
 ```
 or
 ```shell
-composer run test
+composer run tests
 ```
 
 Bear in mind that there are **simple unit tests** (hence the `--testsuite=Unit` parameter) that are very fast to run, and there are **integration tests** (`--testsuite=Integration`) that need to load the entire WordPress codebase, recreate the db, etc. Choose which ones you want to run depending on what you are after.

@@ -38,8 +38,6 @@ interface ServiceProviderInterface
      *
      * This method should only be used to configure services and parameters.
      * It should not get services.
-     *
-     * @param Container $pimple A container instance
      */
     public function register(\Pixelgrade\StyleManager\Vendor\Pimple\Container $pimple);
 }

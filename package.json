@@ -19,7 +19,7 @@
         "gulp": "node ./node_modules/gulp/bin/gulp.js",
         "dev": "cross-env webpack --mode=development --watch && gulp dev",
         "compile:production": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles",
-        "zip": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer zip",
+        "zip": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer run zip",
         "preinstall": "cd ./node-tasks/ && npm install && node ./lock_node_version.js",
         "webpack:analyzer": "webpack --profile --json > dist/js/stats.json && ./node_modules/.bin/webpack-bundle-analyzer dist/js/stats.json"
     },

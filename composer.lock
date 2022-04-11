@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e1a2addbc1bae31c897d44407b47b8ad",
+    "content-hash": "2b456c5630794e09c9840c180217483b",
     "packages": [
         {
             "name": "cedaro/wp-plugin",
