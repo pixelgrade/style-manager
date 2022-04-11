@@ -45,12 +45,12 @@
 		"php": ">=7.1",
         "pimple/pimple": "^3.2",
         "cedaro/wp-plugin": "^0.4.0",
-        "htmlburger/carbon-fields": "^3.2",
+        "htmlburger/carbon-fields": "^3.3",
 		"instituteweb/composer-scripts": "^1.1",
 		"psr/container": "^1.1",
 		"psr/log": "^1.0",
-		"symfony/polyfill-mbstring": "^v1.23.1",
-		"symfony/polyfill-php72": "^v1.23.0"
+		"symfony/polyfill-mbstring": "^1.23.1",
+		"symfony/polyfill-php72": "^1.23.0"
 	},
 	"require-dev": {
 		"brain/monkey": "^2.2",
@@ -62,9 +62,9 @@
 		"rector/rector": "dev-main",
 		"roave/security-advisories": "dev-master",
 		"squizlabs/php_codesniffer": "^3.3",
-		"szepeviktor/phpstan-wordpress": "^v1.0",
+		"szepeviktor/phpstan-wordpress": "^1.0",
 		"vlucas/phpdotenv": "^5.3",
-		"wordpress/wordpress": "^5.8",
+		"wordpress/wordpress": "^5.9",
 		"wp-coding-standards/wpcs": "^2.3.0"
     },
 	"autoload": {
@@ -118,7 +118,7 @@
 			"npm run gulp composer:prefix_outside_files",
 			"@composer dump-autoload"
 		],
-		"downgrade-to-php-70": [
+		"downgrade-to-php-71": [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
 			"vendor/bin/rector process --autoload-file=vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"
 		],
@@ -136,7 +136,7 @@
 			"npm run gulp composer:delete_lock_and_vendor",
 			"@composer install --prefer-dist --no-scripts",
 			"@prefix-dependencies",
-			"@downgrade-to-php-70",
+			"@downgrade-to-php-71",
 			"@composer dump-autoload --no-dev --optimize"
 		],
 		"zip": [

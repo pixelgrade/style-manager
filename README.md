@@ -55,7 +55,7 @@ We use the following oh-my-zsh plugins: `plugins=(composer git nvm npm)` configu
 
 ## Building The Release .zip 
 
-Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (7.0), and generate a cleaned-up zip.
+Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (7.1), and generate a cleaned-up zip.
 
 After you have updated the version, added the changelog, blessed everything, **you NEED to clone the repo in a TEMPORARY directory** since **the build process is DESTRUCTIVE!!!**
 
@@ -90,4 +90,5 @@ This plugin also includes the following third-party libraries:
 
 * Select 2 - https://select2.github.io/
 * Ace Editor - https://ace.c9.io/
+* CarbonFields - https://carbonfields.net/
 * React jQuery Plugin - https://github.com/natedavisolds/jquery-react
