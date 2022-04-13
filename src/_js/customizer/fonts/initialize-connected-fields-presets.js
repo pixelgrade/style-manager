@@ -40,27 +40,35 @@ export const initializeConnectedFieldsPresets = () => {
 
     // Font Sizing
     const configs = {
+      smallest: {
+        sm_font_primary: [ 0, 34 ],
+        sm_font_secondary: [ 5, 30 ],
+        sm_font_body: [ 0, 10 ],
+      },
       smaller: {
         sm_font_primary: [ 6, 40 ], // sm_font_category: [elevation, pitch]
         sm_font_secondary: [ 16, 16 ],
         sm_font_body: [ 0, 45 ],
       },
-      regular: {
+      normal: {
         sm_font_primary: [ 7, 80 ],
         sm_font_secondary: [ 24, 16 ],
         sm_font_body: [ 24, 45 ],
       },
       larger: {
+        sm_font_primary: [ 12, 100 ],
+        sm_font_secondary: [ 20, 30 ],
+        sm_font_body: [ 50, 30 ],
+      },
+      largest: {
         sm_font_primary: [ 18, 100 ],
         sm_font_secondary: [ 20, 45 ],
         sm_font_body: [ 70, 30 ],
-      },
+      }
 
       // Felt 
       // Connected Fields Presets: 1.5
-      // sm_font_primary: [ 0, 34 ],
-      // sm_font_secondary: [ 10, 10 ],
-      // sm_font_body: [ 19, 45 ],
+      // Config: Smallest
     }
 
     setting.bind( newValue => {
