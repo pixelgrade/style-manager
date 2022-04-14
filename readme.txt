@@ -2,8 +2,8 @@
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 5.5.0
-Tested up to: 5.9.2
-Stable tag: 2.1.1
+Tested up to: 5.9.3
+Stable tag: 2.2.0
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -53,6 +53,16 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.2.0 =
+* 2022-04-19
+* Improve Color Palettes module
+* Improve Fonts Palettes module
+* Improve integration with the block editor and the full-site editor
+* Lots of fixes and performance improvements
+* Ensure compatibility with Nova Blocks 2.0+
+* Ensure WordPress 5.9+ compatibility
+* Update Carbon Fields library to version 3.3+
 
 = 2.1.1 =
 * 2021-12-14
