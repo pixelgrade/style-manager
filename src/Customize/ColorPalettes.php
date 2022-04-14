@@ -647,7 +647,7 @@ class ColorPalettes extends AbstractHookProvider {
 							'label'   => esc_html__( 'Normal', '__plugin_txtd' ),
 							'options' => [
 								'sm_color_grades_number'      => 12,
-								'sm_potential_color_contrast' => 0.9,
+								'sm_potential_color_contrast' => 1,
 								'sm_color_grade_balancer'     => 0,
 								'sm_color_promotion_brand'    => true,
 								'sm_color_promotion_white'    => true,
