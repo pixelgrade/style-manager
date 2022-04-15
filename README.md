@@ -59,9 +59,11 @@ Since Style Manager is intended for distribution on WordPress.org you will need 
 
 After you have updated the version, added the changelog, blessed everything, **you NEED to clone the repo in a TEMPORARY directory** since **the build process is DESTRUCTIVE!!!**
 
-**From the newly cloned, temporary directory,** run this from the command line:
+**From the newly cloned, temporary directory,** run these commands from the command line:
 
 ```shell
+nmp install
+
 npm run zip
 ```
 
