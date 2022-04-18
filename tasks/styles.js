@@ -8,7 +8,7 @@ const gulp = require( 'gulp' ),
 
 function stylesBase( src, dest, cb ) {
 	return gulp.src( src )
-	           .pipe( sass().on( 'error', sass.logError ) )
+	           .pipe( sass.sync({outputStyle: 'compressed'}).on( 'error', sass.logError ) )
 	           .pipe( sassUnicode() )
 	           .pipe( replace( /^@charset "UTF-8";\n/gm, '' ) )
 	           .pipe( gulp.dest( dest ) );
