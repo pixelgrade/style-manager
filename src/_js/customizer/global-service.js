@@ -65,9 +65,12 @@ export const setBackArray = ( newArray ) => {
 
 export const pushToBackArray = ( targetSection, section ) => {
   const backArray = getBackArray();
-  window.document.body.classList.add( 'remove-customizer-transitions' );
+  window.document.body.classList.add( 'sm-customizer-shortcut-busy' );
   setBackArray( [] );
   targetSection.focus();
+  setTimeout( () => {
+    window.document.body.classList.remove( 'sm-customizer-shortcut-busy' );
+  }, 600 );
   setBackArray( backArray );
   addToBackArray( section );
 };
@@ -78,11 +81,12 @@ export const popFromBackArray = () => {
 
   if ( targetSectionID ) {
     wp.customize.section( targetSectionID, ( targetSection ) => {
+      window.document.body.classList.add( 'sm-customizer-shortcut-busy' );
       targetSection.focus();
       if ( ! backArray.length ) {
         setTimeout( () => {
-          window.document.body.classList.remove( 'remove-customizer-transitions' );
-        }, 100 );
+          window.document.body.classList.remove( 'sm-customizer-shortcut-busy' );
+        }, 600 );
       }
     } );
   }

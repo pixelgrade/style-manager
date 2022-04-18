@@ -75,16 +75,16 @@ and other section use the available space
 }
 
 /* Remove customizer transitions on complex navigation to avoid confusing the user */
-.remove-customizer-transitions {
+.sm-customizer-shortcut-busy {
 
-  .customize-pane-parent,
-  .customize-pane-child {
-    transition-duration: 1ms !important;
-  }
+  .customize-pane-child,
+  .customize-pane-parent {
+    opacity: 0.25 !important;
+    cursor: progress !important;
 
-  .customize-pane-parent,
-  [id="sub-accordion-panel-style_manager_panel"] {
-    opacity: 0 !important;
+    > * {
+      pointer-events: none;
+    }
   }
 }
 
