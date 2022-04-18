@@ -79,6 +79,7 @@ class Customize extends AbstractHookProvider {
 		$this->add_filter( 'style_manager/final_config', 'reorganize_sections', 10, 1 );
 		// Remove the switch theme panel from the Customizer.
 		$this->add_action( 'customize_register', 'remove_switch_theme_panel', 12 );
+		$this->add_action( 'customize_register', 'remove_widgets_panel', 12 );
 		// Add the logic that handles sections and controls registered directly to WP_Customizer, not through the Style Manager config.
 		$this->add_action( 'customize_register', 'reorganize_direct_sections_and_controls', 998 );
 
@@ -351,6 +352,24 @@ class Customize extends AbstractHookProvider {
 		}
 
 		$wp_customize->remove_panel( 'themes' );
+	}
+
+	/**
+	 * Remove the widgets panel.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param \WP_Customize_Manager $wp_customize
+	 */
+	protected function remove_widgets_panel( \WP_Customize_Manager $wp_customize ) {
+		// If there is no style manager support, bail.
+		if ( ! $this->is_supported() ) {
+			return;
+		}
+
+		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
+			$wp_customize->remove_panel( 'widgets' );
+		}
 	}
 
 	/**
