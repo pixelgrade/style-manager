@@ -207,7 +207,9 @@ class EditWithBlocks extends AbstractHookProvider {
 			<?php echo $this->sm_fonts->getFontsDynamicStyle(); ?>
 		</style>
 		<?php $styles = ob_get_clean();
-		$settings['__unstableResolvedAssets']['styles'] .= $styles;
+		if ( isset( $settings['__unstableResolvedAssets']['styles'] ) ) {
+			$settings['__unstableResolvedAssets']['styles'] .= $styles;
+		}
 		return $settings;
 	}
 
