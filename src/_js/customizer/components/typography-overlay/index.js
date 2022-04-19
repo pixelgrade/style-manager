@@ -90,6 +90,11 @@ const Element = ( props ) => {
   const [ style, setStyle ] = useState( {} );
 
   const onConnectedFieldsPresetChange = useCallback( newValue => {
+
+    if ( !config?.choices?.[ newValue ]?.config ) {
+      return;
+    }
+
     const newValueConfig = config.choices[ newValue ].config;
 
     Object.keys( newValueConfig ).forEach( settingID => {

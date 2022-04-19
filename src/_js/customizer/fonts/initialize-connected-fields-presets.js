@@ -9,6 +9,11 @@ export const initializeConnectedFieldsPresets = () => {
     const value = setting();
 
     const updateConnectedSettingsConfigs = ( newValue ) => {
+
+      if ( !config?.choices?.[ newValue ]?.config ) {
+        return;
+      }
+
       const newValueConfig = config.choices[ newValue ].config;
 
       Object.keys( newValueConfig ).forEach( settingID => {
