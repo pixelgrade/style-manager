@@ -83,11 +83,9 @@ export const popFromBackArray = () => {
     wp.customize.section( targetSectionID, ( targetSection ) => {
       window.document.body.classList.add( 'sm-customizer-shortcut-busy' );
       targetSection.focus();
-      if ( ! backArray.length ) {
-        setTimeout( () => {
-          window.document.body.classList.remove( 'sm-customizer-shortcut-busy' );
-        }, 600 );
-      }
+      setTimeout( () => {
+        window.document.body.classList.remove( 'sm-customizer-shortcut-busy' );
+      }, 600 );
     } );
   }
 };
