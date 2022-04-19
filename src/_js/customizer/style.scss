@@ -7,6 +7,7 @@
 // theme
 @import 'scss/feedback-modal';
 @import 'scss/style-manager-panel';
+@import 'scss/polish';
 
 .wp-full-overlay-sidebar {
 
@@ -39,13 +40,15 @@
 .customize-control {
 
   // hide color master controls
-  &[id*="sm_dark_color_switch_slider"],
-  &[id*="sm_dark_color_select_slider"],
-  &[id*="sm_advanced_palette_output"],
-  &[id*="sm_text_color_switch_master"],
-  &[id*="sm_accent_color_switch_master"],
-  &[id*="sm_text_color_select_master"],
-  &[id*="sm_accent_color_select_master"] {
+  &:is(
+    [id*="dark_color_switch_slider"],
+    [id*="dark_color_select_slider"],
+    [id*="advanced_palette_output"],
+    [id*="text_color_switch_master"],
+    [id*="accent_color_switch_master"],
+    [id*="text_color_select_master"],
+    [id*="accent_color_select_master"]
+  ) {
     display: none;
   }
 }
