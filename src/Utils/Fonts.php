@@ -372,7 +372,7 @@ class Fonts {
 
 		// Make sure that the value number is rounded to 2 decimals.
 		if ( is_numeric( $standard_value['value'] ) ) {
-			$standard_value['value'] = round( $standard_value['value'], self::FLOAT_PRECISION );
+			$standard_value['value'] = round( (float) $standard_value['value'], self::FLOAT_PRECISION );
 		}
 
 		// Make sure that we convert all falsy unit values to the boolean false.
