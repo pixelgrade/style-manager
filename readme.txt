@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
 Requires at least: 5.5.0
 Tested up to: 5.9.3
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -54,13 +54,17 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 
 == Changelog ==
 
+= 2.2.2 =
+* 2022-04-19
+* Ensure compatibility with PHP 8.0
+
 = 2.2.1 =
 * 2022-04-19
 * Improve backwards compatibility
 * Bug fixes and style improvements
 
 = 2.2.0 =
-* 2022-04-19
+* 2022-04-15
 * Improve Color Palettes module
 * Improve Fonts Palettes module
 * Improve integration with the block editor and the full-site editor
