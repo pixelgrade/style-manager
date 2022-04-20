@@ -313,7 +313,13 @@ function sm_get_legacy_palette_css( $palette ): string {
 	$output .= sm_get_variables_css( $palette, $sourceIndex, true, true );
 	$output .= '}' . PHP_EOL;
 
-	$output .= '.sm-palette-' . $palette->id . ' { ' . PHP_EOL;
+	$selector = '.sm-palette-' . $palette->id;
+
+	if ( ( string ) $palette->id === '1' ) {
+		$selector = 'html, .sm-palette-' . $palette->id;
+	}
+
+	$output .= $selector . ' { ' . PHP_EOL;
 	$output .= sm_get_apply_palette_variables( $palette->id );
 	$output .= '}' . PHP_EOL;
 
