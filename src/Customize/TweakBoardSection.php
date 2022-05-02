@@ -111,6 +111,20 @@ class TweakBoardSection extends AbstractHookProvider {
 							'felt' => esc_html__( 'Felt', '__plugin_txtd' ),
 						],
 					],
+					'sm_decorative_titles_style' => [
+						'type'         => 'radio',
+						// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+						'setting_type' => 'option',
+						// We will force this setting id preventing prefixing and other regular processing.
+						'setting_id'   => 'sm_decorative_titles_style',
+						'label'        => esc_html__( 'Titles Fancy Style (BETA)', '__plugin_txtd' ),
+						'desc'         => esc_html__( 'Choose a decoration style for Headings with Fancy style.', '__plugin_txtd' ),
+						'default'      => 'underline',
+						'choices'      => [
+							'underline'    => esc_html__( 'Underline', '__plugin_txtd' ),
+							'blocky' => esc_html__( 'Blocky', '__plugin_txtd' ),
+						],
+					],
 				]
 			]
 		);
@@ -132,7 +146,8 @@ class TweakBoardSection extends AbstractHookProvider {
 
 		$tweak_board_section_fields = [
 			'sm_collection_title_position',
-			'sm_collection_hover_effect'
+			'sm_collection_hover_effect',
+			'sm_decorative_titles_style'
 		];
 
 		$tweak_board_section_config = [
