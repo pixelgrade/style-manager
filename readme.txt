@@ -1,9 +1,9 @@
-=== Style Manager - Auto-magical system to style your WordPress site ===
+=== Style Manager - Auto-magical system to style your entire WordPress site ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
-Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes
+Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes, global styles
 Requires at least: 5.5.0
-Tested up to: 5.9.3
-Stable tag: 2.2.3
+Tested up to: 6.0
+Stable tag: 2.2.4
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -53,6 +53,11 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.2.4 =
+* 2022-05-06
+* Fix inconsistencies in the block editor.
+* Test with the latest WordPress version.
 
 = 2.2.3 =
 * 2022-04-20
