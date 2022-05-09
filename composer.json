@@ -1,6 +1,6 @@
 {
     "name": "pixelgrade/style-manager",
-    "description": "Style Manager is an auto-magical system to style your WordPress site.",
+    "description": "Style Manager is an auto-magical system to style your entire WordPress site.",
     "type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"authors": [
@@ -42,11 +42,11 @@
 		}
 	},
     "require": {
-		"php": ">=7.1",
-        "pimple/pimple": "^3.2",
-        "cedaro/wp-plugin": "^0.4.0",
-        "htmlburger/carbon-fields": "^3.3",
+		"cedaro/wp-plugin": "^0.4.0",
+		"htmlburger/carbon-fields": "^3.3",
 		"instituteweb/composer-scripts": "^1.1",
+		"php": ">=7.1",
+		"pimple/pimple": "^3.2",
 		"psr/container": "^1.1",
 		"psr/log": "^1.0",
 		"symfony/polyfill-mbstring": "^1.23.1",
