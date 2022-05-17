@@ -80,7 +80,7 @@ class DesignAssets extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get( $skip_cache = false ): array {
+	public function get( bool $skip_cache = false ): array {
 		if ( ! is_null( $this->design_assets ) && false === $skip_cache ) {
 			return $this->design_assets;
 		}
@@ -105,12 +105,12 @@ class DesignAssets extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $entry The entry to return the design asset data.
-	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 * @param string $entry      The entry to return the design asset data.
+	 * @param bool   $skip_cache Optional. Whether to use the cached config or fetch a new one.
 	 *
 	 * @return array|null The entry data. If the entry is not found, null will be returned.
 	 */
-	public function get_entry( string $entry, $skip_cache = false ): ?array {
+	public function get_entry( string $entry, bool $skip_cache = false ): ?array {
 		$this->get( $skip_cache );
 
 		if ( isset( $this->design_assets[ $entry ] ) ) {
@@ -131,7 +131,7 @@ class DesignAssets extends AbstractHookProvider {
 	 *
 	 * @return array|false
 	 */
-	protected function maybe_fetch( $skip_cache = false ) {
+	protected function maybe_fetch( bool $skip_cache = false ) {
 		// First try and get the cached data
 		$data = get_option( self::CACHE_KEY );
 
@@ -153,13 +153,13 @@ class DesignAssets extends AbstractHookProvider {
 			$expire_timestamp = get_option( self::CACHE_TIMESTAMP_KEY );
 		}
 
-		// The data isn't set, is expired or we were instructed to skip the cache; we need to fetch fresh data.
+		// The data isn't set, is expired, or we were instructed to skip the cache; we need to fetch fresh data.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			// Fetch the design assets from the cloud.
 			$fetched_data = $this->cloud_client->fetch_design_assets();
 			// Bail in case of failure to retrieve data.
 			// We will return the data already available.
-			if ( false === $fetched_data || null === $fetched_data ) {
+			if ( null === $fetched_data ) {
 				return $data;
 			}
 

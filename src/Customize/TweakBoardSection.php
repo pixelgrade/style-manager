@@ -52,7 +52,7 @@ class TweakBoardSection extends AbstractHookProvider {
 	 * @return bool
 	 */
 	public function is_supported(): bool {
-		return true;
+		return apply_filters( 'style_manager/tweak_board_is_supported', true );
 	}
 
 	/**
@@ -69,7 +69,7 @@ class TweakBoardSection extends AbstractHookProvider {
 	 */
 
 	protected function add_style_manager_section_master_tweak_board_config ( array $config ): array {
-		// If there is no style manager support, bail early.
+		// If there is no Tweak Board support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
 		}

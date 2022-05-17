@@ -299,7 +299,7 @@ class ColorPalettes extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function add_style_manager_new_section_master_colors_config( array $config ): array {
-		// If there is no style manager support, bail early.
+		// If there is no Color Palettes support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
 		}
@@ -308,7 +308,7 @@ class ColorPalettes extends AbstractHookProvider {
 			$config['sections']['style_manager_section'] = [];
 		}
 
-		$sm_advanced_palette_outpt_default = file_get_contents( __DIR__  . '/sm_advanced_palette_output.json' );
+		$sm_advanced_palette_output_default = file_get_contents( __DIR__  . '/sm_advanced_palette_output.json' );
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section']['options'] =
@@ -380,7 +380,7 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_advanced_palette_output'                => [
 					'type'         => 'text',
 					'live'         => true,
-					'default'      => $sm_advanced_palette_outpt_default,
+					'default'      => $sm_advanced_palette_output_default,
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
 					'setting_type' => 'option',
 					// We will force this setting id preventing prefixing and other regular processing.

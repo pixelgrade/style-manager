@@ -55,9 +55,9 @@ class PixelgradeCloud implements CloudInterface {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public function fetch_design_assets(): array {
+	public function fetch_design_assets(): ?array {
 		$request_data = [
 			'site_url' => home_url('/'),
 			// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
@@ -176,7 +176,7 @@ class PixelgradeCloud implements CloudInterface {
 	 *
 	 * @return array|\WP_Error
 	 */
-	public function send_stats( $data = [], $blocking = false ) {
+	public function send_stats( array $data = [], bool $blocking = false ) {
 		if ( empty( $data ) ) {
 			// This is what we send by default.
 			$data = [
@@ -191,7 +191,7 @@ class PixelgradeCloud implements CloudInterface {
 		/**
 		 * Filters request data sent to the cloud.
 		 *
-		 * @param array  $data
+		 * @param array $data
 		 */
 		$data = apply_filters( 'style_manager/pixelgrade_cloud_request_data', $data );
 		// This is for backwards compatibility.

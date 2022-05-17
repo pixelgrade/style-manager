@@ -92,7 +92,7 @@ class CloudFonts extends AbstractHookProvider {
 	 * @return bool
 	 */
 	public function is_supported(): bool {
-		// For now we will only use the fact that Style Manager is supported.
+		// For now, we will only use the fact that Style Manager is supported.
 		return apply_filters( 'style_manager/cloud_fonts_are_supported', is_sm_supported() );
 	}
 
@@ -105,7 +105,7 @@ class CloudFonts extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_cloud_fonts( $skip_cache = false ): array {
+	public function get_cloud_fonts( bool $skip_cache = false ): array {
 		$config = $this->design_assets->get_entry( 'cloud_fonts', $skip_cache );
 		if ( is_null( $config ) ) {
 			$config = $this->get_default_cloud_fonts();
@@ -123,7 +123,7 @@ class CloudFonts extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_system_fonts( $skip_cache = false ): array {
+	public function get_system_fonts( bool $skip_cache = false ): array {
 		$config = $this->design_assets->get_entry( 'system_fonts', $skip_cache );
 		if ( is_null( $config ) ) {
 			$config = $this->get_default_system_fonts();
@@ -141,7 +141,7 @@ class CloudFonts extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_categories( $skip_cache = false ): array {
+	public function get_categories( bool $skip_cache = false ): array {
 		$categories = $this->design_assets->get_entry( 'font_categories', $skip_cache );
 		if ( is_null( $categories ) ) {
 			$categories = $this->get_default_categories();

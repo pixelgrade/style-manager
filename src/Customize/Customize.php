@@ -27,7 +27,7 @@ class Customize extends AbstractHookProvider {
 	const USER_PROVIDED_FEEDBACK_OPTION_KEY = 'style_manager_user_feedback_provided';
 
 	/**
-	 * Cache for the wupdates identification data to avoid firing the filter multiple times.
+	 * Cache for the WUpdates identification data to avoid firing the filter multiple times.
 	 * @var array
 	 */
 	protected static array $wupdates_ids = [];
@@ -115,7 +115,7 @@ class Customize extends AbstractHookProvider {
 	}
 
 	/**
-	 * Setup the Style Manager Customizer section base config.
+	 * Set up the Style Manager Customizer section base config.
 	 *
 	 * This handles the base configuration for the controls in the Style Manager section. We expect other parties (e.g. the theme),
 	 * to come and fill up the missing details (e.g. connected fields).
@@ -127,7 +127,7 @@ class Customize extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function setup_sm_section_base_config( array $config ): array {
-		// If there is no style manager support, bail early.
+		// If there is no Style Manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
 		}

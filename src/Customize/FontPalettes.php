@@ -255,7 +255,7 @@ class FontPalettes extends AbstractHookProvider {
 					$fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] = 1.0;
 				}
 			} else {
-				// By default we use 1.
+				// By default, we use 1.
 				$fonts_logic_config[ $font_setting_id ]['font_size_multiplier'] = 1.0;
 			}
 
@@ -341,7 +341,7 @@ class FontPalettes extends AbstractHookProvider {
 
 					// If we have reached the end of the list, we will insert it at the end.
 					if ( $i === count( $font_styles_intervals ) ) {
-						array_push( $font_styles_intervals, $font_styles_interval );
+						$font_styles_intervals[] = $font_styles_interval;
 					}
 				}
 
@@ -362,7 +362,7 @@ class FontPalettes extends AbstractHookProvider {
 				// Finally, go through each font style and standardize it.
 				foreach ( $font_styles_intervals as $key => $value ) {
 
-					// Since there is not font value "font_weight", but "font_variant", treat it as such.
+					// Since there is no font value "font_weight", but "font_variant", treat it as such.
 					// Font weight is only a CSS value.
 					// Font variant "splits" into font-weight and (maybe) "font-style".
 					if ( isset( $value['font_weight'] ) && ! isset( $value['font_variant'] ) ) {
@@ -391,7 +391,7 @@ class FontPalettes extends AbstractHookProvider {
 							$font_styles_intervals[ $key ]['font_size_multiplier'] = 1.0;
 						}
 					} else {
-						// By default we use 1, meaning no effect.
+						// By default, we use 1, meaning no effect.
 						$font_styles_intervals[ $key ]['font_size_multiplier'] = 1.0;
 					}
 
@@ -418,7 +418,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_palettes( $skip_cache = false ): array {
+	public function get_palettes( bool $skip_cache = false ): array {
 		$config = $this->design_assets->get_entry( 'font_palettes', $skip_cache );
 		if ( is_null( $config ) ) {
 			$config = $this->get_default_config();
@@ -428,7 +428,7 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	/**
-	 * Setup the Style Manager Customizer section master fonts config.
+	 * Set up the Style Manager Customizer section master fonts config.
 	 *
 	 * This handles the base configuration for the controls in the Style Manager section. We expect other parties (e.g. the theme),
 	 * to come and fill up the missing details (e.g. connected fields).
@@ -440,7 +440,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function add_style_manager_section_master_fonts_config( array $config ): array {
-		// If there is no style manager support, bail early.
+		// If there is no Style Manager support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
 		}
@@ -737,7 +737,7 @@ class FontPalettes extends AbstractHookProvider {
 				'sm_separator_0_4' => [ 'type' => 'html', 'html' => '', 'priority' => 25 ],
 				'sm_fonts_connected_fields_preset' => [
 					'type'         => 'preset',
-					'label'        => __( 'Connected Fields Presets', '__theme_txtd' ),
+					'label'        => __( 'Connected Fields Presets', '__plugin_txtd' ),
 					'live'         => true,
 					'priority'     => 25,
 					'setting_type' => 'option',
@@ -1341,7 +1341,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * @return bool
 	 */
 	protected function update_custom_palette_in_use(): bool {
-		// If there is no style manager support, bail early.
+		// If there is no Font Palettes support, bail early.
 		if ( ! $this->is_supported() ) {
 			return false;
 		}
@@ -1390,11 +1390,11 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $options_details Optional.
+	 * @param array|null $options_details Optional.
 	 *
 	 * @return array
 	 */
-	public function get_all_master_font_controls_ids( $options_details = null ): array {
+	public function get_all_master_font_controls_ids( array $options_details = null ): array {
 		$control_ids = [];
 
 		if ( empty( $options_details ) ) {

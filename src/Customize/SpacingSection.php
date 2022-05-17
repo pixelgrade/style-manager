@@ -15,7 +15,7 @@ use Pixelgrade\StyleManager\Utils\ArrayHelpers;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
- * Provides the font palettes logic.
+ * Provides the Spacing logic.
  *
  * @since 2.0.0
  */
@@ -38,24 +38,23 @@ class SpacingSection extends AbstractHookProvider {
 		/*
 		 * Handle the Customizer Style Manager section config.
 		 */
-		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_master_fonts_config', 12, 1 );
+		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_spacing_config', 12, 1 );
 		$this->add_filter( 'style_manager/sm_panel_config', 'reorganize_customizer_controls', 20, 2 );
 	}
 
 	/**
-	 * Determine if Font Palettes are supported.
+	 * Determine if the Spacing Section is supported.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
 	public function is_supported(): bool {
-		return true;
-//		return apply_filters( 'style_manager/font_palettes_are_supported', current_theme_supports( 'style_manager_font_palettes' ) );
+		return apply_filters( 'style_manager/spacing_is_supported', true );
 	}
 
 	/**
-	 * Setup the Style Manager Customizer section master fonts config.
+	 * Set up the Style Manager Customizer section spacing config.
 	 *
 	 * This handles the base configuration for the controls in the Style Manager section. We expect other parties (e.g. the theme),
 	 * to come and fill up the missing details (e.g. connected fields).
@@ -66,8 +65,8 @@ class SpacingSection extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	protected function add_style_manager_section_master_fonts_config( array $config ): array {
-		// If there is no style manager support, bail early.
+	protected function add_style_manager_section_spacing_config( array $config ): array {
+		// If there is no Spacing support, bail early.
 		if ( ! $this->is_supported() ) {
 			return $config;
 		}
@@ -86,8 +85,8 @@ class SpacingSection extends AbstractHookProvider {
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'   => 'sm_site_container_width',
 					'live'         => true,
-					'label'        => esc_html__( 'Site Container', '__theme_txtd' ),
-					'desc'         => esc_html__( 'Adjust the maximum amount of width your site content extends to.', '__theme_txtd' ),
+					'label'        => esc_html__( 'Site Container', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust the maximum amount of width your site content extends to.', '__plugin_txtd' ),
 					'default'      => 75,
 					'input_attrs'  => [
 						'min'          => 60,
@@ -110,8 +109,8 @@ class SpacingSection extends AbstractHookProvider {
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'   => 'sm_content_inset',
 					'live'         => true,
-					'label'        => esc_html__( 'Content Inset', '__theme_txtd' ),
-					'desc'         => esc_html__( 'Adjust how much the content is visually inset within the Site Container.', '__theme_txtd' ),
+					'label'        => esc_html__( 'Content Inset', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust how much the content is visually inset within the Site Container.', '__plugin_txtd' ),
 					'default'      => 230,
 					'input_attrs'  => [
 						'min'          => 100,
@@ -134,8 +133,8 @@ class SpacingSection extends AbstractHookProvider {
 					// We will force this setting id preventing prefixing and other regular processing.
 					'setting_id'   => 'sm_spacing_level',
 					'live'         => true,
-					'label'        => esc_html__( 'Spacing Level', '__theme_txtd' ),
-					'desc'         => esc_html__( 'Adjust the multiplication factor of the distance between elements.', '__theme_txtd' ),
+					'label'        => esc_html__( 'Spacing Level', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust the multiplication factor of the distance between elements.', '__plugin_txtd' ),
 					'default'      => 1,
 					'input_attrs'  => [
 						'min'          => 0,

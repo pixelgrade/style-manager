@@ -132,7 +132,7 @@ class Fonts extends AbstractHookProvider {
 		 */
 		add_filter( 'style_manager/final_config', [ $this, 'standardize_global_config' ], 99999, 1 );
 
-		// We will initialize the logic after the plugin has finished with it's configuration (at priority 15).
+		// We will initialize the logic after the plugin has finished with its configuration (at priority 15).
 		$this->add_action( 'init', 'init', 20 );
 	}
 
@@ -166,7 +166,7 @@ class Fonts extends AbstractHookProvider {
 
 		if ( $this->plugin_settings->get( 'typography_cloud_fonts', 'yes' ) ) {
 			$this->cloud_fonts = FontsHelper::standardizeFontsList( apply_filters( 'style_manager/cloud_fonts', [] ) );
-			// Add the fonts to selects of the Customizer controls.
+			// Add the fonts to the selects of Customizer controls.
 			if ( ! empty( $this->cloud_fonts ) ) {
 				add_action( 'style_manager/font_family_select_options', [
 					$this,

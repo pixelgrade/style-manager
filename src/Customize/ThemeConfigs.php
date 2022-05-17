@@ -92,7 +92,7 @@ class ThemeConfigs extends AbstractHookProvider {
 	 * @return bool
 	 */
 	public function is_supported(): bool {
-		// For now we will only use the fact that Style Manager is supported.
+		// For now, we will only use the fact that Style Manager is supported.
 		return apply_filters( 'style_manager/theme_configs_are_supported', is_sm_supported() );
 	}
 
@@ -105,7 +105,7 @@ class ThemeConfigs extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	protected function get_theme_configs( $skip_cache = false ): array {
+	protected function get_theme_configs( bool $skip_cache = false ): array {
 		$theme_configs = $this->design_assets->get_entry( 'theme_configs', $skip_cache );
 		if ( is_null( $theme_configs ) ) {
 			$theme_configs = [];
@@ -314,7 +314,7 @@ class ThemeConfigs extends AbstractHookProvider {
 	 */
 	protected function maybe_output_json_external_config() {
 		if ( ! empty( $this->external_theme_config['config'] ) ) {
-			// Also output the JSON in a special hidden div for easy copy pasting.
+			// Also output the JSON in a special hidden div for easy copying and pasting.
 			// Also remove any multiple tabs.
 			echo "\n" . '<!--' . "\n" . 'Just copy&paste this:' . "\n" . "\n" . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . "\n" . "\n" . '-->' . "\n";
 		}

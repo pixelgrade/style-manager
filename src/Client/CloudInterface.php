@@ -20,9 +20,9 @@ interface CloudInterface {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public function fetch_design_assets(): array;
+	public function fetch_design_assets(): ?array;
 
 	/**
 	 * Send stats.
@@ -34,5 +34,5 @@ interface CloudInterface {
 	 *
 	 * @return array|\WP_Error
 	 */
-	public function send_stats( $data = [], $blocking = false );
+	public function send_stats( array $data = [], bool $blocking = false );
 }
