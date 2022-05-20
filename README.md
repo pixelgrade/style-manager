@@ -55,10 +55,12 @@ We use the following oh-my-zsh plugins: `plugins=(composer git nvm npm)` configu
 
 ### Easy experimentation with design assets
 
-To avoid the hassle and bustle of editing design assets on the cloud and then refreshing your local WordPress installation (ad infinitum), you can [**use this must-use plugin**](https://github.com/pixelgrade/style-manager/files/8737684/style-manager-local-dev-mu-plugin.zip) that contains the logic to **automatically load and inject locally-defined, JSON-based design assets.**
+To avoid the hassle and bustle of editing design assets on the cloud and then refreshing your local WordPress installation (ad infinitum), you can [**use this must-use plugin**](https://github.com/pixelgrade/style-manager/files/8737998/style-manager-local-dev-mu-plugin.zip) that contains the logic to **automatically load and inject locally-defined, JSON-based design assets.**
 
-Simply download the zip and extract it in your local WordPress installation's `wp-content/mu-plugins` directory (directly in that directory, not in a subdirectory, since WordPress will not recognize it as mu-plugin). 
+Simply download the zip and extract it in your local WordPress installation's `wp-content/mu-plugins` directory (the `style-manager-local-dev.php` and `style-manager-local-dev` need to be directly in the `mu-plugins` directory, not in a subdirectory, since WordPress will not recognize it as mu-plugin otherwise). 
+
 Next go to the `style-manager-local-dev` directory and remove/add/edit anything you want. The starting directories and files are just there to help you get started. You don't need to keep all of them.
+
 Please note that there are **further instructions** in the mu-plugin's code.
 
 ## Building The Release .zip 
