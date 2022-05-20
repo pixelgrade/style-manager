@@ -53,6 +53,14 @@ For ease of development, it is best to use `nvm` (https://github.com/nvm-sh/nvm)
 
 We use the following oh-my-zsh plugins: `plugins=(composer git nvm npm)` configured in `~/.zshrc`. For automatic node version switching, place this line in `~/.zshrc` just below the plugins line: `NVM_AUTOLOAD=1`. Now whenever you enter a directory through the shell, if it finds a `.nvmrc` file, it will switch to the specified node version.
 
+### Easy experimentation with design assets
+
+To avoid the hassle and bustle of editing design assets on the cloud and then refreshing your local WordPress installation (ad infinitum), you can [**use this must-use plugin**](https://github.com/pixelgrade/style-manager/files/8737684/style-manager-local-dev-mu-plugin.zip) that contains the logic to **automatically load and inject locally-defined, JSON-based design assets.**
+
+Simply download the zip and extract it in your local WordPress installation's `wp-content/mu-plugins` directory (directly in that directory, not in a subdirectory, since WordPress will not recognize it as mu-plugin). 
+Next go to the `style-manager-local-dev` directory and remove/add/edit anything you want. The starting directories and files are just there to help you get started. You don't need to keep all of them.
+Please note that there are **further instructions** in the mu-plugin's code.
+
 ## Building The Release .zip 
 
 Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (7.1), and generate a cleaned-up zip.
