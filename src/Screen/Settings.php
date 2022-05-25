@@ -145,7 +145,7 @@ class Settings extends AbstractHookProvider {
 			         Field::make( 'select', 'style_resources_location', esc_html__( 'Styles location:', '__plugin_txtd' ) )
 			              ->set_help_text( esc_html__( 'Here you can decide where to put your style output, in header or footer', '__plugin_txtd' ) )
 			              ->set_options( [
-				              'wp_head'   => esc_html__( 'In header (just before the head tag)', '__plugin_txtd' ),
+				              'wp_head'   => esc_html__( 'In head (just before the closing head tag)', '__plugin_txtd' ),
 				              'wp_footer' => esc_html__( 'Footer (just before the end of the body tag)', '__plugin_txtd' ),
 			              ] )
 			              ->set_default_value( 'wp_footer' )

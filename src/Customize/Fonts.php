@@ -220,6 +220,11 @@ class Fonts extends AbstractHookProvider {
 		 * Output the frontend fonts specific scripts and styles.
 		 */
 		$load_location = $this->plugin_settings->get( 'style_resources_location', 'wp_head' );
+		// To prevent our dynamic generated CSS inline styles being overwritten by the PHP geenrated ones (in ::outputFontsDynamicStyle() )
+		// We always output in the <head> when in the customizer preview.
+		if ( is_customize_preview() ) {
+			$load_location = 'wp_head';
+		}
 		// Add preconnect links as early as possible for faster external fonts loading.
 		add_action( 'wp_head', [ $this, 'add_preconnect_links' ], 0 );
 		wp_register_script( 'pixelgrade_style_manager-web-font-loader',
@@ -1002,7 +1007,7 @@ class Fonts extends AbstractHookProvider {
 
 			$output .= $font_output . "\n";
 
-			// If we are in a Customizer context we will output CSS rules grouped so we can target them individually.
+			// If we are in a Customizer context we will output CSS rules grouped, so we can target them individually.
 			if ( is_customize_preview() ) { ?>
 				<style id="style-manager_font_output_for_<?php echo sanitize_html_class( $key ); ?>">
 					<?php echo $font_output; ?>
@@ -1012,10 +1017,10 @@ class Fonts extends AbstractHookProvider {
 		}
 
 		// In the front-end we need to print CSS rules in bulk. ?>
-			<style id="style-manager_fonts_output">
-				<?php echo $output; ?>
-			</style>
-			<?php
+		<style id="style-manager_fonts_output">
+			<?php echo $output; ?>
+		</style>
+		<?php
 	}
 
 	/**
