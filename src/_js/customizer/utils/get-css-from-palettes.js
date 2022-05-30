@@ -27,13 +27,13 @@ export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
     return `
       ${ palettesAcc }
       ${ paletteSelector } {
-      ${ getVariationsCSS( palette.variations, variation - 1 ) }
+        ${ getVariationsCSS( palette.variations, variation - 1 ) }
       }
       ${ darkPaletteSelector } {
-      ${ getVariationsCSS( palette.darkVariations, variation - 1 ) }
+        ${ getVariationsCSS( palette.darkVariations, variation - 1 ) }
       }
       ${ paletteShiftedSelector } {
-      ${ getVariationsCSS( palette.variations, palette.sourceIndex ) }
+        ${ getVariationsCSS( palette.variations, palette.sourceIndex ) }
       }
     `;
   }, '');
@@ -54,7 +54,7 @@ const getVariationCSS = ( variations, index, offset ) => {
 
   return Object.keys( variation ).reduce( ( acc, key ) => {
     return `${ acc }
-    --sm-${ key }-color-${ index + 1 }: ${ variation[ key ] };`
+--sm-${ key }-color-${ index + 1 }: ${ variation[ key ] };`
   }, '' );
 
 };
