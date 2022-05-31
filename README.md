@@ -2,9 +2,15 @@
 
 With [Style Manager](https://github.com/pixelgrade/style-manager), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
 
-This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with it's capabilities is to study the way [one of Pixelgrade's themes](https://github.com/pixelgrade/rosa2-lite/tree/master/inc/integrations/customify) integrates with it.
+This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with its capabilities is to study the way [Pixelgrade's Anima universal theme](https://github.com/pixelgrade/anima/blob/dev/inc/integrations/style-manager/style-manager.php) integrates with it.
 
 **Made with care by Pixelgrade**
+
+## Completely compatible with the following WordPress themes:
+- [Mies LT](https://pixelgrade.com/themes/portfolio/mies-lt/) _by Pixelgrade_
+- [Julia LT](https://pixelgrade.com/themes/blogging/julia-lt/) _by Pixelgrade_
+- [Rosa LT](https://pixelgrade.com/themes/restaurants/rosa-lt/) _by Pixelgrade_
+- [Felt LT](https://pixelgrade.com/themes/blogging/felt-lt/) _by Pixelgrade_
 
 ## How to use it?
 
