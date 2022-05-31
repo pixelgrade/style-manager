@@ -7,6 +7,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 **Made with care by Pixelgrade**
 
 ## Completely compatible with the following WordPress themes:
+
 - [Mies LT](https://pixelgrade.com/themes/portfolio/mies-lt/) _by Pixelgrade_
 - [Julia LT](https://pixelgrade.com/themes/blogging/julia-lt/) _by Pixelgrade_
 - [Rosa LT](https://pixelgrade.com/themes/restaurants/rosa-lt/) _by Pixelgrade_
@@ -104,9 +105,12 @@ Bear in mind that there are **simple unit tests** (hence the `--testsuite=Unit` 
 GPLv2 and later, of course!
 
 ## Thanks!
+
 This plugin also includes the following third-party libraries:
 
 * Select 2 - https://select2.github.io/
 * Ace Editor - https://ace.c9.io/
 * CarbonFields - https://carbonfields.net/
 * React jQuery Plugin - https://github.com/natedavisolds/jquery-react
+
+2020-2022 © Pixelgrade.
