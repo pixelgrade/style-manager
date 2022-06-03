@@ -454,6 +454,10 @@
   color: var(--sm-color-palette-neutral-color-4);
 }
 
+.font-options__head:hover .font-options__font-title {
+	background-color: var(--customizer-select-focus-background-color);
+}
+
 .font-options__font-title {
   font-size: 12px;
   line-height: 20px;

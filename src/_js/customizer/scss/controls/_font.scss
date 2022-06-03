@@ -51,6 +51,10 @@
     @include select-focus;
   }
 
+  &:hover .font-options__font-title {
+    background-color: var(--customizer-select-focus-background-color);
+  }
+
   .font-options__option-title {
     margin-right: 10px;
   }
