@@ -56,8 +56,8 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'customize.tweak_board_section' ) )
 			->register_hooks( $container->get( 'customize.general' ) )
 			->register_hooks( $container->get( 'customize.theme_configs' ) )
-			->register_hooks( $container->get( 'screen.customizer' ) );
-
+			->register_hooks( $container->get( 'screen.customizer' ) )
+			->register_hooks( $container->get( 'options' ) );
 
 		if ( is_admin() ) {
 			$this
@@ -66,8 +66,7 @@ class Plugin extends BasePlugin implements Composable {
 				->register_hooks( $container->get( 'hooks.admin_assets' ) )
 				->register_hooks( $container->get( 'screen.general_admin' ) )
 				->register_hooks( $container->get( 'screen.settings' ) )
-				->register_hooks( $container->get( 'screen.edit_with_blocks' ) )
-				->register_hooks( $container->get( 'options' ) );
+				->register_hooks( $container->get( 'screen.edit_with_blocks' ) );
 
 			if ( is_customizer() ) {
 				$this->register_hooks( $container->get( 'screen.customizer.search' ) );
