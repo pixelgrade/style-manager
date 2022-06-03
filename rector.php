@@ -3,28 +3,28 @@
 use Rector\Core\Configuration\Option;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\DowngradeSetList;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
 /** Define ABSPATH as this file's directory */
 if (!defined('ABSPATH')) {
 	define('ABSPATH', __DIR__ . '/vendor/wordpress/wordpress/');
 }
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $rectorConfig): void {
 	// get parameters
-	$parameters = $containerConfigurator->parameters();
+	$parameters = $rectorConfig->parameters();
 
 	// paths to refactor; solid alternative to CLI arguments
-	$parameters->set(Option::PATHS, [
+	$rectorConfig->paths( [
 		__DIR__ . '/src',
 		__DIR__ . '/vendor_prefixed',
 		__DIR__ . '/vendor/htmlburger/carbon-fields',
-	]);
+	] );
 
-	$parameters->set(Option::SKIP, [
+	$rectorConfig->skip( [
 		__DIR__ . '/src/_js',
 		__DIR__ . '/src/_scss',
-	]);
+	] );
 
 	// Rector is static reflection to load code without running it - see https://phpstan.org/blog/zero-config-analysis-with-static-reflection
 	$parameters->set(Option::AUTOLOAD_PATHS, [
@@ -43,8 +43,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$parameters->set(Option::PHPSTAN_FOR_RECTOR_PATH, __DIR__ . '/phpstan.neon.dist');
 
 	// here we can define, what sets of rules will be applied
-	$containerConfigurator->import( DowngradeSetList::PHP_80 );
-	$containerConfigurator->import( DowngradeSetList::PHP_74 );
-	$containerConfigurator->import( DowngradeSetList::PHP_73 );
-	$containerConfigurator->import( DowngradeSetList::PHP_72 );
+	$rectorConfig->import( DowngradeSetList::PHP_80 );
+	$rectorConfig->import( DowngradeSetList::PHP_74 );
+	$rectorConfig->import( DowngradeSetList::PHP_73 );
+	$rectorConfig->import( DowngradeSetList::PHP_72 );
 };
