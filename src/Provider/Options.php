@@ -236,7 +236,7 @@ class Options extends AbstractHookProvider {
 	 *
 	 * @return array|false The option config or false on failure.
 	 */
-	public function get_details( string $option_id, $minimal_details = false, $skip_cache = false ) {
+	public function get_details( string $option_id, bool $minimal_details = false, bool $skip_cache = false ) {
 		if ( empty( $option_id ) ) {
 			return false;
 		}
@@ -491,7 +491,7 @@ class Options extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_details_all( $only_minimal_details = false, $skip_cache = false ): array {
+	public function get_details_all( bool $only_minimal_details = false, bool $skip_cache = false ): array {
 
 		// If we already have the data, do as little as possible.
 		if ( true === $only_minimal_details && ! empty( $this->minimal_details ) ) {
@@ -707,7 +707,7 @@ class Options extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	protected function load_customizer_config( $skip_cache = false ): array {
+	protected function load_customizer_config( bool $skip_cache = false ): array {
 		if ( ! empty( $this->customizer_config ) ) {
 			return $this->customizer_config;
 		}
@@ -735,7 +735,7 @@ class Options extends AbstractHookProvider {
 			$expire_timestamp = \get_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY );
 		}
 
-		// The data isn't set, is expired or we were instructed to skip the cache; we need to regenerate the config.
+		// The data isn't set, is expired, or we were instructed to skip the cache; we need to regenerate the config.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
 			// Allow themes or other plugins to filter the config.
 			$data = \apply_filters( 'style_manager/filter_fields', [] );
@@ -783,10 +783,10 @@ class Options extends AbstractHookProvider {
 	}
 
 	protected function maybe_migrate_controls_data( $key, $value, $new_all_values, $old_all_values ) {
+		// Only migrate on `values_store_mod` change.
 		if ( $key !== 'values_store_mod' ) {
 			return;
 		}
-		// Only migrate on `values_store_mod` change.
 		if ( ! isset( $old_all_values['values_store_mod'] ) || ! isset( $new_all_values['values_store_mod'] ) ) {
 			return;
 		}
@@ -827,11 +827,13 @@ class Options extends AbstractHookProvider {
 			} else if ( $old_values_store === 'theme_mod' && isset( $theme_mods_values[ $setting_id ] ) ) {
 				$old_setting_value = $theme_mods_values[ $setting_id ];
 			}
+
 			// No old value to migrate.
 			if ( $old_setting_value === null ) {
 				continue;
 			}
 
+			// Migrate the old value to the new store location.
 			if ( $new_values_store === 'option' ) {
 				$options_values[ $setting_id ] = $old_setting_value;
 			} else {
