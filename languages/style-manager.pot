@@ -1,24 +1,24 @@
-# Copyright (C) 2021 Pixelgrade
+# Copyright (C) 2022 Pixelgrade
 # This file is distributed under the GPL-2.0 or later..
 msgid ""
 msgstr ""
-"Project-Id-Version: Style Manager 2.0.0\n"
+"Project-Id-Version: Style Manager 2.2.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/style-manager\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-06-03T11:46:19+00:00\n"
+"POT-Creation-Date: 2022-06-07T07:27:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: style-manager\n"
 
 #. Plugin Name of the plugin
-#: src/Customize/Customize.php:130
-#: src/Customize/Customize.php:178
-#: src/Screen/Settings.php:97
-#: src/Screen/Settings.php:99
+#: src/Customize/Customize.php:142
+#: src/Customize/Customize.php:190
+#: src/Screen/Settings.php:107
+#: src/Screen/Settings.php:109
 msgid "Style Manager"
 msgstr ""
 
@@ -27,7 +27,7 @@ msgid "https://wordpress.org/plugins/style-manager"
 msgstr ""
 
 #. Description of the plugin
-msgid "Auto-magical system to style your WordPress site."
+msgid "Auto-magical system to style your entire WordPress site."
 msgstr ""
 
 #. Author of the plugin
@@ -39,13 +39,12 @@ msgid "https://pixelgrade.com"
 msgstr ""
 
 #: resources/sm_theme_root.php:79
-#: src/Customize/FontPalettes.php:560
-#: src/Screen/Customizer.php:1285
+#: src/Screen/Customizer.php:1292
 msgid "Fonts"
 msgstr ""
 
 #: resources/sm_theme_root.php:87
-#: src/Screen/Settings.php:120
+#: src/Screen/Settings.php:133
 msgid "Header"
 msgstr ""
 
@@ -111,9 +110,9 @@ msgid "Price"
 msgstr ""
 
 #: resources/sm_theme_root.php:518
-#: src/Customize/ColorPalettes.php:707
-#: src/Screen/Customizer.php:1237
-#: src/Screen/Settings.php:118
+#: src/Customize/ColorPalettes.php:849
+#: src/Screen/Customizer.php:1244
+#: src/Screen/Settings.php:131
 msgid "Colors"
 msgstr ""
 
@@ -185,708 +184,1086 @@ msgstr ""
 msgid "WooCommerce Info"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:243
+#: src/Customize/ColorPalettes.php:200
 msgid "Color Usage"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:351
+#: src/Customize/ColorPalettes.php:253
+msgid "Fine-tune color palette"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:366
 msgid "Palette Source"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:543
+#: src/Customize/ColorPalettes.php:394
 msgid "Palette Output"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:554
-msgid "Shift the <strong>start position</strong> of the color palette. Use 0 for white, 1-2 for subtle shades, 3-6 for colorful, above 7 for darker shades."
-msgstr ""
-
-#: src/Customize/ColorPalettes.php:558
-msgid "Palette Basis Position"
-msgstr ""
-
-#: src/Customize/ColorPalettes.php:579
+#: src/Customize/ColorPalettes.php:419
 msgid "Text Master"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:591
-msgid "Text Select Master"
-msgstr ""
-
-#: src/Customize/ColorPalettes.php:597
-msgid "Text"
-msgstr ""
-
-#: src/Customize/ColorPalettes.php:606
+#: src/Customize/ColorPalettes.php:431
 msgid "Accent Master"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:618
-msgid "Accent Select Master"
-msgstr ""
-
-#: src/Customize/ColorPalettes.php:624
-#: src/sm-functions.php:33
-#: src/sm-functions.php:41
-msgid "Accent"
-msgstr ""
-
-#: src/Customize/ColorPalettes.php:629
+#: src/Customize/ColorPalettes.php:440
 msgid "Adjust <strong>how much color</strong> you want to add to your site. For more control over elements, you can edit them individually."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:632
+#: src/Customize/ColorPalettes.php:443
 msgid "Coloration Level"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:636
+#: src/Customize/ColorPalettes.php:447
 msgid "Low"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:637
+#: src/Customize/ColorPalettes.php:448
 msgid "Medium"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:638
+#: src/Customize/ColorPalettes.php:449
 msgid "High"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:639
+#: src/Customize/ColorPalettes.php:450
 msgid "Striking"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:645
-msgid "Dark to Color (switch)"
+#: src/Customize/ColorPalettes.php:458
+msgid "Palette Configuration"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:660
-msgid "Dark to Color (select)"
+#: src/Customize/ColorPalettes.php:459
+msgid "Change the structure of the generated palette while maintaining the underlying principles and guidelines."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:754
-msgid "Appearance"
+#: src/Customize/ColorPalettes.php:466
+msgid "Presets"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:757
-msgid "<strong>Auto</strong> activates dark mode automatically, according to the visitor's system-wide setting"
+#: src/Customize/ColorPalettes.php:471
+#: src/Customize/ColorPalettes.php:591
+#: src/Customize/FontPalettes.php:470
+msgid "Normal"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:759
+#: src/Customize/ColorPalettes.php:483
+msgid "Simple"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:495
+#: src/Customize/ColorPalettes.php:726
 msgid "Light"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:760
-#: src/sm-functions.php:32
-#: src/sm-functions.php:40
+#: src/Customize/ColorPalettes.php:507
+#: src/Customize/ColorPalettes.php:727
+#: src/sm-functions.php:42
+#: src/sm-functions.php:50
 msgid "Dark"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:761
-#: src/Customize/Fonts.php:1530
+#: src/Customize/ColorPalettes.php:519
+msgid "Custom"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:531
+msgid "Number of color grades"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:545
+msgid "Potential color contrast"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:559
+msgid "Color grade balancer"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:569
+msgid "Shift the <strong>start position</strong> of the color palette. Use 1 for white, 2-3 for subtle shades, 4-7 for colorful, above 8 for darker shades."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:573
+msgid "Palette basis offset"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:588
+msgid "Elements color contrast"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:592
+msgid "Average"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:593
+msgid "Maximum"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:601
+msgid "Brand colors"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:609
+msgid "Pure white"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:617
+msgid "Pure black"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:673
+msgid "Color System"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:675
+msgid "Set up the <a href=\"https://pixelgrade.com/docs/design-and-style/color-system/\" target=\"_blank\">Color System</a> for your website using the tools below."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:721
+msgid "Appearance"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:724
+msgid "Choose between light or dark color schemes or set it to <strong>\"Auto\"</strong> to activate dark mode automatically, according to your visitors' system-wide setting."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:728
+#: src/Customize/Fonts.php:1591
 msgid "Auto"
 msgstr ""
 
-#: src/Customize/Customize.php:179
+#: src/Customize/ColorPalettes.php:828
+msgid "Colorize elements one by one"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:829
+msgid "Customize colors usage"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:830
+msgid "Fine-tune generated palette"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:831
+msgid "Brand Colors"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:832
+msgid "Adjust the main brand colors you want to use on your site. Provide <strong>only the main colors</strong> since the Color System will <strong>generate an entire palette</strong> from these. For advanced controls of generated color palette, see the section below."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:833
+msgid "Explore colors"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:834
+msgid "Curated color presets to help you lay the foundations of the color system and make it easy to get started."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:835
+msgid "Extract from Image"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:836
+#: src/Customize/ColorPalettes.php:858
+msgid "Interpolated Color"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:837
+msgid "Extract colors from an image and generate a color palette for your design system."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:838
+msgid "Drag and drop your image"
+msgstr ""
+
+#. translators 1: open span, 2: close span
+#: src/Customize/ColorPalettes.php:842
+msgid "or %1$s select a file %2$s from your computer"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:848
+#: src/Customize/FontPalettes.php:798
+#: src/Screen/Settings.php:154
+msgid "Typography"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:850
+msgid "Live site"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:851
+msgid "The color system"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:852
+msgid "The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:853
+msgid "Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content."
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:854
+msgid "Surface"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:855
+#: src/Customize/ColorPalettes.php:863
+#: src/sm-functions.php:43
+#: src/sm-functions.php:51
+msgid "Accent"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:856
+msgid "Text"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:857
+msgid "Color"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:860
+msgid "Primary"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:861
+msgid "Secondary"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:862
+msgid "Body"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:865
+msgid "Category"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:866
+msgid "Preview"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:867
+msgid "Size"
+msgstr ""
+
+#: src/Customize/ColorPalettes.php:869
+msgid "Fine-tune the type system"
+msgstr ""
+
+#: src/Customize/Customize.php:191
 msgid "<strong>Style Manager</strong> is an intuitive system to help you change the look of your website and make an excellent impression."
 msgstr ""
 
-#: src/Customize/Customize.php:206
+#: src/Customize/Customize.php:219
 msgid "Theme Options"
 msgstr ""
 
-#: src/Customize/Customize.php:207
+#: src/Customize/Customize.php:220
 msgid "Advanced options to change your site look-and-feel on a detailed level."
 msgstr ""
 
-#: src/Customize/Customize.php:304
-#: src/Screen/Settings.php:103
+#: src/Customize/Customize.php:317
+#: src/Screen/Settings.php:113
 msgid "General"
 msgstr ""
 
-#: src/Customize/Customize.php:356
+#: src/Customize/Customize.php:387
 msgid "Site Identity"
 msgstr ""
 
-#: src/Customize/Customize.php:534
+#: src/Customize/Customize.php:514
+msgid "Close media panel"
+msgstr ""
+
+#: src/Customize/Customize.php:520
+msgid "How would you rate your experience in finding the right colors for your site?"
+msgstr ""
+
+#. translators: The Style Manager lowest rating.
+#: src/Customize/Customize.php:524
+msgid "Poor"
+msgstr ""
+
+#. translators: The Style Manager highest rating.
+#: src/Customize/Customize.php:547
+msgid "Great"
+msgstr ""
+
+#. translators: %s: The selected star rating
+#: src/Customize/Customize.php:553
+msgid "What points along the way made this a %s* experience for you?"
+msgstr ""
+
+#: src/Customize/Customize.php:554
+msgid "We are counting on your insights to guide us in doing better 🙏"
+msgstr ""
+
+#: src/Customize/Customize.php:558
+msgid "Describe your experience in customizing your site colors.."
+msgstr ""
+
+#: src/Customize/Customize.php:560
+msgid "May we have a little more info about your experience?"
+msgstr ""
+
+#: src/Customize/Customize.php:565
 msgid "Send us your insights"
 msgstr ""
 
-#: src/Customize/Customize.php:612
+#: src/Customize/Customize.php:568
+msgid "Thank you so much for your feedback!"
+msgstr ""
+
+#: src/Customize/Customize.php:569
+msgid "It means the world to us as we strive to constantly push the limits and aim higher. Stay awesome! 🤗"
+msgstr ""
+
+#. translators: %s: Pixelgrade
+#: src/Customize/Customize.php:572
+msgid "The %s Team"
+msgstr ""
+
+#: src/Customize/Customize.php:575
+msgid "We've hit a snag!"
+msgstr ""
+
+#: src/Customize/Customize.php:576
+msgid "We couldn't record your feedback and we would truly appreciate it if you would try it again at a latter time. Stay awesome! 🤗"
+msgstr ""
+
+#: src/Customize/Customize.php:643
 msgid "No type provided"
 msgstr ""
 
-#: src/Customize/Customize.php:616
+#: src/Customize/Customize.php:647
 msgid "No rating provided"
 msgstr ""
 
-#: src/Customize/Customize.php:638
-#: src/Customize/Customize.php:643
+#: src/Customize/Customize.php:669
+#: src/Customize/Customize.php:674
 msgid "Sorry, something went wrong and we couldn't save your feedback."
 msgstr ""
 
-#: src/Customize/Customize.php:649
+#: src/Customize/Customize.php:680
 msgid "Thank you for your feedback."
 msgstr ""
 
-#: src/Customize/FontPalettes.php:399
+#: src/Customize/FontPalettes.php:145
+msgid "Fine-tune font palette"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:460
+msgid "Adjust the overall font sizing you want to use on your site. For advanced controls over individual elements, see the section below."
+msgstr ""
+
+#: src/Customize/FontPalettes.php:463
+msgid "Font Sizing"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:468
+msgid "Smallest"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:469
+msgid "Smaller"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:471
+msgid "Larger"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:472
+msgid "Largest"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:485
 msgid "Select a font palette:"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:400
+#: src/Customize/FontPalettes.php:486
 msgid "Conveniently change the design of your site with font palettes. Easy as pie."
 msgstr ""
 
-#: src/Customize/FontPalettes.php:414
+#: src/Customize/FontPalettes.php:502
+msgid "Adjust the font family and sizing for each category of fonts while maintaining the hierarchy relation between them."
+msgstr ""
+
+#: src/Customize/FontPalettes.php:509
+#: src/Customize/FontPalettes.php:521
 msgid "Font Primary"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:442
+#: src/Customize/FontPalettes.php:510
+msgid "Adjust the font family and sizing of all the elements from the Font Primary category."
+msgstr ""
+
+#: src/Customize/FontPalettes.php:545
+msgid "Change all the font sizes of the elements in this category by a fixed amount."
+msgstr ""
+
+#: src/Customize/FontPalettes.php:550
+msgid "Font Sizing: Elevation ↑↓"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:560
+msgid "Adjust the rising angle for elements in this category. A flat ‘0’ degree Pitch makes all elements equal to the Elevation, removing the hierarchy between them."
+msgstr ""
+
+#: src/Customize/FontPalettes.php:565
+msgid "Font Sizing: Pitch"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:579
+#: src/Customize/FontPalettes.php:587
 msgid "Font Secondary"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:470
+#: src/Customize/FontPalettes.php:615
+#: src/Customize/FontPalettes.php:679
+msgid "Elevation ↑↓"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:629
+#: src/Customize/FontPalettes.php:693
+msgid "Pitch"
+msgstr ""
+
+#: src/Customize/FontPalettes.php:643
+#: src/Customize/FontPalettes.php:651
 msgid "Font Body"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:501
+#: src/Customize/FontPalettes.php:707
+#: src/Customize/FontPalettes.php:718
 msgid "Font Accent"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:610
-msgid "Palettes"
+#: src/Customize/FontPalettes.php:743
+msgid "Connected Fields Presets"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:611
-msgid "Advanced"
+#: src/Customize/FontPalettes.php:799
+msgid "Set up the <a href=\"https://pixelgrade.com/docs/design-and-style/typography-system/\">Typography system</a> of your website using the tools below."
 msgstr ""
 
-#: src/Customize/FontPalettes.php:732
-#: src/Customize/FontPalettes.php:735
+#: src/Customize/FontPalettes.php:875
+#: src/Customize/FontPalettes.php:878
 msgid "Gema"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:736
-#: src/Customize/FontPalettes.php:836
-#: src/Customize/FontPalettes.php:943
-#: src/Customize/FontPalettes.php:1077
+#: src/Customize/FontPalettes.php:879
+#: src/Customize/FontPalettes.php:979
+#: src/Customize/FontPalettes.php:1086
+#: src/Customize/FontPalettes.php:1220
 msgid "A graceful nature, truly tasteful and polished."
 msgstr ""
 
-#: src/Customize/FontPalettes.php:832
-#: src/Customize/FontPalettes.php:835
+#: src/Customize/FontPalettes.php:975
+#: src/Customize/FontPalettes.php:978
 msgid "Julia"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:939
-#: src/Customize/FontPalettes.php:942
+#: src/Customize/FontPalettes.php:1082
+#: src/Customize/FontPalettes.php:1085
 msgid "Patch"
 msgstr ""
 
-#: src/Customize/FontPalettes.php:1073
-#: src/Customize/FontPalettes.php:1076
+#: src/Customize/FontPalettes.php:1216
+#: src/Customize/FontPalettes.php:1219
+#: src/Customize/TweakBoardSection.php:110
 msgid "Hive"
 msgstr ""
 
-#: src/Customize/Fonts.php:524
+#: src/Customize/Fonts.php:556
+msgid "Third-Party Fonts"
+msgstr ""
+
+#: src/Customize/Fonts.php:576
 msgid "Cloud Fonts"
 msgstr ""
 
-#: src/Customize/Fonts.php:543
+#: src/Customize/Fonts.php:595
 msgid "Theme Fonts"
 msgstr ""
 
-#: src/Customize/Fonts.php:563
+#: src/Customize/Fonts.php:615
 msgid "System fonts"
 msgstr ""
 
-#: src/Customize/Fonts.php:584
-#: src/Customize/Fonts.php:694
+#: src/Customize/Fonts.php:636
+#: src/Customize/Fonts.php:746
 msgid "Google fonts"
 msgstr ""
 
 #. translators: %s: The font category name
-#: src/Customize/Fonts.php:686
+#: src/Customize/Fonts.php:738
 msgid "Google fonts %s"
 msgstr ""
 
-#: src/Customize/Fonts.php:1529
+#: src/Customize/Fonts.php:1590
 msgid "Select a font family"
 msgstr ""
 
+#: src/Customize/SpacingSection.php:88
+msgid "Site Container"
+msgstr ""
+
+#: src/Customize/SpacingSection.php:89
+msgid "Adjust the maximum amount of width your site content extends to."
+msgstr ""
+
+#: src/Customize/SpacingSection.php:112
+msgid "Content Inset"
+msgstr ""
+
+#: src/Customize/SpacingSection.php:113
+msgid "Adjust how much the content is visually inset within the Site Container."
+msgstr ""
+
+#: src/Customize/SpacingSection.php:136
+msgid "Spacing Level"
+msgstr ""
+
+#: src/Customize/SpacingSection.php:137
+msgid "Adjust the multiplication factor of the distance between elements."
+msgstr ""
+
+#: src/Customize/SpacingSection.php:178
+msgid "Spacing"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:91
+msgid "Collections titles position"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:92
+msgid "Choose \"Sideways\" to rotate the Collection block titles 90-degrees and align them along the left side of the content rather than at the top of it."
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:95
+msgid "Above"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:96
+msgid "Sideways"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:105
+msgid "Collections hover effect"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:106
+msgid "Choose the effect triggered when an user moves the cursor above a post collection card's media."
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:109
+#: src/Utils/Fonts.php:469
+#: src/Utils/Fonts.php:475
+msgid "None"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:111
+msgid "Felt"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:120
+msgid "Titles Fancy Style (BETA)"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:121
+msgid "Choose a decoration style for Headings with Fancy style."
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:124
+#: src/Utils/Fonts.php:476
+msgid "Underline"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:125
+msgid "Blocky"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:154
+msgid "Tweak Board"
+msgstr ""
+
+#: src/Customize/TweakBoardSection.php:155
+msgid "Control visual effects whose aim is to give your site a bolder voice."
+msgstr ""
+
 #. translators: %s: documentation URL
-#: src/functions.php:86
+#: src/functions.php:93
 msgid "Style Manager is missing required dependencies. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferer\">Learn more.</a>"
 msgstr ""
 
-#: src/Provider/Options.php:734
+#: src/Provider/Options.php:746
 msgid "The Style Manager fields configuration should be an array. Please check the filters that are hooked into 'style_manager/filter_fields'."
 msgstr ""
 
-#: src/Provider/Options.php:744
+#: src/Provider/Options.php:756
 msgid "The Style Manager fields configuration should be an array. Please check the filters that are hooked into 'style_manager/final_config'."
 msgstr ""
 
-#: src/Screen/Customizer.php:121
+#: src/Screen/Customizer.php:129
 msgid "Panel's defaults"
 msgstr ""
 
-#: src/Screen/Customizer.php:122
+#: src/Screen/Customizer.php:130
 msgid "Reset All Options for This Section"
 msgstr ""
 
-#: src/Screen/Customizer.php:123
+#: src/Screen/Customizer.php:131
 msgid "Do you really want to reset to defaults all the fields? Watch out, this will reset all your Style Manager options and will save them!"
 msgstr ""
 
-#: src/Screen/Customizer.php:124
+#: src/Screen/Customizer.php:132
 msgid "Do you really want to reset the settings in this panel?"
 msgstr ""
 
-#: src/Screen/Customizer.php:125
+#: src/Screen/Customizer.php:133
 msgid "Do you really want to reset the settings in this section?"
 msgstr ""
 
-#: src/Screen/Customizer.php:220
+#: src/Screen/Customizer.php:228
 msgid "<strong>Style Manager: Development Mode</strong><p>All options are switched to default. While they are changing in the live preview, they will not be kept when you hit publish.</p>"
 msgstr ""
 
-#: src/Screen/Customizer.php:269
+#: src/Screen/Customizer.php:277
 msgid "Panel title is required"
 msgstr ""
 
-#: src/Screen/Customizer.php:270
+#: src/Screen/Customizer.php:278
 msgid "Description of what this panel does."
 msgstr ""
 
-#: src/Screen/Customizer.php:321
+#: src/Screen/Customizer.php:329
 msgid "Style Manager Toolbox"
 msgstr ""
 
-#: src/Screen/Customizer.php:327
+#: src/Screen/Customizer.php:335
 msgid "Reset Style Manager"
 msgstr ""
 
-#: src/Screen/Customizer.php:347
+#: src/Screen/Customizer.php:355
 msgid "Reset All Style Manager Options to Default"
 msgstr ""
 
-#: src/Screen/Customizer.php:385
+#: src/Screen/Customizer.php:393
 msgid "The Title Section is required"
 msgstr ""
 
-#: src/Screen/Customizer.php:1108
+#: src/Screen/Customizer.php:1115
 msgid "Style Presets"
 msgstr ""
 
-#: src/Screen/Customizer.php:1112
+#: src/Screen/Customizer.php:1119
 msgid "Select a style:"
 msgstr ""
 
-#: src/Screen/Customizer.php:1113
+#: src/Screen/Customizer.php:1120
 msgid "Conveniently change the design of your site with built-in style presets. Easy as pie."
 msgstr ""
 
-#: src/Screen/Customizer.php:1118
+#: src/Screen/Customizer.php:1125
 msgid "Royal"
 msgstr ""
 
-#: src/Screen/Customizer.php:1136
+#: src/Screen/Customizer.php:1143
 msgid "Lovely"
 msgstr ""
 
-#: src/Screen/Customizer.php:1154
+#: src/Screen/Customizer.php:1161
 msgid "Queen"
 msgstr ""
 
-#: src/Screen/Customizer.php:1172
+#: src/Screen/Customizer.php:1179
 msgid "Carrot"
 msgstr ""
 
-#: src/Screen/Customizer.php:1192
+#: src/Screen/Customizer.php:1199
 msgid "Adler"
 msgstr ""
 
-#: src/Screen/Customizer.php:1210
+#: src/Screen/Customizer.php:1217
 msgid "Velvet"
 msgstr ""
 
-#: src/Screen/Customizer.php:1241
+#: src/Screen/Customizer.php:1248
 msgid "Links Color"
 msgstr ""
 
-#: src/Screen/Customizer.php:1253
+#: src/Screen/Customizer.php:1260
 msgid "Headings Color"
 msgstr ""
 
-#: src/Screen/Customizer.php:1268
+#: src/Screen/Customizer.php:1275
 msgid "Body Color"
 msgstr ""
 
-#: src/Screen/Customizer.php:1289
+#: src/Screen/Customizer.php:1296
 msgid "Headings"
 msgstr ""
 
-#: src/Screen/Customizer.php:1319
+#: src/Screen/Customizer.php:1326
 msgid "Body Text"
 msgstr ""
 
-#: src/Screen/Customizer.php:1339
+#: src/Screen/Customizer.php:1346
 msgid "Backgrounds"
 msgstr ""
 
-#: src/Screen/Customizer.php:1343
+#: src/Screen/Customizer.php:1350
 msgid "Page Background"
 msgstr ""
 
-#: src/Screen/Customizer.php:1359
+#: src/Screen/Customizer.php:1366
 msgid "Layout"
 msgstr ""
 
-#: src/Screen/Customizer.php:1363
+#: src/Screen/Customizer.php:1370
 msgid "Site Title Size"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:94
+#: src/Screen/Customizer/Control/Background.php:103
 msgid "No media selected"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:151
+#: src/Screen/Customizer/Control/Background.php:160
 msgid "Upload"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:158
+#: src/Screen/Customizer/Control/Background.php:167
 msgid "Remove"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:181
+#: src/Screen/Customizer/Control/Background.php:190
 msgid "Background repeat.."
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:205
+#: src/Screen/Customizer/Control/Background.php:214
 msgid "Background clip.."
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:229
+#: src/Screen/Customizer/Control/Background.php:238
 msgid "Background origin.."
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:252
+#: src/Screen/Customizer/Control/Background.php:261
 msgid "Background size.."
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:271
+#: src/Screen/Customizer/Control/Background.php:280
 msgid "Background attachment.."
 msgstr ""
 
-#: src/Screen/Customizer/Control/Background.php:301
+#: src/Screen/Customizer/Control/Background.php:310
 msgid "Background position.."
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:149
+#: src/Screen/Customizer/Control/Font.php:150
 msgid "Recommended"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:213
+#: src/Screen/Customizer/Control/Font.php:212
 msgid "Font Size"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:214
+#: src/Screen/Customizer/Control/Font.php:213
 msgid "Line height"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:215
+#: src/Screen/Customizer/Control/Font.php:214
 msgid "Letter Spacing"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:217
+#: src/Screen/Customizer/Control/Font.php:216
 msgid "Text Align"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:218
+#: src/Screen/Customizer/Control/Font.php:217
 msgid "Text Transform"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:219
+#: src/Screen/Customizer/Control/Font.php:218
 msgid "Text Decoration"
 msgstr ""
 
-#: src/Screen/Customizer/Control/Font.php:281
+#: src/Screen/Customizer/Control/Font.php:280
 msgid "Font Variant"
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:62
+#: src/Screen/Customizer/Search.php:73
 msgid "Search"
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:69
+#: src/Screen/Customizer/Search.php:80
 msgid "Search through all controls, menus, and widgets."
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:71
+#: src/Screen/Customizer/Search.php:82
 msgid "Start typing..."
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:77
+#: src/Screen/Customizer/Search.php:88
 msgid "Clear current search"
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:77
+#: src/Screen/Customizer/Search.php:88
 msgid "Clear"
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:79
+#: src/Screen/Customizer/Search.php:90
 msgid "Close search"
 msgstr ""
 
-#: src/Screen/Customizer/Search.php:150
+#: src/Screen/Customizer/Search.php:160
 msgid "Press return or enter to open this section"
 msgstr ""
 
 #. translators: %s: The parent theme name.
-#: src/Screen/GeneralAdmin.php:97
+#: src/Screen/GeneralAdmin.php:106
 msgid "You have activated a child theme for \"%s\". Good for you!"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:100
+#: src/Screen/GeneralAdmin.php:109
 msgid "If you have already <strong>set up things in the Customizer,</strong> you may want to <strong>keep those customizations</strong> so you don't start over."
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:103
+#: src/Screen/GeneralAdmin.php:112
 msgid "So, the question is simple: <strong>would you like to migrate all theme-specific options (theme mods) from the parent theme to the child one?</strong>"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:106
+#: src/Screen/GeneralAdmin.php:115
 msgid "All parent theme customizations will remain in place, while those of the active child theme will be overwritten, if any."
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:113
+#: src/Screen/GeneralAdmin.php:122
 msgid "Yes, migrate customizations"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:115
+#: src/Screen/GeneralAdmin.php:124
 msgid "No, thank you"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:134
+#: src/Screen/GeneralAdmin.php:143
 msgid "Migrating customizations.."
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:149
+#: src/Screen/GeneralAdmin.php:158
 msgid "Successfully migrated the parent customizations! Enjoy crafting your site!"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:150
+#: src/Screen/GeneralAdmin.php:159
 msgid "Finished migration"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:152
-#: src/Screen/GeneralAdmin.php:157
+#: src/Screen/GeneralAdmin.php:161
+#: src/Screen/GeneralAdmin.php:166
 msgid "Something went wrong and we couldn't migrate the customizations."
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:153
-#: src/Screen/GeneralAdmin.php:158
+#: src/Screen/GeneralAdmin.php:162
+#: src/Screen/GeneralAdmin.php:167
 msgid "Migration error"
 msgstr ""
 
-#: src/Screen/GeneralAdmin.php:202
+#: src/Screen/GeneralAdmin.php:216
 msgid "Could not update the child theme theme_mods."
 msgstr ""
 
-#: src/Screen/Settings.php:104
+#: src/Screen/Settings.php:114
 msgid "Store values as:"
 msgstr ""
 
-#: src/Screen/Settings.php:105
-msgid "You can store the values globally so you can use them with other themes or store them as a \"theme_mod\" which will make an individual set of options only for the current theme"
-msgstr ""
-
-#: src/Screen/Settings.php:107
-msgid "Option (global options)"
-msgstr ""
-
-#: src/Screen/Settings.php:108
-msgid "Theme Mod (per theme options)"
-msgstr ""
-
-#: src/Screen/Settings.php:112
-msgid "Disable default sections"
-msgstr ""
-
-#: src/Screen/Settings.php:113
-msgid "By checking the checkboxes above, you can disable sections available by default in the Customize view."
-msgstr ""
-
-#: src/Screen/Settings.php:115
-msgid "Navigation"
-msgstr ""
-
 #: src/Screen/Settings.php:116
-msgid "Front Page"
+msgid "You can store the values globally so you can use them with other themes or store them as a \"theme_mod\" which will make an individual set of options only for the current theme."
 msgstr ""
 
 #: src/Screen/Settings.php:117
-msgid "Title"
+msgid "<strong>Important Note:</strong> On save with a different way of storing, we will <strong>automatically migrate your existing data</strong> to the new storage location, so you can easily pick-up from were you left off."
 msgstr ""
 
-#: src/Screen/Settings.php:119
-#: src/sm-functions.php:31
-#: src/sm-functions.php:39
-msgid "Background"
+#: src/Screen/Settings.php:120
+msgid "Option (global options)"
 msgstr ""
 
 #: src/Screen/Settings.php:121
-msgid "Widgets"
+msgid "Theme Mod (per theme options)"
 msgstr ""
 
-#: src/Screen/Settings.php:123
-msgid "Enable Reset Buttons"
-msgstr ""
-
-#: src/Screen/Settings.php:124
-msgid "You can enable \"Reset to defaults\" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this."
+#: src/Screen/Settings.php:125
+msgid "Disable default sections"
 msgstr ""
 
 #: src/Screen/Settings.php:126
-msgid "Enable Editor Style"
+msgid "By checking the checkboxes above, you can disable sections available by default in the Customize view."
 msgstr ""
 
-#: src/Screen/Settings.php:127
-msgid "The styling added by Style Manager in front-end can be added in the WordPress editor too by enabling this option"
+#: src/Screen/Settings.php:128
+msgid "Navigation"
 msgstr ""
 
-#: src/Screen/Settings.php:131
-msgid "Output"
+#: src/Screen/Settings.php:129
+msgid "Front Page"
+msgstr ""
+
+#: src/Screen/Settings.php:130
+msgid "Title"
 msgstr ""
 
 #: src/Screen/Settings.php:132
-msgid "Styles location:"
+#: src/sm-functions.php:41
+#: src/sm-functions.php:49
+msgid "Background"
 msgstr ""
 
-#: src/Screen/Settings.php:133
-msgid "Here you can decide where to put your style output, in header or footer"
-msgstr ""
-
-#: src/Screen/Settings.php:135
-msgid "In header (just before the head tag)"
+#: src/Screen/Settings.php:134
+msgid "Widgets"
 msgstr ""
 
 #: src/Screen/Settings.php:136
-msgid "Footer (just before the end of the body tag)"
+msgid "Enable Reset Buttons"
 msgstr ""
 
-#: src/Screen/Settings.php:141
-msgid "Typography"
+#: src/Screen/Settings.php:137
+msgid "You can enable \"Reset to defaults\" buttons for panels / sections or all settings. We have disabled this feature by default to avoid accidental resets. If you are sure that you need it please enable this."
 msgstr ""
 
-#: src/Screen/Settings.php:142
-msgid "Enable Typography Options"
+#: src/Screen/Settings.php:139
+msgid "Enable Editor Style"
+msgstr ""
+
+#: src/Screen/Settings.php:140
+msgid "The styling added by Style Manager in front-end can be added in the WordPress editor too by enabling this option"
+msgstr ""
+
+#: src/Screen/Settings.php:144
+msgid "Output"
 msgstr ""
 
 #: src/Screen/Settings.php:145
-msgid "Use system fonts"
+msgid "Styles location:"
 msgstr ""
 
 #: src/Screen/Settings.php:146
-msgid "Would you like to have system fonts available in the font controls?"
+msgid "Here you can decide where to put your style output, in header or footer"
+msgstr ""
+
+#: src/Screen/Settings.php:148
+msgid "In head (just before the closing head tag)"
+msgstr ""
+
+#: src/Screen/Settings.php:149
+msgid "Footer (just before the end of the body tag)"
 msgstr ""
 
 #: src/Screen/Settings.php:155
+msgid "Enable Typography Options"
+msgstr ""
+
+#: src/Screen/Settings.php:158
+msgid "Use system fonts"
+msgstr ""
+
+#: src/Screen/Settings.php:159
+msgid "Would you like to have system fonts available in the font controls?"
+msgstr ""
+
+#: src/Screen/Settings.php:168
 msgid "Use Google fonts"
 msgstr ""
 
-#: src/Screen/Settings.php:156
+#: src/Screen/Settings.php:169
 msgid "Would you like to have Google fonts available in the font controls?"
 msgstr ""
 
-#: src/Screen/Settings.php:165
+#: src/Screen/Settings.php:178
 msgid "Group Google fonts"
 msgstr ""
 
-#: src/Screen/Settings.php:166
+#: src/Screen/Settings.php:179
 msgid "You can chose to see the Google fonts in groups"
 msgstr ""
 
-#: src/Screen/Settings.php:179
+#: src/Screen/Settings.php:192
 msgid "Use cloud fonts"
 msgstr ""
 
-#: src/Screen/Settings.php:180
+#: src/Screen/Settings.php:193
 msgid "Would you to have Cloud fonts available in the font controls?"
 msgstr ""
 
-#: src/Screen/Settings.php:191
+#: src/Screen/Settings.php:204
 msgid "Tools"
 msgstr ""
 
-#: src/Screen/Settings.php:192
-#: src/Screen/Settings.php:194
+#: src/Screen/Settings.php:205
+#: src/Screen/Settings.php:207
 msgid "Reset Customizer Settings"
 msgstr ""
 
-#: src/Screen/Settings.php:193
+#: src/Screen/Settings.php:206
 msgid "Resets all the Customizer settings introduced by this plugin. It will NOT reset the core WordPress Customizer settings or plugin settings."
 msgstr ""
 
-#: src/Screen/Settings.php:263
+#: src/Screen/Settings.php:271
 msgid "Settings"
 msgstr ""
 
-#: src/Screen/Settings.php:279
+#: src/Screen/Settings.php:287
 msgid "You don't have the necessary privileges to do this."
 msgstr ""
 
-#: src/Screen/Settings.php:285
+#: src/Screen/Settings.php:293
 msgid "We couldn't  find an options key. Nothing was reset."
 msgstr ""
 
 #. translators: %s: The deleted options key name.
-#: src/Screen/Settings.php:294
+#: src/Screen/Settings.php:302
 msgid "Deleted the \"%s\" options key!"
 msgstr ""
 
-#: src/Utils/Fonts.php:461
-msgid "Initial"
-msgstr ""
-
-#: src/Utils/Fonts.php:462
-msgid "Center"
+#: src/sm-functions.php:527
+msgid "Brand"
 msgstr ""
 
 #: src/Utils/Fonts.php:463
-msgid "Left"
+msgid "Initial"
 msgstr ""
 
 #: src/Utils/Fonts.php:464
+msgid "Center"
+msgstr ""
+
+#: src/Utils/Fonts.php:465
+msgid "Left"
+msgstr ""
+
+#: src/Utils/Fonts.php:466
 msgid "Right"
 msgstr ""
 
-#: src/Utils/Fonts.php:467
-#: src/Utils/Fonts.php:473
-msgid "None"
-msgstr ""
-
-#: src/Utils/Fonts.php:468
-msgid "Capitalize"
-msgstr ""
-
-#: src/Utils/Fonts.php:469
-msgid "Uppercase"
-msgstr ""
-
 #: src/Utils/Fonts.php:470
-msgid "Lowercase"
+msgid "Title Case"
 msgstr ""
 
-#: src/Utils/Fonts.php:474
-msgid "Underline"
+#: src/Utils/Fonts.php:471
+msgid "UPPERCASE"
 msgstr ""
 
-#: src/Utils/Fonts.php:475
+#: src/Utils/Fonts.php:472
+msgid "lowercase"
+msgstr ""
+
+#: src/Utils/Fonts.php:477
 msgid "Overline"
 msgstr ""
 
-#: src/Utils/Fonts.php:476
+#: src/Utils/Fonts.php:478
 msgid "Line Through"
 msgstr ""
 
