@@ -85,7 +85,7 @@ class GeneralAdmin extends AbstractHookProvider {
 	function child_theme_migrate_theme_mods_notice() {
 		global $pagenow;
 
-		// We only show the notice on the themes dashboard, and if we are allowed to.
+		// We only show the notice on the Themes dashboard page, and if we are allowed to.
 		if ( 'themes.php' !== $pagenow
 		     || ! is_child_theme()
 		     || true !== apply_filters( 'style_manager/allow_child_theme_mod_migrate_notice', true )
@@ -206,8 +206,13 @@ class GeneralAdmin extends AbstractHookProvider {
 		foreach ( $excluded as $exclude ) {
 			unset( $parent_theme_mods[ $exclude ] );
 		}
+
+		$current_theme_mods = get_theme_mods();
+		// Merge the parent ones, overwriting the existing entries.
+		$new_theme_mods = array_merge( $current_theme_mods, $parent_theme_mods );
+
 		// Finally, write the new theme mods for the active child theme.
-		if ( ! update_option( 'theme_mods_' . get_option( 'stylesheet' ), $parent_theme_mods ) ) {
+		if ( ! update_option( 'theme_mods_' . get_option( 'stylesheet' ), $new_theme_mods ) ) {
 			wp_send_json_error( esc_html__( 'Could not update the child theme theme_mods.', '__plugin_txtd' ) );
 		}
 
