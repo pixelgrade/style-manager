@@ -6,7 +6,7 @@
  * Plugin Name: Style Manager
  * Plugin URI:  https://wordpress.org/plugins/style-manager
  * Description: Auto-magical system to style your entire WordPress site.
- * Version: 2.2.5
+ * Version: 2.2.6
  * Author: Pixelgrade
  * Author URI: https://pixelgrade.com
  * Author Email: contact@pixelgrade.com
@@ -35,7 +35,7 @@ if ( ! \defined( 'ABSPATH' ) ) {
  *
  * @var string
  */
-const VERSION        = '2.2.5';
+const VERSION        = '2.2.6';
 
 /**
  * Plugin required minimal PHP version.
@@ -143,5 +143,5 @@ $style_manager_plugin = plugin()
 	->register_hooks( $style_manager_container->get( 'hooks.activation' ) )
 	->register_hooks( $style_manager_container->get( 'hooks.deactivation' ) );
 
-// Compose before the theme is setup; this should give plenty of opportunities to hook.
+// Compose before the theme is set up; this should give plenty of opportunities to hook.
 add_action( 'setup_theme', [ $style_manager_plugin, 'compose' ], 15 );
