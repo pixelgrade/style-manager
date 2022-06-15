@@ -44,6 +44,11 @@ $badge-font-accent: #9C9CDD;
   grid-template-columns: min-content auto min-content;
 
   line-height: 1.25;
+
+  // Fix buttons' font-size
+  :is(.wp-block-button__link, #specific) {
+    font-size: inherit;
+  }
 }
 
 
