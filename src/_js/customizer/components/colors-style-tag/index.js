@@ -12,7 +12,9 @@ const ColorsStyleTag = props => {
     wp.customize( 'sm_advanced_palette_output', setting => {
       const output = setting();
       const palettes = JSON.parse( output );
-      setCSS( getCSSFromPalettes( palettes, newVariation ) );
+      const newCSS = getCSSFromPalettes( palettes, newVariation );
+
+      setCSS( newCSS );
     } );
   }, [] );
 
