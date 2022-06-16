@@ -346,7 +346,7 @@ class Customize extends AbstractHookProvider {
 	 * @param \WP_Customize_Manager $wp_customize
 	 */
 	protected function remove_switch_theme_panel( \WP_Customize_Manager $wp_customize ) {
-		// If there is no style manager support, bail.
+		// If there is no Style Manager support, bail.
 		if ( ! $this->is_supported() ) {
 			return;
 		}
@@ -362,7 +362,7 @@ class Customize extends AbstractHookProvider {
 	 * @param \WP_Customize_Manager $wp_customize
 	 */
 	protected function remove_widgets_panel( \WP_Customize_Manager $wp_customize ) {
-		// If there is no style manager support, bail.
+		// If there is no Style Manager support, bail.
 		if ( ! $this->is_supported() ) {
 			return;
 		}
