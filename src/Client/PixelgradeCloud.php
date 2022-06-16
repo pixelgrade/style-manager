@@ -59,6 +59,15 @@ class PixelgradeCloud implements CloudInterface {
 	 */
 	public function fetch_design_assets(): ?array {
 		$request_data = [
+			// We will only fetch design assets that are handled by Style Manager.
+			'types' => [
+				'color_palettes_v2',
+				'font_palettes',
+				'cloud_fonts',
+				'system_fonts',
+				'font_categories',
+				'theme_configs',
+			],
 			'site_url' => home_url('/'),
 			// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
 			'theme_data' => $this->get_active_theme_data(),
@@ -100,13 +109,12 @@ class PixelgradeCloud implements CloudInterface {
 		// Bail in case of decode error or failure to retrieve data.
 		// We will return the data already available.
 		if ( is_wp_error( $response ) ) {
-			return [];
+			return null;
 		}
 		$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
 		// Bail in case of decode error or failure to retrieve data.
-		// We will return the data already available.
 		if ( null === $response_data || empty( $response_data['data'] ) || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
-			return [];
+			return null;
 		}
 
 		return apply_filters( 'style_manager/fetch_design_assets', $response_data['data'] );
