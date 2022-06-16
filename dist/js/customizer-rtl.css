@@ -3203,6 +3203,9 @@ img:not([src]) {
   grid-template-columns: min-content auto min-content;
   line-height: 1.25;
 }
+.sm-typography-preview :is(.wp-block-button__link, #specific) {
+  font-size: inherit;
+}
 
 .sm-typography-preview__separator {
   grid-column-end: span 3;
