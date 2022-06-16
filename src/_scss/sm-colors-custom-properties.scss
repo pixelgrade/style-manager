@@ -15,25 +15,16 @@ html {
   @include apply-variation(1);
 }
 
+html,
+[class*="sm-variation-"]:where(:not(.sm-color-signal-0)) {
+  background-color: var(--sm-current-bg-color);
+  color: var(--sm-current-fg1-color);
+}
+
 @for $i from 1 through 12 {
 
   .sm-variation-#{ $i } {
     @include apply-variation($i);
   }
-}
-
-html,
-[class*="sm-variation-"] {
-  background-color: var(--sm-current-bg-color);
-  color: var(--sm-current-fg1-color);
-}
-
-.sm-color-signal-0 {
-  --sm-current-bg-color: inherit;
-  --sm-current-accent-color: inherit;
-  --sm-current-accent2-color: inherit;
-  --sm-current-accent3-color: inherit;
-  --sm-current-fg1-color: inherit;
-  --sm-current-fg2-color: inherit;
 }
 
