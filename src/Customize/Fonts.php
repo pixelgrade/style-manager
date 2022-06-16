@@ -775,10 +775,6 @@ class Fonts extends AbstractHookProvider {
 		$excluded_fields = [
 			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
 			FontPalettes::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
-			'sm_font_primary',
-			'sm_font_secondary',
-			'sm_font_body',
-			'sm_font_accent',
 			'sm_fonts_connected_fields_preset',
 		];
 
