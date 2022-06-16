@@ -9,40 +9,40 @@
 }
 
 :where(
-  [id*="sm_coloration_level"],
-  [id*="sm_dark_mode_advanced"],
+  [id*="customize-control-sm_coloration_level"],
+  [id*="customize-control-sm_dark_mode_advanced"],
 
-  [id*="sm_color_fine_tune_intro"],
-  [id*="sm_color_fine_tune_presets"],
-  [id*="sm_color_grades_number"],
-  [id*="sm_potential_color_contrast"],
-  [id*="sm_color_grade_balancer"],
-  [id*="sm_site_color_variation"],
-  [id*="sm_elements_color_contrast"],
-  [id*="sm_color_promotion"],
+  [id*="customize-control-sm_color_fine_tune_intro"],
+  [id*="customize-control-sm_color_fine_tune_presets"],
+  [id*="customize-control-sm_color_grades_number"],
+  [id*="customize-control-sm_potential_color_contrast"],
+  [id*="customize-control-sm_color_grade_balancer"],
+  [id*="customize-control-sm_site_color_variation"],
+  [id*="customize-control-sm_elements_color_contrast"],
+  [id*="customize-control-sm_color_promotion"],
 
-  [id*="sm_font_sizing"],
-  [id*="sm_font_palette"],
+  [id*="customize-control-sm_font_sizing"],
+  [id*="customize-control-sm_font_palette"],
 
-  [id*="sm_font_primary_intro"],
-  [id*="sm_font_primary"],
-  [id*="sm_font_primary_elevation"],
-  [id*="sm_font_primary_pitch"],
+  [id*="customize-control-sm_font_primary_intro"],
+  [id*="customize-control-sm_font_primary"],
+  [id*="customize-control-sm_font_primary_elevation"],
+  [id*="customize-control-sm_font_primary_pitch"],
 
-  [id*="sm_font_secondary_intro"],
-  [id*="sm_font_secondary"],
-  [id*="sm_font_secondary_elevation"],
-  [id*="sm_font_secondary_pitch"],
+  [id*="customize-control-sm_font_secondary_intro"],
+  [id*="customize-control-sm_font_secondary"],
+  [id*="customize-control-sm_font_secondary_elevation"],
+  [id*="customize-control-sm_font_secondary_pitch"],
 
-  [id*="sm_font_body_intro"],
-  [id*="sm_font_body"],
-  [id*="sm_font_body_elevation"],
-  [id*="sm_font_body_pitch"],
+  [id*="customize-control-sm_font_body_intro"],
+  [id*="customize-control-sm_font_body"],
+  [id*="customize-control-sm_font_body_elevation"],
+  [id*="customize-control-sm_font_body_pitch"],
 
-  [id*="sm_font_accent_intro"],
-  [id*="sm_font_accent"],
+  [id*="customize-control-sm_font_accent_intro"],
+  [id*="customize-control-sm_font_accent"],
 
-  [id*="sm_fonts_connected_fields_preset"]
+  [id*="customize-control-sm_fonts_connected_fields_preset"]
 ) {
   border: 0 solid var(--customizer-border-color);
   background: var(--sm-color-palette-accent-color-1);
