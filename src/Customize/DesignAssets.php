@@ -76,7 +76,7 @@ class DesignAssets extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 * @param bool $skip_cache Optional. Whether to use the cached data or fetch new data.
 	 *
 	 * @return array
 	 */
@@ -85,7 +85,7 @@ class DesignAssets extends AbstractHookProvider {
 			return $this->design_assets;
 		}
 
-		$this->design_assets = $this->maybe_fetch( $skip_cache ) ? $this->maybe_fetch( $skip_cache ) : null;
+		$this->design_assets = $this->maybe_fetch( $skip_cache );
 
 		// Determine if we should use the config in the theme root and skip the external config entirely.
 		if ( defined('STYLE_MANAGER_LOAD_THEME_ROOT_CONFIG') && true === STYLE_MANAGER_LOAD_THEME_ROOT_CONFIG ) {
@@ -132,12 +132,12 @@ class DesignAssets extends AbstractHookProvider {
 	 * @return array|false
 	 */
 	protected function maybe_fetch( bool $skip_cache = false ) {
-		// First try and get the cached data
+		// First try and get the cached data.
 		$data = get_option( self::CACHE_KEY );
 
 		// For performance reasons, we will ONLY fetch remotely when in the WP ADMIN area or via an ADMIN AJAX call, regardless of settings.
 		if ( ! is_admin() ) {
-			return  $data;
+			return $data;
 		}
 
 		// We don't force skip the cache for AJAX requests for performance reasons.
@@ -159,7 +159,7 @@ class DesignAssets extends AbstractHookProvider {
 			$fetched_data = $this->cloud_client->fetch_design_assets();
 			// Bail in case of failure to retrieve data.
 			// We will return the data already available.
-			if ( null === $fetched_data ) {
+			if ( is_null( $fetched_data ) ) {
 				return $data;
 			}
 
