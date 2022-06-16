@@ -878,20 +878,15 @@ class Fonts extends AbstractHookProvider {
 			return $urls;
 		}
 
-		// These are fields that should have no frontend impact.
+		// These are fields that should have no frontend impact since they are just part of the internal logic.
 		$excluded_fields = [
 			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
 			FontPalettes::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
-			'sm_font_primary',
-			'sm_font_secondary',
-			'sm_font_body',
-			'sm_font_accent',
 			'sm_fonts_connected_fields_preset',
 		];
 
-		// We will gather Google Fonts and make a single request to the Google Fonts API.
+		// We will gather Google Fonts families and make a single request to the Google Fonts API.
 		$google_fonts = [];
-
 		foreach ( $font_fields as $id => $font ) {
 			// Bail if this is an excluded field.
 			if ( in_array( $id, $excluded_fields ) ) {
@@ -910,7 +905,7 @@ class Fonts extends AbstractHookProvider {
 				$value = $this->getFontDefaultsValue( str_replace( '"', '', $font['value'] ) );
 			}
 
-			// Bail if we don't have a value or the value isn't an array
+			// Bail if we don't have a value or the value isn't an array.
 			if ( empty( $value ) || ! is_array( $value ) ) {
 				continue;
 			}
@@ -922,7 +917,7 @@ class Fonts extends AbstractHookProvider {
 			$font_family = $value['font_family'];
 
 			$font_type = $this->determineFontType( $value['font_family'] );
-			// If this is a standard font, we have nothing to do.
+			// If this is a system font, we have nothing to do since they are... system fonts.
 			if ( 'system_font' === $font_type ) {
 				continue;
 			}
@@ -930,8 +925,9 @@ class Fonts extends AbstractHookProvider {
 			$font_details = $this->getFontDetails( $value['font_family'], $font_type );
 
 			if ( 'google_font' !== $font_type ) {
-				// When a src is given, we have nothing to do.
-				if ( ! empty( $font_details['src'] ) ) {
+				// When a src is given, simply add it to the list if it is not already there.
+				// Otherwise, skip this font since we can't do anything about it.
+				if ( ! empty( $font_details['src'] ) && ! in_array( $font_details['src'], $urls ) ) {
 					$urls[] = $font_details['src'];
 				}
 				continue;
@@ -943,9 +939,14 @@ class Fonts extends AbstractHookProvider {
 				$font_family .= ':' . FontsHelper::convertFontVariantsToGoogleFontsCSS2Styles( $font_details['variants'] );
 			}
 
-			$google_fonts[] = $font_family;
+			// Avoid having duplicate entries.
+			if ( ! in_array( $font_family, $google_fonts ) ) {
+				$google_fonts[] = $font_family;
+			}
 		}
 
+		// Get the stylesheet URL from the Google Fonts API and add it to the rest of the stylesheet URLs
+		// (like those for our cloud fonts).
 		if ( ! empty( $google_fonts ) ) {
 			$google_url = 'https://fonts.googleapis.com/css2';
 			// Add `family=` to each font family.
@@ -961,7 +962,7 @@ class Fonts extends AbstractHookProvider {
 			$urls[] = $google_url;
 		}
 
-		return $urls;
+		return apply_filters( 'style_manager/fonts_stylesheet_urls', $urls );
 	}
 
 	/**
