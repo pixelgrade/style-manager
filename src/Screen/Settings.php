@@ -176,7 +176,7 @@ class Settings extends AbstractHookProvider {
 				              ],
 			              ] ),
 			         Field::make( 'checkbox', 'typography_group_google_fonts', esc_html__( 'Group Google fonts', '__plugin_txtd' ) )
-			              ->set_help_text( esc_html__( 'You can chose to see the Google fonts in groups', '__plugin_txtd' ) )
+			              ->set_help_text( esc_html__( 'See Google fonts grouped by their type instead of alphabetical order.', '__plugin_txtd' ) )
 			              ->set_option_value( 'yes' )
 			              ->set_default_value( 'yes' )
 			              ->set_conditional_logic( [
@@ -190,7 +190,7 @@ class Settings extends AbstractHookProvider {
 				              ],
 			              ] ),
 			         Field::make( 'checkbox', 'typography_cloud_fonts', esc_html__( 'Use cloud fonts', '__plugin_txtd' ) )
-			              ->set_help_text( esc_html__( 'Would you to have Cloud fonts available in the font controls?', '__plugin_txtd' ) )
+			              ->set_help_text( esc_html__( 'Would you like to have Cloud fonts available in the font controls?', '__plugin_txtd' ) )
 			              ->set_option_value( 'yes' )
 			              ->set_default_value( 'yes' )
 			              ->set_conditional_logic( [
