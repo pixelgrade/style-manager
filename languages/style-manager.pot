@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0 or later..
 msgid ""
 msgstr ""
-"Project-Id-Version: Style Manager 2.2.6\n"
+"Project-Id-Version: Style Manager 2.2.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/style-manager\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-06-07T07:27:20+00:00\n"
+"POT-Creation-Date: 2022-06-16T13:43:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: style-manager\n"
@@ -110,7 +110,7 @@ msgid "Price"
 msgstr ""
 
 #: resources/sm_theme_root.php:518
-#: src/Customize/ColorPalettes.php:849
+#: src/Customize/ColorPalettes.php:856
 #: src/Screen/Customizer.php:1244
 #: src/Screen/Settings.php:131
 msgid "Colors"
@@ -245,7 +245,7 @@ msgid "Presets"
 msgstr ""
 
 #: src/Customize/ColorPalettes.php:471
-#: src/Customize/ColorPalettes.php:591
+#: src/Customize/ColorPalettes.php:598
 #: src/Customize/FontPalettes.php:470
 msgid "Normal"
 msgstr ""
@@ -255,12 +255,12 @@ msgid "Simple"
 msgstr ""
 
 #: src/Customize/ColorPalettes.php:495
-#: src/Customize/ColorPalettes.php:726
+#: src/Customize/ColorPalettes.php:733
 msgid "Light"
 msgstr ""
 
 #: src/Customize/ColorPalettes.php:507
-#: src/Customize/ColorPalettes.php:727
+#: src/Customize/ColorPalettes.php:734
 #: src/sm-functions.php:42
 #: src/sm-functions.php:50
 msgid "Dark"
@@ -290,167 +290,167 @@ msgstr ""
 msgid "Palette basis offset"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:588
+#: src/Customize/ColorPalettes.php:595
 msgid "Elements color contrast"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:592
+#: src/Customize/ColorPalettes.php:599
 msgid "Average"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:593
+#: src/Customize/ColorPalettes.php:600
 msgid "Maximum"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:601
+#: src/Customize/ColorPalettes.php:608
 msgid "Brand colors"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:609
+#: src/Customize/ColorPalettes.php:616
 msgid "Pure white"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:617
+#: src/Customize/ColorPalettes.php:624
 msgid "Pure black"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:673
+#: src/Customize/ColorPalettes.php:680
 msgid "Color System"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:675
+#: src/Customize/ColorPalettes.php:682
 msgid "Set up the <a href=\"https://pixelgrade.com/docs/design-and-style/color-system/\" target=\"_blank\">Color System</a> for your website using the tools below."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:721
+#: src/Customize/ColorPalettes.php:728
 msgid "Appearance"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:724
+#: src/Customize/ColorPalettes.php:731
 msgid "Choose between light or dark color schemes or set it to <strong>\"Auto\"</strong> to activate dark mode automatically, according to your visitors' system-wide setting."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:728
-#: src/Customize/Fonts.php:1591
+#: src/Customize/ColorPalettes.php:735
+#: src/Customize/Fonts.php:1588
 msgid "Auto"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:828
+#: src/Customize/ColorPalettes.php:835
 msgid "Colorize elements one by one"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:829
+#: src/Customize/ColorPalettes.php:836
 msgid "Customize colors usage"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:830
+#: src/Customize/ColorPalettes.php:837
 msgid "Fine-tune generated palette"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:831
+#: src/Customize/ColorPalettes.php:838
 msgid "Brand Colors"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:832
+#: src/Customize/ColorPalettes.php:839
 msgid "Adjust the main brand colors you want to use on your site. Provide <strong>only the main colors</strong> since the Color System will <strong>generate an entire palette</strong> from these. For advanced controls of generated color palette, see the section below."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:833
+#: src/Customize/ColorPalettes.php:840
 msgid "Explore colors"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:834
+#: src/Customize/ColorPalettes.php:841
 msgid "Curated color presets to help you lay the foundations of the color system and make it easy to get started."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:835
+#: src/Customize/ColorPalettes.php:842
 msgid "Extract from Image"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:836
-#: src/Customize/ColorPalettes.php:858
+#: src/Customize/ColorPalettes.php:843
+#: src/Customize/ColorPalettes.php:865
 msgid "Interpolated Color"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:837
+#: src/Customize/ColorPalettes.php:844
 msgid "Extract colors from an image and generate a color palette for your design system."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:838
+#: src/Customize/ColorPalettes.php:845
 msgid "Drag and drop your image"
 msgstr ""
 
 #. translators 1: open span, 2: close span
-#: src/Customize/ColorPalettes.php:842
+#: src/Customize/ColorPalettes.php:849
 msgid "or %1$s select a file %2$s from your computer"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:848
+#: src/Customize/ColorPalettes.php:855
 #: src/Customize/FontPalettes.php:798
 #: src/Screen/Settings.php:154
 msgid "Typography"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:850
+#: src/Customize/ColorPalettes.php:857
 msgid "Live site"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:851
+#: src/Customize/ColorPalettes.php:858
 msgid "The color system"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:852
+#: src/Customize/ColorPalettes.php:859
 msgid "The color system presented below is designed based on your brand colors. Hover over a color grade to see a preview of how you will be able to use colors with your content blocks."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:853
+#: src/Customize/ColorPalettes.php:860
 msgid "Each column from the color palette below represent a state where a component could be. The first row is the main surface or background color, while the other two rows are for the content."
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:854
+#: src/Customize/ColorPalettes.php:861
 msgid "Surface"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:855
-#: src/Customize/ColorPalettes.php:863
+#: src/Customize/ColorPalettes.php:862
+#: src/Customize/ColorPalettes.php:870
 #: src/sm-functions.php:43
 #: src/sm-functions.php:51
 msgid "Accent"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:856
+#: src/Customize/ColorPalettes.php:863
 msgid "Text"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:857
+#: src/Customize/ColorPalettes.php:864
 msgid "Color"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:860
+#: src/Customize/ColorPalettes.php:867
 msgid "Primary"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:861
+#: src/Customize/ColorPalettes.php:868
 msgid "Secondary"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:862
+#: src/Customize/ColorPalettes.php:869
 msgid "Body"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:865
+#: src/Customize/ColorPalettes.php:872
 msgid "Category"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:866
+#: src/Customize/ColorPalettes.php:873
 msgid "Preview"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:867
+#: src/Customize/ColorPalettes.php:874
 msgid "Size"
 msgstr ""
 
-#: src/Customize/ColorPalettes.php:869
+#: src/Customize/ColorPalettes.php:876
 msgid "Fine-tune the type system"
 msgstr ""
 
@@ -704,7 +704,7 @@ msgstr ""
 msgid "Google fonts %s"
 msgstr ""
 
-#: src/Customize/Fonts.php:1590
+#: src/Customize/Fonts.php:1587
 msgid "Select a font family"
 msgstr ""
 
@@ -1186,7 +1186,7 @@ msgid "Group Google fonts"
 msgstr ""
 
 #: src/Screen/Settings.php:179
-msgid "You can chose to see the Google fonts in groups"
+msgid "See Google fonts grouped by their type instead of alphabetical order."
 msgstr ""
 
 #: src/Screen/Settings.php:192
@@ -1194,7 +1194,7 @@ msgid "Use cloud fonts"
 msgstr ""
 
 #: src/Screen/Settings.php:193
-msgid "Would you to have Cloud fonts available in the font controls?"
+msgid "Would you like to have Cloud fonts available in the font controls?"
 msgstr ""
 
 #: src/Screen/Settings.php:204
