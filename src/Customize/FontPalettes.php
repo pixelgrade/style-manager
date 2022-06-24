@@ -454,7 +454,7 @@ class FontPalettes extends AbstractHookProvider {
 			'options' => [
 				'sm_font_sizing'              => [
 					'type'         => 'sm_radio',
-					'desc'         => wp_kses( __( 'Adjust the overall font sizing you want to use on your site. For advanced controls over individual elements, see the section below.', '__plugin_txtd' ), [ 'strong' => [] ] ),
+					'desc'         => wp_kses( __( 'Adjust the overall font sizing you want to use on your site. For advanced controls over individual elements, open the section below.', '__plugin_txtd' ), [ 'strong' => [] ] ),
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_sizing',
 					'label'        => esc_html__( 'Font Sizing', '__plugin_txtd' ),
