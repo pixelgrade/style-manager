@@ -198,6 +198,20 @@
   }
 }
 
+// Color System panel
+[id="customize-control-sm_advanced_palette_source_control"] {
+  .sm-group {
+    &:first-child {
+      margin-top: 0;
+    }
+
+    // Blend "Brand Colors" and "Fine-tune generated palette" sections
+    &:nth-child(3) {
+      margin-top: -1px;
+    }
+  }
+}
+
 .sm-blinds,
 .sm-group__body,
 .sm-blinds__header,

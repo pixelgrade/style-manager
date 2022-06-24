@@ -35,7 +35,8 @@
 }
 
 .customize-control-description {
-  margin-bottom: calc( 0.5 * var(--customizer-spacing) );
+  margin-bottom: calc( 0.75 * var(--customizer-spacing) );
+  margin-top: calc(-0.25 * var(--customizer-spacing));  
   font-style: normal;
   opacity: 0.8;
   clear: both;
