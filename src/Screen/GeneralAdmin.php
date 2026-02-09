@@ -190,6 +190,10 @@ class GeneralAdmin extends AbstractHookProvider {
 		// Check nonce.
 		check_ajax_referer( 'style_manager_migrate_customizations_from_parent_to_child_theme', 'nonce_migrate' );
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
 		$parent_theme = wp_get_theme( get_template() );
 		if ( ! $parent_theme->exists() ) {
 			wp_send_json_error();
