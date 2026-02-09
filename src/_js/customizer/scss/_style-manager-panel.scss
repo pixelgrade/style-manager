@@ -14,22 +14,41 @@ $sm-tweak-board-id: unquote( '#accordion-section-sm_tweak_board_section' );
         margin-top: calc( 0.5 * var(--customizer-spacing) );
       }
 
+      // Higher specificity variant to override WP 6.9+ padding:0 rule
+      // WP 6.9 uses: #customize-controls .current-panel .control-section > h3.accordion-section-title:has(button.accordion-trigger) { padding: 0 }
+      &.control-section > h3.accordion-section-title,
+      > .accordion-section-title {
+        padding: calc( 0.75 * var(--customizer-spacing) ) 14px;
+      }
+
       > .accordion-section-title {
         @include section-title-with-icon;
         justify-content: flex-start;
 
         border-top-width: 1px;
         border-bottom-width: 1px;
-        padding-top: calc( 0.75 * var(--customizer-spacing) );
-        padding-bottom: calc( 0.75 * var(--customizer-spacing) );
 
         font-size: 18px;
         letter-spacing: -0.01em;
+
+        // WP 6.9+ wraps section title text in a button.accordion-trigger
+        // Reset its styles so the parent h3 controls the layout
+        button.accordion-trigger {
+          all: unset;
+          display: flex;
+          align-items: center;
+          flex: 1 1 auto;
+          font: inherit;
+          letter-spacing: inherit;
+          cursor: pointer;
+        }
 
         &:before {
           content: "";
           width: 2em;
           height: 2em;
+          min-width: 2em;
+          flex-shrink: 0;
           margin-right: 15px;
 
           display: flex;

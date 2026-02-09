@@ -3,12 +3,14 @@
   overflow: hidden;
 
   height: 2.7em;
+  box-sizing: border-box;
 
   display: flex;
   flex-wrap: nowrap;
   align-items: stretch;
 
   color: var(--sm-color-palette-neutral-color-9);
+  border: var(--customizer-field-border-width) solid var(--sm-color-palette-accent-color-7);
   border-radius: 999em;
 
   font-size: var(--customizer-field-font-size);
@@ -19,20 +21,6 @@
 
   > * {
     flex: 1 1 0;
-  }
-
-  &:after {
-    content: "";
-
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    border: var(--customizer-field-border-width) solid var(--sm-color-palette-accent-color-7);
-    border-radius: 999em;
-    pointer-events: none;
   }
 
   input[type="radio"] {
