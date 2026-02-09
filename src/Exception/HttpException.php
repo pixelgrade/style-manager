@@ -64,7 +64,7 @@ class HttpException extends \Exception implements StyleManagerException {
 		Throwable $previous = null
 	): HttpException {
 		$user_id     = get_current_user_id();
-		$request_uri = $_SERVER['REQUEST_URI'];
+		$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		$message     = "Forbidden resource requested; User: {$user_id}; URI: {$request_uri}";
 
 		return new static( $message, HTTP::FORBIDDEN, $code, $previous );
