@@ -219,15 +219,9 @@ if ( ! class_exists( 'WUpdates_Plugin_Updates_mg8pX' ) ) {
 			$http_args['body']['data'] = $optional_data;
 
 			// Check for an available update
-			$url = $http_url = set_url_scheme( 'https://wupdates.com/wp-json/wup/v1/plugins/check_version/mg8pX', 'http' );
-			if ( $ssl = wp_http_supports( array( 'ssl' ) ) ) {
-				$url = set_url_scheme( $url, 'https' );
-			}
+			$url = 'https://wupdates.com/wp-json/wup/v1/plugins/check_version/mg8pX';
 
 			$raw_response = wp_remote_post( $url, $http_args );
-			if ( $ssl && is_wp_error( $raw_response ) ) {
-				$raw_response = wp_remote_post( $http_url, $http_args );
-			}
 			// We stop in case we haven't received a proper response
 			if ( is_wp_error( $raw_response ) || 200 != wp_remote_retrieve_response_code( $raw_response ) ) {
 				return $transient;
