@@ -4,7 +4,8 @@
  *
  * @wordpress-plugin
  * Plugin Name: Style Manager
- * Plugin URI:  https://wordpress.org/plugins/style-manager
+ * Plugin URI:  https://github.com/pixelgrade/style-manager
+ * Update URI:  false
  * Description: Auto-magical system to style your entire WordPress site.
  * Version: 2.2.7
  * Author: Pixelgrade

@@ -56,7 +56,7 @@
 }
 
 :root {
-  --customizer-spacing: 16px;
+  --customizer-spacing: 20px;
   --customizer-border-color: var(--sm-color-palette-neutral-color-3);
   --customizer-background-color: var(--sm-color-palette-neutral-color-2);
   --customizer-text-color: var(--sm-color-palette-neutral-text-color-1);
@@ -105,8 +105,7 @@
 }
 
 .customize-control-description {
-  margin-bottom: calc(0.75 * var(--customizer-spacing));
-  margin-top: calc(-0.25 * var(--customizer-spacing));
+  margin-bottom: calc(0.5 * var(--customizer-spacing));
   font-style: normal;
   opacity: 0.8;
   clear: both;
@@ -1925,13 +1924,6 @@ body.feedback-modal-open #style-manager-user-feedback-modal .modal {
 }
 [id=customize-control-sm_colorize_elements_button_control] .sm-panel-toggle {
   border-top: 0;
-}
-
-[id=customize-control-sm_advanced_palette_source_control] .sm-group:first-child {
-  margin-top: 0;
-}
-[id=customize-control-sm_advanced_palette_source_control] .sm-group:nth-child(3) {
-  margin-top: -1px;
 }
 
 .sm-blinds,
