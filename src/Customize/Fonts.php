@@ -679,7 +679,7 @@ class Fonts extends AbstractHookProvider {
 		// Determine the option class.
 		$option_class = ( false !== strpos( $font_type, '_font' ) ) ? $font_type : $font_type . '_font';
 
-		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . '>' . $font_family_display . '</option>';
+		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . '>' . esc_html( $font_family_display ) . '</option>';
 
 		return apply_filters( 'style_manager/filter_font_option_markup', $html, $font_family, $active_font_family, $font_type );
 	}

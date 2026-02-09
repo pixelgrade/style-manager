@@ -254,7 +254,7 @@ class Font extends BaseControl {
 				<span class="font-options__option-title"><?php echo esc_html( $this->label ); ?></span>
 			<?php endif; ?>
 			<span class="font-options__font-title"
-			      id="font_name_<?php echo esc_attr( $this->CSSID ); ?>"><?php echo $font_family_display; ?></span>
+			      id="font_name_<?php echo esc_attr( $this->CSSID ); ?>"><?php echo esc_html( $font_family_display ); ?></span>
 		</label>
 	<?php }
 
@@ -417,7 +417,7 @@ class Font extends BaseControl {
 		// Determine the option class.
 		$option_class = ( false !== strpos( $font_type, '_font' ) ) ? $font_type : $font_type . '_font';
 
-		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . '>' . $font_family_display . '</option>';
+		$html .= '<option class="' . esc_attr( $option_class ) . '" value="' . esc_attr( $font_family ) . '" ' . $selected . '>' . esc_html( $font_family_display ) . '</option>';
 
 		return apply_filters( 'style_manager/filter_font_option_markup', $html, $font_family, $active_font_family, $font_type );
 	}
