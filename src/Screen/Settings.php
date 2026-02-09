@@ -298,7 +298,8 @@ class Settings extends AbstractHookProvider {
 	}
 
 	public function permission_nonce_callback() {
-		return wp_verify_nonce( $this->get_nonce(), 'style_manager_settings_nonce' );
+		return current_user_can( Capabilities::MANAGE_OPTIONS )
+		       && wp_verify_nonce( $this->get_nonce(), 'style_manager_settings_nonce' );
 	}
 
 	private function get_nonce() {
