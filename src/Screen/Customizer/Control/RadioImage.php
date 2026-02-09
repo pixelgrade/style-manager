@@ -85,12 +85,12 @@ class RadioImage extends BaseControl {
 							}
 							$color = '';
 							if ( isset( $setts['color'] ) ) {
-								$color .= ' style="border-left-color: ' . $setts['color'] . '; color: ' . $setts['color'] . ';"';
+								$color .= ' style="border-left-color: ' . esc_attr( $setts['color'] ) . '; color: ' . esc_attr( $setts['color'] ) . ';"';
 							}
 
 							$label   = $setts['label'];
 							$options = $setts['options'];
-							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
+							$data    = ' data-options=\'' . esc_attr( wp_json_encode( $options ) ) . '\''; ?>
 
 							<fieldset class="style-manager_radio_button">
 								<input
@@ -102,7 +102,7 @@ class RadioImage extends BaseControl {
 									<?php echo $data; ?>
 								/>
 								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; ?>>
-									<?php echo $label; ?>
+									<?php echo esc_html( $label ); ?>
 								</label>
 							</fieldset>
 						<?php } ?>
