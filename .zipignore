@@ -84,6 +84,7 @@ src/_scss
 #
 # Composer related
 #
+vendor/composer/tmp-*
 
 # The php-scoper is only used during development.
 php-scoper
@@ -95,6 +96,12 @@ vendor/psr
 vendor/pimple
 # cedaro/wp-plugin is prefixed and located in vendor_prefixed folder.
 vendor/cedaro
+
+# Carbon Fields dev files
+**/.travis.yml
+**/.scrutinizer.yml
+**/DEVELOPMENT.md
+**/Vagrantfile
 
 # The rector is only used during development.
 rector.php
