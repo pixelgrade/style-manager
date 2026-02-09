@@ -162,7 +162,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	public function output_dynamic_style() { ?>
 		<style id="style-manager_output_style">
-			<?php echo $this->get_dynamic_style(); ?>
+			<?php echo wp_strip_all_tags( $this->get_dynamic_style() ); ?>
 		</style>
 		<?php
 
@@ -294,7 +294,7 @@ class FrontendOutput extends AbstractHookProvider {
 			return '';
 		}
 
-		$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . $value . $unit . '; }' . "\n";
+		$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . wp_strip_all_tags( $value ) . $unit . '; }' . "\n";
 
 		// Handle the value filter callback.
 		if ( isset( $css_property['filter_value_cb'] ) ) {
@@ -382,25 +382,25 @@ class FrontendOutput extends AbstractHookProvider {
 
 		$output .= $selector . ' {';
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {
-			$output .= 'background-image: url( ' . $value['background-image'] . ');';
+			$output .= 'background-image: url( ' . esc_url( $value['background-image'] ) . ');';
 		} else {
 			$output .= 'background-image: none;';
 		}
 
 		if ( isset( $value['background-repeat'] ) && ! empty( $value['background-repeat'] ) ) {
-			$output .= 'background-repeat:' . $value['background-repeat'] . ';';
+			$output .= 'background-repeat:' . sanitize_text_field( $value['background-repeat'] ) . ';';
 		}
 
 		if ( isset( $value['background-position'] ) && ! empty( $value['background-position'] ) ) {
-			$output .= 'background-position:' . $value['background-position'] . ';';
+			$output .= 'background-position:' . sanitize_text_field( $value['background-position'] ) . ';';
 		}
 
 		if ( isset( $value['background-size'] ) && ! empty( $value['background-size'] ) ) {
-			$output .= 'background-size:' . $value['background-size'] . ';';
+			$output .= 'background-size:' . sanitize_text_field( $value['background-size'] ) . ';';
 		}
 
 		if ( isset( $value['background-attachment'] ) && ! empty( $value['background-attachment'] ) ) {
-			$output .= 'background-attachment:' . $value['background-attachment'] . ';';
+			$output .= 'background-attachment:' . sanitize_text_field( $value['background-attachment'] ) . ';';
 		}
 		$output .= "}\n";
 
