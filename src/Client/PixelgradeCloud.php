@@ -102,7 +102,7 @@ class PixelgradeCloud implements CloudInterface {
 			'timeout'   => 5,
 			'blocking'  => true,
 			'body'      => $request_data,
-			'sslverify' => false,
+			'sslverify' => true,
 		];
 		// Get the design assets from the cloud.
 		$response = wp_remote_request( $this->endpoints['cloud']['getDesignAssets']['url'], $request_args );
@@ -210,7 +210,7 @@ class PixelgradeCloud implements CloudInterface {
 			'timeout'   => 5,
 			'blocking'  => $blocking,
 			'body'      => $data,
-			'sslverify' => false,
+			'sslverify' => true,
 		];
 
 		// Make the request and return the response.
