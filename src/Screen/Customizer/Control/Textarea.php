@@ -39,7 +39,7 @@ class Textarea extends BaseControl {
 			<textarea id="<?php echo esc_attr( $this->id ); ?>"
 			          rows="5" <?php $this->link(); ?>><?php echo esc_textarea( $this->value() ); ?></textarea>
 			<?php if ( ! empty( $this->description ) ) : ?>
-				<span class="description customize-control-description"><?php echo $this->description; ?></span>
+				<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 			<?php endif; ?>
 		</label>
 		<?php

@@ -50,7 +50,7 @@ class SMToggle extends BaseControl {
 				<div class="sm-toggle__label-text"><?php echo esc_html( $this->label ); ?></div>
 			</label>
 			<?php if ( ! empty( $this->description ) ) : ?>
-				<span id="<?php echo esc_attr( $description_id ); ?>" class="sm-toggle__description"><?php echo $this->description; ?></span>
+				<span id="<?php echo esc_attr( $description_id ); ?>" class="sm-toggle__description"><?php echo wp_kses_post( $this->description ); ?></span>
 			<?php endif; ?>
 		</div>
 

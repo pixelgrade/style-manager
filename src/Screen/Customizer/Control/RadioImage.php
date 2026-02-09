@@ -64,7 +64,7 @@ class RadioImage extends BaseControl {
 					</div>
 
 					<?php if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+						<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 					<?php } ?>
 				</label>
 				<?php break;
@@ -109,7 +109,7 @@ class RadioImage extends BaseControl {
 					</div>
 
 					<?php if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+						<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 					<?php } ?>
 				</label>
 				<?php break;
