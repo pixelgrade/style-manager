@@ -313,7 +313,7 @@ if ( ! class_exists( 'WUpdates_Plugin_Updates_mg8pX' ) ) {
 			if ( is_wp_error( $data ) || empty( $data ) ) {
 				echo $error_msg;
 			} else {
-				echo $data;
+				echo wp_kses_post( $data );
 			}
 
 			exit;
