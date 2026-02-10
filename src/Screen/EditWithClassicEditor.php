@@ -177,7 +177,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 			}
 		};
 
-		const xmlString = <?php echo json_encode( str_replace( "\n", '', $custom_output ) ); ?>,
+		const xmlString = <?php echo json_encode( str_replace( "\n", '', (string) $custom_output ) ); ?>,
 			parser = new DOMParser();
 
 		$('.mce-edit-area iframe').each(function(idx, iframe) {

@@ -1394,7 +1394,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	public function get_all_master_font_controls_ids( array $options_details = null ): array {
+	public function get_all_master_font_controls_ids( ?array $options_details = null ): array {
 		$control_ids = [];
 
 		if ( empty( $options_details ) ) {

@@ -41,7 +41,7 @@ class HttpException extends \Exception implements StyleManagerException {
 		string $message,
 		int $status_code = HTTP::INTERNAL_SERVER_ERROR,
 		int $code = 0,
-		Throwable $previous = null
+		?Throwable $previous = null
 	) {
 		$this->status_code = $status_code;
 		$message           = $message ?: 'Internal Server Error';
@@ -61,7 +61,7 @@ class HttpException extends \Exception implements StyleManagerException {
 	 */
 	public static function forForbiddenResource(
 		int $code = 0,
-		Throwable $previous = null
+		?Throwable $previous = null
 	): HttpException {
 		$user_id     = get_current_user_id();
 		$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );

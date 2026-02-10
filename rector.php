@@ -43,6 +43,7 @@ return static function (RectorConfig $rectorConfig): void {
 	$parameters->set(Option::PHPSTAN_FOR_RECTOR_PATH, __DIR__ . '/phpstan.neon.dist');
 
 	// here we can define, what sets of rules will be applied
+	$rectorConfig->import( DowngradeSetList::PHP_81 );
 	$rectorConfig->import( DowngradeSetList::PHP_80 );
 	$rectorConfig->import( DowngradeSetList::PHP_74 );
 	$rectorConfig->import( DowngradeSetList::PHP_73 );

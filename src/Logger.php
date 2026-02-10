@@ -78,7 +78,7 @@ final class Logger extends AbstractLogger {
 		error_log(
 			sprintf(
 				'CUSTOMIFY.%s: %s',
-				strtoupper( $level ),
+				strtoupper( (string) $level ),
 				$this->format( $message, $context )
 			)
 		);

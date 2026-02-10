@@ -49,8 +49,8 @@
 		"pimple/pimple": "^3.2",
 		"psr/container": "^1.1",
 		"psr/log": "^1.0",
-		"symfony/polyfill-mbstring": "^1.23.1",
-		"symfony/polyfill-php72": "^1.23.0"
+		"symfony/polyfill-mbstring": "^1.27",
+		"symfony/polyfill-php72": "^1.27"
 	},
 	"require-dev": {
 		"brain/monkey": "^2.2",
@@ -100,7 +100,7 @@
 
 		"php-compatibility" : [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
-			"vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.0-"
+			"vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.1-"
 		],
 
 		"pre-install-cmd": "@create-vendor-prefix-folder",

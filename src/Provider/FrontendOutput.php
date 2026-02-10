@@ -378,7 +378,7 @@ class FrontendOutput extends AbstractHookProvider {
 		}
 
 		// Loose the ton of tabs.
-		$selector = trim( preg_replace( '/\t+/', '', $selector ) );
+		$selector = trim( preg_replace( '/\t+/', '', $selector ) ?? '' );
 
 		$output .= $selector . ' {';
 		if ( isset( $value['background-image'] ) && ! empty( $value['background-image'] ) ) {

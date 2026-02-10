@@ -418,11 +418,11 @@ class Fonts extends AbstractHookProvider {
 				// We will keep only the first item, but only if the resulting font can be found.
 				// Otherwise we will leave the font stack as it is.
 
-				if ( false !== strpos( $entryValue, ',' ) ) {
-					$entryValue = trim( substr( $entryValue, 0, strpos( $entryValue, ',' ) ) );
+				if ( false !== strpos( (string) $entryValue, ',' ) ) {
+					$entryValue = trim( substr( (string) $entryValue, 0, strpos( (string) $entryValue, ',' ) ) );
 				}
 				// Make sure that the font family is free from " or '
-				$entryValue = trim( $entryValue, "\"\'\‘\’\“\”" );
+				$entryValue = trim( (string) $entryValue, "\"\'\'\'\"\"" );
 				// Search for the font.
 				$fontDetails = $this->getFontDetails( $entryValue );
 				if ( false !== $fontDetails ) {
@@ -1533,7 +1533,7 @@ if (typeof WebFont !== 'undefined') {
 			$own_origin = FontsHelper::extractOriginFromUrl( get_bloginfo( 'url' ) );
 			if ( ! empty( $own_origin ) ) {
 				// Remove the protocol
-				$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin );
+				$own_origin = preg_replace( '#((http|https|ftp|ftps)?\:?)#i', '', $own_origin ) ?? '';
 
 				$external_origins = [];
 				foreach ( $args['custom_srcs'] as $src ) {

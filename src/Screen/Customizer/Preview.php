@@ -73,14 +73,14 @@ class Preview extends AbstractHookProvider {
 function sm_advanced_palette_output_cb( value, selector, property ) {
     var palettes = JSON.parse( value ),
         variation = parseInt( wp.customize( 'sm_site_color_variation' )(), 10 ),
-        fallbackPalettes = JSON.parse('" . json_encode( $fallback_palettes ) . "');
-        
-      
-        
+        fallbackPalettes = JSON.parse('" . (string) json_encode( $fallback_palettes ) . "');
+
+
+
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
-    
+
     window.parent.sm.customizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
     return window.parent.sm.customizer.getCSSFromPalettes( palettes, variation );
 }" . PHP_EOL;
@@ -103,7 +103,7 @@ function sm_advanced_palette_output_cb( value, selector, property ) {
 function sm_site_color_variation_cb( value, selector, property ) {
     var palettes = JSON.parse( wp.customize( 'sm_advanced_palette_output' )() ),
         variation = parseInt( value, 10 ),
-        fallbackPalettes = JSON.parse('" . json_encode( $fallback_palettes ) . "'),
+        fallbackPalettes = JSON.parse('" . (string) json_encode( $fallback_palettes ) . "'),
         styleTag = document.querySelector( '#dynamic_style_sm_advanced_palette_output' );
         
     if ( ! palettes.length ) {

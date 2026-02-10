@@ -388,7 +388,7 @@ class EditWithBlocks extends AbstractHookProvider {
 		$new_selectors = [];
 		foreach ( $selectors as $selector ) {
 			// Clean up
-			$selector = trim( $selector );
+			$selector = trim( (string) $selector );
 
 			// If the selector matches the excluded, skip it.
 			if ( $this->preg_match_any( self::$excluded_selectors_regex, $selector ) ) {
@@ -416,10 +416,10 @@ class EditWithBlocks extends AbstractHookProvider {
 
 				// When it comes to background properties applied at the body level, we need to scope to the editor namespace
 				if ( isset( $css_property['property'] ) && 0 === strpos( $css_property['property'], 'background' ) ) {
-					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$editor_namespace_selector, $selector );
+					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$editor_namespace_selector, $selector ) ?? $selector;
 				} else {
-					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::get_block_namespace_selector(), $selector );
-					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::get_block_namespace_selector(), $selector ) ?? $selector;
+					$new_selectors[] = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector ) ?? $selector;
 				}
 				continue;
 			}
@@ -427,7 +427,7 @@ class EditWithBlocks extends AbstractHookProvider {
 			// If we encounter selectors that seem that they could target the post title,
 			// we will add selectors for the Gutenberg title also.
 			if ( preg_match( self::$title_regex, $selector ) ) {
-				$new_selectors[] = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
+				$new_selectors[] = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector ) ?? $selector;
 			}
 
 			$new_selectors[] = self::get_block_namespace_selector() . ' ' . $selector;
@@ -468,9 +468,9 @@ class EditWithBlocks extends AbstractHookProvider {
 
 			// For root html elements, we will not prefix them, but replace them with the block and title namespace.
 			if ( preg_match( self::$root_regex, $selector ) ) {
-				$new_selector                   = preg_replace( '/^(html body|body|html|)/', self::get_block_namespace_selector(), $selector );
+				$new_selector                   = preg_replace( '/^(html body|body|html|)/', self::get_block_namespace_selector(), $selector ) ?? $selector;
 				$new_selectors[ $new_selector ] = $selector_details;
-				$new_selector                   = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector );
+				$new_selector                   = preg_replace( '/^(html body|body|html)/', self::$title_namespace_selector, $selector ) ?? $selector;
 				$new_selectors[ $new_selector ] = $selector_details;
 				continue;
 			}
@@ -478,7 +478,7 @@ class EditWithBlocks extends AbstractHookProvider {
 			// If we encounter selectors that seem that they could target the post title,
 			// we will add selectors for the Gutenberg title also.
 			if ( preg_match( self::$title_regex, $selector ) ) {
-				$new_selector                   = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector );
+				$new_selector                   = preg_replace( self::$title_regex, self::$title_input_namespace_selector, $selector ) ?? $selector;
 				$new_selectors[ $new_selector ] = $selector_details;
 			}
 

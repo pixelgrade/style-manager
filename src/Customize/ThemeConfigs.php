@@ -316,7 +316,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		if ( ! empty( $this->external_theme_config['config'] ) ) {
 			// Also output the JSON in a special hidden div for easy copying and pasting.
 			// Also remove any multiple tabs.
-			echo "\n" . '<!--' . "\n" . 'Just copy&paste this:' . "\n" . "\n" . trim( str_replace( '\t\t', '', json_encode( $this->external_theme_config['config'] ) ) ) . "\n" . "\n" . '-->' . "\n";
+			echo "\n" . '<!--' . "\n" . 'Just copy&paste this:' . "\n" . "\n" . trim( str_replace( '\t\t', '', (string) json_encode( $this->external_theme_config['config'] ) ) ) . "\n" . "\n" . '-->' . "\n";
 		}
 	}
 }

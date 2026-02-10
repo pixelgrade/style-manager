@@ -792,7 +792,7 @@ class Fonts {
 		}
 
 		if ( is_array( $value ) || is_object( $value ) ) {
-			$value = self::encodeURIComponent( json_encode( $value ) );
+			$value = self::encodeURIComponent( (string) json_encode( $value ) );
 		}
 
 		return $value;

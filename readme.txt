@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes, global styles
 Requires at least: 5.5.0
 Tested up to: 6.9.1
-Stable tag: 2.2.8
+Stable tag: 2.2.9
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -53,6 +53,11 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.2.9 =
+* Ensure full compatibility with PHP 8.1, 8.2, 8.3, 8.4, and 8.5 (zero deprecation notices)
+* Update symfony polyfill dependency version constraints for PHP 8.2+ compatibility
+* Add PHP 8.1 downgrade set to Rector build pipeline
 
 = 2.2.8 =
 * 2026-02-09
