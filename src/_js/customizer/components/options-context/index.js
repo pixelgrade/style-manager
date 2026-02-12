@@ -3,6 +3,10 @@ import React, { createContext, useCallback, useEffect, useMemo, useRef, useState
 import { getColorOptionsIDs } from "../../utils";
 import { useCustomizeSettingCallback } from "../../hooks";
 
+// Safari < 16.4 lacks requestIdleCallback/cancelIdleCallback support.
+const scheduleCallback = window.requestIdleCallback || ( ( cb ) => setTimeout( cb, 1 ) );
+const cancelScheduledCallback = window.cancelIdleCallback || clearTimeout;
+
 const OptionsContext = createContext();
 
 export const OptionsProvider = ( props ) => {
@@ -15,9 +19,9 @@ export const OptionsProvider = ( props ) => {
     } );
 
     useCustomizeSettingCallback( settingID, newValue => {
-      cancelIdleCallback( callback );
+      cancelScheduledCallback( callback );
       nextOptions.current = { ...nextOptions.current, [settingID]: newValue };
-      requestIdleCallback( callback );
+      scheduleCallback( callback );
     }, [] );
   } );
 

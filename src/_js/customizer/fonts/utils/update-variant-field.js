@@ -54,7 +54,9 @@ export const updateVariantField = function( newFontDetails, wrapper ) {
   } );
 
   // This is a costly operation especially when font palettes are changed and multiple font fields are updated
-  requestIdleCallback( () => {
+  // Use requestIdleCallback with setTimeout fallback for Safari < 16.4 which lacks support.
+  const scheduleCallback = window.requestIdleCallback || ( ( cb ) => setTimeout( cb, 1 ) );
+  scheduleCallback( () => {
     // Only reinitialize the select2.
     // No need to rebind on change or on input since those are still bound to the original HTML element.
     fontVariantInput.select2( {
