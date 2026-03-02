@@ -32,6 +32,8 @@ css
 __MACOSX
 **/__MACOSX
 CHANGELOG.md
+CLAUDE.md
+AGENTS.md
 README.md
 **/README.md
 palettes.md
