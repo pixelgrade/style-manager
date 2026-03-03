@@ -68,8 +68,7 @@
         "terser-webpack-plugin": "^5.3.16",
         "webpack": "^5.105.3",
         "webpack-bundle-analyzer": "^4.5.0",
-        "webpack-cli": "^6.0.1",
-        "worker-loader": "^3.0.8"
+        "webpack-cli": "^6.0.1"
     },
     "dependencies": {
         "lodash-webpack-plugin": "^0.11.6",

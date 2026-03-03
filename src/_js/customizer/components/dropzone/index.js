@@ -9,8 +9,6 @@ import { ConfigContext } from '../../components';
 import { getPalettesFromColors } from '../../utils';
 import { useUpdateSourceSetting } from '../../hooks';
 
-import Worker from "worker-loader!./worker.js";
-
 const canInterpolate = ( color1, color2 ) => {
   const luminance1 = chroma( color1 ).luminance();
   const luminance2 = chroma( color2 ).luminance();
@@ -57,7 +55,7 @@ const DropZone = ( props ) => {
     let worker = null;
 
     try {
-      worker = new Worker();
+      worker = new Worker( new URL( './worker.js', import.meta.url ) );
     } catch (e) {
 
     }
