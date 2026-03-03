@@ -125,9 +125,14 @@ jobs:
             exit 1
           fi
 
+      - name: Stage zip artifact
+        run: |
+          ZIP_PATH="$(ls -1 ../style-manager-*.zip | head -n 1)"
+          cp "$ZIP_PATH" "./$(basename "$ZIP_PATH")"
+
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
           name: style-manager-zip
-          path: ../style-manager-*.zip
+          path: style-manager-*.zip
           if-no-files-found: error
