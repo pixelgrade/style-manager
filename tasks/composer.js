@@ -5,23 +5,24 @@ var gulp = require( 'gulp' ),
   plugins = require( 'gulp-load-plugins' )();
 
 gulp.task( 'composer:delete_lock_and_vendor', function () {
-  return gulp.src( [ 'composer.lock', 'vendor' ] , { allowEmpty: true, read: false } )
-    .pipe( plugins.clean() );
+  fs.rmSync( 'composer.lock', { force: true } );
+  fs.rmSync( 'vendor', { recursive: true, force: true } );
+  return Promise.resolve();
 } );
 
 gulp.task( 'composer:delete_prefixed_vendor_libraries', function () {
-  return gulp.src(
-    [
-      'vendor/cedaro/wp-plugin',
-      'vendor/pimple/pimple',
-      'vendor/psr/container',
-      'vendor/psr/log',
-      'vendor/symfony/polyfill-mbstring',
-      'vendor/symfony/polyfill-php72',
-    ],
-    { allowEmpty: true, read: false }
-  )
-    .pipe( plugins.clean() );
+  [
+    'vendor/cedaro/wp-plugin',
+    'vendor/pimple/pimple',
+    'vendor/psr/container',
+    'vendor/psr/log',
+    'vendor/symfony/polyfill-mbstring',
+    'vendor/symfony/polyfill-php72',
+  ].forEach( function( path ) {
+    fs.rmSync( path, { recursive: true, force: true } );
+  } );
+
+  return Promise.resolve();
 } );
 
 gulp.task( 'composer:create_vendor_prefixed_folder', function () {
@@ -30,7 +31,7 @@ gulp.task( 'composer:create_vendor_prefixed_folder', function () {
 } );
 
 gulp.task( 'composer:prefix', function ( cb ) {
-  plugins.exec( 'composer prefix-dependencies', function ( err, stdout, stderr ) {
+  cp.exec( 'composer prefix-dependencies', function ( err, stdout, stderr ) {
     console.log( stdout );
     console.log( stderr );
     cb( err );
