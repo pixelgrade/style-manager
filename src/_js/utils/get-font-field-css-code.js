@@ -8,7 +8,7 @@ import { getFontFieldCSSProperties } from './get-font-field-css-properties'
 export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
   let sm;
   try {
-    sm = window.styleManager || parent.styleManager;
+    sm = parent.styleManager || window.styleManager;
   } catch ( e ) {
     sm = window.styleManager;
   }

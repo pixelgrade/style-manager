@@ -4,7 +4,7 @@ import _ from "lodash";
 export const getFontFamilyFallbackStack = ( fontFamily ) => {
   let sm;
   try {
-    sm = window.styleManager || parent.styleManager;
+    sm = parent.styleManager || window.styleManager;
   } catch ( e ) {
     sm = window.styleManager;
   }
@@ -23,17 +23,22 @@ export const getFontFamilyFallbackStack = ( fontFamily ) => {
   let fallbackStack = '';
 
   const fontDetails = smCustomizer.getFontDetails( fontFamily );
+  if ( !fontDetails ) {
+    return fallbackStack;
+  }
+
+  const fontCategories = sm?.fonts?.categories;
   if ( typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty( fontDetails.fallback_stack ) ) {
     fallbackStack = fontDetails.fallback_stack
-  } else if ( typeof fontDetails.category !== 'undefined' && !_.isEmpty( fontDetails.category ) ) {
+  } else if ( fontCategories && typeof fontDetails.category !== 'undefined' && !_.isEmpty( fontDetails.category ) ) {
     const category = fontDetails.category;
     // Search in the available categories for a match.
-    if ( typeof sm.fonts.categories[ category ] !== 'undefined' ) {
+    if ( typeof fontCategories[ category ] !== 'undefined' ) {
       // Matched by category ID/key
-      fallbackStack = typeof sm.fonts.categories[ category ].fallback_stack !== 'undefined' ? sm.fonts.categories[ category ].fallback_stack : ''
+      fallbackStack = typeof fontCategories[ category ].fallback_stack !== 'undefined' ? fontCategories[ category ].fallback_stack : ''
     } else {
       // We need to search for aliases.
-      _.find( sm.fonts.categories, function( categoryDetails ) {
+      _.find( fontCategories, function( categoryDetails ) {
         if ( typeof categoryDetails.aliases !== 'undefined' ) {
           const aliases = maybeImplodeList( categoryDetails.aliases );
           if ( aliases.indexOf( category ) !== - 1 ) {

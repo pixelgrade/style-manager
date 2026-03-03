@@ -4,7 +4,7 @@ import { standardizeToArray } from './standardize-to-array';
 
 function getParentStyleManager() {
   try {
-    return window.styleManager || parent.styleManager;
+    return parent.styleManager || window.styleManager;
   } catch ( e ) {
     return window.styleManager;
   }
@@ -32,7 +32,8 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     return
   }
 
-  const fontConfig = sm.config.settings[ settingID ];
+  const fontConfig = sm?.config?.settings?.[ settingID ];
+  const loadAllVariants = !!fontConfig?.fields?.[ 'font-weight' ]?.loadAllVariants;
 
   let family = font.font_family;
   // The font family may be a comma separated list like "Roboto, sans"
@@ -48,12 +49,15 @@ export const maybeLoadFontFamily = function( font, settingID ) {
   }
 
   const fontDetails = smCustomizer.getFontDetails( family, fontType );
+  if ( !fontDetails ) {
+    return;
+  }
 
   // Handle theme defined fonts and cloud fonts together since they are very similar.
   if ( fontType === 'theme_font' || fontType === 'cloud_font' ) {
 
     // Bail if we have no src.
-    if ( typeof fontDetails.src === undefined ) {
+    if ( typeof fontDetails.src === 'undefined' ) {
       return
     }
 
@@ -63,7 +67,7 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     let variants =
       (
         typeof font.font_variant !== 'undefined'
-        && ( typeof fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] === 'undefined' || !fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] )
+        && !loadAllVariants
         && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
         && _.includes( fontDetails.variants, font.font_variant ) // If the value variant is not amongst the available ones, load all available variants.
       ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
@@ -101,7 +105,7 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     let variants =
       (
         typeof font.font_variant !== 'undefined'
-        && ( typeof fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] === 'undefined' || !fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] )
+        && !loadAllVariants
         && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
         && _.includes( fontDetails.variants, font.font_variant ) // If the value variant is not amongst the available ones, load all available variants.
       ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
@@ -129,4 +133,3 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     // Maybe Typekit, Fonts.com or Fontdeck fonts
   }
 };
-

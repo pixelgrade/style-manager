@@ -3,7 +3,7 @@ export const maybeLoadWebfontloaderScript = () => {
   if ( typeof WebFont === 'undefined' ) {
     let webfontloaderUrl;
     try {
-      webfontloaderUrl = ( window.styleManager || parent.styleManager )?.config?.webfontloader_url;
+      webfontloaderUrl = ( parent.styleManager || window.styleManager )?.config?.webfontloader_url;
     } catch ( e ) {
       webfontloaderUrl = window.styleManager?.config?.webfontloader_url;
     }
