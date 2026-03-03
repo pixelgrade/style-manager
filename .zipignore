@@ -62,6 +62,9 @@ babel.config.js
 .eslintrc
 .eslintrc.js
 .csslintrc
+**/.eslintrc
+**/.eslintrc.js
+**/.csslintrc
 .stylelintrc
 tsconfig.json
 tslint.json
