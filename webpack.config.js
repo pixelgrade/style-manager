@@ -3,7 +3,6 @@
  */
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const MiniCssExtractPlugin = require( "mini-css-extract-plugin" );
-const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzerPlugin;
 const path = require( 'path' );
 
 const files = [
@@ -110,7 +109,6 @@ module.exports = {
     ],
   },
   'plugins': [
-    new BundleAnalyzerPlugin,
     new MiniCssExtractPlugin( {
       // Options similar to the same options in webpackOptions.output
       // both options are optional

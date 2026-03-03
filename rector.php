@@ -2,7 +2,6 @@
 
 use Rector\Core\Configuration\Option;
 use Rector\Core\ValueObject\PhpVersion;
-use Rector\Set\ValueObject\DowngradeSetList;
 use Rector\Config\RectorConfig;
 
 /** Define ABSPATH as this file's directory */
@@ -37,15 +36,9 @@ return static function (RectorConfig $rectorConfig): void {
 //	]);
 
 	// is your PHP version different from the one your refactor to? [default: your PHP version]
-	$parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_71);
+	$parameters->set(Option::PHP_VERSION_FEATURES, PhpVersion::PHP_81);
 
 	// Path to phpstan with extensions, that PHPSTan in Rector uses to determine types
 	$parameters->set(Option::PHPSTAN_FOR_RECTOR_PATH, __DIR__ . '/phpstan.neon.dist');
 
-	// here we can define, what sets of rules will be applied
-	$rectorConfig->import( DowngradeSetList::PHP_81 );
-	$rectorConfig->import( DowngradeSetList::PHP_80 );
-	$rectorConfig->import( DowngradeSetList::PHP_74 );
-	$rectorConfig->import( DowngradeSetList::PHP_73 );
-	$rectorConfig->import( DowngradeSetList::PHP_72 );
 };
