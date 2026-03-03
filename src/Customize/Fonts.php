@@ -1472,7 +1472,7 @@ const styleManagerFontLoader = function() {
 			window.dispatchEvent(new Event('wf-inactive'));
 			// Since we rely on this event to show text, if [all] the webfonts have failed, we still want to let the browser handle it.
 			// So we set the .wf-active class on the html element.
-			document.getElementByTag('html')[0].classList.add('wf-active');
+			document.getElementsByTagName('html')[0].classList.add('wf-active');
 		}
 	};
 		<?php if ( ! empty( $args['google_families'] ) ) { ?>

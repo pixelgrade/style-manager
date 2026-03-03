@@ -6,8 +6,18 @@ import { getFontFieldCSSProperties } from './get-font-field-css-properties'
 
 // Mirror logic of server-side Utils\Fonts::getFontStyle()
 export const getFontFieldCSSCode = ( settingID, cssValue, value ) => {
-  const styleManager = styleManager || parent.styleManager;
-  const fontConfig = styleManager.config.settings[ settingID ];
+  let sm;
+  try {
+    sm = window.styleManager || parent.styleManager;
+  } catch ( e ) {
+    sm = window.styleManager;
+  }
+
+  if ( ! sm?.config?.settings?.[ settingID ] ) {
+    return '';
+  }
+
+  const fontConfig = sm.config.settings[ settingID ];
   const prefix = typeof fontConfig.properties_prefix === 'undefined' ? '' : fontConfig.properties_prefix;
 
   let output = '';
