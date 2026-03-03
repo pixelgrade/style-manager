@@ -195,7 +195,6 @@ class EditWithBlocks extends AbstractHookProvider {
 	public function register_hooks() {
 		// Styles and scripts when editing.
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
-		$this->add_action( 'enqueue_block_editor_assets', 'dynamic_styles_scripts', 999 );
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_editor_dynamic_css', 999 );
 
 		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
@@ -232,7 +231,17 @@ class EditWithBlocks extends AbstractHookProvider {
 	 * Replaces the previous __unstableResolvedAssets injection which is removed in WP 7.0.
 	 */
 	public function enqueue_editor_dynamic_css() {
-		$css = $this->frontend_output->get_dynamic_style() . $this->sm_fonts->getFontsDynamicStyle();
+		$this->sm_fonts->enqueue_frontend_scripts_styles();
+
+		add_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );
+		$fonts_css = $this->sm_fonts->getFontsDynamicStyle();
+		remove_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10 );
+
+		add_filter( 'style_manager/css_selector', [ $this, 'gutenbergify_css_selectors' ], 10, 2 );
+		$dynamic_css = $this->frontend_output->get_dynamic_style();
+		remove_filter( 'style_manager/css_selector', [ $this, 'gutenbergify_css_selectors' ], 10 );
+
+		$css = $dynamic_css . $fonts_css;
 
 		if ( empty( trim( $css ) ) ) {
 			return;
@@ -380,31 +389,6 @@ class EditWithBlocks extends AbstractHookProvider {
 
 		wp_enqueue_script( 'wp-dom-ready' );
 		wp_add_inline_script( 'wp-dom-ready', $data );
-	}
-
-	/**
-	 * Output Style Manager's dynamic styles and scripts in the Gutenberg context.
-	 *
-	 * @since 2.0.0
-	 */
-	public function dynamic_styles_scripts() {
-		if ( ! $this->plugin_settings->get( 'enable_editor_style', true ) ) {
-			return;
-		}
-
-		$enqueue_parent_handle = $this->get_editor_style_handle();
-		if ( empty( $enqueue_parent_handle ) ) {
-			return;
-		}
-
-		add_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );
-		$this->sm_fonts->enqueue_frontend_scripts_styles();
-		wp_add_inline_style( $enqueue_parent_handle, $this->sm_fonts->getFontsDynamicStyle() );
-		remove_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10 );
-
-		add_filter( 'style_manager/css_selector', [ $this, 'gutenbergify_css_selectors' ], 10, 2 );
-		wp_add_inline_style( $enqueue_parent_handle, $this->frontend_output->get_dynamic_style() );
-		remove_filter( 'style_manager/css_selector', [ $this, 'gutenbergify_css_selectors' ], 10 );
 	}
 
 	/**

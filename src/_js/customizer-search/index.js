@@ -5,7 +5,13 @@
  */
 
 /** @namespace styleManager */
-window.styleManager = window.styleManager || parent.styleManager || {};
+let parentStyleManager = {};
+try {
+  parentStyleManager = window.parent && window.parent.styleManager ? window.parent.styleManager : {};
+} catch (e) {
+  parentStyleManager = {};
+}
+window.styleManager = window.styleManager || parentStyleManager || {};
 
 (function ($, styleManager, wp) {
 

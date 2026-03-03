@@ -74,15 +74,31 @@ function sm_advanced_palette_output_cb( value, selector, property ) {
     var palettes = JSON.parse( value ),
         variation = parseInt( wp.customize( 'sm_site_color_variation' )(), 10 ),
         fallbackPalettes = JSON.parse('" . (string) json_encode( $fallback_palettes ) . "');
+    var smCustomizer = null;
 
+    try {
+        if ( window.parent && window.parent.sm && window.parent.sm.customizer ) {
+            smCustomizer = window.parent.sm.customizer;
+        }
+    } catch (e) {}
 
+    if ( ! smCustomizer && window.sm && window.sm.customizer ) {
+        smCustomizer = window.sm.customizer;
+    }
 
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
 
-    window.parent.sm.customizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
-    return window.parent.sm.customizer.getCSSFromPalettes( palettes, variation );
+    if ( ! smCustomizer || typeof smCustomizer.getCSSFromPalettes !== 'function' ) {
+        return '';
+    }
+
+    if ( typeof smCustomizer.maybeFillPalettesArray === 'function' ) {
+        smCustomizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
+    }
+
+    return smCustomizer.getCSSFromPalettes( palettes, variation );
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
@@ -105,13 +121,31 @@ function sm_site_color_variation_cb( value, selector, property ) {
         variation = parseInt( value, 10 ),
         fallbackPalettes = JSON.parse('" . (string) json_encode( $fallback_palettes ) . "'),
         styleTag = document.querySelector( '#dynamic_style_sm_advanced_palette_output' );
+    var smCustomizer = null;
+
+    try {
+        if ( window.parent && window.parent.sm && window.parent.sm.customizer ) {
+            smCustomizer = window.parent.sm.customizer;
+        }
+    } catch (e) {}
+
+    if ( ! smCustomizer && window.sm && window.sm.customizer ) {
+        smCustomizer = window.sm.customizer;
+    }
         
     if ( ! palettes.length ) {
         palettes = fallbackPalettes;
     }
     
-    window.parent.sm.customizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
-    var newCSS = window.parent.sm.customizer.getCSSFromPalettes( palettes, variation );
+    if ( ! smCustomizer || typeof smCustomizer.getCSSFromPalettes !== 'function' ) {
+        return '';
+    }
+
+    if ( typeof smCustomizer.maybeFillPalettesArray === 'function' ) {
+        smCustomizer.maybeFillPalettesArray( palettes, " . $palettes_count . " );
+    }
+
+    var newCSS = smCustomizer.getCSSFromPalettes( palettes, variation );
     
     if ( styleTag ) {
         styleTag.innerHTML = newCSS;
