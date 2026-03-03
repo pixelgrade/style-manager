@@ -38,6 +38,7 @@ module.exports = {
     filename: pathData => {
       return `${ kebabize( pathData.chunk.name ) }.js`;
     },
+    chunkFilename: '[name].js',
     library: {
       name: [ 'sm', '[name]' ],
       type: 'window'

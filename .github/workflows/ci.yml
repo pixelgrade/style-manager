@@ -83,11 +83,47 @@ jobs:
       - name: Install rsync
         run: sudo apt-get update && sudo apt-get install -y rsync
 
+      - name: Install WP-CLI
+        run: |
+          curl -fsSL -o wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          php wp-cli.phar --info
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+          wp --info
+
       - name: Install dependencies
         run: npm ci
 
       - name: Build release zip
         run: npm run zip
+
+      - name: Verify production autoload integrity
+        run: node ./node-tasks/verify_release_autoload.js
+
+      - name: Validate zip contents
+        run: |
+          ZIP_PATH="$(ls -1 ../style-manager-*.zip | head -n 1)"
+          unzip -l "$ZIP_PATH" > /tmp/style-manager-zip-list.txt
+
+          if grep -Eq 'vendor/(phpstan|rector|brain|mockery|phpunit|symfony|psr|pimple|cedaro|nikic|phpcsstandards)/' /tmp/style-manager-zip-list.txt; then
+            echo "Zip contains stripped/dev vendor references."
+            exit 1
+          fi
+
+          if grep -Eq 'dist/js/[0-9]+\.js' /tmp/style-manager-zip-list.txt; then
+            echo "Zip contains numeric chunk names in dist/js. Expected deterministic chunk naming."
+            exit 1
+          fi
+
+          if ! grep -Eq 'dist/js/customizer-worker\.js' /tmp/style-manager-zip-list.txt; then
+            echo "Expected dist/js/customizer-worker.js in zip output."
+            exit 1
+          fi
+
+          if grep -Eq '(\.csslintrc|\.eslintrc|plans/)' /tmp/style-manager-zip-list.txt; then
+            echo "Zip contains development-only root files or plans."
+            exit 1
+          fi
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4

@@ -55,7 +55,7 @@ const DropZone = ( props ) => {
     let worker = null;
 
     try {
-      worker = new Worker( new URL( './worker.js', import.meta.url ) );
+      worker = new Worker( new URL( /* webpackChunkName: "customizer-worker" */ './worker.js', import.meta.url ) );
     } catch (e) {
 
     }

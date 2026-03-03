@@ -59,7 +59,9 @@ browserslist
 babel.config.js
 .babelrc
 .eslintignore
+.eslintrc
 .eslintrc.js
+.csslintrc
 .stylelintrc
 tsconfig.json
 tslint.json
@@ -76,6 +78,8 @@ phpstan.neon.dist
 .npmrc
 .nvmrc
 .node-version
+plans
+**/plans
 
 # Style Manager specifics
 # From src we will only exclude js and scss, since the rest of the files (PHP) are needed.
@@ -124,8 +128,10 @@ vendor/phpcompatibility
 vendor/phpdocumentor
 vendor/phpoption
 vendor/phpspec
+vendor/phpcsstandards
 vendor/phpstan
 vendor/phpunit
+vendor/nikic
 vendor/php-stubs
 vendor/rector
 vendor/sebastian
