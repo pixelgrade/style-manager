@@ -2,8 +2,17 @@
 import _ from "lodash";
 
 export const getFontSubfieldUnit = ( settingID, field ) => {
+  let sm;
+  try {
+    sm = parent.styleManager || window.styleManager;
+  } catch ( e ) {
+    sm = window.styleManager;
+  }
 
-  if ( typeof styleManager.config.settings[ settingID ] === 'undefined' || typeof styleManager.config.settings[ settingID ].fields[ field ] === 'undefined' ) {
+  const setting = sm?.config?.settings?.[ settingID ];
+  const fieldConfig = setting?.fields?.[ field ];
+
+  if ( typeof setting === 'undefined' || typeof fieldConfig === 'undefined' ) {
     // These fields don't have an unit, by default.
     if ( _.includes( [
       'font-family',
@@ -21,22 +30,22 @@ export const getFontSubfieldUnit = ( settingID, field ) => {
     return 'px'
   }
 
-  if ( typeof styleManager.config.settings[ settingID ].fields[ field ].unit !== 'undefined' ) {
+  if ( typeof fieldConfig.unit !== 'undefined' ) {
     // Make sure that we convert all falsy unit values to the boolean false.
     return _.includes( [
       '',
       'false',
       false
-    ], styleManager.config.settings[ settingID ].fields[ field ].unit ) ? false : styleManager.config.settings[ settingID ].fields[ field ].unit
+    ], fieldConfig.unit ) ? false : fieldConfig.unit
   }
 
-  if ( typeof styleManager.config.settings[ settingID ].fields[ field ][ 3 ] !== 'undefined' ) {
+  if ( typeof fieldConfig[ 3 ] !== 'undefined' ) {
     // Make sure that we convert all falsy unit values to the boolean false.
     return _.includes( [
       '',
       'false',
       false
-    ], styleManager.config.settings[ settingID ].fields[ field ][ 3 ] ) ? false : styleManager.config.settings[ settingID ].fields[ field ][ 3 ]
+    ], fieldConfig[ 3 ] ) ? false : fieldConfig[ 3 ]
   }
 
   return 'px'

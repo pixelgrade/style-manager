@@ -59,7 +59,28 @@ function generatePotFile (done) {
 generatePotFile.description = 'Scan the build files and generate the .pot file.'
 gulp.task('build:translate:generatepot', generatePotFile)
 
+function normalizePotFile( done ) {
+  const potFilePath = '../build/' + slug + '/languages/' + slug + '.pot';
+
+  if ( !fs.existsSync( potFilePath ) ) {
+    done();
+    return;
+  }
+
+  const normalizedPotContent = fs.readFileSync( potFilePath, 'utf8' ).replace(
+    /"POT-Creation-Date: .*\\n"/g,
+    '"POT-Creation-Date: 1970-01-01T00:00:00+00:00\\\\n"'
+  );
+
+  fs.writeFileSync( potFilePath, normalizedPotContent );
+  done();
+}
+
+normalizePotFile.description = 'Normalize volatile POT headers for deterministic release artifacts.';
+gulp.task( 'build:translate:normalizepot', normalizePotFile );
+
 gulp.task('build:translate', gulp.series(
   'build:translate:replacetxtdomain',
-  'build:translate:generatepot'
+  'build:translate:generatepot',
+  'build:translate:normalizepot'
 ))

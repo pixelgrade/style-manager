@@ -109,6 +109,7 @@ class TweakBoardSection extends AbstractHookProvider {
 							'none' => esc_html__( 'None', '__plugin_txtd' ),
 							'hive' => esc_html__( 'Hive', '__plugin_txtd' ),
 							'felt' => esc_html__( 'Felt', '__plugin_txtd' ),
+							'pile' => esc_html__( 'Pile', '__plugin_txtd' ),
 						],
 					],
 					'sm_decorative_titles_style' => [

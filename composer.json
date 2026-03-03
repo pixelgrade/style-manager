@@ -25,6 +25,9 @@
 		"source": "https://github.com/pixelgrade/style-manager"
 	},
 	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
 		"optimize-autoloader": true,
 		"preferred-install": "dist",
 		"sort-packages": true
@@ -41,31 +44,29 @@
 			"url": "https://github.com/cedaro/wp-test-suite"
 		}
 	},
-    "require": {
+	"require": {
 		"cedaro/wp-plugin": "^0.4.0",
 		"htmlburger/carbon-fields": "^3.3",
 		"instituteweb/composer-scripts": "^1.1",
-		"php": ">=7.1",
+		"php": ">=8.1",
 		"pimple/pimple": "^3.2",
-		"psr/container": "^1.1",
+		"psr/container": "^1.1 || ^2.0",
 		"psr/log": "^1.0",
-		"symfony/polyfill-mbstring": "^1.27",
-		"symfony/polyfill-php72": "^1.27"
+		"symfony/polyfill-mbstring": "^1.27"
 	},
 	"require-dev": {
 		"brain/monkey": "^2.2",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.1",
 		"pclzip/pclzip": "^2.8",
 		"php-stubs/wordpress-stubs": "^5.7",
 		"phpcompatibility/php-compatibility": "^9.3",
-		"phpunit/phpunit": "^7.5",
-		"rector/rector": "dev-main",
+		"phpunit/phpunit": "^9.6",
 		"roave/security-advisories": "dev-master",
 		"squizlabs/php_codesniffer": "^3.3",
 		"szepeviktor/phpstan-wordpress": "^1.0",
 		"vlucas/phpdotenv": "^5.3",
 		"wordpress/wordpress": "^5.9",
-		"wp-coding-standards/wpcs": "^2.3.0"
+		"wp-coding-standards/wpcs": "^3.2"
     },
 	"autoload": {
 		"psr-4": {
@@ -80,8 +81,7 @@
 			"src/cloud-filter-functions.php",
 			"src/deprecated.php",
 
-			"vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php",
-			"vendor_prefixed/symfony/polyfill-php72/bootstrap.php"
+			"vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php"
 		]
 	},
 	"autoload-dev": {
@@ -100,7 +100,7 @@
 
 		"php-compatibility" : [
 			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
-			"vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 7.1-"
+			"vendor/bin/phpcs -p ./*.php ./src/* --standard=PHPCompatibility --runtime-set ignore_warnings_on_exit true --runtime-set testVersion 8.1-"
 		],
 
 		"pre-install-cmd": "@create-vendor-prefix-folder",
@@ -118,26 +118,22 @@
 			"npm run gulp composer:prefix_outside_files",
 			"@composer dump-autoload"
 		],
-		"downgrade-to-php-71": [
-			"\\InstituteWeb\\ComposerScripts\\ImprovedScriptExecution::apply",
-			"vendor/bin/rector process --autoload-file=vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"
-		],
-
 		"dev-install": [
 			"npm install",
 			"@create-vendor-prefix-folder",
 			"@composer install --prefer-dist --no-scripts",
-			"@prefix-dependencies",
+			"npm run gulp composer:delete_prefixed_vendor_libraries",
+			"@composer dump-autoload",
 			"@phpcs-install-standards"
 		],
+		"verify-release-autoload": "node ./node-tasks/verify_release_autoload.js",
 
 		"pre-build": [
 			"npm install",
-			"npm run gulp composer:delete_lock_and_vendor",
-			"@composer install --prefer-dist --no-scripts",
-			"@prefix-dependencies",
-			"@downgrade-to-php-71",
-			"@composer dump-autoload --no-dev --optimize"
+			"@composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader",
+			"npm run gulp composer:delete_prefixed_vendor_libraries",
+			"@composer dump-autoload --no-dev --optimize",
+			"@verify-release-autoload"
 		],
 		"zip": [
 			"@pre-build",

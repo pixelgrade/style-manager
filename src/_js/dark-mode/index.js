@@ -27,13 +27,21 @@ class DarkMode {
 
       this.bindEvents();
       this.update();
+      this.observeEditorIframe();
     } );
 
   }
 
   initializeCustomizePreview() {
 
-    const api = window.wp?.customize || window.parent?.wp?.customize;
+    let api = window.wp?.customize;
+    if ( ! api ) {
+      try {
+        api = window.parent?.wp?.customize;
+      } catch ( e ) {
+        // Cross-frame access denied.
+      }
+    }
 
     if ( ! api ) {
       return;
@@ -121,6 +129,43 @@ class DarkMode {
     } else {
       window.document.documentElement.classList.remove( 'is-dark' );
     }
+
+    // Propagate dark mode class into the block editor iframe (WP 7.0+).
+    this.syncDarkModeToEditorIframe( isDark );
+  }
+
+  syncDarkModeToEditorIframe( isDark ) {
+    const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+    if ( ! iframe?.contentDocument ) {
+      return;
+    }
+
+    try {
+      if ( isDark ) {
+        iframe.contentDocument.documentElement.classList.add( 'is-dark' );
+      } else {
+        iframe.contentDocument.documentElement.classList.remove( 'is-dark' );
+      }
+    } catch ( e ) {
+      // Cross-origin iframe — cannot access contentDocument.
+    }
+  }
+
+  observeEditorIframe() {
+    // Watch for the editor iframe being added to the DOM (created dynamically by WP).
+    const observer = new MutationObserver( () => {
+      const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+      if ( iframe ) {
+        // Wait for iframe to load before syncing.
+        iframe.addEventListener( 'load', () => {
+          this.syncDarkModeToEditorIframe( this.isCompiledDark() );
+        } );
+        // Also try immediately in case it's already loaded.
+        this.syncDarkModeToEditorIframe( this.isCompiledDark() );
+      }
+    } );
+
+    observer.observe( document.body, { childList: true, subtree: true } );
   }
 }
 
@@ -145,7 +190,14 @@ function isLoggedIn() {
 }
 
 function isCustomizePreview() {
-  return inIframe() && window?.parent?.wp?.customize;
+  if ( ! inIframe() ) {
+    return false;
+  }
+  try {
+    return !! window?.parent?.wp?.customize;
+  } catch ( e ) {
+    return false;
+  }
 }
 
 export default new DarkMode();

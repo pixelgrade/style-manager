@@ -1,6 +1,6 @@
 const gulp = require( 'gulp' ),
-  plugins = require( 'gulp-load-plugins' )(),
   fs = require( 'fs' ),
+  cp = require( 'child_process' ),
   del = require( 'del' );
 
 const gulpconfig = require('./gulpconfig.json');
@@ -11,24 +11,24 @@ const slug = gulpconfig.slug;
 // Copy plugin folder outside in a build folder.
 // -----------------------------------------------------------------------------
 function copyFolder() {
-  const dir = process.cwd();
-  return gulp.src( './*' )
-             .pipe( plugins.exec( 'rm -Rf ./../build; mkdir -p ./../build/' + slug + ';', {
-               silent: true,
-               continueOnError: true // default: false
-             } ) )
-             .pipe( plugins.rsync( {
-               root: dir,
-               destination: '../build/' + slug + '/',
-               // archive: true,
-               progress: false,
-               silent: true,
-               compress: false,
-               recursive: true,
-               emptyDirectories: true,
-               clean: true,
-               exclude: ['node_modules', 'tests', 'tasks', 'node-tasks']
-             } ) );
+  fs.rmSync( './../build', { recursive: true, force: true } );
+  fs.mkdirSync( './../build/' + slug, { recursive: true } );
+
+  const command = [
+    'rsync',
+    '-a',
+    '--delete',
+    '--exclude', 'node_modules',
+    '--exclude', 'tests',
+    '--exclude', 'tasks',
+    '--exclude', 'node-tasks',
+    './',
+    './../build/' + slug + '/',
+  ];
+
+  cp.execFileSync( command[0], command.slice(1), { stdio: 'inherit' } );
+
+  return Promise.resolve();
 }
 
 copyFolder.description = 'Copy plugin production files to a separate build folder';

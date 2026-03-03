@@ -18,7 +18,17 @@ import {
 
   domReady( () => {
 
-    const settings = window?.top?.styleManager?.config?.settings;
+    let settings;
+    try {
+      settings = window?.top?.styleManager?.config?.settings;
+    } catch ( e ) {
+      // Cross-frame access denied.
+    }
+
+    if ( ! settings ) {
+      return;
+    }
+
     const getStyleTagID = ( settingID => `dynamic_style_${ settingID.replace( /\\W/g, '_' ) }` );
 
     const properKeys = Object.keys( settings ).filter( settingID => {

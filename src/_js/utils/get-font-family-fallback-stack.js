@@ -2,21 +2,43 @@
 import _ from "lodash";
 
 export const getFontFamilyFallbackStack = ( fontFamily ) => {
-  const styleManager = styleManager || parent.styleManager;
+  let sm;
+  try {
+    sm = parent.styleManager || window.styleManager;
+  } catch ( e ) {
+    sm = window.styleManager;
+  }
+
+  let smCustomizer;
+  try {
+    smCustomizer = parent.sm?.customizer;
+  } catch ( e ) {
+    smCustomizer = null;
+  }
+
+  if ( ! sm || ! smCustomizer ) {
+    return '';
+  }
+
   let fallbackStack = '';
 
-  const fontDetails = parent.sm.customizer.getFontDetails( fontFamily );
+  const fontDetails = smCustomizer.getFontDetails( fontFamily );
+  if ( !fontDetails ) {
+    return fallbackStack;
+  }
+
+  const fontCategories = sm?.fonts?.categories;
   if ( typeof fontDetails.fallback_stack !== 'undefined' && !_.isEmpty( fontDetails.fallback_stack ) ) {
     fallbackStack = fontDetails.fallback_stack
-  } else if ( typeof fontDetails.category !== 'undefined' && !_.isEmpty( fontDetails.category ) ) {
+  } else if ( fontCategories && typeof fontDetails.category !== 'undefined' && !_.isEmpty( fontDetails.category ) ) {
     const category = fontDetails.category;
     // Search in the available categories for a match.
-    if ( typeof styleManager.fonts.categories[ category ] !== 'undefined' ) {
+    if ( typeof fontCategories[ category ] !== 'undefined' ) {
       // Matched by category ID/key
-      fallbackStack = typeof styleManager.fonts.categories[ category ].fallback_stack !== 'undefined' ? styleManager.fonts.categories[ category ].fallback_stack : ''
+      fallbackStack = typeof fontCategories[ category ].fallback_stack !== 'undefined' ? fontCategories[ category ].fallback_stack : ''
     } else {
       // We need to search for aliases.
-      _.find( styleManager.fonts.categories, function( categoryDetails ) {
+      _.find( fontCategories, function( categoryDetails ) {
         if ( typeof categoryDetails.aliases !== 'undefined' ) {
           const aliases = maybeImplodeList( categoryDetails.aliases );
           if ( aliases.indexOf( category ) !== - 1 ) {

@@ -31,8 +31,9 @@ class EditWithBlocks extends AbstractHookProvider {
 	 * Selectors that we will use to constrain CSS rules to certain scopes.
 	 */
 	public static string $editor_namespace_selector = '.editor-styles-wrapper';
-	public static string $title_namespace_selector = '.editor-styles-wrapper .editor-post-title__block';
-	public static string $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title__block .editor-post-title__input';
+	// Updated for WP 6.x+: .editor-post-title__block was replaced by .editor-post-title
+	public static string $title_namespace_selector = '.editor-styles-wrapper .editor-post-title';
+	public static string $title_input_namespace_selector = '.editor-styles-wrapper .editor-post-title';
 
 	/**
 	 * Get the block namespace CSS selector according to the WP version in use.
@@ -56,7 +57,8 @@ class EditWithBlocks extends AbstractHookProvider {
 	/**
 	 * Regexes
 	 */
-	public static $gutenbergy_selector_regex = '/^(\.edit-post-visual-editor|\.editor-block-list__block).*$/';
+	// Updated for WP 6.x+: .edit-post-visual-editor is now .editor-visual-editor
+	public static $gutenbergy_selector_regex = '/^(\.edit-post-visual-editor|\.editor-visual-editor|\.editor-block-list__block).*$/';
 	public static $root_regex = '/^(body|html).*$/';
 	public static $title_regex = '/^(h1|h1\s+.*|\.single\s*\.entry-title.*|\.entry-title.*|\.page-title.*|\.article__?title.*)$/';
 	/* Regexes based on which we will ignore selectors = do not include them in the selector list for a certain rule. */
@@ -194,23 +196,51 @@ class EditWithBlocks extends AbstractHookProvider {
 		// Styles and scripts when editing.
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
 		$this->add_action( 'enqueue_block_editor_assets', 'dynamic_styles_scripts', 999 );
+		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_editor_dynamic_css', 999 );
 
 		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
 		$this->add_action( 'admin_enqueue_scripts', 'print_script_to_move_dark_classname_to_html' );
-		$this->add_filter( 'block_editor_settings_all', 'alter_editor_settings' );
+
+		// Deregister WP Font Library collections when SM is managing fonts,
+		// to prevent duplicate font UI alongside Style Manager's font controls.
+		$this->add_action( 'init', 'maybe_deregister_font_collections', 20 );
 	}
 
-	public function alter_editor_settings( $settings ) {
-		ob_start(); ?>
-		<style id="style-manager_output_style">
-			<?php echo $this->frontend_output->get_dynamic_style(); ?>
-			<?php echo $this->sm_fonts->getFontsDynamicStyle(); ?>
-		</style>
-		<?php $styles = ob_get_clean();
-		if ( isset( $settings['__unstableResolvedAssets']['styles'] ) ) {
-			$settings['__unstableResolvedAssets']['styles'] .= $styles;
+	/**
+	 * Deregister WP Font Library font collections when Style Manager manages fonts.
+	 *
+	 * Prevents the WP Font Library UI from showing alongside SM's font controls.
+	 * Only deregisters when SM is active and has font palettes configured.
+	 */
+	public function maybe_deregister_font_collections() {
+		if ( ! function_exists( 'wp_unregister_font_collection' ) ) {
+			return;
 		}
-		return $settings;
+
+		// Only deregister if SM is managing fonts (has font palettes).
+		$sm_fonts_config = $this->options->get( 'sm_font_palette', false );
+		if ( empty( $sm_fonts_config ) ) {
+			return;
+		}
+
+		wp_unregister_font_collection( 'google-fonts' );
+	}
+
+	/**
+	 * Enqueue SM dynamic CSS (colors + fonts) into the block editor via inline style.
+	 *
+	 * Replaces the previous __unstableResolvedAssets injection which is removed in WP 7.0.
+	 */
+	public function enqueue_editor_dynamic_css() {
+		$css = $this->frontend_output->get_dynamic_style() . $this->sm_fonts->getFontsDynamicStyle();
+
+		if ( empty( trim( $css ) ) ) {
+			return;
+		}
+
+		wp_register_style( 'style-manager-editor-dynamic', false );
+		wp_enqueue_style( 'style-manager-editor-dynamic' );
+		wp_add_inline_style( 'style-manager-editor-dynamic', $css );
 	}
 
 	/**
@@ -338,6 +368,13 @@ class EditWithBlocks extends AbstractHookProvider {
 		$data = 'wp.domReady( function() {
 					if ( document.body.classList.contains( "dark-mode-advanced" ) ) {
 						document.documentElement.classList.add( "is-dark" );
+						// Also propagate into the block editor iframe (WP 7.0+).
+						var iframe = document.querySelector( "iframe[name=editor-canvas]" );
+						if ( iframe && iframe.contentDocument ) {
+							try {
+								iframe.contentDocument.documentElement.classList.add( "is-dark" );
+							} catch(e) {}
+						}
 					}
 				} );';
 

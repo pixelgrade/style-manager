@@ -2,9 +2,29 @@ import _ from "lodash";
 
 import { standardizeToArray } from './standardize-to-array';
 
+function getParentStyleManager() {
+  try {
+    return parent.styleManager || window.styleManager;
+  } catch ( e ) {
+    return window.styleManager;
+  }
+}
+
+function getParentSmCustomizer() {
+  try {
+    return parent.sm?.customizer;
+  } catch ( e ) {
+    return null;
+  }
+}
+
 export const maybeLoadFontFamily = function( font, settingID ) {
 
-  const styleManager = styleManager || parent.styleManager;
+  const sm = getParentStyleManager();
+
+  if ( ! sm ) {
+    return;
+  }
 
   window.fontsCache = window.fontsCache ?? [];
 
@@ -12,24 +32,32 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     return
   }
 
-  const fontConfig = styleManager.config.settings[ settingID ];
+  const fontConfig = sm?.config?.settings?.[ settingID ];
+  const loadAllVariants = !!fontConfig?.fields?.[ 'font-weight' ]?.loadAllVariants;
 
   let family = font.font_family;
   // The font family may be a comma separated list like "Roboto, sans"
-  const fontType = parent.sm.customizer.determineFontType( family );
+  const smCustomizer = getParentSmCustomizer();
+  if ( ! smCustomizer ) {
+    return;
+  }
+  const fontType = smCustomizer.determineFontType( family );
 
   if ( 'system_font' === fontType ) {
     // Nothing to do for standard fonts
     return
   }
 
-  const fontDetails = parent.sm.customizer.getFontDetails( family, fontType );
+  const fontDetails = smCustomizer.getFontDetails( family, fontType );
+  if ( !fontDetails ) {
+    return;
+  }
 
   // Handle theme defined fonts and cloud fonts together since they are very similar.
   if ( fontType === 'theme_font' || fontType === 'cloud_font' ) {
 
     // Bail if we have no src.
-    if ( typeof fontDetails.src === undefined ) {
+    if ( typeof fontDetails.src === 'undefined' ) {
       return
     }
 
@@ -39,7 +67,7 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     let variants =
       (
         typeof font.font_variant !== 'undefined'
-        && ( typeof fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] === 'undefined' || !fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] )
+        && !loadAllVariants
         && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
         && _.includes( fontDetails.variants, font.font_variant ) // If the value variant is not amongst the available ones, load all available variants.
       ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
@@ -49,7 +77,7 @@ export const maybeLoadFontFamily = function( font, settingID ) {
 
       if ( !_.isEmpty( variants ) ) {
         family = family + ':' + variants.map( function( variant ) {
-          return parent.sm.customizer.convertFontVariantToFVD( variant )
+          return smCustomizer.convertFontVariantToFVD( variant )
         } ).join( ',' )
       }
     }
@@ -77,7 +105,7 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     let variants =
       (
         typeof font.font_variant !== 'undefined'
-        && ( typeof fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] === 'undefined' || !fontConfig[ 'fields' ][ 'font-weight' ][ 'loadAllVariants' ] )
+        && !loadAllVariants
         && typeof fontDetails.variants !== 'undefined' // If the font has no variants, any variant value we may have received should be ignored.
         && _.includes( fontDetails.variants, font.font_variant ) // If the value variant is not amongst the available ones, load all available variants.
       ) ? font.font_variant : typeof fontDetails.variants !== 'undefined' ? fontDetails.variants : [];
@@ -105,4 +133,3 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     // Maybe Typekit, Fonts.com or Fontdeck fonts
   }
 };
-

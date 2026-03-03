@@ -54,7 +54,7 @@ This will set up all node_modules, composer packages, and compile the scripts an
 
 ## Local Environment Setup Pointers
 
-You need to be careful since we **require** certain **node versions (v14) and PHP versions (v7.4).**
+You need to be careful since we **require** certain **node versions (v22) and PHP versions (v8.1).**
 
 For ease of development, it is best to use `nvm` (https://github.com/nvm-sh/nvm) for node version management and automatic node version switching on shell navigation. For the `zsh` shell the easiest way is to use [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh) with the `nvm` [plugin](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm) activated.
 
@@ -72,7 +72,7 @@ Please note that there are **further instructions** in the mu-plugin's code.
 
 ## Building The Release .zip 
 
-Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (7.1), and generate a cleaned-up zip.
+Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (8.1), and generate a cleaned-up zip.
 
 After you have updated the version, added the changelog, blessed everything, **you NEED to clone the repo in a TEMPORARY directory** since **the build process is DESTRUCTIVE!!!**
 

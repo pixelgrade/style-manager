@@ -1,21 +1,48 @@
 const gulp = require( 'gulp' ),
-  dartSass = require('sass'),
-	sass = require( 'gulp-sass' )(dartSass),
-	sassUnicode = require('gulp-sass-unicode'),
+  fs = require( 'fs' ),
+  path = require( 'path' ),
+  dartSass = require( 'sass' ),
 	rtlcss = require( 'gulp-rtlcss' ),
-	rename = require( 'gulp-rename' ),
-	replace = require( 'gulp-replace' );
+	rename = require( 'gulp-rename' );
 
-function stylesBase( src, dest, cb ) {
-	return gulp.src( src )
-	           .pipe( sass.sync({outputStyle: 'compressed'}).on( 'error', sass.logError ) )
-	           .pipe( sassUnicode() )
-	           .pipe( replace( /^@charset "UTF-8";\n/gm, '' ) )
-	           .pipe( gulp.dest( dest ) );
+function getScssEntries( directoryPath, entries = [] ) {
+	const entryList = fs.readdirSync( directoryPath, { withFileTypes: true } );
+
+	entryList.forEach( ( entry ) => {
+		const fullPath = path.join( directoryPath, entry.name );
+
+		if ( entry.isDirectory() ) {
+			getScssEntries( fullPath, entries );
+			return;
+		}
+
+		if ( path.extname( entry.name ) === '.scss' && !entry.name.startsWith( '_' ) ) {
+			entries.push( fullPath );
+		}
+	} );
+
+	return entries;
 }
 
 function compileStyles( cb ) {
-	return stylesBase( './src/_scss/**/*.scss', './dist/css/', cb );
+	const sourceRoot = path.resolve( './src/_scss' );
+	const destinationRoot = path.resolve( './dist/css' );
+	const scssEntries = getScssEntries( sourceRoot );
+
+	try {
+		scssEntries.forEach( ( entryPath ) => {
+			const relativePath = path.relative( sourceRoot, entryPath ).replace( /\.scss$/i, '.css' );
+			const destinationPath = path.join( destinationRoot, relativePath );
+			const compiled = dartSass.compile( entryPath, { style: 'compressed', loadPaths: [ sourceRoot ] } );
+
+			fs.mkdirSync( path.dirname( destinationPath ), { recursive: true } );
+			fs.writeFileSync( destinationPath, compiled.css.replace( /^@charset "UTF-8";\n/gm, '' ) );
+		} );
+
+		cb();
+	} catch ( error ) {
+		cb( error );
+	}
 }
 
 function stylesRTL( cb ) {
