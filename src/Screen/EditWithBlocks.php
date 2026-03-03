@@ -364,7 +364,8 @@ class EditWithBlocks extends AbstractHookProvider {
 	}
 
 	public function add_sm_dark_classname_to_body( $classname ) {
-		$dark_mode = \Pixelgrade\StyleManager\get_option( 'sm_dark_mode_advanced', 'off' );
+		// Read the setting directly from wp_options to avoid stale cached option-details values.
+		$dark_mode = \get_option( 'sm_dark_mode_advanced', 'off' );
 
 		if ( $dark_mode === 'on' ) {
 			$classname = $classname . ' dark-mode-advanced';
@@ -375,15 +376,38 @@ class EditWithBlocks extends AbstractHookProvider {
 
 	public function print_script_to_move_dark_classname_to_html() {
 		$data = 'wp.domReady( function() {
-					if ( document.body.classList.contains( "dark-mode-advanced" ) ) {
-						document.documentElement.classList.add( "is-dark" );
-						// Also propagate into the block editor iframe (WP 7.0+).
-						var iframe = document.querySelector( "iframe[name=editor-canvas]" );
-						if ( iframe && iframe.contentDocument ) {
-							try {
-								iframe.contentDocument.documentElement.classList.add( "is-dark" );
-							} catch(e) {}
+					var iframeSelector = "iframe[name=editor-canvas]";
+					var syncDarkClass = function() {
+						var isDark = document.body.classList.contains( "dark-mode-advanced" );
+						document.documentElement.classList.toggle( "is-dark", isDark );
+
+						var iframe = document.querySelector( iframeSelector );
+						if ( iframe ) {
+							if ( ! iframe.hasAttribute( "data-sm-dark-bound" ) ) {
+								iframe.setAttribute( "data-sm-dark-bound", "1" );
+								iframe.addEventListener( "load", syncDarkClass );
+							}
+
+							if ( iframe.contentDocument && iframe.contentDocument.documentElement ) {
+								try {
+									iframe.contentDocument.documentElement.classList.toggle( "is-dark", isDark );
+								} catch (e) {}
+							}
 						}
+					};
+
+					syncDarkClass();
+
+					if ( window.MutationObserver ) {
+						var observer = new MutationObserver( function() {
+							syncDarkClass();
+						} );
+						observer.observe( document.body, {
+							childList: true,
+							subtree: true,
+							attributes: true,
+							attributeFilter: [ "class" ]
+						} );
 					}
 				} );';
 
