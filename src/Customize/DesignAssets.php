@@ -85,7 +85,11 @@ class DesignAssets extends AbstractHookProvider {
 			return $this->design_assets;
 		}
 
-		$this->design_assets = $this->maybe_fetch( $skip_cache );
+		$design_assets = $this->maybe_fetch( $skip_cache );
+		if ( ! is_array( $design_assets ) ) {
+			$design_assets = [];
+		}
+		$this->design_assets = $design_assets;
 
 		// Determine if we should use the config in the theme root and skip the external config entirely.
 		if ( defined('STYLE_MANAGER_LOAD_THEME_ROOT_CONFIG') && true === STYLE_MANAGER_LOAD_THEME_ROOT_CONFIG ) {
