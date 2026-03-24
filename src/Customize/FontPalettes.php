@@ -462,6 +462,70 @@ class FontPalettes extends AbstractHookProvider {
 		// The section might be already defined, thus we merge, not replace the entire section config.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
+				'sm_voice_tuner_label'    => [
+					'type'         => 'html',
+					'html'         => '<span class="customize-control-title">' . esc_html__( 'Tune your project\'s voice:', '__plugin_txtd' ) . '</span>' .
+					                  '<span class="description customize-control-description">' . esc_html__( 'Set the personality of your project. Font palettes will be sorted by how well they match.', '__plugin_txtd' ) . '</span>',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_voice_tuner_label',
+					'priority'     => 0.5,
+				],
+				'sm_voice_formality'      => [
+					'type'         => 'sm_radio',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_voice_formality',
+					'label'        => esc_html__( 'Formality', '__plugin_txtd' ),
+					'default'      => 'balanced',
+					'live'         => true,
+					'priority'     => 0.6,
+					'choices'      => [
+						'low'      => esc_html__( 'Casual', '__plugin_txtd' ),
+						'balanced' => esc_html__( 'Balanced', '__plugin_txtd' ),
+						'high'     => esc_html__( 'Formal', '__plugin_txtd' ),
+					],
+				],
+				'sm_voice_energy'         => [
+					'type'         => 'sm_radio',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_voice_energy',
+					'label'        => esc_html__( 'Energy', '__plugin_txtd' ),
+					'default'      => 'balanced',
+					'live'         => true,
+					'priority'     => 0.7,
+					'choices'      => [
+						'low'      => esc_html__( 'Calm', '__plugin_txtd' ),
+						'balanced' => esc_html__( 'Balanced', '__plugin_txtd' ),
+						'high'     => esc_html__( 'Energetic', '__plugin_txtd' ),
+					],
+				],
+				'sm_voice_warmth'         => [
+					'type'         => 'sm_radio',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_voice_warmth',
+					'label'        => esc_html__( 'Warmth', '__plugin_txtd' ),
+					'default'      => 'balanced',
+					'live'         => true,
+					'priority'     => 0.8,
+					'choices'      => [
+						'low'      => esc_html__( 'Cool', '__plugin_txtd' ),
+						'balanced' => esc_html__( 'Balanced', '__plugin_txtd' ),
+						'high'     => esc_html__( 'Warm', '__plugin_txtd' ),
+					],
+				],
+				'sm_voice_tradition'      => [
+					'type'         => 'sm_radio',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_voice_tradition',
+					'label'        => esc_html__( 'Style', '__plugin_txtd' ),
+					'default'      => 'balanced',
+					'live'         => true,
+					'priority'     => 0.9,
+					'choices'      => [
+						'low'      => esc_html__( 'Modern', '__plugin_txtd' ),
+						'balanced' => esc_html__( 'Balanced', '__plugin_txtd' ),
+						'high'     => esc_html__( 'Classic', '__plugin_txtd' ),
+					],
+				],
 				'sm_font_sizing'              => [
 					'type'         => 'sm_radio',
 					'desc'         => wp_kses( __( 'Adjust the overall font sizing you want to use on your site. For advanced controls over individual elements, open the section below.', '__plugin_txtd' ), [ 'strong' => [] ] ),
@@ -772,6 +836,11 @@ class FontPalettes extends AbstractHookProvider {
 	 */
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 		$font_palettes_fields = [
+			'sm_voice_tuner_label',
+			'sm_voice_formality',
+			'sm_voice_energy',
+			'sm_voice_warmth',
+			'sm_voice_tradition',
 			'sm_font_sizing',
 			'sm_separator_0_0',
 			'sm_current_font_palette',
