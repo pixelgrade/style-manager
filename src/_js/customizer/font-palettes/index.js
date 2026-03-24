@@ -21,10 +21,6 @@ export const initializeFontPalettes = () => {
 };
 
 const applyFontPalette = ( fontsLogic ) => {
-  if ( ! fontsLogic ) {
-    return;
-  }
-
   $.each( fontsLogic, ( settingID, config ) => {
     wp.customize( settingID, setting => {
       setting.set( config );

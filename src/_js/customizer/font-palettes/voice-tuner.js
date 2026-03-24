@@ -7,7 +7,6 @@ const VALUE_MAP = Object.freeze( {
 } );
 
 const DIMENSIONS = Object.freeze( [ 'formality', 'energy', 'warmth', 'tradition' ] );
-const MAX_DISTANCE = Math.sqrt( DIMENSIONS.length * Math.pow( VALUE_MAP.high, 2 ) );
 
 let hasBoundSettings = false;
 
@@ -85,11 +84,14 @@ const updatePaletteBadge = ( $card, score, hasBalancedProfile ) => {
     return;
   }
 
-  const percentage = Math.round( clampScore( score ) * 100 );
+  const fit = clampScore( score );
+  const percentage = Math.round( fit * 100 );
   const $targetBadge = $badge.length ? $badge : $( '<span />', {
     class: 'voice-tuner-fit',
   } ).appendTo( $card );
 
+  $targetBadge.removeClass( 'voice-tuner-fit--high voice-tuner-fit--mid voice-tuner-fit--low' );
+  $targetBadge.addClass( getFitStateClass( fit ) );
   $targetBadge.text( `${ percentage }%` );
 };
 
@@ -118,6 +120,11 @@ const getPaletteID = card => {
 
 const getPalettePersonality = paletteID => {
   const personalityMap = window.styleManager?.fontPalettes?.personalityMap || {};
+
+  if ( ! Object.prototype.hasOwnProperty.call( personalityMap, paletteID ) ) {
+    return null;
+  }
+
   const personality = personalityMap[ paletteID ] || {};
 
   return DIMENSIONS.reduce( ( vector, dimension ) => {
@@ -128,15 +135,33 @@ const getPalettePersonality = paletteID => {
 };
 
 const getPaletteFitScore = ( profile, personality ) => {
+  if ( ! personality ) {
+    return 0.5;
+  }
+
   const distance = DIMENSIONS.reduce( ( total, dimension ) => {
     const difference = profile[ dimension ] - personality[ dimension ];
 
     return total + Math.pow( difference, 2 );
   }, 0 );
 
-  return clampScore( 1 - ( Math.sqrt( distance ) / MAX_DISTANCE ) );
+  const dist = Math.sqrt( distance ) / 2;
+
+  return clampScore( 1 - dist );
 };
 
 const clampScore = score => {
   return Math.max( 0, Math.min( 1, score ) );
+};
+
+const getFitStateClass = fit => {
+  if ( fit >= 0.75 ) {
+    return 'voice-tuner-fit--high';
+  }
+
+  if ( fit >= 0.5 ) {
+    return 'voice-tuner-fit--mid';
+  }
+
+  return 'voice-tuner-fit--low';
 };
