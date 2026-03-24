@@ -207,6 +207,16 @@ class FontPalettes extends AbstractHookProvider {
 			return $palette_config;
 		}
 
+		if ( ! isset( $palette_config['personality'] ) ) {
+			$palette_config['personality'] = [];
+		}
+		$palette_config['personality'] = wp_parse_args( $palette_config['personality'], [
+			'formality' => 0.5,
+			'energy'    => 0.5,
+			'warmth'    => 0.5,
+			'tradition' => 0.5,
+		] );
+
 		global $wp_customize;
 		// We only need to do the fonts logic preprocess when we are in the Customizer.
 		if ( ! empty( $wp_customize ) && $wp_customize instanceof \WP_Customize_Manager && ! empty( $palette_config['fonts_logic'] ) ) {
