@@ -8,6 +8,7 @@ nbproject
 codekit-config.json
 
 node_modules
+.worktrees/
 build
 *-ck.js
 npm-debug.log
