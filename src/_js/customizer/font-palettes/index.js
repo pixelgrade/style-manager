@@ -19,6 +19,10 @@ export const initializeFontPalettes = () => {
   } );
 
   initializeVoiceTunerAccordion();
+  const scheduleAccordionPlacement = window.requestAnimationFrame || ( callback => window.setTimeout( callback, 0 ) );
+  scheduleAccordionPlacement( () => {
+    initializeVoiceTunerAccordion();
+  } );
   initializeVoiceTuner();
 };
 

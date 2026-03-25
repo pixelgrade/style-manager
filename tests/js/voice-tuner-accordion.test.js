@@ -231,6 +231,7 @@ export const runVoiceTunerAccordionTests = async ( assert ) => {
   const section = documentRef.createElement( 'ul' );
   section.id = 'sub-accordion-section-sm_font_palettes_section';
 
+  const fontSizingControl = createControl( documentRef, 'customize-control-sm_font_sizing_control', 'pix_customizer_setting customize-control customize-control-sm_radio' );
   const titleControl = createControl(
     documentRef,
     'customize-control-sm_voice_tuner_label_control',
@@ -244,7 +245,7 @@ export const runVoiceTunerAccordionTests = async ( assert ) => {
   const fontPaletteControl = createControl( documentRef, 'customize-control-sm_font_palette_control', 'pix_customizer_setting customize-control customize-control-preset' );
   const voiceTunerControls = [ titleControl, formalityControl, energyControl, warmthControl, traditionControl ];
 
-  section.append( ...voiceTunerControls, fontPaletteControl );
+  section.append( fontSizingControl, fontPaletteControl, ...voiceTunerControls );
 
   initializeVoiceTunerAccordion( { document: documentRef } );
 
@@ -253,7 +254,20 @@ export const runVoiceTunerAccordionTests = async ( assert ) => {
   const toggleLabel = toggleButton?.querySelector( '.sm-panel-toggle__label' );
 
   assert.ok( toggleControl, 'expected a Voice Tuner toggle control to be inserted' );
-  assert.equal( section.children[0], toggleControl, 'expected the toggle control to render before the Voice Tuner controls' );
+  assert.deepEqual(
+    section.children.map( child => child.id ),
+    [
+      'customize-control-sm_font_sizing_control',
+      'customize-control-sm_voice_tuner_toggle_control',
+      'customize-control-sm_voice_tuner_label_control',
+      'customize-control-sm_voice_formality_control',
+      'customize-control-sm_voice_energy_control',
+      'customize-control-sm_voice_warmth_control',
+      'customize-control-sm_voice_tradition_control',
+      'customize-control-sm_font_palette_control',
+    ],
+    'expected the Voice Tuner accordion controls to render as one block directly above the font palette picker'
+  );
   assert.equal( toggleButton?.getAttribute( 'aria-expanded' ), 'false', 'expected the Voice Tuner toggle to start collapsed' );
   assert.equal( toggleLabel?.textContent, 'Tune your project\'s voice', 'expected the toggle label to reuse the Voice Tuner title without the trailing colon' );
   assert.ok( titleControl.classList.contains( 'sm-voice-tuner-accordion__intro' ), 'expected the intro control to be marked for accordion intro styling' );

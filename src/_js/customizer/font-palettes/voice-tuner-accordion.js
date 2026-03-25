@@ -1,4 +1,5 @@
 const VOICE_TUNER_TOGGLE_CONTROL_ID = 'customize-control-sm_voice_tuner_toggle_control';
+const FONT_PALETTE_CONTROL_ID = 'customize-control-sm_font_palette_control';
 const VOICE_TUNER_CONTROL_IDS = [
   'customize-control-sm_voice_tuner_label_control',
   'customize-control-sm_voice_formality_control',
@@ -14,37 +15,61 @@ const TOGGLE_ICON_MARKUP = `
 `;
 
 export const initializeVoiceTunerAccordion = ( { document: documentRef = document } = {} ) => {
-  if ( documentRef.getElementById( VOICE_TUNER_TOGGLE_CONTROL_ID ) ) {
-    return;
-  }
-
   const controls = VOICE_TUNER_CONTROL_IDS.map( id => documentRef.getElementById( id ) );
 
   if ( controls.some( control => ! control ) ) {
     return;
   }
 
+  const fontPaletteControl = documentRef.getElementById( FONT_PALETTE_CONTROL_ID );
   const [ titleControl ] = controls;
-  const parentElement = titleControl.parentElement;
+  const parentElement = fontPaletteControl?.parentElement || titleControl.parentElement;
 
-  if ( ! parentElement ) {
+  if ( ! parentElement || ! fontPaletteControl ) {
     return;
   }
 
   const toggleTitle = getToggleTitle( titleControl );
-  const { control: toggleControl, button: toggleButton } = createToggleControl( documentRef, toggleTitle );
+  const { control: toggleControl, button: toggleButton, isNew } = getOrCreateToggleControl( documentRef, toggleTitle );
 
-  titleControl.classList.add( 'sm-voice-tuner-accordion__intro' );
-  controls.forEach( control => control.classList.add( 'sm-voice-tuner-accordion__content' ) );
+  controls.forEach( ( control, index ) => {
+    control.classList.add( 'sm-voice-tuner-accordion__content' );
 
-  toggleButton.addEventListener( 'click', () => {
-    const isExpanded = toggleButton.getAttribute( 'aria-expanded' ) !== 'true';
-    syncExpandedState( controls, toggleControl, toggleButton, isExpanded );
+    if ( index === 0 ) {
+      control.classList.add( 'sm-voice-tuner-accordion__content--first', 'sm-voice-tuner-accordion__intro' );
+    }
+
+    if ( index === controls.length - 1 ) {
+      control.classList.add( 'sm-voice-tuner-accordion__content--last' );
+    }
   } );
 
-  parentElement.insertBefore( toggleControl, titleControl );
+  if ( ! toggleButton.__smVoiceTunerAccordionBound ) {
+    toggleButton.addEventListener( 'click', () => {
+      const isExpanded = toggleButton.getAttribute( 'aria-expanded' ) !== 'true';
+      syncExpandedState( controls, toggleControl, toggleButton, isExpanded );
+    } );
 
-  syncExpandedState( controls, toggleControl, toggleButton, false );
+    toggleButton.__smVoiceTunerAccordionBound = true;
+  }
+
+  ensureAccordionOrder( parentElement, toggleControl, controls, fontPaletteControl );
+
+  if ( typeof MutationObserver !== 'undefined' && ! parentElement.__smVoiceTunerAccordionObserver ) {
+    const observer = new MutationObserver( () => {
+      ensureAccordionOrder( parentElement, toggleControl, controls, fontPaletteControl );
+    } );
+
+    observer.observe( parentElement, { childList: true } );
+    parentElement.__smVoiceTunerAccordionObserver = observer;
+  }
+
+  syncExpandedState(
+    controls,
+    toggleControl,
+    toggleButton,
+    isNew ? false : toggleButton.getAttribute( 'aria-expanded' ) === 'true'
+  );
 };
 
 const getToggleTitle = ( titleControl ) => {
@@ -78,6 +103,63 @@ const createToggleControl = ( documentRef, title ) => {
   control.appendChild( button );
 
   return { control, button };
+};
+
+const getOrCreateToggleControl = ( documentRef, title ) => {
+  const existingControl = documentRef.getElementById( VOICE_TUNER_TOGGLE_CONTROL_ID );
+
+  if ( existingControl ) {
+    const existingButton = existingControl.querySelector( '.sm-panel-toggle' );
+
+    if ( existingButton ) {
+      existingButton.setAttribute( 'aria-label', title );
+
+      const existingLabel = existingButton.querySelector( '.sm-panel-toggle__label' );
+
+      if ( existingLabel ) {
+        existingLabel.textContent = title;
+      }
+
+      return { control: existingControl, button: existingButton, isNew: false };
+    }
+  }
+
+  return {
+    ...createToggleControl( documentRef, title ),
+    isNew: true,
+  };
+};
+
+const ensureAccordionOrder = ( parentElement, toggleControl, controls, fontPaletteControl ) => {
+  let referenceNode = fontPaletteControl;
+
+  for ( let index = controls.length - 1; index >= 0; index-- ) {
+    const control = controls[index];
+
+    if ( getNextElementSibling( control, parentElement ) !== referenceNode ) {
+      parentElement.insertBefore( control, referenceNode );
+    }
+
+    referenceNode = control;
+  }
+
+  if ( getNextElementSibling( toggleControl, parentElement ) !== controls[0] ) {
+    parentElement.insertBefore( toggleControl, controls[0] );
+  }
+};
+
+const getNextElementSibling = ( element, parentElement ) => {
+  if ( typeof element.nextElementSibling !== 'undefined' ) {
+    return element.nextElementSibling;
+  }
+
+  const index = parentElement.children.indexOf( element );
+
+  if ( index === -1 ) {
+    return null;
+  }
+
+  return parentElement.children[ index + 1 ] || null;
 };
 
 const syncExpandedState = ( controls, toggleControl, toggleButton, isExpanded ) => {
