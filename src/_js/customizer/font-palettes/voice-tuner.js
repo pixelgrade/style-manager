@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { buildVoiceTunerUpdatePlan } from './voice-tuner-plan';
+import { createVoiceTunerUpdateScheduler } from './voice-tuner-scheduler';
 
 const VALUE_MAP = Object.freeze( {
   low: 0.15,
@@ -29,7 +30,7 @@ const bindVoiceTunerSettings = () => {
     const settingID = `sm_voice_${ dimension }`;
 
     wp.customize( settingID, setting => {
-      setting.bind( updateVoiceTuner );
+      setting.bind( scheduleVoiceTunerUpdate );
     } );
   } );
 };
@@ -42,6 +43,14 @@ const updateVoiceTuner = () => {
   $( '.js-font-palette' ).each( function( index, paletteSet ) {
     updatePaletteSet( $( paletteSet ), profile, hasBalancedProfile, personalityMap );
   } );
+};
+
+const voiceTunerUpdateScheduler = createVoiceTunerUpdateScheduler( {
+  flush: updateVoiceTuner,
+} );
+
+const scheduleVoiceTunerUpdate = () => {
+  voiceTunerUpdateScheduler.schedule();
 };
 
 const updatePaletteSet = ( $paletteSet, profile, hasBalancedProfile, personalityMap ) => {
