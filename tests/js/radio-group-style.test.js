@@ -7,7 +7,7 @@ export const runRadioGroupStyleTests = async ( assert ) => {
 
   assert.ok( labelBlockMatch, 'expected to find the shared sm-radio-group label rule' );
   assert.ok(
-    ! /transition\s*:/.test( labelBlockMatch[1] ),
-    'shared sm-radio-group labels should not animate state changes'
+    /transition\s*:\s*all\s+\.3s\s+ease\s*;/.test( labelBlockMatch[1] ),
+    'shared sm-radio-group labels should restore the original all .3s ease transition'
   );
 };
