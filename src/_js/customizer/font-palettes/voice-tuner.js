@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { buildVoiceTunerUpdatePlan } from './voice-tuner-plan';
 
 const VALUE_MAP = Object.freeze( {
   low: 0.15,
@@ -36,78 +37,99 @@ const bindVoiceTunerSettings = () => {
 const updateVoiceTuner = () => {
   const profile = getCurrentVoiceProfile();
   const hasBalancedProfile = DIMENSIONS.every( dimension => profile[ dimension ] === VALUE_MAP.balanced );
+  const personalityMap = window.styleManager?.fontPalettes?.personalityMap || {};
 
   $( '.js-font-palette' ).each( function( index, paletteSet ) {
-    updatePaletteSet( $( paletteSet ), profile, hasBalancedProfile );
+    updatePaletteSet( $( paletteSet ), profile, hasBalancedProfile, personalityMap );
   } );
 };
 
-const updatePaletteSet = ( $paletteSet, profile, hasBalancedProfile ) => {
-  const cards = $paletteSet.children( '.customize-inside-control-row' ).toArray();
+const updatePaletteSet = ( $paletteSet, profile, hasBalancedProfile, personalityMap ) => {
+  const records = getPaletteRecords( $paletteSet );
 
-  if ( ! cards.length ) {
+  if ( ! records.length ) {
     return;
   }
 
-  const originalCards = $paletteSet.data( 'voiceTunerOriginalCards' ) || cards.slice();
-
-  if ( ! $paletteSet.data( 'voiceTunerOriginalCards' ) ) {
-    $paletteSet.data( 'voiceTunerOriginalCards', originalCards );
-  }
-
-  if ( hasBalancedProfile ) {
-    originalCards.forEach( card => {
-      $paletteSet.append( card );
-      updatePaletteBadge( $( card ), 0.5, true );
-    } );
-
-    return;
-  }
-
-  const scoredCards = cards.map( ( card, index ) => {
-    const paletteID = getPaletteID( card );
-
-    return {
-      card,
-      index,
-      score: getPaletteFitScore( profile, getPalettePersonality( paletteID ) ),
-    };
+  const currentCards = $paletteSet.children( '.customize-inside-control-row' ).toArray();
+  const plan = buildVoiceTunerUpdatePlan( {
+    records,
+    currentCards,
+    profile,
+    hasBalancedProfile,
+    personalityMap,
   } );
 
-  scoredCards
-    .sort( ( left, right ) => {
-      if ( right.score !== left.score ) {
-        return right.score - left.score;
-      }
+  if ( plan.shouldReorder ) {
+    reorderPaletteCards( $paletteSet[0], plan.orderedCards );
+  }
 
-      return left.index - right.index;
-    } )
-    .forEach( ({ card }) => {
-      $paletteSet.append( card );
-    } );
-
-  scoredCards.forEach( ({ card, score }) => {
-    updatePaletteBadge( $( card ), score, hasBalancedProfile );
-  } );
+  plan.badgeStates.forEach( syncPaletteBadge );
 };
 
-const updatePaletteBadge = ( $card, score, hasBalancedProfile ) => {
-  const $badge = $card.children( '.voice-tuner-fit' ).first();
+const getPaletteRecords = ( $paletteSet ) => {
+  const cachedRecords = $paletteSet.data( 'voiceTunerRecords' );
 
-  if ( hasBalancedProfile ) {
-    $badge.remove();
+  if ( cachedRecords ) {
+    return cachedRecords;
+  }
+
+  const records = $paletteSet.children( '.customize-inside-control-row' ).toArray().map( ( card, originalIndex ) => ( {
+    card,
+    paletteID: getPaletteID( card ),
+    badge: getOrCreateBadge( card ),
+    originalIndex,
+  } ) );
+
+  $paletteSet.data( 'voiceTunerRecords', records );
+
+  return records;
+};
+
+const reorderPaletteCards = ( paletteSet, orderedCards ) => {
+  paletteSet.append( ...orderedCards );
+};
+
+const syncPaletteBadge = ( badgeState ) => {
+  const { card, visible, fitClass, label } = badgeState;
+  const badge = getOrCreateBadge( card );
+
+  if ( ! visible ) {
+    if ( ! badge.hidden ) {
+      badge.hidden = true;
+    }
+
     return;
   }
 
-  const fit = clampScore( score );
-  const percentage = Math.round( fit * 100 );
-  const $targetBadge = $badge.length ? $badge : $( '<span />', {
-    class: 'voice-tuner-fit',
-  } ).appendTo( $card );
+  const desiredClassName = `voice-tuner-fit ${ fitClass }`;
 
-  $targetBadge.removeClass( 'voice-tuner-fit--high voice-tuner-fit--mid voice-tuner-fit--low' );
-  $targetBadge.addClass( getFitStateClass( fit ) );
-  $targetBadge.text( `${ percentage }%` );
+  if ( badge.hidden ) {
+    badge.hidden = false;
+  }
+
+  if ( badge.className !== desiredClassName ) {
+    badge.className = desiredClassName;
+  }
+
+  if ( badge.textContent !== label ) {
+    badge.textContent = label;
+  }
+};
+
+const getOrCreateBadge = card => {
+  const existingBadge = card.querySelector( '.voice-tuner-fit' );
+
+  if ( existingBadge ) {
+    return existingBadge;
+  }
+
+  const badge = document.createElement( 'span' );
+  badge.className = 'voice-tuner-fit';
+  badge.hidden = true;
+  card.appendChild( badge );
+
+  return badge;
 };
 
 const getCurrentVoiceProfile = () => {
@@ -131,52 +153,4 @@ const getPaletteID = card => {
   const input = card.querySelector( 'input[type="radio"]' );
 
   return input ? input.value : '';
-};
-
-const getPalettePersonality = paletteID => {
-  const personalityMap = window.styleManager?.fontPalettes?.personalityMap || {};
-
-  if ( ! Object.prototype.hasOwnProperty.call( personalityMap, paletteID ) ) {
-    return null;
-  }
-
-  const personality = personalityMap[ paletteID ] || {};
-
-  return DIMENSIONS.reduce( ( vector, dimension ) => {
-    const value = Number.parseFloat( personality[ dimension ] );
-    vector[ dimension ] = Number.isFinite( value ) ? value : VALUE_MAP.balanced;
-    return vector;
-  }, {} );
-};
-
-const getPaletteFitScore = ( profile, personality ) => {
-  if ( ! personality ) {
-    return 0.5;
-  }
-
-  const distance = DIMENSIONS.reduce( ( total, dimension ) => {
-    const difference = profile[ dimension ] - personality[ dimension ];
-
-    return total + Math.pow( difference, 2 );
-  }, 0 );
-
-  const dist = Math.sqrt( distance ) / 2;
-
-  return clampScore( 1 - dist );
-};
-
-const clampScore = score => {
-  return Math.max( 0, Math.min( 1, score ) );
-};
-
-const getFitStateClass = fit => {
-  if ( fit >= 0.75 ) {
-    return 'voice-tuner-fit--high';
-  }
-
-  if ( fit >= 0.5 ) {
-    return 'voice-tuner-fit--mid';
-  }
-
-  return 'voice-tuner-fit--low';
 };
