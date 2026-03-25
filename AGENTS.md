@@ -185,6 +185,15 @@ This applies to both this repo (`pixelgrade/style-manager`) and the theme repo (
 - In this Local setup, WP-CLI may fail DB connection because `DB_HOST=localhost` resolves to socket while CLI PHP default socket is not Local's socket.
   - If WP-CLI fails with `Error establishing a database connection`, verify via browser/admin or use explicit Local socket tooling.
 
+## Customizer UI Learnings
+
+- Perceived lag in Typography controls is often post-click Customizer work, not the shared `.sm-radio-group` shell or delayed click dispatch.
+  - For bulk Typography setting changes, reduce duplicate downstream updates before tuning control cosmetics.
+- Voice Tuner controls feel more responsive when the selected radio paints first and the palette resort runs on the next animation frame.
+  - Prefer deferring heavy sidebar-only DOM work by one frame instead of doing it in the same click turn.
+- Customizer sections can reshuffle injected controls after the first render.
+  - When adding synthetic rows that must stay adjacent to native controls, anchor them to a stable sibling, rerun placement on the next frame, and keep a `MutationObserver` on the section container to restore the intended order.
+
 ## Similar Plugin Build Notes (Nova Blocks)
 - Same build pattern as Style Manager
 - `gulp zip` needs WP CLI environment
