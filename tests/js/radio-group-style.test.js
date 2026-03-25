@@ -9,8 +9,8 @@ export const runRadioGroupStyleTests = async ( assert ) => {
   assert.ok( labelBlockMatch, 'expected to find the shared sm-radio-group label rule' );
   assert.ok( checkedLabelBlockMatch, 'expected to find the shared checked label rule' );
   assert.ok(
-    /transition\s*:\s*all\s+1s\s+ease\s*;/.test( labelBlockMatch[1] ),
-    'shared sm-radio-group labels should use the temporary 1s inspection transition'
+    /transition\s*:\s*all\s+0\.4s\s+ease\s*;/.test( labelBlockMatch[1] ),
+    'shared sm-radio-group labels should use the 0.4s transition timing'
   );
   assert.ok(
     ! /&:before\s*\{/.test( checkedLabelBlockMatch[1] ),
