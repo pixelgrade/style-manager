@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { initializeVoiceTunerAccordion } from './voice-tuner-accordion';
 import { initializeVoiceTuner } from './voice-tuner'
 
 export const initializeFontPalettes = () => {
@@ -17,6 +18,7 @@ export const initializeFontPalettes = () => {
     } );
   } );
 
+  initializeVoiceTunerAccordion();
   initializeVoiceTuner();
 };
 
