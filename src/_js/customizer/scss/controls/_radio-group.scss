@@ -29,25 +29,6 @@
     &:checked + label {
       background-color: var(--sm-color-palette-accent-color-7);
       color: var(--sm-color-palette-neutral-color-1);
-
-      &:before {
-        content: "";
-
-        display: inline-block;
-        color: inherit;
-
-        position: relative;
-        top: .285em;
-        margin-right: .45em;
-
-        height: .8em;
-        width: .55em;
-
-        border-right: 2px solid;
-        border-bottom: 2px solid;
-
-        transform: translateY(-50%) rotate(45deg);
-      }
     }
   }
 
