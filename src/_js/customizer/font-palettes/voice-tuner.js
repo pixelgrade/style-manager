@@ -49,6 +49,21 @@ const updatePaletteSet = ( $paletteSet, profile, hasBalancedProfile ) => {
     return;
   }
 
+  const originalCards = $paletteSet.data( 'voiceTunerOriginalCards' ) || cards.slice();
+
+  if ( ! $paletteSet.data( 'voiceTunerOriginalCards' ) ) {
+    $paletteSet.data( 'voiceTunerOriginalCards', originalCards );
+  }
+
+  if ( hasBalancedProfile ) {
+    originalCards.forEach( card => {
+      $paletteSet.append( card );
+      updatePaletteBadge( $( card ), 0.5, true );
+    } );
+
+    return;
+  }
+
   const scoredCards = cards.map( ( card, index ) => {
     const paletteID = getPaletteID( card );
 

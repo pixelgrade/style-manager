@@ -2,46 +2,158 @@
 //    FONT PALETTES
 //------------------------------------*/
 
+[id^="customize-control-sm_voice_"] {
+  --customize-control-spacing-y: calc( 0.5 * var(--customizer-spacing) );
+
+  .customize-control-title {
+    margin-bottom: calc( 0.25 * var(--customizer-spacing) );
+  }
+
+  .customize-control-description {
+    margin-top: calc( -0.15 * var(--customizer-spacing) );
+    margin-bottom: 0;
+  }
+
+  .sm-radio-group {
+    height: 2.4em;
+    font-size: calc( 0.95 * var(--customizer-field-font-size) );
+  }
+}
+
+#customize-control-sm_voice_tuner_label_control {
+  --customize-control-spacing-y: calc( 0.75 * var(--customizer-spacing) );
+  margin-top: calc( 0.75 * var(--customizer-spacing) );
+  padding-top: calc( 0.75 * var(--customizer-spacing) );
+  border-top: 1px solid var(--customizer-border-color);
+}
+
 .customize-control-font-palette {
 
   .customize-inside-control-row {
+    display: block;
     position: relative;
 
-    padding-top: 52%;
+    padding: 17px;
     margin-left: 0;
     overflow: hidden;
 
-    background-color: var(--sm-color-palette-neutral-color-1);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: right center;
-    border-radius: var(--customizer-field-border-radius);
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
 
     & + .customize-inside-control-row {
-      margin-top: calc( 0.5 * var(--customizer-spacing) );
+      margin-top: 5px;
     }
 
     input {
       display: none;
     }
 
-    input + label {
+    // The label overlay for click target — covers the full card.
+    // Uses `label` (not `input + label`) because preview spans sit between input and label.
+    label {
       position: absolute;
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
+      z-index: 3;
 
-      border: var(--customizer-field-border-width) solid var(--customizer-border-color);
+      border: 2px solid transparent;
       border-radius: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
     }
 
-    &:hover input + label {
-      border-color: var(--sm-color-palette-neutral-color-3);
+    &:hover label {
+      border-color: var(--sm-color-palette-neutral-color-3, #999);
     }
 
-    input:checked + label {
-      border-color: var(--sm-color-palette-neutral-color-5);
+    &.current-font-palette label,
+    input:checked ~ label {
+      border-color: var(--sm-color-palette-neutral-color-5, #333);
     }
+  }
+
+  // Watermark character
+  .font-palette-preview__watermark {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 100px;
+    line-height: 1;
+    opacity: 0.12;
+    pointer-events: none;
+    color: #222;
+  }
+
+  // Palette title (rendered in primary font)
+  .font-palette-preview__title {
+    display: block;
+    position: relative;
+    z-index: 1;
+
+    font-size: 34px;
+    line-height: 1.15;
+    color: #222;
+    margin-bottom: 4px;
+  }
+
+  // Palette description (rendered in body font)
+  .font-palette-preview__desc {
+    display: block;
+    position: relative;
+    z-index: 1;
+
+    font-size: 15px;
+    line-height: 1.45;
+    color: #333;
+  }
+
+  .voice-tuner-fit {
+    position: absolute;
+    top: var(--customizer-spacing);
+    right: var(--customizer-spacing);
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.75em;
+    padding: 0.35em 0.75em;
+
+    border: 1px solid transparent;
+    border-radius: 999em;
+    background: var(--sm-color-palette-accent-color-1);
+    color: var(--sm-color-palette-accent-color-9);
+    box-shadow: 0 4px 12px rgba( 11, 29, 85, 0.08 );
+
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .voice-tuner-fit--high {
+    background: var(--sm-color-palette-accent-color-7);
+    border-color: var(--sm-color-palette-accent-color-8);
+    color: var(--sm-color-palette-accent-color-1);
+  }
+
+  .voice-tuner-fit--mid {
+    background: var(--sm-color-palette-accent-color-3);
+    border-color: var(--sm-color-palette-accent-color-4);
+    color: var(--sm-color-palette-accent-color-10);
+  }
+
+  .voice-tuner-fit--low {
+    background: var(--sm-color-palette-accent-color-2);
+    border-color: var(--sm-color-palette-accent-color-3);
+    color: var(--sm-color-palette-accent-color-9);
   }
 }

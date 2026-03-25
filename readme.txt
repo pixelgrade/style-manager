@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes, global styles
 Requires at least: 5.5.0
 Tested up to: 6.9.1
-Stable tag: 2.2.10
+Stable tag: 2.2.11
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -53,6 +53,12 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
 == Changelog ==
+
+= 2.2.11 =
+* Add Voice Tuner controls to sort font palettes by personality fit.
+* Restore original palette ordering when the tuner returns to balanced.
+* Preserve Voice Tuner scoring on current installs where local palette overrides omit personality metadata.
+* Refresh font palette cards with richer live preview typography.
 
 = 2.2.10 =
 * Consolidated release from beta streams.

@@ -20,6 +20,12 @@ pxg.json
 build
 css
 .idea
+.vscode
+**/.vscode
+.claude
+**/.claude
+.worktrees
+**/.worktrees
 .editorconfig
 **/.svn*
 **/*.css.map

@@ -270,26 +270,65 @@ class Preset extends BaseControl {
 
 				if ( ! empty( $this->description ) ) { ?>
 					<span class="description customize-control-description"><?php echo $this->description; ?></span>
-				<?php } ?>
+				<?php }
+
+				// Preprocess all choices once.
+				$choices = $this->sm_font_palettes->preprocess_config( $this->choices );
+
+				// Collect all Google Fonts needed for preview cards.
+				$preview_heading_size = 34;
+				$preview_body_size    = 15;
+				$google_font_families = []; // family => [weights]
+
+				foreach ( $choices as $choice_config ) {
+					if ( empty( $choice_config['fonts_logic'] ) ) {
+						continue;
+					}
+					$fonts_logic = $choice_config['fonts_logic'];
+
+					// Primary font (heading).
+					if ( ! empty( $fonts_logic['sm_font_primary']['font_family'] ) ) {
+						$heading_style = FontPalettes::get_preview_font_style(
+							$fonts_logic['sm_font_primary'], $preview_heading_size
+						);
+						$family = $heading_style['font_family'];
+						$weight = (int) $heading_style['font_weight'];
+						$google_font_families[ $family ][] = $weight;
+					}
+
+					// Body font.
+					if ( ! empty( $fonts_logic['sm_font_body']['font_family'] ) ) {
+						$body_style = FontPalettes::get_preview_font_style(
+							$fonts_logic['sm_font_body'], $preview_body_size
+						);
+						$family = $body_style['font_family'];
+						$weight = (int) $body_style['font_weight'];
+						$google_font_families[ $family ][] = $weight;
+					}
+				}
+
+				// Collect all unique font families needed for preview cards.
+				$preview_font_families = []; // family => [weights]
+				foreach ( $google_font_families as $family => $weights ) {
+					$preview_font_families[ $family ] = array_values( array_unique( array_map( 'intval', $weights ) ) );
+				}
+				?>
 
 				<div class="js-style-manager-preset js-font-palette customize-control-font-palette">
 					<?php
-					$choices = $this->sm_font_palettes->preprocess_config( $this->choices );
 					foreach ( $choices as $choice_value => $choice_config ) {
 						if ( empty( $choice_config['options'] ) && empty( $choice_config['fonts_logic'] ) ) {
 							continue;
 						}
 
-						// Make sure that the defaults are in place
 						$choice_config = wp_parse_args( $choice_config, [
 							'label'   => '',
 							'preview' => [],
 						] );
 
-						// Make sure that the preview defaults are in place
 						$choice_config['preview'] = wp_parse_args( $choice_config['preview'], [
-							'sample_letter'        => 'A',
-							'background_image_url' => plugin()->get_url( 'images/color_palette_image.jpg' ),
+							'title'       => $choice_config['label'],
+							'description' => '',
 						] );
 
 						$label = $choice_config['label'];
@@ -305,12 +344,31 @@ class Preset extends BaseControl {
 						}
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
 						$data  .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
+
+						// Extract preview font styles from the palette's fonts_logic.
+						$fonts_logic   = $choice_config['fonts_logic'];
+						$heading_style = FontPalettes::get_preview_font_style(
+							$fonts_logic['sm_font_primary'] ?? [], $preview_heading_size
+						);
+						$body_style = FontPalettes::get_preview_font_style(
+							$fonts_logic['sm_font_body'] ?? [], $preview_body_size
+						);
+
+						$preview_title = esc_html( $choice_config['preview']['title'] );
+						$preview_desc  = esc_html( $choice_config['preview']['description'] );
+
+						$heading_font_family    = esc_attr( $heading_style['font_family'] );
+						$heading_font_weight    = esc_attr( (string) $heading_style['font_weight'] );
+						$heading_letter_spacing = esc_attr( $heading_style['letter_spacing'] );
+						$heading_text_transform = esc_attr( $heading_style['text_transform'] );
+
+						$body_font_family = esc_attr( $body_style['font_family'] );
+						$body_font_weight = esc_attr( (string) $body_style['font_weight'] );
 						?>
 
 						<span
-							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' ); ?>"
-							style="background-image: url( <?php echo esc_url( $choice_config['preview']['background_image_url'] ); ?> );">
-                            <input
+							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' ); ?>">
+							<input
 								<?php $this->link(); ?>
 								name="<?php echo esc_attr( $this->setting->id ); ?>"
 								id="<?php echo esc_attr( $choice_value ); ?>-font-palette"
@@ -319,12 +377,57 @@ class Preset extends BaseControl {
 								<?php selected( $this->value(), $choice_value ); ?>
 								<?php echo $data; ?>
 							/>
+							<span class="font-palette-preview__watermark"
+								style="font-family: '<?php echo $heading_font_family; ?>', sans-serif;">Aa</span>
+							<span class="font-palette-preview__title"
+								style="font-family: '<?php echo $heading_font_family; ?>', sans-serif; font-weight: <?php echo $heading_font_weight; ?>; letter-spacing: <?php echo $heading_letter_spacing; ?>; text-transform: <?php echo $heading_text_transform; ?>;"><?php echo $preview_title; ?></span>
+							<span class="font-palette-preview__desc"
+								style="font-family: '<?php echo $body_font_family; ?>', serif; font-weight: <?php echo $body_font_weight; ?>;"><?php echo $preview_desc; ?></span>
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
 								<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
 							</label>
-                        </span>
+						</span>
 					<?php } ?>
 				</div>
+
+				<?php if ( ! empty( $preview_font_families ) ) { ?>
+				<script>
+				(function() {
+					// Load preview fonts using the existing font infrastructure.
+					// familyWeights maps font family => array of needed weights.
+					var familyWeights = <?php echo json_encode( $preview_font_families ); ?>;
+					var sm = window.styleManager;
+					if ( ! sm || ! sm.fonts ) return;
+
+					var googleFamilies = [];
+					var customFamilies = [];
+					var customUrls = [];
+
+					Object.keys( familyWeights ).forEach( function( family ) {
+						var weights = familyWeights[ family ];
+						// Build the "Family:w1,w2" string for WebFont Loader.
+						var familySpec = family + ':' + weights.join( ',' );
+
+						if ( sm.fonts.google_fonts && sm.fonts.google_fonts[ family ] ) {
+							googleFamilies.push( familySpec );
+						} else if ( sm.fonts.cloud_fonts && sm.fonts.cloud_fonts[ family ] && sm.fonts.cloud_fonts[ family ].src ) {
+							customFamilies.push( familySpec );
+							customUrls.push( sm.fonts.cloud_fonts[ family ].src );
+						} else if ( sm.fonts.theme_fonts && sm.fonts.theme_fonts[ family ] && sm.fonts.theme_fonts[ family ].src ) {
+							customFamilies.push( familySpec );
+							customUrls.push( sm.fonts.theme_fonts[ family ].src );
+						}
+					});
+
+					if ( typeof WebFont !== 'undefined' ) {
+						var config = { classes: false, events: false };
+						if ( googleFamilies.length ) config.google = { families: googleFamilies };
+						if ( customFamilies.length ) config.custom = { families: customFamilies, urls: customUrls };
+						WebFont.load( config );
+					}
+				})();
+				</script>
+				<?php } ?>
 
 				<?php break;
 			}

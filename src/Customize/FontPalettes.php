@@ -187,7 +187,7 @@ class FontPalettes extends AbstractHookProvider {
 		}
 
 		foreach ( $config as $palette_id => $palette_config ) {
-			$config[ $palette_id ] = $this->preprocess_palette_config( $palette_config );
+			$config[ $palette_id ] = $this->preprocess_palette_config( $palette_config, (string) $palette_id );
 		}
 
 		return $config;
@@ -198,24 +198,28 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $palette_config
+	 * @param array  $palette_config
+	 * @param string $palette_id
 	 *
 	 * @return array
 	 */
-	protected function preprocess_palette_config( array $palette_config ): array {
+	protected function preprocess_palette_config( array $palette_config, string $palette_id = '' ): array {
 		if ( empty( $palette_config ) ) {
 			return $palette_config;
 		}
 
-		if ( ! isset( $palette_config['personality'] ) ) {
-			$palette_config['personality'] = [];
+		$palette_config = $this->normalize_palette_personality( $palette_config, $palette_id );
+
+		// Ensure preview fields have defaults for live preview rendering.
+		if ( ! isset( $palette_config['preview'] ) ) {
+			$palette_config['preview'] = [];
 		}
-		$palette_config['personality'] = wp_parse_args( $palette_config['personality'], [
-			'formality' => 0.5,
-			'energy'    => 0.5,
-			'warmth'    => 0.5,
-			'tradition' => 0.5,
-		] );
+		if ( empty( $palette_config['preview']['title'] ) && ! empty( $palette_config['label'] ) ) {
+			$palette_config['preview']['title'] = $palette_config['label'];
+		}
+		if ( empty( $palette_config['preview']['description'] ) ) {
+			$palette_config['preview']['description'] = '';
+		}
 
 		global $wp_customize;
 		// We only need to do the fonts logic preprocess when we are in the Customizer.
@@ -224,6 +228,190 @@ class FontPalettes extends AbstractHookProvider {
 		}
 
 		return $palette_config;
+	}
+
+	/**
+	 * Normalize a palette personality vector for Voice Tuner scoring.
+	 *
+	 * @since 2.2.10
+	 *
+	 * @param array $palette_config
+	 *
+	 * @return array
+	 */
+	protected function normalize_palette_personality( array $palette_config, string $palette_id = '' ): array {
+		$known_personality = $this->get_known_palette_personality( $palette_id, $palette_config );
+
+		if ( ! isset( $palette_config['personality'] ) || ! is_array( $palette_config['personality'] ) ) {
+			$palette_config['personality'] = [];
+		}
+
+		$palette_config['personality'] = wp_parse_args( $palette_config['personality'], wp_parse_args( $known_personality, [
+			'formality' => 0.5,
+			'energy'    => 0.5,
+			'warmth'    => 0.5,
+			'tradition' => 0.5,
+		] ) );
+
+		return $palette_config;
+	}
+
+	/**
+	 * Backfill personality vectors for shipped palettes when older design assets
+	 * or local overrides omit Voice Tuner metadata.
+	 *
+	 * @since 2.2.11
+	 *
+	 * @param string $palette_id
+	 * @param array  $palette_config
+	 *
+	 * @return array
+	 */
+	protected function get_known_palette_personality( string $palette_id, array $palette_config ): array {
+		$known_personalities = $this->get_known_palette_personality_map();
+		$lookup_keys         = array_filter( array_unique( [
+			sanitize_title( $palette_id ),
+			$this->get_palette_personality_lookup_key( $palette_config['label'] ?? '' ),
+			$this->get_palette_personality_lookup_key( $palette_config['preview']['title'] ?? '' ),
+		] ) );
+
+		foreach ( $lookup_keys as $lookup_key ) {
+			if ( isset( $known_personalities[ $lookup_key ] ) ) {
+				return $known_personalities[ $lookup_key ];
+			}
+		}
+
+		return [];
+	}
+
+	/**
+	 * Build a stable lookup key for known palette personalities.
+	 *
+	 * @since 2.2.11
+	 *
+	 * @param string $value
+	 *
+	 * @return string
+	 */
+	protected function get_palette_personality_lookup_key( string $value ): string {
+		return sanitize_title( wp_strip_all_tags( $value ) );
+	}
+
+	/**
+	 * Known personality vectors for currently shipped palettes.
+	 *
+	 * This lets Voice Tuner work across current installs even when a cached cloud
+	 * palette or a local override does not yet carry explicit personality data.
+	 *
+	 * @since 2.2.11
+	 *
+	 * @return array<string, array<string, float>>
+	 */
+	protected function get_known_palette_personality_map(): array {
+		return [
+			'gema'      => [ 'formality' => 0.65, 'energy' => 0.3, 'warmth' => 0.4, 'tradition' => 0.5 ],
+			'julia'     => [ 'formality' => 0.55, 'energy' => 0.4, 'warmth' => 0.65, 'tradition' => 0.6 ],
+			'patch'     => [ 'formality' => 0.25, 'energy' => 0.7, 'warmth' => 0.8, 'tradition' => 0.2 ],
+			'hive'      => [ 'formality' => 0.7, 'energy' => 0.5, 'warmth' => 0.45, 'tradition' => 0.7 ],
+			'pile'      => [ 'formality' => 0.7, 'energy' => 0.45, 'warmth' => 0.35, 'tradition' => 0.6 ],
+			'atlas'     => [ 'formality' => 0.45, 'energy' => 0.75, 'warmth' => 0.55, 'tradition' => 0.2 ],
+			'capitol'   => [ 'formality' => 0.55, 'energy' => 0.8, 'warmth' => 0.35, 'tradition' => 0.2 ],
+			'felt'      => [ 'formality' => 0.55, 'energy' => 0.4, 'warmth' => 0.7, 'tradition' => 0.65 ],
+			'system'    => [ 'formality' => 0.45, 'energy' => 0.4, 'warmth' => 0.55, 'tradition' => 0.35 ],
+			'archie'    => [ 'formality' => 0.55, 'energy' => 0.35, 'warmth' => 0.75, 'tradition' => 0.65 ],
+			'swedish'   => [ 'formality' => 0.75, 'energy' => 0.45, 'warmth' => 0.45, 'tradition' => 0.85 ],
+			'lacrima'   => [ 'formality' => 0.6, 'energy' => 0.25, 'warmth' => 0.8, 'tradition' => 0.75 ],
+			'blair'     => [ 'formality' => 0.6, 'energy' => 0.65, 'warmth' => 0.55, 'tradition' => 0.4 ],
+			'patrick'   => [ 'formality' => 0.2, 'energy' => 0.8, 'warmth' => 0.45, 'tradition' => 0.15 ],
+			'alpina'    => [ 'formality' => 0.55, 'energy' => 0.6, 'warmth' => 0.35, 'tradition' => 0.45 ],
+			'edward'    => [ 'formality' => 0.85, 'energy' => 0.3, 'warmth' => 0.55, 'tradition' => 0.9 ],
+			'self'      => [ 'formality' => 0.45, 'energy' => 0.75, 'warmth' => 0.6, 'tradition' => 0.45 ],
+			'voltage'   => [ 'formality' => 0.35, 'energy' => 0.85, 'warmth' => 0.3, 'tradition' => 0.15 ],
+			'smith'     => [ 'formality' => 0.45, 'energy' => 0.7, 'warmth' => 0.35, 'tradition' => 0.25 ],
+			'lively'    => [ 'formality' => 0.55, 'energy' => 0.75, 'warmth' => 0.55, 'tradition' => 0.45 ],
+			'pandora'   => [ 'formality' => 0.55, 'energy' => 0.45, 'warmth' => 0.65, 'tradition' => 0.6 ],
+			'local'     => [ 'formality' => 0.65, 'energy' => 0.25, 'warmth' => 0.2, 'tradition' => 0.2 ],
+			'exquisite' => [ 'formality' => 0.7, 'energy' => 0.35, 'warmth' => 0.75, 'tradition' => 0.7 ],
+			'wireframe' => [ 'formality' => 0.35, 'energy' => 0.15, 'warmth' => 0.15, 'tradition' => 0.15 ],
+		];
+	}
+
+	/**
+	 * Extract the font styling for the preview card at a given font size.
+	 *
+	 * This evaluates font_styles_intervals to determine the correct
+	 * weight, letter-spacing, and text-transform for a specific size.
+	 *
+	 * @since 2.2.11
+	 *
+	 * @param array $font_logic A single font entry from fonts_logic (e.g., sm_font_primary).
+	 * @param int   $size       The font size in px to evaluate intervals for.
+	 *
+	 * @return array{font_family: string, font_weight: string|int, letter_spacing: string, text_transform: string}
+	 */
+	public static function get_preview_font_style( array $font_logic, int $size ): array {
+		$style = [
+			'font_family'    => $font_logic['font_family'] ?? '',
+			'font_weight'    => 400,
+			'letter_spacing' => '0',
+			'text_transform' => 'none',
+		];
+
+		if ( empty( $font_logic['font_styles_intervals'] ) || ! is_array( $font_logic['font_styles_intervals'] ) ) {
+			// Fallback: use the first available font_weight from the palette.
+			if ( ! empty( $font_logic['font_weights'] ) ) {
+				$first_weight = $font_logic['font_weights'][0];
+				if ( is_numeric( $first_weight ) ) {
+					$style['font_weight'] = (int) $first_weight;
+				}
+			}
+
+			return $style;
+		}
+
+		// Walk through intervals to find the one that applies at this size.
+		// Intervals are sorted by 'start' (ascending) and non-overlapping after preprocessing.
+		foreach ( $font_logic['font_styles_intervals'] as $interval ) {
+			$start = $interval['start'] ?? 0;
+			$end   = $interval['end'] ?? PHP_INT_MAX;
+
+			if ( $size >= $start && $size < $end ) {
+				// Cloud palettes use 'font_variant' instead of 'font_weight'.
+				$weight = $interval['font_weight'] ?? $interval['font_variant'] ?? null;
+				if ( $weight !== null ) {
+					// Normalize 'regular' to 400.
+					$style['font_weight'] = ( $weight === 'regular' ) ? 400 : $weight;
+				}
+				if ( isset( $interval['letter_spacing'] ) ) {
+					$ls = $interval['letter_spacing'];
+					// Cloud palettes may provide letter_spacing as {"value": 0.04, "unit": "em"}.
+					if ( is_array( $ls ) && isset( $ls['value'] ) ) {
+						$style['letter_spacing'] = $ls['value'] . ( $ls['unit'] ?? 'em' );
+					} elseif ( is_numeric( $ls ) ) {
+						$style['letter_spacing'] = $ls . 'em';
+					} elseif ( is_string( $ls ) ) {
+						$style['letter_spacing'] = $ls;
+					} else {
+						$style['letter_spacing'] = '0';
+					}
+				}
+				if ( isset( $interval['text_transform'] ) ) {
+					$style['text_transform'] = $interval['text_transform'];
+				}
+				break;
+			}
+		}
+
+		// If no interval matched and we still have the default weight,
+		// use the first available font_weight from the palette.
+		if ( $style['font_weight'] === 400 && ! empty( $font_logic['font_weights'] ) ) {
+			$first_weight = $font_logic['font_weights'][0];
+			if ( is_numeric( $first_weight ) ) {
+				$style['font_weight'] = (int) $first_weight;
+			}
+		}
+
+		return $style;
 	}
 
 	/**
@@ -434,7 +622,25 @@ class FontPalettes extends AbstractHookProvider {
 			$config = $this->get_default_config();
 		}
 
-		return apply_filters( 'style_manager/get_font_palettes', $config );
+		$filtered_config = apply_filters( 'style_manager/get_font_palettes', $config );
+
+		foreach ( $filtered_config as $palette_id => $palette_config ) {
+			if ( ! isset( $config[ $palette_id ] ) || ! is_array( $config[ $palette_id ] ) || ! is_array( $palette_config ) ) {
+				continue;
+			}
+
+			// Preserve source metadata when site filters provide partial palette overrides.
+			$filtered_config[ $palette_id ] = wp_parse_args( $palette_config, $config[ $palette_id ] );
+
+			if ( isset( $config[ $palette_id ]['personality'] ) && is_array( $config[ $palette_id ]['personality'] ) ) {
+				$filtered_config[ $palette_id ]['personality'] = wp_parse_args(
+					isset( $palette_config['personality'] ) && is_array( $palette_config['personality'] ) ? $palette_config['personality'] : [],
+					$config[ $palette_id ]['personality']
+				);
+			}
+		}
+
+		return $filtered_config;
 	}
 
 	/**
@@ -552,7 +758,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_id'   => self::SM_FONT_PALETTE_OPTION_KEY,
 					// We don't want to refresh the preview window, even though we have no direct effect on it through this field.
 					'live'         => true,
-					'priority'     => 5,
+					'priority'     => 40,
 					'label'        => esc_html__( 'Select a font palette:', '__plugin_txtd' ),
 					'desc'         => esc_html__( 'Conveniently change the design of your site with font palettes. Easy as pie.', '__plugin_txtd' ),
 					'default'      => 'julia',
@@ -818,6 +1024,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_id'   => 'sm_fonts_connected_fields_preset',
 					'choices_type' => 'radio',
 				],
+				'sm_separator_0_5' => [ 'type' => 'html', 'html' => '', 'priority' => 29.9 ],
 			],
 		] );
 
@@ -836,16 +1043,9 @@ class FontPalettes extends AbstractHookProvider {
 	 */
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 		$font_palettes_fields = [
-			'sm_voice_tuner_label',
-			'sm_voice_formality',
-			'sm_voice_energy',
-			'sm_voice_warmth',
-			'sm_voice_tradition',
 			'sm_font_sizing',
 			'sm_separator_0_0',
 			'sm_current_font_palette',
-			self::SM_FONT_PALETTE_OPTION_KEY,
-			self::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
 			'sm_fine_tune_intro',
 			'sm_font_primary_intro',
 			'sm_font_primary',
@@ -867,6 +1067,13 @@ class FontPalettes extends AbstractHookProvider {
 			'sm_separator_0_4',
 			'sm_fonts_connected_fields_preset',
 			'sm_separator_0_5',
+			'sm_voice_tuner_label',
+			'sm_voice_formality',
+			'sm_voice_energy',
+			'sm_voice_warmth',
+			'sm_voice_tradition',
+			self::SM_FONT_PALETTE_OPTION_KEY,
+			self::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
 			'sm_font_palettes_spacing_bottom',
 		];
 
@@ -883,10 +1090,27 @@ class FontPalettes extends AbstractHookProvider {
 				continue;
 			}
 
+			$field_config = $sm_section_config['options'][ $field_id ];
+			$priority_overrides = [
+				'sm_current_font_palette'                  => 4.5,
+				'sm_separator_0_5'                         => 29.9,
+				'sm_voice_tuner_label'                     => 30.0,
+				'sm_voice_formality'                       => 30.1,
+				'sm_voice_energy'                          => 30.2,
+				'sm_voice_warmth'                          => 30.3,
+				'sm_voice_tradition'                       => 30.4,
+				self::SM_FONT_PALETTE_OPTION_KEY           => 40,
+				self::SM_FONT_PALETTE_VARIATION_OPTION_KEY => 40.1,
+				'sm_font_palettes_spacing_bottom'          => 40.2,
+			];
+			if ( isset( $priority_overrides[ $field_id ] ) ) {
+				$field_config['priority'] = $priority_overrides[ $field_id ];
+			}
+
 			if ( empty( $font_palettes_section_config['options'] ) ) {
-				$font_palettes_section_config['options'] = [ $field_id => $sm_section_config['options'][ $field_id ] ];
+				$font_palettes_section_config['options'] = [ $field_id => $field_config ];
 			} else {
-				$font_palettes_section_config['options'] = array_merge( $font_palettes_section_config['options'], [ $field_id => $sm_section_config['options'][ $field_id ] ] );
+				$font_palettes_section_config['options'] = array_merge( $font_palettes_section_config['options'], [ $field_id => $field_config ] );
 			}
 		}
 
@@ -965,6 +1189,14 @@ class FontPalettes extends AbstractHookProvider {
 						'font' => 'font_body',
 						'size' => 16,
 					],
+				],
+
+				// Personality vector used by voice tuning.
+				'personality' => [
+					'formality' => 0.65,
+					'energy'    => 0.3,
+					'warmth'    => 0.4,
+					'tradition' => 0.5,
 				],
 
 				'fonts_logic' => [
@@ -1065,6 +1297,14 @@ class FontPalettes extends AbstractHookProvider {
 						'font' => 'font_body',
 						'size' => 17,
 					],
+				],
+
+				// Personality vector used by voice tuning.
+				'personality' => [
+					'formality' => 0.55,
+					'energy'    => 0.4,
+					'warmth'    => 0.65,
+					'tradition' => 0.6,
 				],
 
 				'fonts_logic' => [
@@ -1172,6 +1412,14 @@ class FontPalettes extends AbstractHookProvider {
 						'font' => 'font_body',
 						'size' => 16,
 					],
+				],
+
+				// Personality vector used by voice tuning.
+				'personality' => [
+					'formality' => 0.25,
+					'energy'    => 0.7,
+					'warmth'    => 0.8,
+					'tradition' => 0.2,
 				],
 
 				'fonts_logic' => [
@@ -1306,6 +1554,14 @@ class FontPalettes extends AbstractHookProvider {
 						'font' => 'font_body',
 						'size' => 18,
 					],
+				],
+
+				// Personality vector used by voice tuning.
+				'personality' => [
+					'formality' => 0.7,
+					'energy'    => 0.5,
+					'warmth'    => 0.45,
+					'tradition' => 0.7,
 				],
 
 				'fonts_logic' => [
@@ -1538,6 +1794,13 @@ class FontPalettes extends AbstractHookProvider {
 			'regular' => [],
 			'big'     => [],
 		];
+
+		$personality_map = [];
+		foreach ( $this->get_palettes() as $palette_id => $palette_config ) {
+			$palette_config = $this->normalize_palette_personality( $palette_config, (string) $palette_id );
+			$personality_map[ $palette_id ] = $palette_config['personality'];
+		}
+		$localized['fontPalettes']['personalityMap'] = $personality_map;
 
 		if ( empty( $localized['l10n'] ) ) {
 			$localized['l10n'] = [];
