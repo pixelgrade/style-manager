@@ -25,8 +25,8 @@ Clone/bootstrap flow for a fresh machine:
 git clone git@github.com:pixelgrade/style-manager.git
 cd style-manager
 
-# 2. Point the repo at your private companion repo
-git config --local stylemanager.privateRepo git@github.com:<you>/style-manager-private.git
+# 2. Point the repo at the shared private companion repo
+git config --local stylemanager.privateRepo git@github.com:pixelgrade/style-manager-private.git
 
 # 3. Hydrate the private local overlays
 bin/bootstrap-private
@@ -40,7 +40,7 @@ What gets pulled from the private repo when present:
 
 If you prefer to keep an explicit local checkout of the private repo, use:
 ```bash
-git clone git@github.com:<you>/style-manager-private.git /path/to/style-manager-private
+git clone git@github.com:pixelgrade/style-manager-private.git /path/to/style-manager-private
 bin/bootstrap-private --source-dir /path/to/style-manager-private
 ```
 
