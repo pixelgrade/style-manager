@@ -44,6 +44,13 @@ git clone git@github.com:pixelgrade/style-manager-private.git /path/to/style-man
 bin/bootstrap-private --source-dir /path/to/style-manager-private
 ```
 
+How later private-overlay changes are handled:
+- `bin/bootstrap-private` only manages these top-level targets: `AGENTS.local.md`, `.ai/`, `.claude/napkin.md`, and `.env.local`.
+- In the default copy mode, rerun `bin/bootstrap-private --force` when one of those targets changed in the private repo and you want to replace your local copy.
+- New files added inside `.ai/` are treated as part of the `.ai/` target, so copy mode still needs `--force` to refresh that directory.
+- If you bootstrap with `--link`, later changes inside the private repo show up through the symlink without recopies.
+- If you introduce a brand-new private path outside those managed targets, update `bin/bootstrap-private`, `.gitignore`, and the packaging exclusions before expecting it to sync.
+
 ## Build Process (`npm run zip`)
 
 ### Prerequisites
