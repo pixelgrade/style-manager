@@ -8,6 +8,42 @@
 - **Test site PHP:** 8.2.27
 - **Dev site PHP CLI:** 7.4.33
 
+## Private Local Files
+
+- Keep `AGENTS.md` as the canonical shared instruction file for both Codex and Claude.
+- Keep `CLAUDE.md` as a thin shim to `@AGENTS.md` so the shared instructions stay in one place.
+- Keep shared private agent instructions in `AGENTS.local.md`.
+- Keep vendor-neutral private research notes, plans, and issue writeups in `.ai/`.
+- Keep tool-specific distilled working memory in `.claude/napkin.md`.
+- Keep local env values in `.env.local`.
+- Do not commit those private overlays; commit only the `*.example` files.
+- Use `bin/bootstrap-private` to hydrate the private overlays after cloning the public repo.
+
+Clone/bootstrap flow for a fresh machine:
+```bash
+# 1. Clone the public repo
+git clone git@github.com:pixelgrade/style-manager.git
+cd style-manager
+
+# 2. Point the repo at your private companion repo
+git config --local stylemanager.privateRepo git@github.com:<you>/style-manager-private.git
+
+# 3. Hydrate the private local overlays
+bin/bootstrap-private
+```
+
+What gets pulled from the private repo when present:
+- `AGENTS.local.md`
+- `.ai/`
+- `.claude/napkin.md`
+- `.env.local`
+
+If you prefer to keep an explicit local checkout of the private repo, use:
+```bash
+git clone git@github.com:<you>/style-manager-private.git /path/to/style-manager-private
+bin/bootstrap-private --source-dir /path/to/style-manager-private
+```
+
 ## Build Process (`npm run zip`)
 
 ### Prerequisites
@@ -80,7 +116,7 @@ If local PATH points to older runtimes (e.g. PHP 7.4 / Composer 2.0), builds fai
 
 ## WUpdates Release
 
-- Keep raw WUpdates host, port, and key material out of git. This repo assumes a local `wupdates` SSH alias is already configured on the release machine.
+- Keep raw WUpdates host, port, and key material out of git. Store them only in private local files such as `AGENTS.local.md`, `.ai/`, or `.claude/napkin.md`. This repo assumes a local `wupdates` SSH alias is already configured on the release machine.
 - Product type: `wup_plugin`
 - Product slug: `style-manager`
 - Release artifact: `../style-manager-X-X-X.zip`

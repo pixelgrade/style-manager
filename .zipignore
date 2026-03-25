@@ -40,9 +40,16 @@ __MACOSX
 CHANGELOG.md
 CLAUDE.md
 AGENTS.md
+AGENTS.local.md
+AGENTS.local.example.md
 README.md
 **/README.md
 palettes.md
+.ai
+.private
+.env
+.env.local
+.env.*.local
 .csscomb
 .csscomb.json
 .codeclimate.yml

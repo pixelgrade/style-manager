@@ -13,6 +13,16 @@ build
 *-ck.js
 npm-debug.log
 
+# Private local overlays
+.env
+.env.local
+.env.*.local
+AGENTS.local.md
+.ai/
+.claude/napkin.md
+.claude/local/
+.private/
+
 /vendor/
 /php-scoper/vendor/
 /dist/js/stats.json
