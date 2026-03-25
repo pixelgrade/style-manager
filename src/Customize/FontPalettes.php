@@ -347,11 +347,12 @@ class FontPalettes extends AbstractHookProvider {
 	 * @param array $font_logic A single font entry from fonts_logic (e.g., sm_font_primary).
 	 * @param int   $size       The font size in px to evaluate intervals for.
 	 *
-	 * @return array{font_family: string, font_weight: string|int, letter_spacing: string, text_transform: string}
+	 * @return array{font_family: string, font_variant: string, font_weight: string|int, letter_spacing: string, text_transform: string}
 	 */
 	public static function get_preview_font_style( array $font_logic, int $size ): array {
 		$style = [
 			'font_family'    => $font_logic['font_family'] ?? '',
+			'font_variant'   => 'regular',
 			'font_weight'    => 400,
 			'letter_spacing' => '0',
 			'text_transform' => 'none',
@@ -361,6 +362,7 @@ class FontPalettes extends AbstractHookProvider {
 			// Fallback: use the first available font_weight from the palette.
 			if ( ! empty( $font_logic['font_weights'] ) ) {
 				$first_weight = $font_logic['font_weights'][0];
+				$style['font_variant'] = (string) $first_weight;
 				if ( is_numeric( $first_weight ) ) {
 					$style['font_weight'] = (int) $first_weight;
 				}
@@ -376,6 +378,11 @@ class FontPalettes extends AbstractHookProvider {
 			$end   = $interval['end'] ?? PHP_INT_MAX;
 
 			if ( $size >= $start && $size < $end ) {
+				$variant = $interval['font_variant'] ?? $interval['font_weight'] ?? null;
+				if ( $variant !== null ) {
+					$style['font_variant'] = (string) $variant;
+				}
+
 				// Cloud palettes use 'font_variant' instead of 'font_weight'.
 				$weight = $interval['font_weight'] ?? $interval['font_variant'] ?? null;
 				if ( $weight !== null ) {
@@ -406,6 +413,7 @@ class FontPalettes extends AbstractHookProvider {
 		// use the first available font_weight from the palette.
 		if ( $style['font_weight'] === 400 && ! empty( $font_logic['font_weights'] ) ) {
 			$first_weight = $font_logic['font_weights'][0];
+			$style['font_variant'] = (string) $first_weight;
 			if ( is_numeric( $first_weight ) ) {
 				$style['font_weight'] = (int) $first_weight;
 			}
@@ -622,20 +630,23 @@ class FontPalettes extends AbstractHookProvider {
 			$config = $this->get_default_config();
 		}
 
-		$filtered_config = apply_filters( 'style_manager/get_font_palettes', $config );
+		$preprocessed_config = $this->preprocess_config( $config );
+		$filtered_config     = apply_filters( 'style_manager/get_font_palettes', $config );
 
 		foreach ( $filtered_config as $palette_id => $palette_config ) {
-			if ( ! isset( $config[ $palette_id ] ) || ! is_array( $config[ $palette_id ] ) || ! is_array( $palette_config ) ) {
+			if ( ! isset( $preprocessed_config[ $palette_id ] ) || ! is_array( $preprocessed_config[ $palette_id ] ) || ! is_array( $palette_config ) ) {
 				continue;
 			}
 
-			// Preserve source metadata when site filters provide partial palette overrides.
-			$filtered_config[ $palette_id ] = wp_parse_args( $palette_config, $config[ $palette_id ] );
+			$source_palette_config = $preprocessed_config[ $palette_id ];
 
-			if ( isset( $config[ $palette_id ]['personality'] ) && is_array( $config[ $palette_id ]['personality'] ) ) {
+			// Preserve source metadata when site filters provide partial palette overrides.
+			$filtered_config[ $palette_id ] = wp_parse_args( $palette_config, $source_palette_config );
+
+			if ( isset( $source_palette_config['personality'] ) && is_array( $source_palette_config['personality'] ) ) {
 				$filtered_config[ $palette_id ]['personality'] = wp_parse_args(
 					isset( $palette_config['personality'] ) && is_array( $palette_config['personality'] ) ? $palette_config['personality'] : [],
-					$config[ $palette_id ]['personality']
+					$source_palette_config['personality']
 				);
 			}
 		}

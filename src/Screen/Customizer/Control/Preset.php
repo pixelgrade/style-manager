@@ -275,10 +275,10 @@ class Preset extends BaseControl {
 				// Preprocess all choices once.
 				$choices = $this->sm_font_palettes->preprocess_config( $this->choices );
 
-				// Collect all Google Fonts needed for preview cards.
+				// Collect all preview font variants needed for the cards.
 				$preview_heading_size = 34;
 				$preview_body_size    = 15;
-				$google_font_families = []; // family => [weights]
+				$preview_font_families = []; // family => [variants]
 
 				foreach ( $choices as $choice_config ) {
 					if ( empty( $choice_config['fonts_logic'] ) ) {
@@ -292,8 +292,10 @@ class Preset extends BaseControl {
 							$fonts_logic['sm_font_primary'], $preview_heading_size
 						);
 						$family = $heading_style['font_family'];
-						$weight = (int) $heading_style['font_weight'];
-						$google_font_families[ $family ][] = $weight;
+						$variant = (string) ( $heading_style['font_variant'] ?? $heading_style['font_weight'] );
+						if ( ! empty( $family ) ) {
+							$preview_font_families[ $family ][] = $variant;
+						}
 					}
 
 					// Body font.
@@ -302,15 +304,16 @@ class Preset extends BaseControl {
 							$fonts_logic['sm_font_body'], $preview_body_size
 						);
 						$family = $body_style['font_family'];
-						$weight = (int) $body_style['font_weight'];
-						$google_font_families[ $family ][] = $weight;
+						$variant = (string) ( $body_style['font_variant'] ?? $body_style['font_weight'] );
+						if ( ! empty( $family ) ) {
+							$preview_font_families[ $family ][] = $variant;
+						}
 					}
 				}
 
-				// Collect all unique font families needed for preview cards.
-				$preview_font_families = []; // family => [weights]
-				foreach ( $google_font_families as $family => $weights ) {
-					$preview_font_families[ $family ] = array_values( array_unique( array_map( 'intval', $weights ) ) );
+				// Collect all unique variants needed for preview cards.
+				foreach ( $preview_font_families as $family => $variants ) {
+					$preview_font_families[ $family ] = array_values( array_unique( array_map( 'strval', $variants ) ) );
 				}
 				?>
 
@@ -394,35 +397,100 @@ class Preset extends BaseControl {
 				<script>
 				(function() {
 					// Load preview fonts using the existing font infrastructure.
-					// familyWeights maps font family => array of needed weights.
-					var familyWeights = <?php echo json_encode( $preview_font_families ); ?>;
+					// familyVariants maps font family => array of needed variants.
+					var familyVariants = <?php echo wp_json_encode( $preview_font_families ); ?>;
 					var sm = window.styleManager;
+					var smCustomizer = window.sm && window.sm.customizer ? window.sm.customizer : null;
 					if ( ! sm || ! sm.fonts ) return;
 
 					var googleFamilies = [];
 					var customFamilies = [];
 					var customUrls = [];
 
-					Object.keys( familyWeights ).forEach( function( family ) {
-						var weights = familyWeights[ family ];
-						// Build the "Family:w1,w2" string for WebFont Loader.
-						var familySpec = family + ':' + weights.join( ',' );
+					function convertVariantToFVD( variant ) {
+						if ( smCustomizer && typeof smCustomizer.convertFontVariantToFVD === 'function' ) {
+							return smCustomizer.convertFontVariantToFVD( variant );
+						}
+
+						variant = String( variant );
+						var fontStyle = 'n';
+						if ( variant.indexOf( 'italic' ) !== -1 ) {
+							fontStyle = 'i';
+							variant = variant.replace( 'italic', '' );
+						} else if ( variant.indexOf( 'oblique' ) !== -1 ) {
+							fontStyle = 'o';
+							variant = variant.replace( 'oblique', '' );
+						}
+
+						var fontWeight = '4';
+						switch ( variant ) {
+							case '100':
+								fontWeight = '1';
+								break;
+							case '200':
+								fontWeight = '2';
+								break;
+							case '300':
+								fontWeight = '3';
+								break;
+							case '500':
+								fontWeight = '5';
+								break;
+							case '600':
+								fontWeight = '6';
+								break;
+							case '700':
+							case 'bold':
+								fontWeight = '7';
+								break;
+							case '800':
+								fontWeight = '8';
+								break;
+							case '900':
+								fontWeight = '9';
+								break;
+						}
+
+						return fontStyle + fontWeight;
+					}
+
+					Object.keys( familyVariants ).forEach( function( family ) {
+						var variants = Array.isArray( familyVariants[ family ] ) ? familyVariants[ family ].filter( function( variant ) {
+							return variant !== null && typeof variant !== 'undefined' && variant !== '';
+						} ) : [];
+						var googleSpec = variants.length ? family + ':' + variants.join( ',' ) : family;
 
 						if ( sm.fonts.google_fonts && sm.fonts.google_fonts[ family ] ) {
-							googleFamilies.push( familySpec );
-						} else if ( sm.fonts.cloud_fonts && sm.fonts.cloud_fonts[ family ] && sm.fonts.cloud_fonts[ family ].src ) {
-							customFamilies.push( familySpec );
-							customUrls.push( sm.fonts.cloud_fonts[ family ].src );
+							googleFamilies.push( googleSpec );
+							return;
+						}
+
+						var customFontDetails = null;
+						if ( sm.fonts.cloud_fonts && sm.fonts.cloud_fonts[ family ] && sm.fonts.cloud_fonts[ family ].src ) {
+							customFontDetails = sm.fonts.cloud_fonts[ family ];
 						} else if ( sm.fonts.theme_fonts && sm.fonts.theme_fonts[ family ] && sm.fonts.theme_fonts[ family ].src ) {
-							customFamilies.push( familySpec );
-							customUrls.push( sm.fonts.theme_fonts[ family ].src );
+							customFontDetails = sm.fonts.theme_fonts[ family ];
+						}
+
+						if ( customFontDetails ) {
+							var customSpec = variants.length ? family + ':' + variants.map( function( variant ) {
+								return convertVariantToFVD( variant );
+							} ).join( ',' ) : family;
+
+							customFamilies.push( customSpec );
+							customUrls.push( customFontDetails.src );
 						}
 					});
 
 					if ( typeof WebFont !== 'undefined' ) {
 						var config = { classes: false, events: false };
-						if ( googleFamilies.length ) config.google = { families: googleFamilies };
-						if ( customFamilies.length ) config.custom = { families: customFamilies, urls: customUrls };
+						if ( googleFamilies.length ) config.google = { families: Array.from( new Set( googleFamilies ) ) };
+						if ( customFamilies.length ) {
+							config.custom = {
+								families: Array.from( new Set( customFamilies ) ),
+								urls: Array.from( new Set( customUrls ) )
+							};
+						}
 						WebFont.load( config );
 					}
 				})();
