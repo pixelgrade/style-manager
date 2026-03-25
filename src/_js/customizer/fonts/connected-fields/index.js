@@ -3,6 +3,15 @@ import { getCallback, getSettingConfig, setCallback, unbindConnectedFields } fro
 import { getConnectedFieldsFontSizeInterval } from "./get-connected-fields-font-size-interval";
 import { standardizeNumericalValue } from "../utils";
 import { round } from '../utils/round';
+import { createConnectedFieldsBatcher } from "./batcher";
+
+const connectedFieldsBatcher = createConnectedFieldsBatcher( ( settingID, fontsLogic ) => {
+  alterConnectedFields( settingID, fontsLogic );
+} );
+
+export const runConnectedFieldsBatch = ( callback ) => {
+  return connectedFieldsBatcher.run( callback );
+};
 
 export const reloadConnectedFields = debounce( () => {
   const settingIDs = styleManager.fontPalettes.masterSettingIds;
@@ -22,7 +31,7 @@ export const reloadConnectedFields = debounce( () => {
       setCallback( settingID, newValue => {
         fontsLogic = newValue;
         maybeLoadFontFamily( newValue, settingID );
-        alterConnectedFields( settingID, fontsLogic )
+        connectedFieldsBatcher.schedule( settingID, fontsLogic )
       } );
 
       setting.bind( getCallback( settingID ) );
@@ -34,12 +43,12 @@ export const reloadConnectedFields = debounce( () => {
 
           setCallback( elevationSettingID, newValue => {
             elevation = newValue;
-            alterConnectedFields( settingID, fontsLogic )
+            connectedFieldsBatcher.schedule( settingID, fontsLogic )
           } );
 
           setCallback( pitchSettingID, newValue => {
             pitch = newValue;
-            alterConnectedFields( settingID, fontsLogic )
+            connectedFieldsBatcher.schedule( settingID, fontsLogic )
           } );
 
           elevationSetting.bind( getCallback( elevationSettingID ) );

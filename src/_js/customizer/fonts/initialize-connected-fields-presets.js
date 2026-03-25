@@ -1,5 +1,5 @@
 import * as globalService from "../global-service";
-import { reloadConnectedFields } from "./connected-fields";
+import { reloadConnectedFields, runConnectedFieldsBatch } from "./connected-fields";
 
 export const initializeConnectedFieldsPresets = () => {
 
@@ -83,11 +83,13 @@ export const initializeConnectedFieldsPresets = () => {
         return;
       }
 
-      Object.keys( config ).forEach( settingID => {
-        wp.customize( `${ settingID }_elevation`, elevationSetting => {
-          wp.customize( `${ settingID }_pitch`, pitchSetting => {
-            elevationSetting.set( config[ settingID ][0] );
-            pitchSetting.set( config[ settingID ][1] );
+      runConnectedFieldsBatch( () => {
+        Object.keys( config ).forEach( settingID => {
+          wp.customize( `${ settingID }_elevation`, elevationSetting => {
+            wp.customize( `${ settingID }_pitch`, pitchSetting => {
+              elevationSetting.set( config[ settingID ][0] );
+              pitchSetting.set( config[ settingID ][1] );
+            } );
           } );
         } );
       } );
