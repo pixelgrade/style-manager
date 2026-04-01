@@ -5,7 +5,9 @@ nbproject
 *.map
 *.sublime-project
 *.sublime-workspace
+*.code-workspace
 codekit-config.json
+.vscode/
 
 node_modules
 .worktrees/
