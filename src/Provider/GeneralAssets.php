@@ -98,7 +98,8 @@ class GeneralAssets extends AbstractHookProvider {
 	 * @return void
 	 */
 	protected function print_inline_scripts() {
-		$advanced_palettes_output = $this->options->get( 'sm_advanced_palette_output', wp_json_encode( [] ) );
+		$runtime_palette_payload = \sm_get_palette_runtime_payload();
+		$palettes                = $runtime_palette_payload['palettes'];
 		if ( function_exists( '\get_current_screen' ) ) {
 			$screen = \get_current_screen();
 		}
@@ -107,7 +108,7 @@ class GeneralAssets extends AbstractHookProvider {
 
 <script id="style-manager-colors-config">
 	window.styleManager = window.styleManager || {};
-	window.styleManager.colorsConfig = <?php echo wp_json_encode( json_decode( $advanced_palettes_output ) ); ?>;
+	window.styleManager.colorsConfig = <?php echo wp_json_encode( $palettes ); ?>;
 	window.styleManager.siteColorVariation = <?php echo absint( $this->options->get( 'sm_site_color_variation', 1 ) ) ?>;
 	window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
 	<?php if ( ( ! empty( $screen ) && $screen->is_block_editor() ) || is_customizer()) { ?>

@@ -218,6 +218,365 @@ function sm_get_palette_output_from_color_config( string $value ): string {
 }
 
 /**
+ * Get saved palettes from the Style Manager option or fallback palettes.
+ *
+ * @since 2.0.0
+ *
+ * @return array
+ */
+function sm_get_saved_palettes(): array {
+	$palettes = json_decode( (string) get_option( 'sm_advanced_palette_output', '[]' ) );
+
+	if ( empty( $palettes ) ) {
+		$palettes = sm_get_fallback_palettes();
+	}
+
+	return is_array( $palettes ) ? $palettes : [];
+}
+
+/**
+ * Get transient runtime palettes for the current request.
+ *
+ * @since 2.0.0
+ *
+ * @param array $saved_palettes Saved palettes already resolved for the request.
+ * @param array $context        Optional runtime context used by request-scoped palette providers.
+ *
+ * @return array
+ */
+function sm_get_runtime_palettes( array $saved_palettes = [], array $context = [] ): array {
+	$runtime_palettes = apply_filters( 'style_manager/runtime_palettes', [], $saved_palettes, $context );
+
+	return is_array( $runtime_palettes ) ? array_values( array_filter( $runtime_palettes ) ) : [];
+}
+
+/**
+ * Build the effective runtime palette payload for a given request context.
+ *
+ * @since 2.0.0
+ *
+ * @param array $context Optional runtime context used by request-scoped palette providers.
+ *
+ * @return array
+ */
+function sm_get_palette_runtime_payload( array $context = [] ): array {
+	$saved_palettes   = sm_get_saved_palettes();
+	$runtime_palettes = sm_get_runtime_palettes( $saved_palettes, $context );
+	$palettes         = sm_merge_palettes_by_id( $saved_palettes, $runtime_palettes );
+
+	return [
+		'palettes'        => $palettes,
+		'runtimePalettes' => $runtime_palettes,
+		'runtimeCss'      => empty( $runtime_palettes ) ? '' : sm_palettes_output( $runtime_palettes ),
+	];
+}
+
+/**
+ * Merge saved and runtime palettes by id.
+ *
+ * @since 2.0.0
+ *
+ * @param array $palettes Base palettes.
+ * @param array $runtime_palettes Runtime palettes.
+ *
+ * @return array
+ */
+function sm_merge_palettes_by_id( array $palettes, array $runtime_palettes = [] ): array {
+	$by_id = [];
+
+	foreach ( array_merge( $palettes, $runtime_palettes ) as $palette ) {
+		if ( ! is_object( $palette ) || ! isset( $palette->id ) ) {
+			continue;
+		}
+
+		$by_id[ (string) $palette->id ] = $palette;
+	}
+
+	return array_values( $by_id );
+}
+
+/**
+ * Get the merged palette list for the current request.
+ *
+ * @since 2.0.0
+ *
+ * @param array $context Optional runtime context used by request-scoped palette providers.
+ *
+ * @return array
+ */
+function sm_get_palettes_for_runtime_context( array $context = [] ): array {
+	$payload = sm_get_palette_runtime_payload( $context );
+
+	return $payload['palettes'];
+}
+
+/**
+ * Get the merged palette list for the current request.
+ *
+ * @since 2.0.0
+ *
+ * @return array
+ */
+function sm_get_palettes_for_current_request(): array {
+	return sm_get_palettes_for_runtime_context();
+}
+
+/**
+ * Get palette CSS output for the current request, including runtime palettes.
+ *
+ * @since 2.0.0
+ *
+ * @param array $context Optional runtime context used by request-scoped palette providers.
+ *
+ * @return string
+ */
+function sm_get_palette_output_for_runtime_context( array $context = [] ): string {
+	$payload = sm_get_palette_runtime_payload( $context );
+
+	return sm_palettes_output( $payload['palettes'] );
+}
+
+/**
+ * Get palette CSS output for the current request, including runtime palettes.
+ *
+ * @since 2.0.0
+ *
+ * @return string
+ */
+function sm_get_palette_output_for_current_request(): string {
+	return sm_get_palette_output_for_runtime_context();
+}
+
+/**
+ * Build a preview payload for runtime palettes without mutating saved options.
+ *
+ * @since 2.0.0
+ *
+ * @param array $context Optional runtime context used by request-scoped palette providers.
+ *
+ * @return array
+ */
+function sm_get_palette_runtime_preview_payload( array $context = [] ): array {
+	return sm_get_palette_runtime_payload( $context );
+}
+
+/**
+ * Build a transient contextual palette from a single source color.
+ *
+ * The returned shape matches the modern Style Manager palette structure
+ * consumed by Nova Blocks and the palette CSS serializer.
+ *
+ * @since 2.0.0
+ *
+ * @param string $color Hex color.
+ * @param string $id Palette id.
+ * @param string $label Palette label.
+ *
+ * @return object|null
+ */
+function sm_build_contextual_palette_from_color( string $color, string $id = 'contextual-post', string $label = 'Contextual Post' ) {
+	$color = strtolower( (string) sanitize_hex_color( $color ) );
+
+	if ( empty( $color ) ) {
+		return null;
+	}
+
+	$mixes = [
+		[ '#ffffff', 0.92 ],
+		[ '#ffffff', 0.84 ],
+		[ '#ffffff', 0.72 ],
+		[ '#ffffff', 0.60 ],
+		[ '#ffffff', 0.40 ],
+		[ '#ffffff', 0.20 ],
+		[ null, 0.00 ],
+		[ '#000000', 0.18 ],
+		[ '#000000', 0.34 ],
+		[ '#000000', 0.50 ],
+		[ '#000000', 0.66 ],
+		[ '#000000', 0.82 ],
+	];
+
+	$variations      = [];
+	$dark_variations = [];
+
+	foreach ( $mixes as $mix ) {
+		[ $reference, $ratio ] = $mix;
+
+		$background      = $reference ? sm_mix_hex_colors( $color, $reference, $ratio ) : $color;
+		$dark_background = sm_mix_hex_colors( $background, '#000000', 0.18 );
+
+		$variations[]      = sm_build_contextual_palette_variation( $background, $color );
+		$dark_variations[] = sm_build_contextual_palette_variation( $dark_background, $color );
+	}
+
+	return (object) [
+		'id'             => $id,
+		'label'          => $label,
+		'source'         => [ $color ],
+		'sourceIndex'    => 6,
+		'variations'     => $variations,
+		'darkVariations' => $dark_variations,
+	];
+}
+
+/**
+ * Build a single contextual palette variation.
+ *
+ * @since 2.0.0
+ *
+ * @param string $background Background hex color.
+ * @param string $source Source hex color.
+ *
+ * @return object
+ */
+function sm_build_contextual_palette_variation( string $background, string $source ): object {
+	$foreground = sm_pick_contextual_text_color( $background );
+	$accent     = sm_get_accessible_contextual_accent( $background, $source, $foreground );
+
+	return (object) [
+		'bg'     => $background,
+		'accent' => $accent,
+		'fg1'    => $foreground,
+		'fg2'    => $foreground,
+	];
+}
+
+/**
+ * Pick the best foreground between black and white for a background color.
+ *
+ * @since 2.0.0
+ *
+ * @param string $background Background hex color.
+ *
+ * @return string
+ */
+function sm_pick_contextual_text_color( string $background ): string {
+	$black_contrast = sm_hex_color_contrast_ratio( $background, '#111111' );
+	$white_contrast = sm_hex_color_contrast_ratio( $background, '#ffffff' );
+
+	return $white_contrast >= $black_contrast ? '#ffffff' : '#111111';
+}
+
+/**
+ * Pick an accessible accent color for a contextual variation.
+ *
+ * @since 2.0.0
+ *
+ * @param string $background Background hex color.
+ * @param string $source Source hex color.
+ * @param string $fallback Fallback foreground color.
+ *
+ * @return string
+ */
+function sm_get_accessible_contextual_accent( string $background, string $source, string $fallback ): string {
+	if ( sm_hex_color_contrast_ratio( $background, $source ) >= 2.5 ) {
+		return $source;
+	}
+
+	$enhanced_source = strtolower( $fallback ) === '#ffffff'
+		? sm_mix_hex_colors( $source, '#ffffff', 0.35 )
+		: sm_mix_hex_colors( $source, '#000000', 0.35 );
+
+	if ( sm_hex_color_contrast_ratio( $background, $enhanced_source ) >= 2.5 ) {
+		return $enhanced_source;
+	}
+
+	return $fallback;
+}
+
+/**
+ * Blend two hex colors using linear RGB interpolation.
+ *
+ * @since 2.0.0
+ *
+ * @param string $base Base color.
+ * @param string $mix Mix color.
+ * @param float  $ratio Mix ratio between 0 and 1.
+ *
+ * @return string
+ */
+function sm_mix_hex_colors( string $base, string $mix, float $ratio ): string {
+	$ratio = max( 0, min( 1, $ratio ) );
+	$base_rgb = sm_hex_to_rgb_channels( $base );
+	$mix_rgb  = sm_hex_to_rgb_channels( $mix );
+
+	$red   = (int) round( $base_rgb[0] * ( 1 - $ratio ) + $mix_rgb[0] * $ratio );
+	$green = (int) round( $base_rgb[1] * ( 1 - $ratio ) + $mix_rgb[1] * $ratio );
+	$blue  = (int) round( $base_rgb[2] * ( 1 - $ratio ) + $mix_rgb[2] * $ratio );
+
+	return sprintf( '#%02x%02x%02x', $red, $green, $blue );
+}
+
+/**
+ * Compute WCAG contrast ratio between two hex colors.
+ *
+ * @since 2.0.0
+ *
+ * @param string $color_a First color.
+ * @param string $color_b Second color.
+ *
+ * @return float
+ */
+function sm_hex_color_contrast_ratio( string $color_a, string $color_b ): float {
+	$luminance_a = sm_hex_color_relative_luminance( $color_a );
+	$luminance_b = sm_hex_color_relative_luminance( $color_b );
+	$light       = max( $luminance_a, $luminance_b );
+	$dark        = min( $luminance_a, $luminance_b );
+
+	return ( $light + 0.05 ) / ( $dark + 0.05 );
+}
+
+/**
+ * Compute relative luminance for a hex color.
+ *
+ * @since 2.0.0
+ *
+ * @param string $color Hex color.
+ *
+ * @return float
+ */
+function sm_hex_color_relative_luminance( string $color ): float {
+	$channels = sm_hex_to_rgb_channels( $color );
+	$linear   = array_map(
+		static function ( int $channel ): float {
+			$channel = $channel / 255;
+
+			if ( $channel <= 0.03928 ) {
+				return $channel / 12.92;
+			}
+
+			return pow( ( $channel + 0.055 ) / 1.055, 2.4 );
+		},
+		$channels
+	);
+
+	return 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
+}
+
+/**
+ * Convert a hex color into integer RGB channels.
+ *
+ * @since 2.0.0
+ *
+ * @param string $color Hex color.
+ *
+ * @return int[]
+ */
+function sm_hex_to_rgb_channels( string $color ): array {
+	$color = ltrim( strtolower( $color ), '#' );
+
+	if ( strlen( $color ) === 3 ) {
+		$color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
+	}
+
+	return [
+		hexdec( substr( $color, 0, 2 ) ),
+		hexdec( substr( $color, 2, 2 ) ),
+		hexdec( substr( $color, 4, 2 ) ),
+	];
+}
+
+/**
  * @since   2.0.0
  *
  * @param object[] $palettes
@@ -584,7 +943,22 @@ if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
 }
 
 function sm_advanced_palette_output_cb( string $value, string $selector, string $property ): string {
-	return sm_get_palette_output_from_color_config( $value );
+	$palettes = json_decode( $value );
+
+	if ( empty( $palettes ) ) {
+		$palettes = sm_get_fallback_palettes();
+	}
+
+	if ( ! is_array( $palettes ) ) {
+		$palettes = [];
+	}
+
+	return sm_palettes_output(
+		sm_merge_palettes_by_id(
+			$palettes,
+			sm_get_runtime_palettes( $palettes )
+		)
+	);
 }
 
 function sm_site_color_variation_cb( string $value, string $selector, string $property ): string {

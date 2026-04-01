@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Font Palette Preview Prototype</title>
+
+<!-- Preconnect to Google Fonts for performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Load fonts used by the palettes (matching actual Style Manager palette data) -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;700&family=Lora:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;700;900&family=Roboto:wght@300;400;500;700&family=Source+Sans+3:wght@300;400;600;700&family=Merriweather:wght@300;400;700&family=Oswald:wght@300;400;600&family=Raleway:wght@300;400;600;700&family=Open+Sans:wght@300;400;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --customizer-width: 320px;
+    --card-gap: 8px;
+    --border-color: #ddd;
+    --border-color-hover: #999;
+    --border-color-active: #333;
+    --card-bg: #f8f8f8;
+    --card-radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #eee;
+    padding: 20px;
+  }
+
+  h1 { font-size: 18px; margin-bottom: 8px; }
+  h2 { font-size: 14px; margin-bottom: 12px; color: #666; font-weight: normal; }
+
+  .approaches {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .approach {
+    width: var(--customizer-width);
+    background: #fff;
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .approach-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .approach-desc {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  /* ============================================
+     APPROACH A: Live Text with Watermark Letter
+     Closest to current design, but with real fonts
+     ============================================ */
+  .palette-card-a {
+    position: relative;
+    padding: 16px 20px;
+    margin-bottom: var(--card-gap);
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .palette-card-a:hover {
+    border-color: var(--border-color-hover);
+  }
+
+  .palette-card-a.active {
+    border-color: var(--border-color-active);
+  }
+
+  .palette-card-a .watermark {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 100px;
+    line-height: 1;
+    opacity: 0.06;
+    pointer-events: none;
+    /* Font family set inline per card */
+  }
+
+  .palette-card-a .card-title {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 4px;
+    /* Font family, weight, etc. set inline per card */
+  }
+
+  .palette-card-a .card-desc {
+    position: relative;
+    z-index: 1;
+    color: #666;
+    /* Font family set inline per card */
+  }
+
+  /* ============================================
+     APPROACH B: Typographic Specimen (3-line preview)
+     Shows heading, subheading, body text sample
+     ============================================ */
+  .palette-card-b {
+    position: relative;
+    padding: 14px 16px;
+    margin-bottom: var(--card-gap);
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .palette-card-b:hover {
+    border-color: var(--border-color-hover);
+  }
+
+  .palette-card-b.active {
+    border-color: var(--border-color-active);
+  }
+
+  .palette-card-b .specimen-heading {
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+
+  .palette-card-b .specimen-sub {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .palette-card-b .specimen-body {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .palette-card-b .palette-name {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #aaa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* ============================================
+     APPROACH C: Compact Type Scale
+     Shows the font at multiple sizes to show range
+     ============================================ */
+  .palette-card-c {
+    position: relative;
+    padding: 12px 16px;
+    margin-bottom: var(--card-gap);
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .palette-card-c:hover {
+    border-color: var(--border-color-hover);
+  }
+
+  .palette-card-c.active {
+    border-color: var(--border-color-active);
+  }
+
+  .palette-card-c .type-scale {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .palette-card-c .scale-large {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .palette-card-c .scale-medium {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .palette-card-c .scale-small {
+    font-size: 12px;
+    line-height: 1.2;
+    color: #888;
+  }
+
+  .palette-card-c .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .palette-card-c .palette-name-c {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .palette-card-c .font-names {
+    font-size: 9px;
+    color: #bbb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* ============================================
+     APPROACH D: Refined Current (title + desc + subtle accent)
+     Like A but with a subtle color accent strip and better typography
+     ============================================ */
+  .palette-card-d {
+    position: relative;
+    padding: 20px 20px 16px;
+    margin-bottom: var(--card-gap);
+    background: #fff;
+    border: 2px solid var(--border-color);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .palette-card-d:hover {
+    border-color: var(--border-color-hover);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .palette-card-d.active {
+    border-color: var(--border-color-active);
+  }
+
+  .palette-card-d .card-title-d {
+    margin-bottom: 6px;
+  }
+
+  .palette-card-d .card-desc-d {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #777;
+  }
+
+  .palette-card-d .accent-char {
+    position: absolute;
+    right: -5px;
+    bottom: -15px;
+    font-size: 120px;
+    line-height: 1;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Font Palette Preview — Live Text Approaches</h1>
+<h2>Exploring alternatives to hardcoded preview images</h2>
+
+<div class="approaches">
+
+  <!-- ======== APPROACH A: Live Text with Watermark Letter ======== -->
+  <div class="approach">
+    <div class="approach-title">A: Live Text + Watermark</div>
+    <div class="approach-desc">Closest to current design. Real fonts replace the background image. Large letter watermark rendered as CSS text.</div>
+
+    <div class="palette-card-a active" onclick="selectCard(this)">
+      <span class="watermark" style="font-family: 'Montserrat', sans-serif; font-weight: 100;">A</span>
+      <div class="card-title" style="font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em;">Pile</div>
+      <div class="card-desc" style="font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 300;">A bold clarity grounded in refined detail.</div>
+    </div>
+
+    <div class="palette-card-a" onclick="selectCard(this)">
+      <span class="watermark" style="font-family: 'Lora', serif; font-weight: 700;">A</span>
+      <div class="card-title" style="font-family: 'Lora', serif; font-size: 28px; font-weight: 700;">Atlas</div>
+      <div class="card-desc" style="font-family: 'PT Serif', serif; font-size: 13px; font-weight: 400; font-style: italic;">Driven and inspired by simple and bold.</div>
+    </div>
+
+    <div class="palette-card-a" onclick="selectCard(this)">
+      <span class="watermark" style="font-family: 'Playfair Display', serif; font-weight: 900;">A</span>
+      <div class="card-title" style="font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700;">Capitol</div>
+      <div class="card-desc" style="font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 300;">Driven and inspired by simple and bold.</div>
+    </div>
+
+    <div class="palette-card-a" onclick="selectCard(this)">
+      <span class="watermark" style="font-family: 'Libre Baskerville', serif; font-weight: 400;">A</span>
+      <div class="card-title" style="font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 700;">Felt</div>
+      <div class="card-desc" style="font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 400; font-style: italic;">A sense of tradition and warmth.</div>
+    </div>
+
+    <div class="palette-card-a" onclick="selectCard(this)">
+      <span class="watermark" style="font-family: 'Work Sans', sans-serif; font-weight: 700;">A</span>
+      <div class="card-title" style="font-family: 'Work Sans', sans-serif; font-size: 28px; font-weight: 600;">Rosa</div>
+      <div class="card-desc" style="font-family: 'Merriweather', serif; font-size: 12px; font-weight: 300;">Elegance meets approachable warmth.</div>
+    </div>
+  </div>
+
+  <!-- ======== APPROACH B: Typographic Specimen ======== -->
+  <div class="approach">
+    <div class="approach-title">B: Type Specimen</div>
+    <div class="approach-desc">Shows heading, subheading & body to preview the full type hierarchy at a glance.</div>
+
+    <div class="palette-card-b active" onclick="selectCard(this)">
+      <span class="palette-name">Pile</span>
+      <div class="specimen-heading" style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; text-transform: uppercase;">The Quick Fox</div>
+      <div class="specimen-sub" style="font-family: 'Montserrat', sans-serif; font-weight: 300;">DESIGN STUDIO &bull; PORTFOLIO</div>
+      <div class="specimen-body" style="font-family: 'Montserrat', sans-serif; font-weight: 200;">The quick brown fox jumps over the lazy dog. Typography is the craft of endowing human language with a durable visual form.</div>
+    </div>
+
+    <div class="palette-card-b" onclick="selectCard(this)">
+      <span class="palette-name">Atlas</span>
+      <div class="specimen-heading" style="font-family: 'Lora', serif; font-size: 24px; font-weight: 700;">The Quick Fox</div>
+      <div class="specimen-sub" style="font-family: 'Montserrat', sans-serif; font-weight: 600;">DESIGN STUDIO &bull; PORTFOLIO</div>
+      <div class="specimen-body" style="font-family: 'PT Serif', serif; font-weight: 400;">The quick brown fox jumps over the lazy dog. Typography is the craft of endowing human language with a durable visual form.</div>
+    </div>
+
+    <div class="palette-card-b" onclick="selectCard(this)">
+      <span class="palette-name">Capitol</span>
+      <div class="specimen-heading" style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700;">The Quick Fox</div>
+      <div class="specimen-sub" style="font-family: 'Raleway', sans-serif; font-weight: 600;">DESIGN STUDIO &bull; PORTFOLIO</div>
+      <div class="specimen-body" style="font-family: 'Source Sans 3', sans-serif; font-weight: 300;">The quick brown fox jumps over the lazy dog. Typography is the craft of endowing human language with a durable visual form.</div>
+    </div>
+
+    <div class="palette-card-b" onclick="selectCard(this)">
+      <span class="palette-name">Felt</span>
+      <div class="specimen-heading" style="font-family: 'Libre Baskerville', serif; font-size: 22px; font-weight: 700;">The Quick Fox</div>
+      <div class="specimen-sub" style="font-family: 'Source Sans 3', sans-serif; font-weight: 600;">DESIGN STUDIO &bull; PORTFOLIO</div>
+      <div class="specimen-body" style="font-family: 'Source Sans 3', sans-serif; font-weight: 400;">The quick brown fox jumps over the lazy dog. Typography is the craft of endowing human language with a durable visual form.</div>
+    </div>
+
+    <div class="palette-card-b" onclick="selectCard(this)">
+      <span class="palette-name">Rosa</span>
+      <div class="specimen-heading" style="font-family: 'Work Sans', sans-serif; font-size: 24px; font-weight: 600;">The Quick Fox</div>
+      <div class="specimen-sub" style="font-family: 'Work Sans', sans-serif; font-weight: 500;">DESIGN STUDIO &bull; PORTFOLIO</div>
+      <div class="specimen-body" style="font-family: 'Merriweather', serif; font-weight: 300;">The quick brown fox jumps over the lazy dog. Typography is the craft of endowing human language with a durable visual form.</div>
+    </div>
+  </div>
+
+  <!-- ======== APPROACH C: Compact Type Scale ======== -->
+  <div class="approach">
+    <div class="approach-title">C: Type Scale</div>
+    <div class="approach-desc">Compact view showing the font at multiple sizes. Great for comparing weights and proportions.</div>
+
+    <div class="palette-card-c active" onclick="selectCard(this)">
+      <div class="type-scale">
+        <span class="scale-large" style="font-family: 'Montserrat', sans-serif; font-weight: 700; text-transform: uppercase;">Aa</span>
+        <span class="scale-medium" style="font-family: 'Montserrat', sans-serif; font-weight: 300; text-transform: uppercase;">Bb Cc</span>
+        <span class="scale-small" style="font-family: 'Montserrat', sans-serif; font-weight: 200;">The quick brown fox</span>
+      </div>
+      <div class="card-meta">
+        <span class="palette-name-c">Pile</span>
+        <span class="font-names">Montserrat</span>
+      </div>
+    </div>
+
+    <div class="palette-card-c" onclick="selectCard(this)">
+      <div class="type-scale">
+        <span class="scale-large" style="font-family: 'Lora', serif; font-weight: 700;">Aa</span>
+        <span class="scale-medium" style="font-family: 'Montserrat', sans-serif; font-weight: 600; text-transform: uppercase;">Bb Cc</span>
+        <span class="scale-small" style="font-family: 'PT Serif', serif; font-weight: 400;">The quick brown fox</span>
+      </div>
+      <div class="card-meta">
+        <span class="palette-name-c">Atlas</span>
+        <span class="font-names">Lora &middot; PT Serif</span>
+      </div>
+    </div>
+
+    <div class="palette-card-c" onclick="selectCard(this)">
+      <div class="type-scale">
+        <span class="scale-large" style="font-family: 'Playfair Display', serif; font-weight: 700;">Aa</span>
+        <span class="scale-medium" style="font-family: 'Raleway', sans-serif; font-weight: 600; text-transform: uppercase;">Bb Cc</span>
+        <span class="scale-small" style="font-family: 'Source Sans 3', sans-serif; font-weight: 300;">The quick brown fox</span>
+      </div>
+      <div class="card-meta">
+        <span class="palette-name-c">Capitol</span>
+        <span class="font-names">Playfair &middot; Source Sans</span>
+      </div>
+    </div>
+
+    <div class="palette-card-c" onclick="selectCard(this)">
+      <div class="type-scale">
+        <span class="scale-large" style="font-family: 'Libre Baskerville', serif; font-weight: 700;">Aa</span>
+        <span class="scale-medium" style="font-family: 'Source Sans 3', sans-serif; font-weight: 600; text-transform: uppercase;">Bb Cc</span>
+        <span class="scale-small" style="font-family: 'Source Sans 3', sans-serif; font-weight: 400;">The quick brown fox</span>
+      </div>
+      <div class="card-meta">
+        <span class="palette-name-c">Felt</span>
+        <span class="font-names">Libre Baskerville &middot; Source Sans</span>
+      </div>
+    </div>
+
+    <div class="palette-card-c" onclick="selectCard(this)">
+      <div class="type-scale">
+        <span class="scale-large" style="font-family: 'Work Sans', sans-serif; font-weight: 600;">Aa</span>
+        <span class="scale-medium" style="font-family: 'Work Sans', sans-serif; font-weight: 500;">Bb Cc</span>
+        <span class="scale-small" style="font-family: 'Merriweather', serif; font-weight: 300;">The quick brown fox</span>
+      </div>
+      <div class="card-meta">
+        <span class="palette-name-c">Rosa</span>
+        <span class="font-names">Work Sans &middot; Merriweather</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== APPROACH D: Refined Card ======== -->
+  <div class="approach">
+    <div class="approach-title">D: Refined Card</div>
+    <div class="approach-desc">Clean card with live fonts, subtle accent character. Most polished feel, closest to a design system preview.</div>
+
+    <div class="palette-card-d active" onclick="selectCard(this)">
+      <span class="accent-char" style="font-family: 'Montserrat', sans-serif; font-weight: 100;">P</span>
+      <div class="card-title-d" style="font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.1;">Pile</div>
+      <div class="card-desc-d" style="font-family: 'Montserrat', sans-serif; font-weight: 200;">A bold clarity grounded in refined detail.</div>
+    </div>
+
+    <div class="palette-card-d" onclick="selectCard(this)">
+      <span class="accent-char" style="font-family: 'Lora', serif; font-weight: 700;">A</span>
+      <div class="card-title-d" style="font-family: 'Lora', serif; font-size: 26px; font-weight: 700; line-height: 1.1;">Atlas</div>
+      <div class="card-desc-d" style="font-family: 'PT Serif', serif; font-weight: 400; font-style: italic;">Driven and inspired by simple and bold.</div>
+    </div>
+
+    <div class="palette-card-d" onclick="selectCard(this)">
+      <span class="accent-char" style="font-family: 'Playfair Display', serif; font-weight: 900;">C</span>
+      <div class="card-title-d" style="font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; line-height: 1.1;">Capitol</div>
+      <div class="card-desc-d" style="font-family: 'Source Sans 3', sans-serif; font-weight: 300;">Driven and inspired by simple and bold.</div>
+    </div>
+
+    <div class="palette-card-d" onclick="selectCard(this)">
+      <span class="accent-char" style="font-family: 'Libre Baskerville', serif; font-weight: 400;">F</span>
+      <div class="card-title-d" style="font-family: 'Libre Baskerville', serif; font-size: 24px; font-weight: 700; line-height: 1.1;">Felt</div>
+      <div class="card-desc-d" style="font-family: 'Source Sans 3', sans-serif; font-weight: 400; font-style: italic;">A sense of tradition and warmth.</div>
+    </div>
+
+    <div class="palette-card-d" onclick="selectCard(this)">
+      <span class="accent-char" style="font-family: 'Work Sans', sans-serif; font-weight: 700;">R</span>
+      <div class="card-title-d" style="font-family: 'Work Sans', sans-serif; font-size: 26px; font-weight: 600; line-height: 1.1;">Rosa</div>
+      <div class="card-desc-d" style="font-family: 'Merriweather', serif; font-weight: 300;">Elegance meets approachable warmth.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function selectCard(el) {
+  // Deselect siblings
+  const parent = el.parentElement;
+  parent.querySelectorAll('.active').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+
+</body>
+</html>
