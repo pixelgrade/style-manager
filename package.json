@@ -43,7 +43,7 @@
         "gulp-rtlcss": "^1.4.2",
         "hsluv": "^0.1.0",
         "jquery": "^3.6.0",
-        "lodash": "^4.17.21",
+        "lodash": "^4.18.1",
         "merge-stream": "^2.0.0",
         "mini-css-extract-plugin": "^2.10.0",
         "react": "^17.0.2",
