@@ -224,7 +224,17 @@ class FontPalettes extends AbstractHookProvider {
 		global $wp_customize;
 		// We only need to do the fonts logic preprocess when we are in the Customizer.
 		if ( ! empty( $wp_customize ) && $wp_customize instanceof \WP_Customize_Manager && ! empty( $palette_config['fonts_logic'] ) ) {
+			$connected_fields_preset = '';
+			if ( ! empty( $palette_config['fonts_logic']['connected_fields_preset'] ) ) {
+				$connected_fields_preset = (string) $palette_config['fonts_logic']['connected_fields_preset'];
+				unset( $palette_config['fonts_logic']['connected_fields_preset'] );
+			}
+
 			$palette_config['fonts_logic'] = $this->preprocess_fonts_logic_config( $palette_config['fonts_logic'] );
+
+			if ( '' !== $connected_fields_preset ) {
+				$palette_config['fonts_logic']['connected_fields_preset'] = $connected_fields_preset;
+			}
 		}
 
 		return $palette_config;
@@ -437,6 +447,10 @@ class FontPalettes extends AbstractHookProvider {
 		}
 
 		foreach ( $fonts_logic_config as $font_setting_id => $font_logic ) {
+			if ( ! is_array( $font_logic ) ) {
+				unset( $fonts_logic_config[ $font_setting_id ] );
+				continue;
+			}
 
 			if ( ! empty( $font_logic['reset'] ) ) {
 				$fonts_logic_config[ $font_setting_id ]['reset'] = true;
@@ -642,6 +656,13 @@ class FontPalettes extends AbstractHookProvider {
 
 			// Preserve source metadata when site filters provide partial palette overrides.
 			$filtered_config[ $palette_id ] = wp_parse_args( $palette_config, $source_palette_config );
+
+			if ( isset( $source_palette_config['fonts_logic'] ) && is_array( $source_palette_config['fonts_logic'] ) ) {
+				$filtered_config[ $palette_id ]['fonts_logic'] = wp_parse_args(
+					isset( $palette_config['fonts_logic'] ) && is_array( $palette_config['fonts_logic'] ) ? $palette_config['fonts_logic'] : [],
+					$source_palette_config['fonts_logic']
+				);
+			}
 
 			if ( isset( $source_palette_config['personality'] ) && is_array( $source_palette_config['personality'] ) ) {
 				$filtered_config[ $palette_id ]['personality'] = wp_parse_args(

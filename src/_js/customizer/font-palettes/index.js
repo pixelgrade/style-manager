@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { initializeVoiceTunerAccordion } from './voice-tuner-accordion';
-import { initializeVoiceTuner } from './voice-tuner'
+import { initializeVoiceTuner } from './voice-tuner';
+import { applyFontPaletteSelection } from './utils';
 
 export const initializeFontPalettes = () => {
 
@@ -12,9 +13,24 @@ export const initializeFontPalettes = () => {
       const $label = $( event.currentTarget );
       const forID = $label.attr( 'for' );
       const $input = $( `#${ forID }` );
-      const fontsLogic = $input.data( 'fonts_logic' );
-
-      applyFontPalette( fontsLogic );
+      applyFontPaletteSelection(
+        {
+          fontsLogic: $input.data( 'fonts_logic' ) || {},
+          connectedFieldsPreset: $input.data( 'connected_fields_preset' ) || '',
+        },
+        {
+          setFontSetting: ( settingID, config ) => {
+            wp.customize( settingID, setting => {
+              setting.set( config );
+            } );
+          },
+          setConnectedFieldsPreset: preset => {
+            wp.customize( 'sm_fonts_connected_fields_preset', setting => {
+              setting.set( preset );
+            } );
+          },
+        }
+      );
     } );
   } );
 
@@ -24,12 +40,4 @@ export const initializeFontPalettes = () => {
     initializeVoiceTunerAccordion();
   } );
   initializeVoiceTuner();
-};
-
-const applyFontPalette = ( fontsLogic ) => {
-  $.each( fontsLogic, ( settingID, config ) => {
-    wp.customize( settingID, setting => {
-      setting.set( config );
-    } );
-  } );
 };

@@ -345,8 +345,19 @@ class Preset extends BaseControl {
 						if ( empty( $choice_config['fonts_logic'] ) ) {
 							$choice_config['fonts_logic'] = [];
 						}
+
+						$connected_fields_preset = '';
+						if ( ! empty( $choice_config['fonts_logic']['connected_fields_preset'] ) ) {
+							$connected_fields_preset = (string) $choice_config['fonts_logic']['connected_fields_preset'];
+							unset( $choice_config['fonts_logic']['connected_fields_preset'] );
+						}
+
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
 						$data  .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
+
+						if ( '' !== $connected_fields_preset ) {
+							$data .= ' data-connected_fields_preset=\'' . esc_attr( $connected_fields_preset ) . '\'';
+						}
 
 						// Extract preview font styles from the palette's fonts_logic.
 						$fonts_logic   = $choice_config['fonts_logic'];
