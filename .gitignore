@@ -12,6 +12,7 @@ codekit-config.json
 node_modules
 .worktrees/
 build
+tmp/
 *-ck.js
 npm-debug.log
 

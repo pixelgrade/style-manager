@@ -65,6 +65,8 @@ doc
 **/doc
 docs
 **/docs
+tmp
+**/tmp
 circle.yml
 .circleci
 browserslist
