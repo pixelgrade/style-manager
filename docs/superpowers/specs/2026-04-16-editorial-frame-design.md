@@ -187,11 +187,12 @@ Desktop behavior:
 
 Mobile behavior:
 
-- do not preserve literal desktop rails
-- collapse chrome into a compact top-row treatment
-- preserve access to the same menu content and extras
+- do not preserve the frame or right rail
+- append Chrome Menu items to the existing mobile menu
+- place appended Chrome Menu items at the bottom of the mobile menu
+- preserve support for the same content types and extras in that mobile menu context
 
-This follows the live Hive behavior more closely and avoids forcing desktop geometry onto smaller screens.
+This keeps mobile navigation inside a single navigation system and avoids introducing a second chrome treatment on small screens.
 
 ## Fallback Behavior
 
@@ -210,7 +211,7 @@ The system must fail cleanly.
 - render the outer chrome shell
 - render the `chrome` menu rail
 - support automatic item treatment for extras, social links, and normal links
-- implement responsive mobile collapse
+- append Chrome Menu items to the bottom of the mobile menu on smaller screens instead of rendering a separate mobile chrome
 
 ### v2
 
@@ -229,6 +230,7 @@ QA should cover:
 - chrome menu with Search only
 - mixed chrome menu with regular + social + Search
 - desktop and mobile
+- mobile menu with appended Chrome Menu items at the bottom
 - light and dark palette combinations
 - coexistence with Nova sticky header behavior
 - coexistence with existing search overlay flow
