@@ -100,7 +100,7 @@ class Options extends AbstractHookProvider {
 		 * Handle the force clearing of the caches. We clear in a proactive manner.
 		 */
 		$this->add_action( 'after_switch_theme', 'invalidate_all_caches', 1 );
-		$this->add_action( 'upgrader_process_complete', 'invalidate_all_caches', 1 );
+		$this->add_action( 'upgrader_process_complete', 'maybe_invalidate_after_upgrade', 1, 2 );
 
 		// Whenever we update data from the Customizer, we will invalidate the options details (that include the value).
 		// Customize save (publish) used the same changeset save logic, so this filter is fired then also.
@@ -388,6 +388,42 @@ class Options extends AbstractHookProvider {
 		$this->invalidate_details_cache();
 
 		\do_action( 'style_manager/invalidate_all_caches' );
+	}
+
+	/**
+	 * Invalidate caches after an upgrade only when the upgrade is relevant to Style Manager.
+	 *
+	 * Previously hooked unconditionally to upgrader_process_complete, which fired on every
+	 * plugin auto-update, translation update, and core update — busting the 24h Customizer
+	 * config cache on each one. See pixelgrade/style-manager#84.
+	 *
+	 * Now invalidates only when:
+	 *   - a theme is installed/updated (theme config changes can affect SM)
+	 *   - Style Manager itself is in the plugin package list
+	 *
+	 * Translation and core updates are no-ops.
+	 *
+	 * @param \WP_Upgrader $upgrader
+	 * @param array        $hook_extra
+	 */
+	public function maybe_invalidate_after_upgrade( $upgrader, $hook_extra ) {
+		if ( empty( $hook_extra['type'] ) ) {
+			return;
+		}
+
+		if ( 'theme' === $hook_extra['type'] ) {
+			$this->invalidate_all_caches();
+			return;
+		}
+
+		if ( 'plugin' === $hook_extra['type'] && ! empty( $hook_extra['plugins'] ) && is_array( $hook_extra['plugins'] ) ) {
+			foreach ( $hook_extra['plugins'] as $plugin_file ) {
+				if ( false !== stripos( (string) $plugin_file, 'style-manager' ) ) {
+					$this->invalidate_all_caches();
+					return;
+				}
+			}
+		}
 	}
 
 	/**
