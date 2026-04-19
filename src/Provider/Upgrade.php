@@ -12,6 +12,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Provider;
 
 use Pixelgrade\StyleManager\Capabilities;
+use Pixelgrade\StyleManager\Customize\DesignAssets;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
@@ -147,6 +148,51 @@ class Upgrade extends AbstractHookProvider {
 			$this->options->invalidate_all_caches();
 
 			update_option( self::VERSION_OPTION_NAME, VERSION );
+		}
+
+		// Migrate cache options away from autoload (issue #86).
+		// Gated on a one-shot flag rather than version so it runs once per install regardless of release timing.
+		if ( ! get_option( 'sm_perf_autoload_migrated_v1', false ) ) {
+			$this->migrate_cache_options_off_autoload();
+			add_option( 'sm_perf_autoload_migrated_v1', '1', '', false );
+		}
+	}
+
+	/**
+	 * Move SM cache options out of the wp_options autoload payload.
+	 *
+	 * On Pixelgrade-themed sites the SM cache entries can total 100+ KB of autoload payload
+	 * loaded into PHP memory on every WordPress request — frontend included — even though
+	 * these caches are only consumed in admin/Customizer code paths. Flipping autoload to
+	 * false removes them from the autoload blob with no behavioural change. Reads happen
+	 * via a dedicated query (or object cache hit, where present) the first time each option
+	 * is requested in a given request lifecycle. See pixelgrade/style-manager#86.
+	 *
+	 * WordPress has no portable API for flipping an existing option's autoload flag across
+	 * versions, so we delete + re-add. Idempotent: if the value is missing, the entry is
+	 * simply skipped on the next iteration.
+	 *
+	 * @since 2.2.13
+	 */
+	protected function migrate_cache_options_off_autoload(): void {
+		$keys = [
+			Options::CUSTOMIZER_OPT_NAME_CACHE_KEY,
+			Options::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY,
+			Options::MINIMAL_DETAILS_CACHE_KEY,
+			Options::DETAILS_CACHE_TIMESTAMP_KEY,
+			Options::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY,
+			DesignAssets::CACHE_KEY,
+			DesignAssets::CACHE_TIMESTAMP_KEY,
+		];
+
+		foreach ( $keys as $key ) {
+			$value = get_option( $key );
+			if ( false === $value ) {
+				continue;
+			}
+
+			delete_option( $key );
+			add_option( $key, $value, '', false );
 		}
 	}
 }

@@ -479,8 +479,9 @@ class Options extends AbstractHookProvider {
 
 			if ( true !== $skip_cache ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
-				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY, $data, true );
-				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
+				// Not autoloaded — this cache is consumed only in admin/Customizer paths. See pixelgrade/style-manager#86.
+				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY, $data, false );
+				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, false );
 			}
 		}
 
@@ -495,7 +496,7 @@ class Options extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	public function invalidate_customizer_opt_name_cache() {
-		update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
+		update_option( self::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, false );
 
 		$this->clear_locally_cached_data();
 	}
@@ -635,9 +636,10 @@ class Options extends AbstractHookProvider {
 
 			if ( true !== $skip_cache ) {
 				// Cache the data for 24 hours, but only if we are not supposed to skip the cache entirely.
-				\update_option( self::MINIMAL_DETAILS_CACHE_KEY, $options_minimal_details, true );
-				\update_option( self::EXTRA_DETAILS_CACHE_KEY, $options_extra_details, false ); // we will not autoload extra details for performance reasons.
-				\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
+				// None of these are autoloaded — admin/Customizer-only consumers. See pixelgrade/style-manager#86.
+				\update_option( self::MINIMAL_DETAILS_CACHE_KEY, $options_minimal_details, false );
+				\update_option( self::EXTRA_DETAILS_CACHE_KEY, $options_extra_details, false );
+				\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, false );
 			}
 
 			$data          = $this->minimal_details = $options_minimal_details;
@@ -691,7 +693,7 @@ class Options extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	protected function invalidate_details_cache() {
-		\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
+		\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, false );
 
 		$this->clear_locally_cached_data();
 	}
@@ -796,8 +798,9 @@ class Options extends AbstractHookProvider {
 
 			if ( true !== $skip_cache ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
+				// Neither autoloaded — only consumed in admin/Customizer paths. See pixelgrade/style-manager#86.
 				\update_option( self::CUSTOMIZER_CONFIG_CACHE_KEY, $data, false );
-				\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, true );
+				\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() + 24 * HOUR_IN_SECONDS, false );
 			}
 		}
 
@@ -813,7 +816,7 @@ class Options extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	protected function invalidate_customizer_config_cache() {
-		\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, true );
+		\update_option( self::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, false );
 
 		$this->clear_locally_cached_data();
 	}

@@ -169,16 +169,18 @@ class DesignAssets extends AbstractHookProvider {
 
 			$data = $fetched_data;
 
-			// Cache the data in an option for 6 hours
-			update_option( self::CACHE_KEY, $data, true );
-			update_option( self::CACHE_TIMESTAMP_KEY, time() + 6 * HOUR_IN_SECONDS, true );
+			// Cache the data in an option for 6 hours.
+			// Not autoloaded — only consumed in admin/Customizer paths (see is_admin() bail above);
+			// keeping it out of the autoload payload saves ~117 KB per WP request. See pixelgrade/style-manager#86.
+			update_option( self::CACHE_KEY, $data, false );
+			update_option( self::CACHE_TIMESTAMP_KEY, time() + 6 * HOUR_IN_SECONDS, false );
 		}
 
 		return apply_filters( 'style_manager/maybe_fetch_design_assets', $data );
 	}
 
 	protected static function invalidate_cache() {
-		update_option( self::CACHE_TIMESTAMP_KEY , time() - 24 * HOUR_IN_SECONDS, true );
+		update_option( self::CACHE_TIMESTAMP_KEY , time() - 24 * HOUR_IN_SECONDS, false );
 	}
 
 	/**
