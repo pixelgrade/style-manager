@@ -164,6 +164,19 @@ class DesignAssets extends AbstractHookProvider {
 			// Bail in case of failure to retrieve data.
 			// We will return the data already available.
 			if ( is_null( $fetched_data ) ) {
+				// Cache the failure with a short TTL so we don't hammer the cloud on every admin
+				// request when it's unreachable (dev installs, network errors, cloud downtime).
+				//
+				// We need to seed CACHE_KEY with an empty array (not leave it as false), because
+				// the re-fetch gate below is `false === $data || false === $expire_timestamp ||
+				// $expire_timestamp < time()` — a false $data forces a re-fetch regardless of the
+				// timestamp. Setting it to [] satisfies the gate; consumers tolerate [] (it flows
+				// through `if ( ! is_array( $design_assets ) ) { $design_assets = []; }` as-is).
+				// See pixelgrade/style-manager#87.
+				if ( false === $data ) {
+					update_option( self::CACHE_KEY, [], false );
+				}
+				update_option( self::CACHE_TIMESTAMP_KEY, time() + 5 * MINUTE_IN_SECONDS, false );
 				return $data;
 			}
 
