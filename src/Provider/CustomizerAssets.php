@@ -61,6 +61,7 @@ class CustomizerAssets extends AbstractHookProvider {
 			[
 				'jquery',
 				'jquery-react',
+				'lodash',
 				'pixelgrade_style_manager-chroma',
 				'pixelgrade_style_manager-select2',
 				'pixelgrade_style_manager-regression',
