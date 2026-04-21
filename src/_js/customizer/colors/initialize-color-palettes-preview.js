@@ -15,8 +15,16 @@ export const initializeColorPalettesPreview = () => {
             return;
           }
 
-          const smPreviewTabs = document.createElement( 'div' );
-          iframe.insertAdjacentElement( 'beforebegin', smPreviewTabs );
+          // Previewer 'ready' fires on every preview refresh and WP swaps in a fresh iframe.
+          // Reuse a stable mount container so React reconciles instead of stacking duplicate widgets.
+          let smPreviewTabs = document.querySelector( '.sm-preview-tabs-root' );
+          if ( ! smPreviewTabs ) {
+            smPreviewTabs = document.createElement( 'div' );
+            smPreviewTabs.className = 'sm-preview-tabs-root';
+          }
+          if ( smPreviewTabs.previousElementSibling !== iframe.previousElementSibling || smPreviewTabs.nextElementSibling !== iframe ) {
+            iframe.insertAdjacentElement( 'beforebegin', smPreviewTabs );
+          }
           ReactDOM.render( <PreviewTabs smPanel={ smPanel } />, smPreviewTabs );
 
         } );
