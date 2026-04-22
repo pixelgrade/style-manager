@@ -4,9 +4,27 @@ import { getCSSFromPalettes } from "../../utils";
 import { useCustomizeSettingCallback } from "../../hooks";
 import { ConfigContext } from "../../components";
 
+const computeInitialCSS = ( siteVariationSettingID ) => {
+  const outputSetting = wp.customize( 'sm_advanced_palette_output' );
+  const variationSetting = wp.customize( siteVariationSettingID );
+  if ( ! outputSetting || ! variationSetting ) {
+    return '';
+  }
+  try {
+    const palettes = JSON.parse( outputSetting() );
+    return getCSSFromPalettes( palettes, variationSetting() );
+  } catch ( e ) {
+    return '';
+  }
+};
+
 const ColorsStyleTag = props => {
   const siteVariationSettingID = 'sm_site_color_variation';
-  const [ CSS, setCSS ] = useState( '' );
+  // Seed the CSS with the current palette output on mount so the preview
+  // overlay has real CSS variables available immediately. Without this the
+  // tag stayed empty until a setting change fired, leaving the overlay with
+  // no --sm-bg-color-N values (grades all fall back to the default bg).
+  const [ CSS, setCSS ] = useState( () => computeInitialCSS( siteVariationSettingID ) );
 
   const onSiteVariationChange = useCallback( newVariation => {
     wp.customize( 'sm_advanced_palette_output', setting => {

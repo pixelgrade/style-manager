@@ -49,6 +49,11 @@ class DarkMode {
 
     api( 'sm_dark_mode_advanced', setting => {
       this.darkModeSetting = setting();
+      // Re-run update now that the real setting is available. The earlier
+      // update() in initialize() ran before this callback fired, so the
+      // 'off' gate in isCompiledDark() couldn't apply and a stale
+      // localStorage value could still have forced is-dark onto <html>.
+      this.update();
 
       setting.bind( ( newValue ) => {
         this.darkModeSetting = newValue;
@@ -107,6 +112,14 @@ class DarkMode {
   }
 
   isCompiledDark() {
+    // When the theme-level dark mode feature is off, ignore any stale storage
+    // toggle state. Without this gate, a 'dark' value persisted by a previous
+    // visit when dark mode was enabled would keep forcing the UI dark after
+    // the feature has been disabled.
+    if ( this.darkModeSetting === 'off' ) {
+      return false;
+    }
+
     let isDark = this.isSystemDark();
     let colorSchemeStorageValue = localStorage.getItem( this.storageItemKey );
 
