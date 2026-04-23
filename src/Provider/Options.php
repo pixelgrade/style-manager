@@ -544,6 +544,18 @@ class Options extends AbstractHookProvider {
 
 		// We will first look for cached data.
 		$data = \get_option( self::MINIMAL_DETAILS_CACHE_KEY );
+
+		// Guard against a pathological persisted state: a previous
+		// regeneration can save an empty array (e.g., if it ran before all
+		// `style_manager/filter_fields` listeners had attached) with a
+		// fresh 24h expiration. Without this check an empty `[]` survives
+		// as "valid" data and the frontend gets no dynamic CSS for a full
+		// day. Treat an empty array identically to a missing cache so
+		// regeneration will run below.
+		if ( is_array( $data ) && empty( $data ) ) {
+			$data = false;
+		}
+
 		if ( false !== $data && false === $only_minimal_details ) {
 			$this->minimal_details = $data;
 
@@ -634,7 +646,14 @@ class Options extends AbstractHookProvider {
 				}
 			}
 
-			if ( true !== $skip_cache ) {
+			// Only persist the cache when regeneration actually produced
+			// options. An empty result is usually a symptom of something
+			// upstream being in a half-built state (e.g., `filter_fields`
+			// listeners haven't all attached yet) and persisting it with
+			// a 24h expiration would make every subsequent request serve
+			// empty dynamic CSS. Letting the next request regenerate
+			// fresh is safer than caching the empty state.
+			if ( true !== $skip_cache && ! empty( $options_minimal_details ) ) {
 				// Cache the data for 24 hours, but only if we are not supposed to skip the cache entirely.
 				// None of these are autoloaded — admin/Customizer-only consumers. See pixelgrade/style-manager#86.
 				\update_option( self::MINIMAL_DETAILS_CACHE_KEY, $options_minimal_details, false );
