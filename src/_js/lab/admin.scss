@@ -72,10 +72,23 @@
   margin: 0;
 }
 
+.sm-lab-readonly-list--compact {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dcdcde;
+}
+
 .sm-lab-admin-swatch {
   width: 18px;
   height: 18px;
   border: 1px solid #8c8f94;
+}
+
+.sm-lab-inspector-heading {
+  margin: 14px 0 8px;
+  color: #646970;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .sm-lab-palette-list {

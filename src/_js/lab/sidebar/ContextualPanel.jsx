@@ -6,12 +6,17 @@ import {
   buildContextualSourcePatch,
 } from './contextual-state.js';
 
-export const ContextualPanel = ( { state, readback, contextualPalette, onChange } ) => {
+export const ContextualPanel = ( { state, readback, contextualReadout, contextualPalette, onChange } ) => {
+  const scopedReadback = contextualReadout ? {
+    surface: contextualReadout.surface,
+    accent: contextualReadout.accent,
+    text: contextualReadout.text,
+  } : readback;
   const paletteJson = JSON.stringify( contextualPalette || {
     id: 'contextual-lab',
     label: 'Contextual Lab',
     source: state.contextual ? [ state.contextual ] : [],
-    readback,
+    readback: scopedReadback,
   }, null, 2 );
 
   const copyJson = () => {
@@ -34,7 +39,7 @@ export const ContextualPanel = ( { state, readback, contextualPalette, onChange 
         enableAlpha={ false }
       />
       <dl className="sm-lab-readonly-list">
-        { Object.entries( readback ).map( ( [ token, value ] ) => (
+        { Object.entries( scopedReadback ).map( ( [ token, value ] ) => (
           <div key={ token }>
             <dt>{ token }</dt>
             <dd>

@@ -3,10 +3,12 @@ import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { fetchLabConfig } from './admin-api.js';
 import { postShowcaseState, subscribeToIframeReadback } from './iframe-bridge.js';
+import { emptyReadbackColors, normalizeRuntimeReadback } from './runtime-readback.js';
 import { buildAdminUrl, buildShowcaseUrl, normalizeLabState } from './state.js';
 import { PalettePanel } from './sidebar/PalettePanel.jsx';
 import { ContextualPanel } from './sidebar/ContextualPanel.jsx';
 import { ColorSignalPanel } from './sidebar/ColorSignalPanel.jsx';
+import { RuntimeInspectorPanel } from './sidebar/RuntimeInspectorPanel.jsx';
 
 const paramsToObject = ( search ) => Object.fromEntries( new URLSearchParams( search ).entries() );
 
@@ -15,12 +17,7 @@ const getInitialState = ( config ) => normalizeLabState( {
   ...paramsToObject( window.location.search ),
 } );
 
-const emptyReadback = {
-  bg: '',
-  accent: '',
-  fg1: '',
-  fg2: '',
-};
+const emptyRuntimeReadback = normalizeRuntimeReadback();
 
 export const App = ( { config } ) => {
   const [ labConfig, setLabConfig ] = useState( () => ( {
@@ -28,7 +25,8 @@ export const App = ( { config } ) => {
     palettes: Array.isArray( config.palettes ) ? config.palettes : [],
   } ) );
   const [ state, setState ] = useState( () => getInitialState( config ) );
-  const [ readback, setReadback ] = useState( emptyReadback );
+  const [ runtimeReadback, setRuntimeReadback ] = useState( emptyRuntimeReadback );
+  const [ readback, setReadback ] = useState( emptyReadbackColors );
   const [ contextualPalette, setContextualPalette ] = useState( null );
   const [ iframeReady, setIframeReady ] = useState( false );
   const [ isResetting, setIsResetting ] = useState( false );
@@ -41,12 +39,12 @@ export const App = ( { config } ) => {
   const palettes = Array.isArray( labConfig.palettes ) ? labConfig.palettes : [];
 
   useEffect( () => subscribeToIframeReadback( ( data ) => {
+    const nextReadback = normalizeRuntimeReadback( data );
+
     setIframeReady( true );
-    setReadback( {
-      ...emptyReadback,
-      ...( data.colors || {} ),
-    } );
-    setContextualPalette( data.contextualPalette || null );
+    setRuntimeReadback( nextReadback );
+    setReadback( nextReadback.colors );
+    setContextualPalette( nextReadback.contextualPalette );
   } ), [] );
 
   useEffect( () => {
@@ -93,7 +91,8 @@ export const App = ( { config } ) => {
         palettes: Array.isArray( nextConfig.palettes ) ? nextConfig.palettes : [],
       } );
       setState( normalizeLabState( nextConfig.defaultState || {} ) );
-      setReadback( emptyReadback );
+      setRuntimeReadback( emptyRuntimeReadback );
+      setReadback( emptyReadbackColors );
       setContextualPalette( null );
     } catch ( error ) {
       setState( normalizeLabState( labConfig.defaultState || {} ) );
@@ -115,8 +114,9 @@ export const App = ( { config } ) => {
           <h1>Style Manager Lab</h1>
         </div>
         <PalettePanel palettes={ palettes } state={ state } contextualPalette={ contextualPalette } onChange={ updateState } />
-        <ContextualPanel state={ state } readback={ readback } contextualPalette={ contextualPalette } onChange={ updateState } />
+        <ContextualPanel state={ state } readback={ readback } contextualReadout={ runtimeReadback.contextualReadout } contextualPalette={ contextualPalette } onChange={ updateState } />
         <ColorSignalPanel state={ state } onChange={ updateState } />
+        <RuntimeInspectorPanel state={ state } readback={ runtimeReadback } />
         <div className="sm-lab-admin__footer">
           <Button variant="secondary" onClick={ resetState } disabled={ isResetting }>
             { isResetting ? 'Refreshing…' : 'Reset to live site state' }
