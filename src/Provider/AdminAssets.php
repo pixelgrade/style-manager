@@ -65,6 +65,40 @@ class AdminAssets extends AbstractHookProvider {
 			VERSION
 		);
 
+		wp_register_script(
+			'pixelgrade_style_manager-lab',
+			$this->plugin->get_url( 'dist/js/lab.js' ),
+			[
+				'wp-components',
+				'wp-element',
+				'wp-i18n',
+			],
+			VERSION,
+			true
+		);
+
+		wp_register_style(
+			'pixelgrade_style_manager-lab',
+			$this->plugin->get_url( 'dist/js/lab' . $rtl_suffix . '.css' ),
+			[ 'wp-components' ],
+			VERSION
+		);
+
+		wp_register_script(
+			'pixelgrade_style_manager-lab-showcase',
+			$this->plugin->get_url( 'dist/js/lab-showcase.js' ),
+			[ 'wp-element' ],
+			VERSION,
+			true
+		);
+
+		wp_register_style(
+			'pixelgrade_style_manager-lab-showcase',
+			$this->plugin->get_url( 'dist/js/lab-showcase' . $rtl_suffix . '.css' ),
+			[ 'pixelgrade_style_manager-sm-colors-custom-properties' ],
+			VERSION
+		);
+
 		/**
 		 * BLOCK EDITOR RELATED
 		 */

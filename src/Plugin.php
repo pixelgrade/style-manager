@@ -59,6 +59,10 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'screen.customizer' ) )
 			->register_hooks( $container->get( 'options' ) );
 
+		if ( Lab\Access::is_enabled() ) {
+			$this->register_hooks( $container->get( 'lab.showcase_route' ) );
+		}
+
 		if ( is_admin() ) {
 			$this
 				->register_hooks( $container->get( 'hooks.upgrade' ) )
@@ -67,6 +71,10 @@ class Plugin extends BasePlugin implements Composable {
 				->register_hooks( $container->get( 'screen.general_admin' ) )
 				->register_hooks( $container->get( 'screen.settings' ) )
 				->register_hooks( $container->get( 'screen.edit_with_blocks' ) );
+
+			if ( Lab\Access::is_enabled() ) {
+				$this->register_hooks( $container->get( 'lab.admin_page' ) );
+			}
 
 			if ( is_customizer() ) {
 				$this->register_hooks( $container->get( 'screen.customizer.search' ) );

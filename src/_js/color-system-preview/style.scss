@@ -1,3 +1,12 @@
+.sm-overlay__container {
+  padding: 0 80px;
+}
+
+.sm-overlay__wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
 .palette-preview-header {
   padding: 1.5em 0;
   background: var(--sm-current-bg-color);

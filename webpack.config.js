@@ -10,6 +10,8 @@ const files = [
   'customizer-preview',
   'customizer-search',
   'dark-mode',
+  'lab',
+  'lab-showcase',
   'settings',
 ];
 
@@ -47,7 +49,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
@@ -93,6 +95,9 @@ module.exports = {
     react: 'React',
     'chroma-js': 'chroma',
     'react-dom': 'ReactDOM',
+    '@wordpress/components': [ 'wp', 'components' ],
+    '@wordpress/element': [ 'wp', 'element' ],
+    '@wordpress/i18n': [ 'wp', 'i18n' ],
   },
   optimization: {
     minimize: true,
@@ -111,9 +116,9 @@ module.exports = {
   },
   'plugins': [
     new MiniCssExtractPlugin( {
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: "[name].css",
+      filename: pathData => {
+        return `${ kebabize( pathData.chunk.name ) }.css`;
+      },
       chunkFilename: "[id].css",
     } ),
   ]

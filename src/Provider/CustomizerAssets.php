@@ -68,6 +68,7 @@ class CustomizerAssets extends AbstractHookProvider {
 				'react',
 				'react-dom',
 				'underscore',
+				'wp-element',
 				'customize-controls',
 			],
 			VERSION );

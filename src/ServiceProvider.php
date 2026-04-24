@@ -215,6 +215,32 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Integration\WPRocket();
 		};
 
+		$container['lab.contextual_palette'] = function() {
+			return new Lab\ContextualPalette();
+		};
+
+		$container['lab.config'] = function() {
+			return new Lab\Config();
+		};
+
+		$container['lab.showcase_renderer'] = function() {
+			return new Lab\ShowcaseRenderer();
+		};
+
+		$container['lab.showcase_route'] = function( $container ) {
+			return new Lab\ShowcaseRoute(
+				$container['lab.showcase_renderer'],
+				$container['lab.contextual_palette'],
+				$container['lab.config']
+			);
+		};
+
+		$container['lab.admin_page'] = function( $container ) {
+			return new Lab\LabAdminPage(
+				$container['lab.config']
+			);
+		};
+
 		$container['options'] = function( $container ) {
 			return new Provider\Options(
 				$container['plugin.settings']
