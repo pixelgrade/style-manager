@@ -73,11 +73,264 @@
   border: 1px solid currentColor;
 }
 
+.sm-lab-contract-explorer,
 .sm-lab-generator,
 .sm-lab-context-matrix,
 .sm-lab-contract,
 .sm-lab-contextual-proof {
   color: var(--sm-current-fg1-color);
+}
+
+.sm-lab-contract-explorer__intro {
+  max-width: 900px;
+}
+
+.sm-lab-contract-explorer__intro h1 {
+  max-width: 780px;
+  margin: 0 0 14px;
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1;
+}
+
+.sm-lab-contract-explorer__intro p {
+  max-width: 760px;
+  color: var(--sm-current-fg2-color);
+  font-size: 1.1em;
+}
+
+.sm-lab-contract-explorer__chain,
+.sm-lab-contract-panel pre,
+.sm-lab-contract-row__behavior,
+.sm-lab-contract-row__proof {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+}
+
+.sm-lab-contract-explorer__chain {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 78%);
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.sm-lab-runtime-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.sm-lab-runtime-strip__panel,
+.sm-lab-contract-panel {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 78%);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 4%);
+}
+
+.sm-lab-runtime-strip__label {
+  margin: 0 0 12px;
+  color: var(--sm-current-accent-color);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sm-lab-runtime-strip__rail {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  min-height: 42px;
+}
+
+.sm-lab-runtime-strip__grade {
+  position: relative;
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 70%);
+}
+
+.sm-lab-runtime-strip__grade[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 2px solid var(--sm-current-accent-color);
+}
+
+.sm-lab-runtime-strip__facts,
+.sm-lab-contract-panel__facts {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.sm-lab-runtime-strip__facts div,
+.sm-lab-contract-panel__facts div {
+  display: grid;
+  gap: 4px;
+}
+
+.sm-lab-runtime-strip__facts dt,
+.sm-lab-contract-panel__facts dt {
+  color: var(--sm-current-fg2-color);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sm-lab-runtime-strip__facts dd,
+.sm-lab-contract-panel__facts dd {
+  margin: 0;
+}
+
+.sm-lab-signal-bars,
+.sm-lab-signal-bars__item,
+.sm-lab-signal-bars__icon {
+  display: grid;
+}
+
+.sm-lab-signal-bars {
+  gap: 8px;
+}
+
+.sm-lab-signal-bars__item {
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.sm-lab-signal-bars__icon {
+  grid-template-columns: repeat(3, 4px);
+  gap: 2px;
+  align-items: end;
+  height: 18px;
+}
+
+.sm-lab-signal-bars__icon span {
+  height: 6px;
+  background: color-mix(in srgb, var(--sm-current-fg1-color), transparent 76%);
+}
+
+.sm-lab-signal-bars__icon span:nth-child(2) {
+  height: 11px;
+}
+
+.sm-lab-signal-bars__icon span:nth-child(3) {
+  height: 16px;
+}
+
+.sm-lab-signal-bars__icon .is-active {
+  background: var(--sm-current-accent-color);
+}
+
+.sm-lab-block-map__sample,
+.sm-lab-context-stack__layers {
+  display: grid;
+  gap: 8px;
+}
+
+.sm-lab-block-map__sample span,
+.sm-lab-context-stack__layers span {
+  display: block;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 82%);
+  border-radius: 4px;
+}
+
+.sm-lab-block-map__surface {
+  background: var(--sm-current-bg-color);
+}
+
+.sm-lab-block-map__text {
+  color: var(--sm-current-fg1-color);
+}
+
+.sm-lab-block-map__action {
+  background: var(--sm-current-accent-color);
+  color: var(--sm-current-bg-color);
+}
+
+.sm-lab-block-map__shadow {
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--sm-current-accent-color), transparent 42%);
+}
+
+.sm-lab-contract-explorer__workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  gap: 18px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.sm-lab-contract-matrix {
+  display: grid;
+  gap: 8px;
+}
+
+.sm-lab-contract-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.8fr) 86px minmax(0, 1.2fr) minmax(120px, 0.7fr);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 78%);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sm-lab-contract-row[aria-selected="true"] {
+  border-color: var(--sm-current-accent-color);
+  box-shadow: inset 0 0 0 1px var(--sm-current-accent-color);
+}
+
+.sm-lab-contract-row__label {
+  font-weight: 700;
+}
+
+.sm-lab-contract-row__maturity,
+.sm-lab-contract-panel__maturity {
+  display: inline-flex;
+  width: max-content;
+  padding: 4px 7px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  color: var(--sm-current-accent-color);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sm-lab-contract-row__behavior,
+.sm-lab-contract-row__proof {
+  color: var(--sm-current-fg2-color);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.sm-lab-contract-panel h2 {
+  margin: 10px 0;
+}
+
+.sm-lab-contract-panel p {
+  color: var(--sm-current-fg2-color);
+}
+
+.sm-lab-contract-panel pre {
+  max-width: 100%;
+  margin: 16px 0 0;
+  padding: 14px;
+  border-radius: 6px;
+  overflow-x: auto;
+  background: color-mix(in srgb, var(--sm-current-fg1-color), transparent 92%);
+  color: var(--sm-current-fg1-color);
+  font-size: 12px;
 }
 
 .sm-lab-generator__intro,
@@ -497,9 +750,15 @@
   }
 
   .sm-lab-flow,
+  .sm-lab-runtime-strip,
+  .sm-lab-contract-explorer__workspace,
   .sm-lab-context-grid,
   .sm-lab-contextual-proof__grid,
   .sm-lab-contract__map {
+    grid-template-columns: 1fr;
+  }
+
+  .sm-lab-contract-row {
     grid-template-columns: 1fr;
   }
 
