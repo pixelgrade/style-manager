@@ -2,6 +2,7 @@ import {
   applyShowcaseState,
   buildContextualPalette,
   buildContextualPaletteCss,
+  buildRuntimePaletteCss,
   dispatchShowcaseState,
 } from '../../src/_js/lab-showcase/runtime.js';
 
@@ -213,6 +214,23 @@ const createSwatch = ( documentRef, token ) => {
   return swatch;
 };
 
+const createRuntimePalette = () => ( {
+  id: 'brand',
+  sourceIndex: 6,
+  variations: Array.from( { length: 12 }, ( _, index ) => ( {
+    bg: `#${ String( index + 1 ).padStart( 6, '0' ) }`,
+    accent: `#${ String( index + 101 ).padStart( 6, '0' ) }`,
+    fg1: `#${ String( index + 201 ).padStart( 6, '0' ) }`,
+    fg2: `#${ String( index + 301 ).padStart( 6, '0' ) }`,
+  } ) ),
+  darkVariations: Array.from( { length: 12 }, ( _, index ) => ( {
+    bg: `#${ String( index + 401 ).padStart( 6, '0' ) }`,
+    accent: `#${ String( index + 501 ).padStart( 6, '0' ) }`,
+    fg1: `#${ String( index + 601 ).padStart( 6, '0' ) }`,
+    fg2: `#${ String( index + 701 ).padStart( 6, '0' ) }`,
+  } ) ),
+} );
+
 const createShowcaseDocument = () => {
   const documentRef = new FakeDocument();
   documentRef.body.className = 'sm-lab-showcase sm-palette-1 sm-variation-1';
@@ -234,6 +252,11 @@ const createShowcaseDocument = () => {
   contextualZone.className = 'sm-lab-contextual sm-palette-contextual-lab sm-variation-1';
   documentRef.body.appendChild( contextualZone );
 
+  const nestedVariationZone = documentRef.createElement( 'section' );
+  nestedVariationZone.setAttribute( 'data-palette-variation', '1' );
+  nestedVariationZone.className = 'wp-block-group sm-palette-1 sm-variation-1';
+  documentRef.body.appendChild( nestedVariationZone );
+
   return documentRef;
 };
 
@@ -252,6 +275,17 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     assert.ok( css.includes( '.sm-palette-contextual-lab {' ), 'contextual CSS should target the Lab palette selector' );
     assert.ok( css.includes( '--sm-bg-color-1: #fff1eb;' ), 'contextual CSS should expose palette variables for the first variation' );
     assert.ok( css.includes( '.is-dark .sm-palette-contextual-lab {' ), 'contextual CSS should include the dark palette selector' );
+  }
+
+  {
+    const css = buildRuntimePaletteCss( [ createRuntimePalette() ], 4 );
+
+    assert.ok( css.includes( '.sm-palette-brand {' ), 'runtime palette CSS should target each palette selector' );
+    assert.ok( css.includes( '--sm-bg-color-1: #000004;' ), 'runtime palette CSS should offset light variables by the selected variation' );
+    assert.ok( css.includes( '.is-dark .sm-palette-brand {' ), 'runtime palette CSS should include dark variables' );
+    assert.ok( css.includes( '--sm-bg-color-1: #000404;' ), 'runtime palette CSS should offset dark variables by the selected variation' );
+    assert.ok( css.includes( '.sm-palette-brand.sm-palette--shifted {' ), 'runtime palette CSS should preserve shifted selectors' );
+    assert.ok( css.includes( '--sm-bg-color-1: #000007;' ), 'shifted palette CSS should use the source index offset' );
   }
 
   {
@@ -278,6 +312,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
         contextual: '#ff5500',
       },
       siteVariation: 1,
+      palettes: [ createRuntimePalette() ],
     } );
 
     assert.ok( documentRef.documentElement.classList.contains( 'is-dark' ), 'dark mode should be applied to the iframe document element' );
@@ -295,8 +330,21 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'swatch readbacks should refresh from the live computed colors'
     );
     assert.ok(
-      documentRef.querySelector( '#style-manager-lab-contextual-palette' )?.textContent.includes( '--sm-bg-color-1: #fff1eb;' ),
-      'the contextual palette style element should refresh in place'
+      documentRef.querySelector( '#style-manager-lab-contextual-palette' )?.textContent.includes( '--sm-bg-color-1: #ffbb99;' ),
+      'the contextual palette style element should refresh with the live variation offset'
+    );
+    assert.ok(
+      documentRef.querySelector( '#style-manager-lab-runtime-palettes' )?.textContent.includes( '--sm-bg-color-1: #000004;' ),
+      'the runtime palette style element should refresh with the live variation offset'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-palette-variation]' )?.getAttribute( 'data-palette-variation' ),
+      '4',
+      'nested palette variation scopes should track the live variation'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-palette-variation]' )?.classList.contains( 'sm-variation-4' ),
+      'nested palette variation scopes should update their variation class'
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );

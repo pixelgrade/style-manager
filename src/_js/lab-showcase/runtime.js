@@ -152,6 +152,29 @@ const buildPaletteCssBlock = ( selector, variations, offset ) => `${ selector } 
   buildVariationCssVariables( variations, index, offset )
 ) ).join( ' ' ) } }`;
 
+export const buildRuntimePaletteCss = ( palettes = [], siteVariation = 1 ) => {
+  const variationOffset = normalizeSiteVariation( siteVariation ) - 1;
+
+  return palettes
+    .filter( ( palette ) => palette?.id && Array.isArray( palette.variations ) && palette.variations.length )
+    .map( ( palette ) => {
+      const selector = `.sm-palette-${ palette.id }`;
+      const darkSelector = `.is-dark .sm-palette-${ palette.id }`;
+      const shiftedSelector = `.sm-palette-${ palette.id }.sm-palette--shifted`;
+      const sourceIndex = Number.parseInt( palette.sourceIndex, 10 );
+      const shiftedOffset = Number.isNaN( sourceIndex ) ? 0 : sourceIndex;
+
+      return [
+        buildPaletteCssBlock( selector, palette.variations, variationOffset ),
+        Array.isArray( palette.darkVariations )
+          ? buildPaletteCssBlock( darkSelector, palette.darkVariations, variationOffset )
+          : '',
+        buildPaletteCssBlock( shiftedSelector, palette.variations, shiftedOffset ),
+      ].filter( Boolean ).join( '\n' );
+    } )
+    .join( '\n' );
+};
+
 export const buildContextualPaletteCss = ( palette, siteVariation = 1 ) => {
   if ( ! palette ) {
     return '';
@@ -234,6 +257,27 @@ const ensureContextualStyleNode = ( documentRef ) => {
   return style;
 };
 
+const ensureRuntimePaletteStyleNode = ( documentRef ) => {
+  const existing = documentRef.getElementById( 'style-manager-lab-runtime-palettes' );
+
+  if ( existing ) {
+    return existing;
+  }
+
+  const style = documentRef.createElement( 'style' );
+  style.setAttribute( 'id', 'style-manager-lab-runtime-palettes' );
+
+  if ( documentRef.head ) {
+    documentRef.head.appendChild( style );
+  } else if ( documentRef.body ) {
+    documentRef.body.appendChild( style );
+  } else {
+    documentRef.documentElement.appendChild( style );
+  }
+
+  return style;
+};
+
 const updateContextualZone = ( documentRef, state ) => {
   const zone = documentRef.querySelector( `[data-palette="${ CONTEXTUAL_ID }"]` );
 
@@ -242,11 +286,19 @@ const updateContextualZone = ( documentRef, state ) => {
   }
 };
 
+const updatePaletteVariationScopes = ( documentRef, state ) => {
+  documentRef.querySelectorAll( '[data-palette-variation]' ).forEach( ( element ) => {
+    element.setAttribute( 'data-palette-variation', String( state.variation ) );
+    replaceClassByPattern( element, /^sm-variation-\d+$/, `sm-variation-${ state.variation }` );
+  } );
+};
+
 export const applyShowcaseState = ( {
   document,
   getComputedStyle,
   state,
   siteVariation = 1,
+  palettes = [],
 } ) => {
   const normalizedState = normalizeLabState( state );
   const documentElement = document.documentElement;
@@ -266,9 +318,13 @@ export const applyShowcaseState = ( {
   setStatusValue( document, 'dark', normalizedState.dark ? 'on' : 'off' );
 
   updateContextualZone( document, normalizedState );
+  updatePaletteVariationScopes( document, normalizedState );
+
+  const runtimePaletteStyleNode = ensureRuntimePaletteStyleNode( document );
+  runtimePaletteStyleNode.textContent = buildRuntimePaletteCss( palettes, normalizedState.variation );
 
   const contextualPalette = buildContextualPalette( normalizedState.contextual );
-  const contextualCss = buildContextualPaletteCss( contextualPalette, siteVariation );
+  const contextualCss = buildContextualPaletteCss( contextualPalette, normalizedState.variation );
   const contextualStyleNode = ensureContextualStyleNode( document );
   contextualStyleNode.textContent = contextualCss;
 
@@ -314,6 +370,9 @@ export const installShowcaseRuntime = ( windowRef = window ) => {
   const getComputedStyle = windowRef.getComputedStyle.bind( windowRef );
   let currentState = parseLabState( windowRef.location.search );
   let siteVariation = normalizeSiteVariation( documentRef.body?.getAttribute( 'data-sm-lab-site-variation' ) || 1 );
+  const palettes = Array.isArray( windowRef.styleManagerLabColorSystem?.palettes )
+    ? windowRef.styleManagerLabColorSystem.palettes
+    : [];
 
   const syncAndPublish = () => {
     const payload = applyShowcaseState( {
@@ -321,6 +380,7 @@ export const installShowcaseRuntime = ( windowRef = window ) => {
       getComputedStyle,
       state: currentState,
       siteVariation,
+      palettes,
     } );
 
     dispatchShowcaseState( windowRef, payload );
