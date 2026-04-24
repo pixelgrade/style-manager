@@ -273,12 +273,15 @@ const createShowcaseDocument = () => {
 
   const contextualZone = documentRef.createElement( 'section' );
   contextualZone.setAttribute( 'data-palette', 'contextual-lab' );
+  contextualZone.setAttribute( 'data-palette-variation', '1' );
   contextualZone.className = 'sm-lab-contextual sm-palette-contextual-lab sm-variation-1';
   documentRef.body.appendChild( contextualZone );
 
   const nestedVariationZone = documentRef.createElement( 'section' );
+  nestedVariationZone.setAttribute( 'data-palette', '1' );
   nestedVariationZone.setAttribute( 'data-palette-variation', '1' );
-  nestedVariationZone.className = 'wp-block-group sm-palette-1 sm-variation-1';
+  nestedVariationZone.setAttribute( 'data-color-signal', '2' );
+  nestedVariationZone.className = 'wp-block-group sm-palette-1 sm-variation-1 sm-color-signal-2';
   documentRef.body.appendChild( nestedVariationZone );
 
   return documentRef;
@@ -480,6 +483,104 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       contextualZone.querySelector( '[data-token="accent"] [data-token-value]' )?.textContent,
       '#111111',
       'token readbacks inside scoped palette zones should read from their own computed context'
+    );
+  }
+
+  {
+    const documentRef = createShowcaseDocument();
+    const nestedSignalZone = documentRef.querySelector( '[data-color-signal="2"]' );
+    nestedSignalZone.appendChild( createSwatch( documentRef, 'bg' ) );
+    nestedSignalZone.appendChild( createSwatch( documentRef, 'accent' ) );
+
+    const hasNestedSignalAncestor = ( element ) => {
+      let cursor = element;
+
+      while ( cursor ) {
+        if ( cursor.getAttribute?.( 'data-color-signal' ) === '2' ) {
+          return true;
+        }
+
+        cursor = cursor.parentElement;
+      }
+
+      return false;
+    };
+    const windowRef = {
+      novablocks: {
+        utils: {
+          getSignals: () => [ 2, 5, 8, 11 ],
+          getColorSignalClassnames: ( attributes ) => [
+            `sm-palette-${ attributes.palette }`,
+            `sm-variation-${ attributes.paletteVariation }`,
+            `sm-color-signal-${ attributes.colorSignal }`,
+            attributes.useSourceColorAsReference ? 'sm-palette--shifted' : '',
+          ].filter( Boolean ).join( ' ' ),
+        },
+      },
+      styleManager: {
+        siteColorVariation: 1,
+        colorsConfig: [
+          {
+            id: '1',
+            sourceIndex: 6,
+            variations: Array.from( { length: 12 }, ( _, index ) => ( {
+              bg: `#${ String( index + 1 ).padStart( 6, '0' ) }`,
+              fg1: index >= 6 ? '#ffffff' : '#111111',
+            } ) ),
+          },
+        ],
+      },
+    };
+
+    applyShowcaseState( {
+      document: documentRef,
+      getComputedStyle: ( element ) => ( {
+        getPropertyValue: ( property ) => {
+          if ( hasNestedSignalAncestor( element ) ) {
+            if ( property === '--sm-current-bg-color' ) {
+              return '#nested-bg';
+            }
+
+            if ( property === '--sm-current-accent-color' ) {
+              return '#nested-accent';
+            }
+          }
+
+          return {
+            '--sm-current-bg-color': '#body-bg',
+            '--sm-current-accent-color': '#body-accent',
+            '--sm-current-fg1-color': '#body-fg1',
+            '--sm-current-fg2-color': '#body-fg2',
+          }[ property ] || '';
+        },
+      } ),
+      state: {
+        palette: '1',
+        variation: 4,
+        contextual: '#ff5500',
+      },
+      palettes: [ createRuntimePalette() ],
+      windowRef,
+    } );
+
+    assert.equal( windowRef.styleManager.siteColorVariation, 4, 'the Lab runtime should publish its selected variation to Nova runtime state' );
+    assert.ok( nestedSignalZone.classList.contains( 'sm-palette-1' ), 'Nova signal scopes should keep their palette class' );
+    assert.ok( nestedSignalZone.classList.contains( 'sm-color-signal-2' ), 'Nova signal scopes should keep their color signal class' );
+    assert.ok( nestedSignalZone.classList.contains( 'sm-variation-5' ), 'Nova signal scopes should compute variation from the active Lab variation' );
+    assert.equal(
+      nestedSignalZone.getAttribute( 'data-palette-variation' ),
+      '1',
+      'Nova signal scopes should keep their saved palette variation attribute'
+    );
+    assert.equal(
+      nestedSignalZone.querySelector( '[data-token="bg"] [data-token-value]' )?.textContent,
+      '#nested-bg',
+      'nested Nova signal readbacks should read from the computed signal context'
+    );
+    assert.equal(
+      nestedSignalZone.querySelector( '[data-token="accent"] [data-token-value]' )?.textContent,
+      '#nested-accent',
+      'nested Nova signal action readbacks should read from the computed signal context'
     );
   }
 };

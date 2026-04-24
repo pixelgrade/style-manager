@@ -39,6 +39,13 @@ const normalizeSiteVariation = ( value ) => {
   return Math.min( Math.max( parsed, 1 ), 12 );
 };
 
+const normalizeVariationValue = ( value ) => {
+  const parsed = Number.parseInt( value, 10 );
+  const variation = Number.isNaN( parsed ) ? 1 : parsed;
+
+  return ( ( variation + 11 ) % 12 ) + 1;
+};
+
 const hexToRgbChannels = ( color ) => {
   const normalized = color.replace( '#', '' );
 
@@ -391,9 +398,257 @@ const updateContextualZone = ( documentRef, state ) => {
 
 const updatePaletteVariationScopes = ( documentRef, state ) => {
   documentRef.querySelectorAll( '[data-palette-variation]' ).forEach( ( element ) => {
+    if ( element.getAttribute?.( 'data-color-signal' ) !== null ) {
+      return;
+    }
+
     element.setAttribute( 'data-palette-variation', String( state.variation ) );
     replaceClassByPattern( element, /^sm-variation-\d+$/, `sm-variation-${ state.variation }` );
   } );
+};
+
+const getSignalAttribute = ( element, name ) => element.getAttribute?.( `data-${ name }` );
+
+const getSignalsForPalette = ( windowRef, paletteId ) => {
+  const signalOptions = windowRef?.novablocks?.utils?.getSignals?.( paletteId );
+
+  if ( Array.isArray( signalOptions ) && signalOptions.length ) {
+    return signalOptions
+      .map( ( signal ) => Number.parseInt( signal, 10 ) )
+      .filter( ( signal ) => ! Number.isNaN( signal ) )
+      .map( normalizeVariationValue );
+  }
+
+  return [ 1, 3, 8, 11 ];
+};
+
+const getPaletteConfig = ( windowRef, paletteId ) => {
+  const palettes = Array.isArray( windowRef?.styleManager?.colorsConfig )
+    ? windowRef.styleManager.colorsConfig
+    : windowRef?.styleManagerLabColorSystem?.palettes;
+
+  if ( ! Array.isArray( palettes ) || ! palettes.length ) {
+    return { sourceIndex: 6 };
+  }
+
+  return palettes.find( ( palette ) => `${ palette.id }` === `${ paletteId }` ) || palettes[0];
+};
+
+const addSiteVariationOffset = ( variation, siteVariation ) => (
+  normalizeVariationValue( normalizeVariationValue( variation ) + normalizeVariationValue( siteVariation ) - 1 )
+);
+
+const removeSiteVariationOffset = ( variation, siteVariation ) => (
+  normalizeVariationValue( normalizeVariationValue( variation ) - normalizeVariationValue( siteVariation ) + 1 )
+);
+
+const getSourceIndexFromPaletteId = ( windowRef, paletteId, siteVariation ) => {
+  const paletteConfig = getPaletteConfig( windowRef, paletteId );
+  const sourceIndex = Number.parseInt( paletteConfig.sourceIndex, 10 );
+  const normalizedSourceIndex = Number.isNaN( sourceIndex ) ? 6 : sourceIndex;
+
+  return ( normalizedSourceIndex - normalizeVariationValue( siteVariation ) + 13 ) % 12;
+};
+
+const getSignalOptionsFromVariation = ( reference, paletteId, windowRef ) => {
+  const normalizedReference = normalizeVariationValue( reference );
+  const variationOptions = [ ...getSignalsForPalette( windowRef, paletteId ) ];
+
+  variationOptions.sort( ( variationA, variationB ) => (
+    Math.abs( normalizedReference - variationA ) - Math.abs( normalizedReference - variationB )
+  ) );
+
+  variationOptions[0] = normalizedReference;
+
+  return variationOptions;
+};
+
+const getPaletteVariationColors = ( palette ) => {
+  if ( Array.isArray( palette?.variations ) ) {
+    return palette.variations.map( ( variation ) => variation?.bg );
+  }
+
+  if ( Array.isArray( palette?.colors ) ) {
+    return palette.colors.map( ( color ) => color?.value );
+  }
+
+  return null;
+};
+
+const getSignalRelativeToVariation = ( compared, reference, paletteId, windowRef ) => {
+  const normalizedCompared = normalizeVariationValue( compared );
+  const normalizedReference = normalizeVariationValue( reference );
+  const variationOptions = getSignalOptionsFromVariation( normalizedReference, paletteId, windowRef );
+  const signal = variationOptions.reduce( ( closestIndex, currentVariation, currentIndex, options ) => (
+    Math.abs( currentVariation - normalizedCompared ) < Math.abs( options[ closestIndex ] - normalizedCompared )
+      ? currentIndex
+      : closestIndex
+  ), 0 );
+  const paletteColors = getPaletteVariationColors( getPaletteConfig( windowRef, paletteId ) );
+
+  if ( ! paletteColors ) {
+    return signal;
+  }
+
+  return paletteColors[ normalizedCompared - 1 ] === paletteColors[ normalizedReference - 1 ]
+    ? 0
+    : Math.max( 1, signal );
+};
+
+const computeColorSignal = ( reference, colorSignal, paletteId, paletteVariation, windowRef ) => {
+  const signalOptions = getSignalOptionsFromVariation( reference, paletteId, windowRef );
+  const normalizedSignal = Math.max( 0, Number.isNaN( colorSignal ) ? 0 : colorSignal );
+
+  if ( Number.isInteger( paletteVariation ) ) {
+    const currentSignal = getSignalRelativeToVariation( paletteVariation, reference, paletteId, windowRef );
+
+    if ( currentSignal === normalizedSignal ) {
+      return paletteVariation;
+    }
+  }
+
+  return signalOptions[ Math.min( signalOptions.length - 1, normalizedSignal ) ];
+};
+
+const isLightNovaVariation = ( windowRef, paletteId, variation ) => {
+  const palette = getPaletteConfig( windowRef, paletteId );
+  const variationIndex = normalizeVariationValue( variation ) - 1;
+  const foreground = normalizeHex(
+    palette?.variations?.[ variationIndex ]?.fg1
+    || palette?.colors?.[ variationIndex ]?.value
+    || ''
+  );
+
+  if ( ! foreground ) {
+    return true;
+  }
+
+  return getContrastRatio( '#ffffff', foreground ) > Math.sqrt( 21 );
+};
+
+const removeNovaSignalClasses = ( element ) => {
+  String( element.className || '' )
+    .split( /\s+/ )
+    .filter( Boolean )
+    .forEach( ( className ) => {
+      if (
+        /^sm-palette-[a-z0-9_-]+$/i.test( className )
+        || /^sm-variation-\d+$/.test( className )
+        || /^sm-color-signal-\d+$/.test( className )
+        || className === 'sm-light'
+        || className === 'sm-dark'
+        || className === 'sm-palette--shifted'
+      ) {
+        element.classList.remove( className );
+      }
+    } );
+};
+
+const addNovaSignalClasses = ( element, classNames ) => {
+  String( classNames || '' )
+    .split( /\s+/ )
+    .filter( Boolean )
+    .forEach( ( className ) => element.classList.add( className ) );
+};
+
+const buildNovaSignalClassNames = ( windowRef, attributes ) => {
+  const getColorSignalClassnames = windowRef?.novablocks?.utils?.getColorSignalClassnames;
+
+  if ( typeof getColorSignalClassnames === 'function' ) {
+    const classNames = getColorSignalClassnames( attributes, true );
+
+    if ( Array.isArray( classNames ) ) {
+      return classNames.join( ' ' );
+    }
+
+    if ( typeof classNames === 'string' ) {
+      return classNames;
+    }
+  }
+
+  return [
+    `sm-palette-${ attributes.palette }`,
+    `sm-variation-${ attributes.paletteVariation }`,
+    `sm-color-signal-${ attributes.colorSignal }`,
+    attributes.useSourceColorAsReference ? 'sm-palette--shifted' : '',
+  ].filter( Boolean ).join( ' ' );
+};
+
+const syncNovaSignalScope = ( element, parentVariation, windowRef, siteVariation ) => {
+  const colorSignalAttribute = getSignalAttribute( element, 'color-signal' );
+  const children = Array.from( element.children || [] );
+
+  if ( colorSignalAttribute === null ) {
+    children.forEach( ( child ) => syncNovaSignalScope( child, parentVariation, windowRef, siteVariation ) );
+    return;
+  }
+
+  const palette = getSignalAttribute( element, 'palette' );
+
+  if ( ! palette ) {
+    children.forEach( ( child ) => syncNovaSignalScope( child, parentVariation, windowRef, siteVariation ) );
+    return;
+  }
+
+  const parsedColorSignal = Number.parseInt( colorSignalAttribute, 10 );
+  const colorSignal = Number.isNaN( parsedColorSignal ) ? 0 : Math.max( 0, parsedColorSignal );
+  const parsedPaletteVariation = Number.parseInt( getSignalAttribute( element, 'palette-variation' ), 10 );
+  const paletteVariation = normalizeVariationValue( Number.isNaN( parsedPaletteVariation ) ? 1 : parsedPaletteVariation );
+  const useSourceColorAsReference = [ '1', 'true', 'yes' ].includes(
+    String( getSignalAttribute( element, 'use-source-color-as-reference' ) || '' ).toLowerCase()
+  );
+  const sourceIndex = getSourceIndexFromPaletteId( windowRef, palette, siteVariation );
+  const absoluteVariation = addSiteVariationOffset(
+    useSourceColorAsReference ? sourceIndex + 1 : paletteVariation,
+    siteVariation
+  );
+  const nextVariation = computeColorSignal( parentVariation, colorSignal, palette, absoluteVariation, windowRef );
+  const finalVariation = useSourceColorAsReference ? 1 : removeSiteVariationOffset( nextVariation, siteVariation );
+  const finalAbsoluteVariation = useSourceColorAsReference
+    ? addSiteVariationOffset( sourceIndex + 1, siteVariation )
+    : addSiteVariationOffset( finalVariation, siteVariation );
+  const classNames = buildNovaSignalClassNames( windowRef, {
+    palette,
+    paletteVariation: finalVariation,
+    useSourceColorAsReference,
+    colorSignal,
+  } );
+  const isLight = isLightNovaVariation( windowRef, palette, finalAbsoluteVariation );
+
+  removeNovaSignalClasses( element );
+  addNovaSignalClasses( element, classNames );
+  element.classList.toggle( 'sm-light', isLight );
+  element.classList.toggle( 'sm-dark', ! isLight );
+
+  children.forEach( ( child ) => syncNovaSignalScope( child, finalAbsoluteVariation, windowRef, siteVariation ) );
+};
+
+const hasNovaSignalAncestor = ( element ) => {
+  let cursor = element.parentElement;
+
+  while ( cursor ) {
+    if ( cursor.getAttribute?.( 'data-color-signal' ) !== null ) {
+      return true;
+    }
+
+    cursor = cursor.parentElement;
+  }
+
+  return false;
+};
+
+const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
+  if ( ! windowRef.styleManager ) {
+    windowRef.styleManager = {};
+  }
+
+  windowRef.styleManager.siteColorVariation = state.variation;
+
+  Array.from( documentRef.querySelectorAll( '[data-color-signal]' ) )
+    .filter( ( element ) => ! hasNovaSignalAncestor( element ) )
+    .forEach( ( element ) => {
+      syncNovaSignalScope( element, state.variation, windowRef, state.variation );
+    } );
 };
 
 export const applyShowcaseState = ( {
@@ -402,6 +657,7 @@ export const applyShowcaseState = ( {
   state,
   siteVariation = 1,
   palettes = [],
+  windowRef = document?.defaultView || {},
 } ) => {
   const normalizedState = normalizeLabState( state );
   const documentElement = document.documentElement;
@@ -433,6 +689,8 @@ export const applyShowcaseState = ( {
   const contextualReadout = buildContextualContrastReadout( contextualPalette, normalizedState.variation, {
     dark: normalizedState.dark,
   } );
+
+  syncNovaSignalScopes( document, windowRef, normalizedState );
 
   const colors = readResolvedColors( { document, getComputedStyle } );
   writeResolvedColors( document, colors, getComputedStyle );

@@ -139,7 +139,7 @@ final class ShowcaseRenderer {
 					<p class="sm-lab-context-cell__label"><?php esc_html_e( 'Runtime contextual palette', '__plugin_txtd' ); ?></p>
 					<?php $this->render_runtime_component_sample( __( 'Synthesized from source', '__plugin_txtd' ) ); ?>
 				</div>
-				<div class="sm-lab-context-cell sm-palette-1 sm-variation-<?php echo esc_attr( $variation ); ?>" data-palette-variation="<?php echo esc_attr( $variation ); ?>" data-color-signal="2">
+				<div class="sm-lab-context-cell sm-palette-1 sm-variation-1 sm-color-signal-2" data-palette="1" data-palette-variation="1" data-color-signal="2">
 					<p class="sm-lab-context-cell__label"><?php esc_html_e( 'Nested block signal', '__plugin_txtd' ); ?></p>
 					<?php $this->render_runtime_component_sample( __( 'Shifted by block signal', '__plugin_txtd' ) ); ?>
 				</div>

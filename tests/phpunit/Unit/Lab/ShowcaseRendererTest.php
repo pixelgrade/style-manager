@@ -39,6 +39,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'Design System Dispatch', $html );
 		$this->assertStringContainsString( 'Runtime brief', $html );
 		$this->assertStringContainsString( 'View details', $html );
+		$this->assertStringContainsString( 'data-palette="1" data-palette-variation="1" data-color-signal="2"', $html );
+		$this->assertStringContainsString( 'sm-color-signal-2', $html );
 		$this->assertStringContainsString( 'Proposed semantic tier', $html );
 		$this->assertStringContainsString( 'theme.json', $html );
 		$this->assertStringContainsString( 'Anima', $html );
