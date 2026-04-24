@@ -1,25 +1,15 @@
 /** @jsx createElement */
 import { createElement } from '@wordpress/element';
-import { PanelBody, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
+import { PalettePreviewList } from './PalettePreviewList.jsx';
 
-const getPaletteOptions = ( palettes ) => [
-  ...palettes.map( ( palette ) => ( {
-    label: palette.label || palette.name || palette.id,
-    value: String( palette.id ),
-  } ) ),
-  {
-    label: 'Contextual',
-    value: 'contextual-lab',
-  },
-];
-
-export const PalettePanel = ( { palettes, state, onChange } ) => (
-  <PanelBody title="Palette" initialOpen={ true }>
-    <SelectControl
-      label="Palette"
-      value={ state.palette }
-      options={ getPaletteOptions( palettes ) }
-      onChange={ ( palette ) => onChange( { palette } ) }
+export const PalettePanel = ( { palettes, state, contextualPalette, onChange } ) => (
+  <PanelBody title="Active Runtime Context" initialOpen={ true }>
+    <PalettePreviewList
+      palettes={ palettes }
+      activePalette={ state.palette }
+      contextualPalette={ contextualPalette }
+      onSelect={ ( palette ) => onChange( { palette } ) }
     />
     <RangeControl
       label="Variation"

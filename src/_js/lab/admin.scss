@@ -78,6 +78,122 @@
   border: 1px solid #8c8f94;
 }
 
+.sm-lab-palette-list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.sm-lab-palette-row {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  background: #fff;
+  color: #1d2327;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sm-lab-palette-row[aria-pressed="true"] {
+  border-color: #2271b1;
+  box-shadow: inset 0 0 0 1px #2271b1;
+}
+
+.sm-lab-palette-row__label {
+  font-weight: 600;
+}
+
+.sm-lab-palette-row__description {
+  color: #646970;
+  font-size: 12px;
+}
+
+.sm-lab-palette-row__rail {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  min-height: 18px;
+}
+
+.sm-lab-palette-row__rail span {
+  min-width: 0;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+}
+
+.sm-lab-signal-control {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sm-lab-signal-control__label {
+  margin: 0;
+  font-weight: 600;
+}
+
+.sm-lab-segmented-control,
+.sm-lab-signal-options {
+  display: grid;
+  gap: 6px;
+}
+
+.sm-lab-segmented-control {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sm-lab-signal-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sm-lab-segmented-control button,
+.sm-lab-signal-options button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sm-lab-segmented-control button[aria-pressed="true"],
+.sm-lab-signal-options button[aria-pressed="true"] {
+  border-color: #2271b1;
+  color: #0a4b78;
+  box-shadow: inset 0 0 0 1px #2271b1;
+}
+
+.sm-lab-signal-control__bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.sm-lab-signal-control__bars span {
+  display: block;
+  width: 4px;
+  height: 6px;
+  background: #c3c4c7;
+}
+
+.sm-lab-signal-control__bars span:nth-child(2) {
+  height: 10px;
+}
+
+.sm-lab-signal-control__bars span:nth-child(3) {
+  height: 14px;
+}
+
+.sm-lab-signal-control__bars .is-active {
+  background: #2271b1;
+}
+
 @media (max-width: 960px) {
   .sm-lab-admin {
     grid-template-columns: 1fr;

@@ -6,6 +6,7 @@ import { postShowcaseState, subscribeToIframeReadback } from './iframe-bridge.js
 import { buildAdminUrl, buildShowcaseUrl, normalizeLabState } from './state.js';
 import { PalettePanel } from './sidebar/PalettePanel.jsx';
 import { ContextualPanel } from './sidebar/ContextualPanel.jsx';
+import { ColorSignalPanel } from './sidebar/ColorSignalPanel.jsx';
 
 const paramsToObject = ( search ) => Object.fromEntries( new URLSearchParams( search ).entries() );
 
@@ -113,8 +114,9 @@ export const App = ( { config } ) => {
         <div className="sm-lab-admin__title">
           <h1>Style Manager Lab</h1>
         </div>
-        <PalettePanel palettes={ palettes } state={ state } onChange={ updateState } />
+        <PalettePanel palettes={ palettes } state={ state } contextualPalette={ contextualPalette } onChange={ updateState } />
         <ContextualPanel state={ state } readback={ readback } contextualPalette={ contextualPalette } onChange={ updateState } />
+        <ColorSignalPanel state={ state } onChange={ updateState } />
         <div className="sm-lab-admin__footer">
           <Button variant="secondary" onClick={ resetState } disabled={ isResetting }>
             { isResetting ? 'Refreshing…' : 'Reset to live site state' }

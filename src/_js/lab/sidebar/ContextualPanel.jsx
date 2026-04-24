@@ -1,6 +1,10 @@
 /** @jsx createElement */
 import { createElement } from '@wordpress/element';
 import { Button, ColorPicker, PanelBody, TextControl } from '@wordpress/components';
+import {
+  buildContextualActivationPatch,
+  buildContextualSourcePatch,
+} from './contextual-state.js';
 
 export const ContextualPanel = ( { state, readback, contextualPalette, onChange } ) => {
   const paletteJson = JSON.stringify( contextualPalette || {
@@ -17,16 +21,16 @@ export const ContextualPanel = ( { state, readback, contextualPalette, onChange 
   };
 
   return (
-    <PanelBody title="Contextual Palette" initialOpen={ state.palette === 'contextual-lab' }>
+    <PanelBody title="Scoped Contextual Palette" initialOpen={ state.palette === 'contextual-lab' }>
       <TextControl
         label="Source color"
         value={ state.contextual }
         placeholder="#3366ff"
-        onChange={ ( contextual ) => onChange( { contextual, palette: 'contextual-lab' } ) }
+        onChange={ ( contextual ) => onChange( buildContextualSourcePatch( contextual ) ) }
       />
       <ColorPicker
         color={ state.contextual || '#3366ff' }
-        onChange={ ( contextual ) => onChange( { contextual, palette: 'contextual-lab' } ) }
+        onChange={ ( contextual ) => onChange( buildContextualSourcePatch( contextual ) ) }
         enableAlpha={ false }
       />
       <dl className="sm-lab-readonly-list">
@@ -40,6 +44,9 @@ export const ContextualPanel = ( { state, readback, contextualPalette, onChange 
           </div>
         ) ) }
       </dl>
+      <Button variant="secondary" onClick={ () => onChange( buildContextualActivationPatch() ) }>
+        Preview contextual as active palette
+      </Button>
       <Button variant="secondary" onClick={ copyJson }>Copy as palette JSON</Button>
     </PanelBody>
   );
