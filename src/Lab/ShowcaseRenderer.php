@@ -17,9 +17,9 @@ final class ShowcaseRenderer {
 		<main class="sm-lab-showcase__page" data-sm-lab-showcase>
 			<?php
 			$this->render_status_strip( $params );
-			$this->render_system_generator( $params );
+			$this->render_runtime_contract_explorer( $params );
 			$this->render_contextual_palette_demo( $params );
-			$this->render_context_matrix( $params );
+			$this->render_context_resilience_matrix( $params );
 			$this->render_semantic_contract();
 			$this->render_typography_stack();
 			$this->render_interactive_primitives();
@@ -63,6 +63,129 @@ final class ShowcaseRenderer {
 			</div>
 		</section>
 		<?php
+	}
+
+	private function render_runtime_contract_explorer( QueryParams $params ): void {
+		?>
+		<section class="sm-lab-zone sm-lab-contract-explorer" data-sm-lab-proof="runtime-contract-explorer">
+			<div class="sm-lab-contract-explorer__intro">
+				<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Runtime contract explorer', '__plugin_txtd' ); ?></p>
+				<h1><?php esc_html_e( 'Build on a live design-system runtime, not static swatches', '__plugin_txtd' ); ?></h1>
+				<p><?php esc_html_e( 'Style Manager resolves brand inputs, contextual palettes, Color Signal, and dark mode into contracts that themes, blocks, tools, and Pixelgrade products can consume without reimplementing palette logic.', '__plugin_txtd' ); ?></p>
+				<p class="sm-lab-contract-explorer__chain"><?php esc_html_e( 'Inputs -> Runtime -> Context scopes -> Consumer APIs -> Reference implementations', '__plugin_txtd' ); ?></p>
+			</div>
+			<?php $this->render_runtime_visual_strip( $params ); ?>
+			<div class="sm-lab-contract-explorer__workspace">
+				<?php $this->render_contract_matrix(); ?>
+				<?php $this->render_selected_contract_panels(); ?>
+			</div>
+		</section>
+		<?php
+	}
+
+	private function render_runtime_visual_strip( QueryParams $params ): void {
+		?>
+		<div class="sm-lab-runtime-strip" data-sm-lab-visual-strip>
+			<div class="sm-lab-runtime-strip__panel">
+				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Active role rail', '__plugin_txtd' ); ?></p>
+				<div class="sm-lab-runtime-strip__rail" data-sm-lab-grade-rail>
+					<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
+						<span
+							class="sm-lab-runtime-strip__grade"
+							style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
+							aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
+							<?php echo $grade === $params->variation() ? 'data-active="true"' : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						></span>
+					<?php endfor; ?>
+				</div>
+				<dl class="sm-lab-runtime-strip__facts">
+					<div>
+						<dt><?php esc_html_e( 'Palette', '__plugin_txtd' ); ?></dt>
+						<dd data-sm-lab-status-value="palette"><?php echo esc_html( $params->palette() ); ?></dd>
+					</div>
+					<div>
+						<dt><?php esc_html_e( 'Variation', '__plugin_txtd' ); ?></dt>
+						<dd data-sm-lab-status-value="variation"><?php echo esc_html( (string) $params->variation() ); ?></dd>
+					</div>
+				</dl>
+			</div>
+			<div class="sm-lab-runtime-strip__panel">
+				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal', '__plugin_txtd' ); ?></p>
+				<div class="sm-lab-signal-bars" data-sm-lab-signal-bars>
+					<?php
+					foreach ( [
+						0 => __( 'None', '__plugin_txtd' ),
+						1 => __( 'Low', '__plugin_txtd' ),
+						2 => __( 'Medium', '__plugin_txtd' ),
+						3 => __( 'High', '__plugin_txtd' ),
+					] as $signal => $label ) :
+						?>
+						<span class="sm-lab-signal-bars__item">
+							<span class="sm-lab-signal-bars__icon" aria-hidden="true">
+								<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
+									<span class="<?php echo esc_attr( $bar <= $signal ? 'is-active' : '' ); ?>"></span>
+								<?php endfor; ?>
+							</span>
+							<span><?php echo esc_html( $label ); ?></span>
+						</span>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function render_contract_matrix(): void {
+		$rows = ContractCatalog::all();
+		?>
+		<div class="sm-lab-contract-matrix" aria-label="<?php esc_attr_e( 'Style Manager runtime contracts', '__plugin_txtd' ); ?>">
+			<?php foreach ( $rows as $row ) : ?>
+				<button
+					type="button"
+					class="sm-lab-contract-row sm-lab-contract-row--<?php echo esc_attr( $row['maturity'] ); ?>"
+					data-sm-lab-contract-row="<?php echo esc_attr( $row['id'] ); ?>"
+					aria-selected="<?php echo esc_attr( 'active-palette' === $row['id'] ? 'true' : 'false' ); ?>"
+				>
+					<span class="sm-lab-contract-row__label"><?php echo esc_html( $row['label'] ); ?></span>
+					<span class="sm-lab-contract-row__maturity"><?php echo esc_html( ucfirst( $row['maturity'] ) ); ?></span>
+					<span class="sm-lab-contract-row__behavior"><?php echo esc_html( $row['visual_behavior'] ); ?></span>
+					<span class="sm-lab-contract-row__proof"><?php echo esc_html( $row['pixelgrade_proof'] ); ?></span>
+				</button>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	private function render_selected_contract_panels(): void {
+		foreach ( ContractCatalog::all() as $row ) :
+			$is_default = 'active-palette' === $row['id'];
+			?>
+			<article
+				class="sm-lab-contract-panel"
+				data-sm-lab-contract-panel="<?php echo esc_attr( $row['id'] ); ?>"
+				<?php echo $is_default ? '' : 'hidden'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			>
+				<p class="sm-lab-contract-panel__maturity"><?php echo esc_html( ucfirst( $row['maturity'] ) ); ?></p>
+				<h2><?php echo esc_html( $row['label'] ); ?></h2>
+				<p><?php echo esc_html( $row['visual_behavior'] ); ?></p>
+				<dl class="sm-lab-contract-panel__facts">
+					<div>
+						<dt><?php esc_html_e( 'Consume today', '__plugin_txtd' ); ?></dt>
+						<dd><?php echo esc_html( $row['consume_today'] ); ?></dd>
+					</div>
+					<div>
+						<dt><?php esc_html_e( 'Proposed API', '__plugin_txtd' ); ?></dt>
+						<dd><?php echo esc_html( $row['proposed_api'] ); ?></dd>
+					</div>
+					<div>
+						<dt><?php esc_html_e( 'Pixelgrade proof', '__plugin_txtd' ); ?></dt>
+						<dd><?php echo esc_html( $row['pixelgrade_proof'] ); ?></dd>
+					</div>
+				</dl>
+				<pre><code><?php echo esc_html( $row['snippet'] ); ?></code></pre>
+			</article>
+			<?php
+		endforeach;
 	}
 
 	private function render_system_generator( QueryParams $params ): void {
@@ -121,10 +244,10 @@ final class ShowcaseRenderer {
 		<?php
 	}
 
-	private function render_context_matrix( QueryParams $params ): void {
+	private function render_context_resilience_matrix( QueryParams $params ): void {
 		$variation = (string) $params->variation();
 		?>
-		<section class="sm-lab-zone sm-lab-context-matrix" data-sm-lab-proof="context-matrix">
+		<section class="sm-lab-zone sm-lab-context-matrix" data-sm-lab-proof="context-resilience">
 			<div class="sm-lab-section-heading">
 				<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Context resilience', '__plugin_txtd' ); ?></p>
 				<h2><?php esc_html_e( 'The same component survives different palette contexts', '__plugin_txtd' ); ?></h2>

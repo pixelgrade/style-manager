@@ -27,8 +27,17 @@ class ShowcaseRendererTest extends TestCase {
 			'variation' => '4',
 		] ) );
 
-		$this->assertStringContainsString( 'data-sm-lab-proof="generator"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-proof="context-matrix"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="runtime-contract-explorer"', $html );
+		$this->assertStringContainsString( 'Build on a live design-system runtime', $html );
+		$this->assertStringContainsString( 'Inputs -> Runtime -> Context scopes -> Consumer APIs -> Reference implementations', $html );
+		$this->assertStringContainsString( 'data-sm-lab-contract-row="active-palette"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-contract-row="contextual-palette"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-contract-row="color-signal"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-contract-panel="active-palette"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-visual-strip', $html );
+		$this->assertStringContainsString( 'data-sm-lab-grade-rail', $html );
+		$this->assertStringContainsString( 'data-sm-lab-signal-bars', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="context-resilience"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="contextual-proof"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="semantic-contract"', $html );
 		$this->assertStringContainsString( 'Contextual palette proof', $html );
