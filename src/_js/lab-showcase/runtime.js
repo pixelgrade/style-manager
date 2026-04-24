@@ -82,6 +82,20 @@ const getContrastRatio = ( colorA, colorB ) => {
   return ( light + 0.05 ) / ( dark + 0.05 );
 };
 
+const formatContrastRatio = ( ratio ) => `${ ratio.toFixed( 2 ) }:1`;
+
+const getContrastStatus = ( ratio ) => {
+  if ( ratio >= 4.5 ) {
+    return 'AA';
+  }
+
+  if ( ratio >= 3 ) {
+    return 'Large text';
+  }
+
+  return 'Needs rescue';
+};
+
 const pickContextualTextColor = ( background ) => (
   getContrastRatio( background, '#ffffff' ) >= getContrastRatio( background, '#111111' ) ? '#ffffff' : '#111111'
 );
@@ -138,6 +152,52 @@ export const buildContextualPalette = ( color, options = {} ) => {
   } );
 
   return palette;
+};
+
+export const buildContextualContrastReadout = ( palette, siteVariation = 1, options = {} ) => {
+  const emptyReadout = {
+    source: 'off',
+    surface: 'n/a',
+    accent: 'n/a',
+    text: 'n/a',
+    accentRatio: 'n/a',
+    accentStatus: 'Set source color',
+    textRatio: 'n/a',
+    textStatus: 'Set source color',
+  };
+
+  if ( ! palette ) {
+    return emptyReadout;
+  }
+
+  const variations = options.dark && Array.isArray( palette.darkVariations ) && palette.darkVariations.length
+    ? palette.darkVariations
+    : palette.variations;
+  const variationOffset = normalizeSiteVariation( siteVariation ) - 1;
+  const scopeVariation = normalizeSiteVariation( options.scopeVariation || siteVariation ) - 1;
+  const variation = variations?.[ ( variationOffset + scopeVariation ) % 12 ];
+
+  if ( ! variation ) {
+    return emptyReadout;
+  }
+
+  const source = palette.source?.[0] || emptyReadout.source;
+  const surface = variation.bg;
+  const accent = variation.accent;
+  const text = variation.fg1;
+  const accentRatioValue = getContrastRatio( surface, accent );
+  const textRatioValue = getContrastRatio( surface, text );
+
+  return {
+    source,
+    surface,
+    accent,
+    text,
+    accentRatio: formatContrastRatio( accentRatioValue ),
+    accentStatus: getContrastStatus( accentRatioValue ),
+    textRatio: formatContrastRatio( textRatioValue ),
+    textStatus: getContrastStatus( textRatioValue ),
+  };
 };
 
 const buildVariationCssVariables = ( variations, index, offset = 0 ) => {
@@ -209,11 +269,9 @@ const replaceClassByPattern = ( element, pattern, nextClass ) => {
 };
 
 const setStatusValue = ( documentRef, key, value ) => {
-  const node = documentRef.querySelector( `[data-sm-lab-status-value="${ key }"]` );
-
-  if ( node ) {
+  documentRef.querySelectorAll( `[data-sm-lab-status-value="${ key }"]` ).forEach( ( node ) => {
     node.textContent = value;
-  }
+  } );
 };
 
 const readResolvedColors = ( { document, getComputedStyle } ) => {
@@ -226,13 +284,58 @@ const readResolvedColors = ( { document, getComputedStyle } ) => {
   }, {} );
 };
 
-const writeResolvedColors = ( documentRef, colors ) => {
-  TOKENS.forEach( ( token ) => {
-    const node = documentRef.querySelector( `[data-token="${ token }"] [data-token-value]` );
+const findTokenReadbackScope = ( node, token ) => {
+  let cursor = node.parentElement;
 
-    if ( node ) {
-      node.textContent = colors[ token ] || 'n/a';
+  while ( cursor ) {
+    if ( cursor.getAttribute?.( 'data-token' ) === token ) {
+      return cursor;
     }
+
+    cursor = cursor.parentElement;
+  }
+
+  return node;
+};
+
+const readScopedTokenColor = ( source, token, getComputedStyle ) => (
+  String( getComputedStyle( source ).getPropertyValue( `--sm-current-${ token }-color` ) || '' ).trim()
+);
+
+const writeResolvedColors = ( documentRef, colors, getComputedStyle ) => {
+  TOKENS.forEach( ( token ) => {
+    documentRef.querySelectorAll( `[data-token="${ token }"] [data-token-value]` ).forEach( ( node ) => {
+      const scope = findTokenReadbackScope( node, token );
+      node.textContent = readScopedTokenColor( scope, token, getComputedStyle ) || colors[ token ] || 'n/a';
+    } );
+  } );
+};
+
+const writeContextualProof = ( documentRef, readout ) => {
+  Object.entries( {
+    source: readout.source,
+    surface: readout.surface,
+    accent: readout.accent,
+    text: readout.text,
+    'accent-ratio': readout.accentRatio,
+    'accent-status': readout.accentStatus,
+    'text-ratio': readout.textRatio,
+    'text-status': readout.textStatus,
+  } ).forEach( ( [ key, value ] ) => {
+    documentRef.querySelectorAll( `[data-sm-lab-contextual-value="${ key }"]` ).forEach( ( node ) => {
+      node.textContent = value;
+    } );
+  } );
+
+  Object.entries( {
+    source: readout.source,
+    surface: readout.surface,
+    accent: readout.accent,
+    text: readout.text,
+  } ).forEach( ( [ key, value ] ) => {
+    documentRef.querySelectorAll( `[data-sm-lab-contextual-swatch="${ key }"]` ).forEach( ( node ) => {
+      node.setAttribute( 'style', `background: ${ normalizeHex( value ) || 'transparent' };` );
+    } );
   } );
 };
 
@@ -327,14 +430,19 @@ export const applyShowcaseState = ( {
   const contextualCss = buildContextualPaletteCss( contextualPalette, normalizedState.variation );
   const contextualStyleNode = ensureContextualStyleNode( document );
   contextualStyleNode.textContent = contextualCss;
+  const contextualReadout = buildContextualContrastReadout( contextualPalette, normalizedState.variation, {
+    dark: normalizedState.dark,
+  } );
 
   const colors = readResolvedColors( { document, getComputedStyle } );
-  writeResolvedColors( document, colors );
+  writeResolvedColors( document, colors, getComputedStyle );
+  writeContextualProof( document, contextualReadout );
 
   return {
     colors,
     contextualCss,
     contextualPalette,
+    contextualReadout,
     state: normalizedState,
   };
 };
@@ -362,6 +470,7 @@ const publishReadback = ( windowRef, payload ) => {
     height: windowRef.document.documentElement.scrollHeight,
     colors: payload.colors,
     contextualPalette: payload.contextualPalette,
+    contextualReadout: payload.contextualReadout,
   }, windowRef.location.origin );
 };
 

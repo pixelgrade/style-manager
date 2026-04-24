@@ -17,10 +17,13 @@ final class ShowcaseRenderer {
 		<main class="sm-lab-showcase__page" data-sm-lab-showcase>
 			<?php
 			$this->render_status_strip( $params );
+			$this->render_system_generator( $params );
+			$this->render_contextual_palette_demo( $params );
+			$this->render_context_matrix( $params );
+			$this->render_semantic_contract();
 			$this->render_typography_stack();
 			$this->render_interactive_primitives();
 			$this->render_color_system_preview();
-			$this->render_contextual_palette_demo( $params );
 			$this->render_nova_blocks_zone();
 			$this->render_tosca_inspired_zone();
 			?>
@@ -59,6 +62,156 @@ final class ShowcaseRenderer {
 				<?php endforeach; ?>
 			</div>
 		</section>
+		<?php
+	}
+
+	private function render_system_generator( QueryParams $params ): void {
+		?>
+		<section class="sm-lab-zone sm-lab-generator" data-sm-lab-proof="generator">
+			<div class="sm-lab-generator__intro">
+				<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'System generator', '__plugin_txtd' ); ?></p>
+				<h1><?php esc_html_e( 'One brand input becomes a complete runtime system', '__plugin_txtd' ); ?></h1>
+				<p><?php esc_html_e( 'Style Manager turns a selected palette and variation into surface, accent, and text roles that real theme and block UI can consume without knowing how the scale was generated.', '__plugin_txtd' ); ?></p>
+			</div>
+			<div class="sm-lab-flow" aria-label="<?php esc_attr_e( 'Style Manager design-system flow', '__plugin_txtd' ); ?>">
+				<div class="sm-lab-flow__step">
+					<span class="sm-lab-flow__index">1</span>
+					<h2><?php esc_html_e( 'Brand input', '__plugin_txtd' ); ?></h2>
+					<p><?php esc_html_e( 'Palette source and active color signal set the runtime context.', '__plugin_txtd' ); ?></p>
+					<dl class="sm-lab-flow__facts">
+						<div>
+							<dt><?php esc_html_e( 'Palette', '__plugin_txtd' ); ?></dt>
+							<dd><?php echo esc_html( $params->palette() ); ?></dd>
+						</div>
+						<div>
+							<dt><?php esc_html_e( 'Variation', '__plugin_txtd' ); ?></dt>
+							<dd data-sm-lab-status-value="variation"><?php echo esc_html( (string) $params->variation() ); ?></dd>
+						</div>
+					</dl>
+				</div>
+				<div class="sm-lab-flow__step sm-lab-flow__step--roles">
+					<span class="sm-lab-flow__index">2</span>
+					<h2><?php esc_html_e( 'Generated roles', '__plugin_txtd' ); ?></h2>
+					<p><?php esc_html_e( 'The palette resolves into the four runtime roles that drive the page.', '__plugin_txtd' ); ?></p>
+					<div class="sm-lab-role-grid">
+						<?php
+						foreach ( [
+							'bg'     => __( 'Surface', '__plugin_txtd' ),
+							'accent' => __( 'Accent', '__plugin_txtd' ),
+							'fg1'    => __( 'Text primary', '__plugin_txtd' ),
+							'fg2'    => __( 'Text secondary', '__plugin_txtd' ),
+						] as $token => $label ) :
+							?>
+							<div class="sm-lab-role" data-token="<?php echo esc_attr( $token ); ?>">
+								<span class="sm-lab-role__chip" style="background: var(--sm-current-<?php echo esc_attr( $token ); ?>-color);"></span>
+								<span><?php echo esc_html( $label ); ?></span>
+								<code data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></code>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<div class="sm-lab-flow__step">
+					<span class="sm-lab-flow__index">3</span>
+					<h2><?php esc_html_e( 'Usable UI', '__plugin_txtd' ); ?></h2>
+					<p><?php esc_html_e( 'The same roles immediately skin real headings, actions, inputs, and nested blocks.', '__plugin_txtd' ); ?></p>
+					<?php $this->render_runtime_component_sample( __( 'Active runtime sample', '__plugin_txtd' ) ); ?>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
+	private function render_context_matrix( QueryParams $params ): void {
+		$variation = (string) $params->variation();
+		?>
+		<section class="sm-lab-zone sm-lab-context-matrix" data-sm-lab-proof="context-matrix">
+			<div class="sm-lab-section-heading">
+				<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Context resilience', '__plugin_txtd' ); ?></p>
+				<h2><?php esc_html_e( 'The same component survives different palette contexts', '__plugin_txtd' ); ?></h2>
+				<p><?php esc_html_e( 'No component-specific color choices are needed here. Each sample inherits the nearest Style Manager palette scope and keeps its structure intact.', '__plugin_txtd' ); ?></p>
+			</div>
+			<div class="sm-lab-context-grid">
+				<div class="sm-lab-context-cell">
+					<p class="sm-lab-context-cell__label"><?php esc_html_e( 'Active site context', '__plugin_txtd' ); ?></p>
+					<?php $this->render_runtime_component_sample( __( 'Inherited from body', '__plugin_txtd' ) ); ?>
+				</div>
+				<div class="sm-lab-context-cell sm-palette-<?php echo esc_attr( ContextualPalette::ID ); ?> sm-variation-<?php echo esc_attr( $variation ); ?>" data-palette-variation="<?php echo esc_attr( $variation ); ?>">
+					<p class="sm-lab-context-cell__label"><?php esc_html_e( 'Runtime contextual palette', '__plugin_txtd' ); ?></p>
+					<?php $this->render_runtime_component_sample( __( 'Synthesized from source', '__plugin_txtd' ) ); ?>
+				</div>
+				<div class="sm-lab-context-cell sm-palette-1 sm-variation-<?php echo esc_attr( $variation ); ?>" data-palette-variation="<?php echo esc_attr( $variation ); ?>" data-color-signal="2">
+					<p class="sm-lab-context-cell__label"><?php esc_html_e( 'Nested block signal', '__plugin_txtd' ); ?></p>
+					<?php $this->render_runtime_component_sample( __( 'Shifted by block signal', '__plugin_txtd' ) ); ?>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
+	private function render_semantic_contract(): void {
+		?>
+		<section class="sm-lab-zone sm-lab-contract" data-sm-lab-proof="semantic-contract">
+			<div class="sm-lab-section-heading">
+				<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Consumer contract', '__plugin_txtd' ); ?></p>
+				<h2><?php esc_html_e( 'Expose the engine through stable semantic roles', '__plugin_txtd' ); ?></h2>
+				<p><?php esc_html_e( 'The raw palette machinery stays inside Style Manager. Themes, blocks, Site Editor bridges, and AI design tools should read the semantic layer.', '__plugin_txtd' ); ?></p>
+			</div>
+			<div class="sm-lab-contract__map">
+				<div class="sm-lab-contract__column">
+					<h3><?php esc_html_e( 'Internal runtime roles', '__plugin_txtd' ); ?></h3>
+					<ul>
+						<li data-token="bg"><code>--sm-current-bg-color</code><span data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></span></li>
+						<li data-token="accent"><code>--sm-current-accent-color</code><span data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></span></li>
+						<li data-token="fg1"><code>--sm-current-fg1-color</code><span data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></span></li>
+						<li data-token="fg2"><code>--sm-current-fg2-color</code><span data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></span></li>
+					</ul>
+				</div>
+				<div class="sm-lab-contract__column">
+					<h3><?php esc_html_e( 'Proposed semantic tier', '__plugin_txtd' ); ?></h3>
+					<ul>
+						<li><code>--sm-surface</code><span><?php esc_html_e( 'page and section surfaces', '__plugin_txtd' ); ?></span></li>
+						<li><code>--sm-text-primary</code><span><?php esc_html_e( 'body and heading text', '__plugin_txtd' ); ?></span></li>
+						<li><code>--sm-text-secondary</code><span><?php esc_html_e( 'captions and metadata', '__plugin_txtd' ); ?></span></li>
+						<li><code>--sm-accent</code><span><?php esc_html_e( 'links and actions', '__plugin_txtd' ); ?></span></li>
+					</ul>
+				</div>
+				<div class="sm-lab-contract__column">
+					<h3><?php esc_html_e( 'WordPress consumers', '__plugin_txtd' ); ?></h3>
+					<ul>
+						<li><code>theme.json</code><span><?php esc_html_e( 'Site Editor presets', '__plugin_txtd' ); ?></span></li>
+						<li><code>Anima --theme-*</code><span><?php esc_html_e( 'theme typography and color roles', '__plugin_txtd' ); ?></span></li>
+						<li><code>Nova Blocks --nb-*</code><span><?php esc_html_e( 'block-level color-signal behavior', '__plugin_txtd' ); ?></span></li>
+					</ul>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
+	private function render_runtime_component_sample( string $context_label ): void {
+		?>
+		<article class="sm-lab-component-sample">
+			<div class="sm-lab-component-sample__meta">
+				<p class="sm-lab-component-sample__kicker"><?php esc_html_e( 'Runtime brief', '__plugin_txtd' ); ?></p>
+				<span><?php echo esc_html( $context_label ); ?></span>
+			</div>
+			<h3><?php esc_html_e( 'Design System Dispatch', '__plugin_txtd' ); ?></h3>
+			<p><?php esc_html_e( 'A palette change becomes stable surface, text, action, and nested-block decisions without this component owning a color recipe.', '__plugin_txtd' ); ?></p>
+			<dl class="sm-lab-component-sample__details">
+				<div>
+					<dt><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></dt>
+					<dd data-token="bg"><span data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></span></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></dt>
+					<dd data-token="accent"><span data-token-value><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></span></dd>
+				</div>
+			</dl>
+			<div class="sm-lab-component-sample__actions">
+				<a class="sm-lab-button sm-lab-button--primary" href="#sm-lab-primary"><?php esc_html_e( 'View details', '__plugin_txtd' ); ?></a>
+				<a class="sm-lab-button sm-lab-button--outline" href="#sm-lab-secondary"><?php esc_html_e( 'Open pattern', '__plugin_txtd' ); ?></a>
+			</div>
+		</article>
 		<?php
 	}
 
@@ -117,12 +270,68 @@ final class ShowcaseRenderer {
 	}
 
 	private function render_contextual_palette_demo( QueryParams $params ): void {
+		$variation = (string) $params->variation();
 		?>
-		<section class="sm-lab-zone sm-lab-contextual sm-palette-<?php echo esc_attr( ContextualPalette::ID ); ?> sm-variation-<?php echo esc_attr( (string) $params->variation() ); ?>" data-palette="<?php echo esc_attr( ContextualPalette::ID ); ?>">
-			<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Contextual palette', '__plugin_txtd' ); ?></p>
-			<h2><?php esc_html_e( 'Runtime Contextual Surface', '__plugin_txtd' ); ?></h2>
-			<p><?php esc_html_e( 'This zone is intentionally generated from the sidebar source color and never writes to saved options.', '__plugin_txtd' ); ?></p>
-			<a class="sm-lab-button sm-lab-button--primary" href="#contextual"><?php esc_html_e( 'Inspect contrast', '__plugin_txtd' ); ?></a>
+		<section class="sm-lab-zone sm-lab-contextual sm-lab-contextual-proof sm-palette-<?php echo esc_attr( ContextualPalette::ID ); ?> sm-variation-<?php echo esc_attr( $variation ); ?>" data-palette="<?php echo esc_attr( ContextualPalette::ID ); ?>" data-palette-variation="<?php echo esc_attr( $variation ); ?>" data-sm-lab-proof="contextual-proof">
+			<div class="sm-lab-section-heading">
+				<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Contextual palette proof', '__plugin_txtd' ); ?></p>
+				<h2><?php esc_html_e( 'A local source color becomes a usable design-system context', '__plugin_txtd' ); ?></h2>
+				<p><?php esc_html_e( 'This proof synthesizes a palette at runtime, applies it to a scoped section, reads its generated roles, and exposes where future safe-token aliases should rescue contrast.', '__plugin_txtd' ); ?></p>
+			</div>
+			<div class="sm-lab-contextual-proof__grid">
+				<div class="sm-lab-contextual-proof__panel sm-lab-contextual-proof__source">
+					<p class="sm-lab-contextual-proof__label"><?php esc_html_e( 'Source color', '__plugin_txtd' ); ?></p>
+					<div class="sm-lab-contextual-proof__source-value">
+						<span class="sm-lab-contextual-proof__chip" data-sm-lab-contextual-swatch="source"></span>
+						<code data-sm-lab-contextual-value="source"><?php echo esc_html( '' !== $params->contextual() ? $params->contextual() : 'off' ); ?></code>
+					</div>
+					<p><?php esc_html_e( 'Picked in the Lab controls, generated only for this preview, and never written into saved options.', '__plugin_txtd' ); ?></p>
+				</div>
+				<div class="sm-lab-contextual-proof__panel">
+					<p class="sm-lab-contextual-proof__label"><?php esc_html_e( 'Generated runtime roles', '__plugin_txtd' ); ?></p>
+					<div class="sm-lab-contextual-roles">
+						<?php
+						foreach ( [
+							'surface' => __( 'Surface', '__plugin_txtd' ),
+							'accent'  => __( 'Accent', '__plugin_txtd' ),
+							'text'    => __( 'Text', '__plugin_txtd' ),
+						] as $role => $label ) :
+							?>
+							<div class="sm-lab-contextual-role">
+								<span class="sm-lab-contextual-proof__chip" data-sm-lab-contextual-swatch="<?php echo esc_attr( $role ); ?>"></span>
+								<span><?php echo esc_html( $label ); ?></span>
+								<code data-sm-lab-contextual-value="<?php echo esc_attr( $role ); ?>"><?php esc_html_e( 'pending', '__plugin_txtd' ); ?></code>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<div class="sm-lab-contextual-proof__panel">
+					<p class="sm-lab-contextual-proof__label"><?php esc_html_e( 'Contrast readout', '__plugin_txtd' ); ?></p>
+					<div class="sm-lab-contrast-readout">
+						<div>
+							<span><?php esc_html_e( 'Accent on surface', '__plugin_txtd' ); ?></span>
+							<strong data-sm-lab-contextual-value="accent-ratio"><?php esc_html_e( 'n/a', '__plugin_txtd' ); ?></strong>
+							<em data-sm-lab-contextual-value="accent-status"><?php esc_html_e( 'Set source color', '__plugin_txtd' ); ?></em>
+						</div>
+						<div>
+							<span><?php esc_html_e( 'Text on surface', '__plugin_txtd' ); ?></span>
+							<strong data-sm-lab-contextual-value="text-ratio"><?php esc_html_e( 'n/a', '__plugin_txtd' ); ?></strong>
+							<em data-sm-lab-contextual-value="text-status"><?php esc_html_e( 'Set source color', '__plugin_txtd' ); ?></em>
+						</div>
+					</div>
+				</div>
+				<div class="sm-lab-contextual-proof__panel sm-lab-contextual-proof__safe">
+					<p class="sm-lab-contextual-proof__label"><?php esc_html_e( 'Safe-token direction', '__plugin_txtd' ); ?></p>
+					<p><?php esc_html_e( 'The next useful contract is not another raw swatch. It is a safe semantic alias that can resolve to adjacent generated roles when a local palette misses its contrast target.', '__plugin_txtd' ); ?></p>
+					<ul>
+						<li><code>--sm-accent-safe</code></li>
+						<li><code>--sm-text-safe</code></li>
+					</ul>
+				</div>
+			</div>
+			<div class="sm-lab-contextual-proof__component">
+				<?php $this->render_runtime_component_sample( __( 'Scoped contextual palette', '__plugin_txtd' ) ); ?>
+			</div>
 		</section>
 		<?php
 	}

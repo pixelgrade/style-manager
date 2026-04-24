@@ -1,0 +1,47 @@
+<?php
+declare ( strict_types = 1 );
+
+namespace Pixelgrade\StyleManager\Tests\Unit\Lab;
+
+use Brain\Monkey\Functions;
+use Pixelgrade\StyleManager\Lab\QueryParams;
+use Pixelgrade\StyleManager\Lab\ShowcaseRenderer;
+use Pixelgrade\StyleManager\Tests\Unit\TestCase;
+
+class ShowcaseRendererTest extends TestCase {
+	public function test_render_outputs_unique_value_showcase_sections(): void {
+		Functions\when( 'esc_attr' )->alias( static fn( $text ) => (string) $text );
+		Functions\when( 'esc_html' )->alias( static fn( $text ) => (string) $text );
+		Functions\when( '__' )->alias( static fn( $text, ...$args ) => (string) $text );
+		Functions\when( 'esc_attr_e' )->alias( static function ( $text, ...$args ): void {
+			echo (string) $text;
+		} );
+		Functions\when( 'esc_html_e' )->alias( static function ( $text, ...$args ): void {
+			echo (string) $text;
+		} );
+		Functions\when( 'esc_html__' )->alias( static fn( $text, ...$args ) => (string) $text );
+		Functions\when( 'do_blocks' )->alias( static fn( string $markup ): string => $markup );
+
+		$html = ( new ShowcaseRenderer() )->render( QueryParams::from_array( [
+			'palette'   => 'brand',
+			'variation' => '4',
+		] ) );
+
+		$this->assertStringContainsString( 'data-sm-lab-proof="generator"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="context-matrix"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="contextual-proof"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="semantic-contract"', $html );
+		$this->assertStringContainsString( 'Contextual palette proof', $html );
+		$this->assertStringContainsString( 'Source color', $html );
+		$this->assertStringContainsString( 'Generated runtime roles', $html );
+		$this->assertStringContainsString( 'Contrast readout', $html );
+		$this->assertStringContainsString( 'Safe-token direction', $html );
+		$this->assertStringContainsString( 'Design System Dispatch', $html );
+		$this->assertStringContainsString( 'Runtime brief', $html );
+		$this->assertStringContainsString( 'View details', $html );
+		$this->assertStringContainsString( 'Proposed semantic tier', $html );
+		$this->assertStringContainsString( 'theme.json', $html );
+		$this->assertStringContainsString( 'Anima', $html );
+		$this->assertStringContainsString( 'Nova Blocks', $html );
+	}
+}

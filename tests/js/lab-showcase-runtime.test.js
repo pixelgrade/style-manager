@@ -2,6 +2,7 @@ import {
   applyShowcaseState,
   buildContextualPalette,
   buildContextualPaletteCss,
+  buildContextualContrastReadout,
   buildRuntimePaletteCss,
   dispatchShowcaseState,
 } from '../../src/_js/lab-showcase/runtime.js';
@@ -214,6 +215,12 @@ const createSwatch = ( documentRef, token ) => {
   return swatch;
 };
 
+const createContextualReadout = ( documentRef, key ) => {
+  const value = documentRef.createElement( 'span' );
+  value.setAttribute( 'data-sm-lab-contextual-value', key );
+  return value;
+};
+
 const createRuntimePalette = () => ( {
   id: 'brand',
   sourceIndex: 6,
@@ -243,8 +250,25 @@ const createShowcaseDocument = () => {
     documentRef.body.appendChild( createStatusValue( documentRef, key ) );
   } );
 
+  documentRef.body.appendChild( createStatusValue( documentRef, 'variation' ) );
+
   [ 'bg', 'accent', 'fg1', 'fg2' ].forEach( ( token ) => {
     documentRef.body.appendChild( createSwatch( documentRef, token ) );
+  } );
+
+  documentRef.body.appendChild( createSwatch( documentRef, 'accent' ) );
+
+  [
+    'source',
+    'surface',
+    'accent',
+    'text',
+    'accent-ratio',
+    'accent-status',
+    'text-ratio',
+    'text-status',
+  ].forEach( ( key ) => {
+    documentRef.body.appendChild( createContextualReadout( documentRef, key ) );
   } );
 
   const contextualZone = documentRef.createElement( 'section' );
@@ -267,6 +291,17 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     assert.equal( palette.id, 'contextual-lab', 'contextual palettes should use the Lab palette id' );
     assert.equal( palette.variations[0].bg, '#fff1eb', 'contextual palette generation should stay aligned with the PHP helper' );
     assert.equal( palette.darkVariations[11].fg1, '#ffffff', 'dark contextual variations should preserve accessible foregrounds' );
+  }
+
+  {
+    const readout = buildContextualContrastReadout( buildContextualPalette( '#ff5500' ), 4 );
+
+    assert.equal( readout.source, '#ff5500', 'contextual readouts should preserve the source color' );
+    assert.equal( readout.surface, '#ff5500', 'contextual readouts should follow the effective scoped variation surface' );
+    assert.equal( readout.accent, '#111111', 'contextual readouts should expose the effective scoped accent role' );
+    assert.equal( readout.text, '#111111', 'contextual readouts should expose the text role' );
+    assert.equal( readout.textStatus, 'AA', 'contextual readouts should classify text contrast' );
+    assert.match( readout.accentRatio, /^\d+\.\d{2}:1$/, 'contextual readouts should format accent contrast ratios' );
   }
 
   {
@@ -324,11 +359,25 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '4',
       'status labels should reflect the live variation'
     );
+    documentRef.querySelectorAll( '[data-sm-lab-status-value="variation"]' ).forEach( ( node ) => {
+      assert.equal(
+        node.textContent,
+        '4',
+        'every matching status label should reflect the live variation'
+      );
+    } );
     assert.equal(
       documentRef.querySelector( '[data-token="accent"] [data-token-value]' )?.textContent,
       '#ff5500',
       'swatch readbacks should refresh from the live computed colors'
     );
+    documentRef.querySelectorAll( '[data-token="accent"] [data-token-value]' ).forEach( ( node ) => {
+      assert.equal(
+        node.textContent,
+        '#ff5500',
+        'every matching swatch readback should refresh from the live computed colors'
+      );
+    } );
     assert.ok(
       documentRef.querySelector( '#style-manager-lab-contextual-palette' )?.textContent.includes( '--sm-bg-color-1: #ffbb99;' ),
       'the contextual palette style element should refresh with the live variation offset'
@@ -348,6 +397,22 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );
+    assert.equal( result.contextualReadout?.surface, '#d14600', 'applyShowcaseState should return the contextual proof readout for the active dark mode' );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-contextual-value="source"]' )?.textContent,
+      '#ff5500',
+      'contextual proof source values should update from live state'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-contextual-value="surface"]' )?.textContent,
+      '#d14600',
+      'contextual proof surface values should update from the selected variation'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-contextual-value="text-status"]' )?.textContent,
+      'AA',
+      'contextual proof contrast labels should update from the generated palette'
+    );
 
     let receivedEvent = null;
     dispatchShowcaseState( {
@@ -365,5 +430,56 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     assert.equal( receivedEvent.type, 'style-manager-lab:showcase-state', 'runtime should dispatch a state event for showcase adapters' );
     assert.equal( receivedEvent.detail.state.variation, 4, 'runtime state events should include normalized variation' );
     assert.equal( receivedEvent.detail.state.dark, true, 'runtime state events should include normalized dark mode' );
+  }
+
+  {
+    const documentRef = createShowcaseDocument();
+    const contextualZone = documentRef.querySelector( '[data-palette="contextual-lab"]' );
+    contextualZone.appendChild( createSwatch( documentRef, 'accent' ) );
+
+    const computedValues = {
+      '--sm-current-bg-color': '#101010',
+      '--sm-current-accent-color': '#ff5500',
+      '--sm-current-fg1-color': '#fafafa',
+      '--sm-current-fg2-color': '#d7d7d7',
+    };
+    const hasContextualAncestor = ( element ) => {
+      let cursor = element;
+
+      while ( cursor ) {
+        if ( cursor.getAttribute?.( 'data-palette' ) === 'contextual-lab' ) {
+          return true;
+        }
+
+        cursor = cursor.parentElement;
+      }
+
+      return false;
+    };
+
+    applyShowcaseState( {
+      document: documentRef,
+      getComputedStyle: ( element ) => ( {
+        getPropertyValue: ( property ) => {
+          if ( hasContextualAncestor( element ) && property === '--sm-current-accent-color' ) {
+            return '#111111';
+          }
+
+          return computedValues[ property ] || '';
+        },
+      } ),
+      state: {
+        palette: 'contextual-lab',
+        variation: 4,
+        contextual: '#ff5500',
+      },
+      palettes: [ createRuntimePalette() ],
+    } );
+
+    assert.equal(
+      contextualZone.querySelector( '[data-token="accent"] [data-token-value]' )?.textContent,
+      '#111111',
+      'token readbacks inside scoped palette zones should read from their own computed context'
+    );
   }
 };
