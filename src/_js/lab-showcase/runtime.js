@@ -653,6 +653,12 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
 
 const getSignalResultVariation = ( state ) => Math.min( state.parentVariation + state.signal, 12 );
 
+const getComponentTokenGrades = ( signalVariation ) => ( {
+  label: Math.max( 1, signalVariation - 5 ),
+  button: signalVariation,
+  shadow: Math.min( 12, signalVariation + 2 ),
+} );
+
 const updateSignalPreviewScopes = ( documentRef, state ) => {
   const signalVariation = getSignalResultVariation( state );
 
@@ -668,12 +674,21 @@ const updateSignalPreviewScopes = ( documentRef, state ) => {
 
 const writeVisualProofState = ( documentRef, state ) => {
   const signalVariation = getSignalResultVariation( state );
+  const signalShifted = signalVariation !== state.parentVariation;
 
   documentRef.querySelectorAll( '[data-sm-lab-grade-swatch]' ).forEach( ( node ) => {
-    const isActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( state.variation );
+    const isActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( state.parentVariation );
     const isSignalActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( signalVariation );
     node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
+    node.setAttribute( 'data-parent-active', isActive ? 'true' : 'false' );
     node.setAttribute( 'data-signal-active', isSignalActive ? 'true' : 'false' );
+    node.setAttribute( 'data-resolved-active', isSignalActive ? 'true' : 'false' );
+  } );
+
+  documentRef.querySelectorAll( '[data-sm-lab-grade-rail]' ).forEach( ( node ) => {
+    node.setAttribute( 'data-sm-lab-parent-grade', String( state.parentVariation ) );
+    node.setAttribute( 'data-sm-lab-resolved-grade', String( signalVariation ) );
+    node.setAttribute( 'data-sm-lab-signal-shifted', signalShifted ? 'true' : 'false' );
   } );
 
   documentRef.querySelectorAll( '[data-sm-lab-signal-option]' ).forEach( ( node ) => {
@@ -687,6 +702,12 @@ const writeVisualProofState = ( documentRef, state ) => {
     variation: signalVariation,
   } ).forEach( ( [ key, value ] ) => {
     documentRef.querySelectorAll( `[data-sm-lab-signal-result="${ key }"]` ).forEach( ( node ) => {
+      node.textContent = String( value );
+    } );
+  } );
+
+  Object.entries( getComponentTokenGrades( signalVariation ) ).forEach( ( [ key, value ] ) => {
+    documentRef.querySelectorAll( `[data-sm-lab-component-grade="${ key }"]` ).forEach( ( node ) => {
       node.textContent = String( value );
     } );
   } );

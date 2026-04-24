@@ -23,8 +23,10 @@ class ShowcaseRendererTest extends TestCase {
 		Functions\when( 'do_blocks' )->alias( static fn( string $markup ): string => $markup );
 
 		$html = ( new ShowcaseRenderer() )->render( QueryParams::from_array( [
-			'palette'   => 'brand',
-			'variation' => '4',
+			'palette'         => 'brand',
+			'variation'       => '4',
+			'parentVariation' => '5',
+			'signal'          => '2',
 		] ) );
 
 		$this->assertStringContainsString( 'data-sm-lab-proof="runtime-contract-explorer"', $html );
@@ -47,10 +49,21 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="mapping"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-result="variation"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-callout="action"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-role-marker="active"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-role-marker="parent"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="signal"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-parent-grade="5"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-resolved-grade="7"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-signal-shifted="true"', $html );
+		$this->assertStringContainsString( 'data-parent-active="true"', $html );
+		$this->assertStringContainsString( 'data-resolved-active="true"', $html );
 		$this->assertStringContainsString( 'data-signal-active="true"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-preview', $html );
+		$this->assertStringContainsString( 'data-sm-lab-button-token-map', $html );
+		$this->assertStringContainsString( 'data-sm-lab-component-grade="button"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-component-grade="label"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-component-grade="shadow"', $html );
+		$this->assertStringContainsString( 'Make a reservation', $html );
+		$this->assertStringContainsString( '--sm-current-accent-color', $html );
 		$this->assertStringContainsString( 'data-sm-lab-grade-rail', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-bars', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="grade-rail"', $html );

@@ -252,10 +252,14 @@ const createShowcaseDocument = () => {
 
   documentRef.body.appendChild( createStatusValue( documentRef, 'variation' ) );
 
+  const gradeRail = documentRef.createElement( 'div' );
+  gradeRail.setAttribute( 'data-sm-lab-grade-rail', '1' );
+  documentRef.body.appendChild( gradeRail );
+
   for ( let grade = 1; grade <= 12; grade += 1 ) {
     const chip = documentRef.createElement( 'span' );
     chip.setAttribute( 'data-sm-lab-grade-swatch', String( grade ) );
-    documentRef.body.appendChild( chip );
+    gradeRail.appendChild( chip );
   }
 
   for ( let signal = 0; signal <= 3; signal += 1 ) {
@@ -309,6 +313,12 @@ const createShowcaseDocument = () => {
   signalPreview.setAttribute( 'data-color-signal', '0' );
   signalPreview.className = 'sm-palette-1 sm-variation-1 sm-color-signal-0';
   documentRef.body.appendChild( signalPreview );
+
+  [ 'label', 'button', 'shadow' ].forEach( ( part ) => {
+    const grade = documentRef.createElement( 'strong' );
+    grade.setAttribute( 'data-sm-lab-component-grade', part );
+    signalPreview.appendChild( grade );
+  } );
 
   return documentRef;
 };
@@ -425,9 +435,29 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'nested palette variation scopes should update their variation class'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-parent-grade' ),
+      '5',
+      'grade rail should expose the parent context grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-resolved-grade' ),
+      '7',
+      'grade rail should expose the signal-resolved grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-signal-shifted' ),
       'true',
-      'active grade marker should follow selected variation'
+      'grade rail should expose whether signal shifted the parent context'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="5"]' )?.getAttribute( 'data-parent-active' ),
+      'true',
+      'parent grade marker should follow the parent context'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-parent-active' ),
+      'false',
+      'body variation should not be treated as the Color Signal parent marker'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-signal-active' ),
@@ -435,9 +465,9 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'signal grade marker should follow the resolved child variation'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="1"]' )?.getAttribute( 'data-active' ),
-      'false',
-      'inactive grade markers should be cleared when variation changes'
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-resolved-active' ),
+      'true',
+      'resolved grade marker should follow the signal-resolved child variation'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-option="2"]' )?.getAttribute( 'data-active' ),
@@ -490,6 +520,21 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     assert.ok(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-color-signal-2' ),
       'signal preview scope should update its signal class'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-component-grade="label"]' )?.textContent,
+      '2',
+      'button label callout should track the resolved contrast grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-component-grade="button"]' )?.textContent,
+      '7',
+      'button fill callout should track the signal-resolved grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-component-grade="shadow"]' )?.textContent,
+      '9',
+      'button shadow callout should track the deeper support grade'
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );

@@ -84,7 +84,11 @@ final class ShowcaseRenderer {
 	}
 
 	private function render_runtime_visual_strip( QueryParams $params ): void {
-		$signal_variation = min( $params->parent_variation() + $params->signal(), 12 );
+		$parent_variation = $params->parent_variation();
+		$signal_variation = min( $parent_variation + $params->signal(), 12 );
+		$signal_shifted   = $signal_variation !== $parent_variation;
+		$label_grade      = max( 1, $signal_variation - 5 );
+		$shadow_grade     = min( 12, $signal_variation + 2 );
 		?>
 		<div class="sm-lab-runtime-strip sm-lab-resolution-path" data-sm-lab-visual-strip data-sm-lab-resolution-path>
 			<div class="sm-lab-resolution-path__header">
@@ -156,21 +160,30 @@ final class ShowcaseRenderer {
 						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Role rail', '__plugin_txtd' ); ?></p>
 					</div>
 					<h2><?php esc_html_e( 'Resolved role rail', '__plugin_txtd' ); ?></h2>
-					<div class="sm-lab-runtime-strip__rail" data-sm-lab-grade-rail data-sm-lab-proof="grade-rail">
+					<div
+						class="sm-lab-runtime-strip__rail"
+						data-sm-lab-grade-rail
+						data-sm-lab-proof="grade-rail"
+						data-sm-lab-parent-grade="<?php echo esc_attr( (string) $parent_variation ); ?>"
+						data-sm-lab-resolved-grade="<?php echo esc_attr( (string) $signal_variation ); ?>"
+						data-sm-lab-signal-shifted="<?php echo esc_attr( $signal_shifted ? 'true' : 'false' ); ?>"
+					>
 						<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
 							<span
 								class="sm-lab-runtime-strip__grade"
 								data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
 								style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
 								aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
-								data-active="<?php echo esc_attr( $grade === $params->variation() ? 'true' : 'false' ); ?>"
+								data-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
+								data-parent-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
 								data-signal-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
+								data-resolved-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
 							></span>
 						<?php endfor; ?>
 					</div>
 					<div class="sm-lab-role-markers">
 						<span data-sm-lab-role-marker="palette"><small><?php esc_html_e( 'Palette', '__plugin_txtd' ); ?></small><strong data-sm-lab-status-value="palette"><?php echo esc_html( $params->palette() ); ?></strong></span>
-						<span data-sm-lab-role-marker="active"><small><?php esc_html_e( 'Variation', '__plugin_txtd' ); ?></small><strong data-sm-lab-status-value="variation"><?php echo esc_html( (string) $params->variation() ); ?></strong></span>
+						<span data-sm-lab-role-marker="parent"><small><?php esc_html_e( 'Parent grade', '__plugin_txtd' ); ?></small><strong data-sm-lab-signal-result="parent"><?php echo esc_html( (string) $parent_variation ); ?></strong></span>
 						<span data-sm-lab-role-marker="signal"><small><?php esc_html_e( 'Signal grade', '__plugin_txtd' ); ?></small><strong data-sm-lab-signal-result="variation"><?php echo esc_html( (string) $signal_variation ); ?></strong></span>
 						<span data-sm-lab-role-marker="source"><small><?php esc_html_e( 'Source anchor', '__plugin_txtd' ); ?></small><strong><?php esc_html_e( 'grade 7', '__plugin_txtd' ); ?></strong></span>
 					</div>
@@ -185,16 +198,48 @@ final class ShowcaseRenderer {
 					<div class="sm-lab-block-map__sample">
 						<div
 							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $signal_variation ); ?> sm-color-signal-<?php echo esc_attr( (string) $params->signal() ); ?>"
-							data-sm-lab-component-callout="surface"
+							data-sm-lab-button-token-map
 							data-sm-lab-signal-preview
 							data-palette="<?php echo esc_attr( $params->palette() ); ?>"
 							data-palette-variation="<?php echo esc_attr( (string) $signal_variation ); ?>"
 							data-color-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
 						>
-							<span class="sm-lab-block-map__surface"><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></span>
-							<strong class="sm-lab-block-map__text" data-sm-lab-component-callout="text"><?php esc_html_e( 'Heading and copy', '__plugin_txtd' ); ?></strong>
-							<span class="sm-lab-block-map__action" data-sm-lab-component-callout="action"><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></span>
-							<span class="sm-lab-block-map__shadow" data-sm-lab-component-callout="shadow"><?php esc_html_e( 'Border / shadow', '__plugin_txtd' ); ?></span>
+							<div class="sm-lab-button-token-map__rail" aria-hidden="true">
+								<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
+									<span
+										class="sm-lab-button-token-map__grade"
+										data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
+										style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
+										data-parent-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
+										data-resolved-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
+										data-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
+										data-signal-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
+									><?php echo esc_html( (string) $grade ); ?></span>
+								<?php endfor; ?>
+							</div>
+							<div class="sm-lab-button-token-map__canvas">
+								<span class="sm-lab-button-token-map__line sm-lab-button-token-map__line--label" aria-hidden="true"></span>
+								<span class="sm-lab-button-token-map__line sm-lab-button-token-map__line--button" aria-hidden="true"></span>
+								<span class="sm-lab-button-token-map__line sm-lab-button-token-map__line--shadow" aria-hidden="true"></span>
+								<span class="sm-lab-button-token-map__callout sm-lab-button-token-map__callout--label" data-sm-lab-component-callout="label">
+									<strong data-sm-lab-component-grade="label"><?php echo esc_html( (string) $label_grade ); ?></strong>
+									<span><?php esc_html_e( 'Label', '__plugin_txtd' ); ?></span>
+									<code>--sm-current-bg-color</code>
+								</span>
+								<button type="button" class="sm-lab-button-token-map__button" data-sm-lab-component-callout="action">
+									<span><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
+								</button>
+								<span class="sm-lab-button-token-map__callout sm-lab-button-token-map__callout--button" data-sm-lab-component-callout="button">
+									<strong data-sm-lab-component-grade="button"><?php echo esc_html( (string) $signal_variation ); ?></strong>
+									<span><?php esc_html_e( 'Button fill', '__plugin_txtd' ); ?></span>
+									<code>--sm-current-accent-color</code>
+								</span>
+								<span class="sm-lab-button-token-map__callout sm-lab-button-token-map__callout--shadow" data-sm-lab-component-callout="shadow">
+									<strong data-sm-lab-component-grade="shadow"><?php echo esc_html( (string) $shadow_grade ); ?></strong>
+									<span><?php esc_html_e( 'Shadow', '__plugin_txtd' ); ?></span>
+									<code>--sm-current-fg2-color</code>
+								</span>
+							</div>
 						</div>
 					</div>
 				</article>
