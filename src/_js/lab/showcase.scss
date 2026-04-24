@@ -154,7 +154,7 @@
 
 .sm-lab-resolution-path__stages {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   align-items: stretch;
 }
@@ -187,6 +187,21 @@
   border-right: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 70%);
   background: var(--sm-current-bg-color);
   transform: translateY(-50%) rotate(45deg);
+}
+
+.sm-lab-resolution-stage:nth-child(3)::after {
+  top: auto;
+  right: 50%;
+  bottom: -13px;
+  transform: translateX(50%) rotate(135deg);
+}
+
+.sm-lab-resolution-stage--wide {
+  grid-column: 1 / -1;
+}
+
+.sm-lab-resolution-stage--wide::after {
+  display: none;
 }
 
 .sm-lab-resolution-stage__topline {
@@ -413,7 +428,7 @@
 .sm-lab-block-map__sample {
   display: grid;
   align-content: start;
-  min-height: 100%;
+  min-height: 0;
 }
 
 .sm-lab-context-stack__layers {
@@ -435,17 +450,21 @@
 
 .sm-lab-block-map__component {
   display: grid;
-  gap: 10px;
+  gap: 0;
   align-content: start;
   align-self: stretch;
   min-width: 0;
   min-height: 0;
-  padding: 12px;
+  padding: 16px;
   border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 76%);
   border-radius: 6px;
   background: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color);
   box-shadow: 0 14px 28px color-mix(in srgb, var(--sm-current-fg1-color), transparent 92%);
+}
+
+.sm-lab-block-map__component[data-sm-lab-token-layout="horizontal"] {
+  overflow-x: auto;
 }
 
 .sm-lab-block-map__component > * {
@@ -456,9 +475,10 @@
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 2px;
-  margin-bottom: -1px;
+  grid-template-columns: repeat(12, minmax(34px, 1fr));
+  gap: 4px;
+  padding: 0 24px;
+  margin-bottom: 0;
 }
 
 .sm-lab-button-token-map__grade {
@@ -466,10 +486,10 @@
   display: grid;
   place-items: center;
   min-width: 0;
-  min-height: 30px;
+  min-height: 48px;
   border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 74%);
   color: color-mix(in srgb, var(--sm-current-fg1-color), var(--sm-current-bg-color) 25%);
-  font-size: 10px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1;
   text-shadow: 0 1px 0 color-mix(in srgb, var(--sm-current-bg-color), transparent 20%);
@@ -507,8 +527,12 @@
 
 .sm-lab-button-token-map__canvas {
   position: relative;
-  min-height: 286px;
-  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.26fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  min-height: 228px;
+  padding: 22px 24px 24px;
   border-radius: 6px;
   border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 84%);
   background:
@@ -517,6 +541,35 @@
     color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 4%);
   background-size: 24px 24px, 24px 24px, auto;
   overflow: hidden;
+}
+
+.sm-lab-button-token-map__brief {
+  position: relative;
+  z-index: 2;
+  max-width: 210px;
+}
+
+.sm-lab-button-token-map__brief h3,
+.sm-lab-button-token-map__brief p {
+  margin: 0;
+}
+
+.sm-lab-button-token-map__brief h3 {
+  color: color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 32%);
+  font-size: 28px;
+  line-height: 1.05;
+}
+
+.sm-lab-button-token-map__brief p {
+  margin-top: 10px;
+  color: var(--sm-current-fg2-color);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.sm-lab-button-token-map__diagram {
+  position: relative;
+  min-height: 184px;
 }
 
 .sm-lab-button-token-map__wires {
@@ -549,64 +602,27 @@
   stroke: color-mix(in srgb, var(--sm-current-fg2-color), var(--sm-current-accent-color) 18%);
 }
 
-.sm-lab-button-token-map__block {
+.sm-lab-button-token-map__labels {
   position: relative;
-  z-index: 2;
   display: grid;
-  gap: 8px;
-  min-height: 250px;
-  padding: 82px 16px 74px;
-  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 82%);
-  border-radius: 8px;
-  background: var(--sm-current-bg-color);
-  color: var(--sm-current-fg1-color);
-  box-shadow:
-    0 14px 0 color-mix(in srgb, var(--sm-current-fg2-color), transparent 48%),
-    0 26px 34px color-mix(in srgb, var(--sm-current-fg1-color), transparent 92%);
-}
-
-.sm-lab-button-token-map__block h3,
-.sm-lab-button-token-map__block p {
-  position: relative;
   z-index: 2;
-  margin: 0;
-}
-
-.sm-lab-button-token-map__block h3 {
-  max-width: 12rem;
-  font-size: 18px;
-  line-height: 1.08;
-}
-
-.sm-lab-button-token-map__block > p:not(.sm-lab-button-token-map__eyebrow) {
-  max-width: 14rem;
-  color: var(--sm-current-fg2-color);
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.sm-lab-button-token-map__eyebrow {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+  grid-template-columns: repeat(3, minmax(150px, max-content));
+  gap: 22px;
+  justify-content: space-between;
+  align-items: start;
+  padding: 14px 8px 0;
 }
 
 .sm-lab-button-token-map__pin {
-  position: absolute;
+  position: relative;
   z-index: 4;
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr);
-  gap: 2px 5px;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 3px 9px;
   align-items: center;
-  width: min(148px, calc(50% - 8px));
+  width: min(210px, 100%);
   min-width: 0;
-  padding: 5px 7px;
+  padding: 8px 12px;
   border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 72%);
   border-radius: 999px;
   background: var(--sm-current-bg-color);
@@ -614,19 +630,19 @@
   box-shadow:
     0 0 0 3px color-mix(in srgb, var(--sm-current-bg-color), transparent 12%),
     0 10px 22px color-mix(in srgb, var(--sm-current-fg1-color), transparent 90%);
-  font-size: 10px;
-  line-height: 1.1;
+  font-size: 12px;
+  line-height: 1.15;
 }
 
 .sm-lab-button-token-map__pin strong {
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--sm-current-accent-color);
   color: var(--sm-current-bg-color);
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .sm-lab-button-token-map__pin em {
@@ -639,68 +655,71 @@
   grid-column: 2;
   max-width: 100%;
   color: var(--sm-current-fg2-color);
-  font-size: 8px;
-  line-height: 1.05;
-  overflow-wrap: anywhere;
-  white-space: normal;
+  font-size: 10px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sm-lab-button-token-map__pin--label {
-  top: 12px;
-  left: 12px;
+  justify-self: start;
 }
 
 .sm-lab-button-token-map__pin--button {
-  right: 10px;
-  top: 12px;
+  justify-self: center;
 }
 
 .sm-lab-button-token-map__pin--shadow {
-  right: 18px;
-  bottom: 8px;
-  width: min(168px, calc(100% - 36px));
+  justify-self: end;
 }
 
-.sm-lab-button-token-map__action-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  margin-top: 6px;
+.sm-lab-button-token-map__component-stage {
+  position: absolute;
+  right: 12%;
+  bottom: 26px;
+  left: 22%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  min-height: 76px;
 }
 
 .sm-lab-button-token-map__button {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: inline-flex;
   align-items: center;
-  min-height: 42px;
-  max-width: 100%;
-  padding: 11px 16px;
+  justify-content: center;
+  width: min(480px, 100%);
+  min-height: 64px;
+  padding: 16px 34px;
   border: 0;
   border-radius: 6px;
   background: var(--sm-current-accent-color);
   color: var(--sm-current-bg-color);
-  box-shadow: 0 8px 0 color-mix(in srgb, var(--sm-current-fg2-color), transparent 28%);
+  box-shadow: 0 12px 0 color-mix(in srgb, var(--sm-current-fg2-color), transparent 28%);
   font: inherit;
+  font-size: 24px;
   font-weight: 800;
 }
 
 .sm-lab-button-token-map__button span {
   display: block;
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  text-align: center;
 }
 
 .sm-lab-button-token-map__shadow-shelf {
   position: absolute;
-  right: 18px;
-  bottom: 32px;
-  left: 44px;
-  height: 12px;
-  border-radius: 999px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: 16px;
+  border-radius: 0 0 8px 8px;
   background: color-mix(in srgb, var(--sm-current-fg2-color), transparent 38%);
-  filter: blur(1px);
 }
 
 .sm-lab-contract-explorer__workspace {
@@ -1252,5 +1271,10 @@
 
   .sm-lab-contextual {
     padding: 28px 20px;
+  }
+
+  .sm-lab-button-token-map__rail,
+  .sm-lab-button-token-map__canvas {
+    min-width: 680px;
   }
 }

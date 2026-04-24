@@ -47,6 +47,7 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="signal"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="roles"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="mapping"', $html );
+		$this->assertStringContainsString( 'sm-lab-resolution-stage--wide', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-result="variation"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-callout="action"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="parent"', $html );
@@ -59,7 +60,10 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-signal-active="true"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-preview', $html );
 		$this->assertStringContainsString( 'data-sm-lab-button-token-map', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-layout="horizontal"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-circuit', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-lane="labels"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-lane="component"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-wire="label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-wire="button"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-wire="shadow"', $html );
@@ -75,7 +79,9 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-component-grade="button"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-grade="label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-grade="shadow"', $html );
-		$this->assertStringContainsString( 'Color-aware section', $html );
+		$this->assertStringContainsString( 'Button block', $html );
+		$this->assertStringContainsString( 'Text label', $html );
+		$this->assertStringContainsString( 'Button fill', $html );
 		$this->assertStringContainsString( 'Make a reservation', $html );
 		$this->assertStringContainsString( '--sm-current-accent-color', $html );
 		$this->assertStringContainsString( 'data-sm-lab-grade-rail', $html );
