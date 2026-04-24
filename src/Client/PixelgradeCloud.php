@@ -12,6 +12,8 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Client;
 
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
+use WpOrg\Requests\Exception as RequestsException;
+use WpOrg\Requests\Requests;
 use const Pixelgrade\StyleManager\VERSION;
 
 /**
@@ -97,27 +99,98 @@ class PixelgradeCloud implements CloudInterface {
 		// This is for backwards compatibility.
 		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
-		$request_args = [
-			'method' => $this->endpoints['cloud']['getDesignAssets']['method'],
-			'timeout'   => 5,
-			'blocking'  => true,
-			'body'      => $request_data,
-			'sslverify' => true,
-		];
-		// Get the design assets from the cloud.
-		$response = wp_remote_request( $this->endpoints['cloud']['getDesignAssets']['url'], $request_args );
-		// Bail in case of decode error or failure to retrieve data.
-		// We will return the data already available.
-		if ( is_wp_error( $response ) ) {
+		$response_data = $this->request_design_assets( $request_data );
+		if ( is_array( $response_data ) ) {
+			return $response_data;
+		}
+
+		// The cloud font palettes endpoint can fail independently of the rest of the
+		// design assets payload. Retry without it so colors/fonts/theme configs still
+		// refresh and callers can preserve any previously cached font palettes.
+		if ( in_array( 'font_palettes', $request_data['types'], true ) ) {
+			$request_data['types'] = array_values( array_filter(
+				$request_data['types'],
+				static fn( string $type ): bool => 'font_palettes' !== $type
+			) );
+
+			$response_data = $this->request_design_assets( $request_data );
+			if ( is_array( $response_data ) ) {
+				return $response_data;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Request design assets data from the Pixelgrade Cloud.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $request_data Request payload.
+	 *
+	 * @return array|null
+	 */
+	protected function request_design_assets( array $request_data ): ?array {
+		$request_body = wp_json_encode( $request_data );
+		if ( false === $request_body ) {
 			return null;
 		}
-		$response_data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		$response_body = $this->execute_design_assets_request(
+			$this->endpoints['cloud']['getDesignAssets']['url'],
+			$this->endpoints['cloud']['getDesignAssets']['method'],
+			$request_body
+		);
+		if ( null === $response_body ) {
+			return null;
+		}
+
+		$response_data = json_decode( $response_body, true );
 		// Bail in case of decode error or failure to retrieve data.
 		if ( null === $response_data || empty( $response_data['data'] ) || empty( $response_data['code'] ) || 'success' !== $response_data['code'] ) {
 			return null;
 		}
 
 		return apply_filters( 'style_manager/fetch_design_assets', $response_data['data'] );
+	}
+
+	/**
+	 * Execute a design assets request against the cloud.
+	 *
+	 * WordPress core forces GET request bodies into query strings when using
+	 * `wp_remote_request()`. The cloud design assets endpoint now tolerates a JSON
+	 * GET body but fatals on the nested query-string variant for `font_palettes`, so
+	 * we bypass `wp_remote_request()` for this endpoint and send the body directly.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $url          Endpoint URL.
+	 * @param string $method       HTTP method.
+	 * @param string $request_body JSON request payload.
+	 *
+	 * @return string|null
+	 */
+	protected function execute_design_assets_request( string $url, string $method, string $request_body ): ?string {
+		try {
+			$response = Requests::request(
+				$url,
+				[
+					'Content-Type' => 'application/json',
+				],
+				$request_body,
+				$method,
+				[
+					'timeout' => 5,
+					'verify' => apply_filters( 'https_ssl_verify', ABSPATH . WPINC . '/certificates/ca-bundle.crt', $url ),
+					'data_format' => 'body',
+				]
+			);
+		} catch ( RequestsException $exception ) {
+			return null;
+		}
+
+		return $response->body ?? null;
 	}
 
 	/**

@@ -12,6 +12,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Customize;
 
 use Pixelgrade\StyleManager\Client\CloudInterface;
+use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
@@ -159,6 +160,8 @@ class DesignAssets extends AbstractHookProvider {
 
 		// The data isn't set, is expired, or we were instructed to skip the cache; we need to fetch fresh data.
 		if ( true === $skip_cache || false === $data || false === $expire_timestamp || $expire_timestamp < time() ) {
+			$previous_data = $data;
+
 			// Fetch the design assets from the cloud.
 			$fetched_data = $this->cloud_client->fetch_design_assets();
 			// Bail in case of failure to retrieve data.
@@ -180,6 +183,13 @@ class DesignAssets extends AbstractHookProvider {
 				return $data;
 			}
 
+			// Preserve the last known good cloud font palettes when the cloud retries
+			// succeed without that entry. This avoids collapsing back to hard-coded
+			// defaults when the cloud font palettes endpoint is temporarily broken.
+			if ( is_array( $data ) && isset( $data['font_palettes'] ) && ! isset( $fetched_data['font_palettes'] ) ) {
+				$fetched_data['font_palettes'] = $data['font_palettes'];
+			}
+
 			$data = $fetched_data;
 
 			// Cache the data in an option for 6 hours.
@@ -187,6 +197,10 @@ class DesignAssets extends AbstractHookProvider {
 			// keeping it out of the autoload payload saves ~117 KB per WP request. See pixelgrade/style-manager#86.
 			update_option( self::CACHE_KEY, $data, false );
 			update_option( self::CACHE_TIMESTAMP_KEY, time() + 6 * HOUR_IN_SECONDS, false );
+
+			if ( $previous_data !== $data ) {
+				static::invalidate_options_caches();
+			}
 		}
 
 		return apply_filters( 'style_manager/maybe_fetch_design_assets', $data );
@@ -194,6 +208,20 @@ class DesignAssets extends AbstractHookProvider {
 
 	protected static function invalidate_cache() {
 		update_option( self::CACHE_TIMESTAMP_KEY , time() - 24 * HOUR_IN_SECONDS, false );
+	}
+
+	/**
+	 * Invalidate dependent Options caches after design assets change.
+	 *
+	 * Design assets feed the generated Customizer config and option details caches. If
+	 * those caches stay warm after a cloud refresh, the UI can keep rendering stale
+	 * palettes until the 24h Options TTL expires.
+	 *
+	 * @since 2.0.0
+	 */
+	protected static function invalidate_options_caches(): void {
+		update_option( Options::CUSTOMIZER_CONFIG_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, false );
+		update_option( Options::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, false );
 	}
 
 	/**

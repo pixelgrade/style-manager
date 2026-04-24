@@ -9,16 +9,14 @@ use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 
 class OptionsTest extends TestCase {
-	protected function tearDown(): void {
+	public function tearDown(): void {
 		unset( $GLOBALS['wp_customize'] );
 
 		parent::tearDown();
 	}
 
 	public function test_get_thememod_value_falls_back_to_filtered_root_theme_mod_when_setting_has_no_post_value(): void {
-		Functions\expect( 'is_wp_error' )
-			->once()
-			->andReturn( false );
+		Functions\expect( 'is_wp_error' )->never();
 
 		Functions\expect( 'get_theme_mod' )
 			->once()
@@ -81,7 +79,44 @@ class OptionsTest extends TestCase {
 
 		$this->assertSame( 60, $value['font_size']['value'] );
 	}
-}
+
+	public function test_get_options_key_regenerates_when_cached_value_is_empty(): void {
+		if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+			define( 'HOUR_IN_SECONDS', 3600 );
+		}
+
+		Functions\when( 'get_option' )->alias( function ( $name, $default = false ) {
+			if ( $name === Options::CUSTOMIZER_OPT_NAME_CACHE_KEY ) {
+				return '';
+			}
+
+			if ( $name === Options::CUSTOMIZER_OPT_NAME_CACHE_TIMESTAMP_KEY ) {
+				return time() + HOUR_IN_SECONDS;
+			}
+
+			return $default;
+		} );
+
+		$updated = [];
+		Functions\when( 'wp_doing_ajax' )->justReturn( false );
+		Functions\when( 'update_option' )->alias( function ( $name, $value ) use ( &$updated ) {
+			$updated[ $name ] = $value;
+
+			return true;
+		} );
+
+		$options = new TestOptions( $this->createMock( PluginSettings::class ) );
+		$options->inject_customizer_config( [
+			'opt-name' => 'hive-lt_options',
+		] );
+
+		$this->assertSame( 'hive-lt_options', $options->get_options_key() );
+		$this->assertSame(
+			'hive-lt_options',
+			$updated[ Options::CUSTOMIZER_OPT_NAME_CACHE_KEY ] ?? null,
+			'The regenerated non-empty option name should replace the bad cached value.'
+		);
+	}
 
 	public function test_get_details_all_regenerates_when_cached_minimal_details_is_an_empty_array(): void {
 		// Seed: cache is stored as [] with a fresh expiration (the
@@ -139,6 +174,11 @@ class OptionsTest extends TestCase {
 		} );
 		Functions\when( 'apply_filters' )->returnArg( 2 );
 		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\when( 'get_theme_mod' )->alias( static function () {
+			return [
+				'my_option' => 'computed',
+			];
+		} );
 		Functions\when( 'wp_doing_ajax' )->justReturn( false );
 
 		$updatedKeys = [];

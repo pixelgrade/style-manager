@@ -306,7 +306,14 @@ class Options extends AbstractHookProvider {
 		if ( ! empty( $wp_customize ) && method_exists( $wp_customize, 'get_setting' ) ) {
 			$setting = $wp_customize->get_setting( $setting_id );
 			if ( ! empty( $setting ) ) {
-				return $setting->value();
+				$undefined  = new \stdClass();
+				$post_value = $setting->post_value( $undefined );
+
+				// Trust explicit preview payloads, but let the aggregated root theme_mod
+				// remain the source of truth on initial loads so root-level filters still apply.
+				if ( $undefined !== $post_value && ! is_wp_error( $post_value ) ) {
+					return $post_value;
+				}
 			} elseif ( $wp_customize->is_preview() ) {
 				// If the setting is not registered (like in asking for the value before wp_loaded), we will read directly from the posted values via the changeset.
 				// Not really the best way, but ok.
@@ -466,6 +473,13 @@ class Options extends AbstractHookProvider {
 		$data             = \get_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY );
 		$expire_timestamp = false;
 
+		// An empty option name cannot address any theme settings. If a
+		// previous request cached an empty value before the Customizer config
+		// was ready, treat it as a miss so the next request can recover.
+		if ( '' === $data ) {
+			$data = false;
+		}
+
 		// Only try to get the expire timestamp if we really need to.
 		if ( true !== $skip_cache && false !== $data ) {
 			// Get the cache data expiration timestamp.
@@ -477,7 +491,7 @@ class Options extends AbstractHookProvider {
 
 			$data = (string) $this->get_customizer_config( 'opt-name' );
 
-			if ( true !== $skip_cache ) {
+			if ( true !== $skip_cache && '' !== $data ) {
 				// Cache the data in an option for 24 hours, but only if we are not supposed to skip the cache entirely.
 				// Not autoloaded — this cache is consumed only in admin/Customizer paths. See pixelgrade/style-manager#86.
 				\update_option( self::CUSTOMIZER_OPT_NAME_CACHE_KEY, $data, false );

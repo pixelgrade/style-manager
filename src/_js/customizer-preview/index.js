@@ -7,6 +7,7 @@ import {
   getSettingCSS,
   inPreviewIframe
 } from './utils';
+import { bindPreviewSettings } from './style-sync';
 
 
 ( () => {
@@ -64,13 +65,13 @@ import {
       } );
     }, 100 );
 
-    properKeys.forEach( settingID => {
-      wp.customize( settingID, setting => {
-        setting.bind( ( newValue ) => {
-          updateQueue[ settingID ] = newValue;
-          onChange();
-        } );
-      } );
+    bindPreviewSettings( {
+      properKeys,
+      customize: wp.customize,
+      enqueue: ( settingID, value ) => {
+        updateQueue[ settingID ] = value;
+        onChange();
+      },
     } );
   } );
 } )();
