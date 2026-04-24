@@ -13,6 +13,7 @@ export const PalettePanel = ( { palettes, state, contextualPalette, onChange } )
     />
     <RangeControl
       label="Variation"
+      __next40pxDefaultSize={ true }
       value={ state.variation }
       min={ 1 }
       max={ 12 }
