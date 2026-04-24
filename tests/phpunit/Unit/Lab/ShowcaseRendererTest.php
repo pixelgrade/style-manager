@@ -37,6 +37,10 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-visual-strip', $html );
 		$this->assertStringContainsString( 'data-sm-lab-grade-rail', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-bars', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="grade-rail"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="signal-levels"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="block-mapping"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="context-stack"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="context-resilience"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="contextual-proof"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="semantic-contract"', $html );

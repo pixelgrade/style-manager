@@ -651,6 +651,13 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
     } );
 };
 
+const writeVisualProofState = ( documentRef, state ) => {
+  documentRef.querySelectorAll( '[data-sm-lab-grade-swatch]' ).forEach( ( node ) => {
+    const isActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( state.variation );
+    node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
+  } );
+};
+
 export const applyShowcaseState = ( {
   document,
   getComputedStyle,
@@ -678,6 +685,7 @@ export const applyShowcaseState = ( {
 
   updateContextualZone( document, normalizedState );
   updatePaletteVariationScopes( document, normalizedState );
+  writeVisualProofState( document, normalizedState );
 
   const runtimePaletteStyleNode = ensureRuntimePaletteStyleNode( document );
   runtimePaletteStyleNode.textContent = buildRuntimePaletteCss( palettes, normalizedState.variation );

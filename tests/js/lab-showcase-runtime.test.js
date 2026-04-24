@@ -252,6 +252,12 @@ const createShowcaseDocument = () => {
 
   documentRef.body.appendChild( createStatusValue( documentRef, 'variation' ) );
 
+  for ( let grade = 1; grade <= 12; grade += 1 ) {
+    const chip = documentRef.createElement( 'span' );
+    chip.setAttribute( 'data-sm-lab-grade-swatch', String( grade ) );
+    documentRef.body.appendChild( chip );
+  }
+
   [ 'bg', 'accent', 'fg1', 'fg2' ].forEach( ( token ) => {
     documentRef.body.appendChild( createSwatch( documentRef, token ) );
   } );
@@ -397,6 +403,16 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     assert.ok(
       documentRef.querySelector( '[data-palette-variation]' )?.classList.contains( 'sm-variation-4' ),
       'nested palette variation scopes should update their variation class'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-active' ),
+      'true',
+      'active grade marker should follow selected variation'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="1"]' )?.getAttribute( 'data-active' ),
+      'false',
+      'inactive grade markers should be cleared when variation changes'
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );

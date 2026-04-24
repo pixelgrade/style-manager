@@ -88,10 +88,11 @@ final class ShowcaseRenderer {
 		<div class="sm-lab-runtime-strip" data-sm-lab-visual-strip>
 			<div class="sm-lab-runtime-strip__panel">
 				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Active role rail', '__plugin_txtd' ); ?></p>
-				<div class="sm-lab-runtime-strip__rail" data-sm-lab-grade-rail>
+				<div class="sm-lab-runtime-strip__rail" data-sm-lab-grade-rail data-sm-lab-proof="grade-rail">
 					<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
 						<span
 							class="sm-lab-runtime-strip__grade"
+							data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
 							style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
 							aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
 							<?php echo $grade === $params->variation() ? 'data-active="true"' : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -111,7 +112,7 @@ final class ShowcaseRenderer {
 			</div>
 			<div class="sm-lab-runtime-strip__panel">
 				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal', '__plugin_txtd' ); ?></p>
-				<div class="sm-lab-signal-bars" data-sm-lab-signal-bars>
+				<div class="sm-lab-signal-bars" data-sm-lab-signal-bars data-sm-lab-proof="signal-levels">
 					<?php
 					foreach ( [
 						0 => __( 'None', '__plugin_txtd' ),
@@ -129,6 +130,24 @@ final class ShowcaseRenderer {
 							<span><?php echo esc_html( $label ); ?></span>
 						</span>
 					<?php endforeach; ?>
+				</div>
+			</div>
+			<div class="sm-lab-runtime-strip__panel sm-lab-block-map" data-sm-lab-proof="block-mapping">
+				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Block mapping', '__plugin_txtd' ); ?></p>
+				<div class="sm-lab-block-map__sample">
+					<span class="sm-lab-block-map__surface"><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></span>
+					<span class="sm-lab-block-map__text"><?php esc_html_e( 'Text', '__plugin_txtd' ); ?></span>
+					<span class="sm-lab-block-map__action"><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></span>
+					<span class="sm-lab-block-map__shadow"><?php esc_html_e( 'Border / shadow', '__plugin_txtd' ); ?></span>
+				</div>
+			</div>
+			<div class="sm-lab-runtime-strip__panel sm-lab-context-stack" data-sm-lab-proof="context-stack">
+				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Context stack', '__plugin_txtd' ); ?></p>
+				<div class="sm-lab-context-stack__layers">
+					<span><?php esc_html_e( 'Page palette', '__plugin_txtd' ); ?></span>
+					<span><?php esc_html_e( 'Section context', '__plugin_txtd' ); ?></span>
+					<span><?php esc_html_e( 'Block signal', '__plugin_txtd' ); ?></span>
+					<span><?php esc_html_e( 'Nested component', '__plugin_txtd' ); ?></span>
 				</div>
 			</div>
 		</div>
