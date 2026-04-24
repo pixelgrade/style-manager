@@ -453,9 +453,12 @@
 }
 
 .sm-lab-button-token-map__rail {
+  position: relative;
+  z-index: 3;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 2px;
+  margin-bottom: -1px;
 }
 
 .sm-lab-button-token-map__grade {
@@ -470,6 +473,7 @@
   font-weight: 800;
   line-height: 1;
   text-shadow: 0 1px 0 color-mix(in srgb, var(--sm-current-bg-color), transparent 20%);
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .sm-lab-button-token-map__grade[data-parent-active="true"] {
@@ -482,84 +486,197 @@
   box-shadow: 0 0 0 3px var(--sm-current-accent-color);
 }
 
+.sm-lab-button-token-map__grade[data-token-label-active="true"],
+.sm-lab-button-token-map__grade[data-token-button-active="true"],
+.sm-lab-button-token-map__grade[data-token-shadow-active="true"] {
+  z-index: 2;
+  transform: translateY(-3px);
+}
+
+.sm-lab-button-token-map__grade[data-token-label-active="true"] {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--sm-current-fg1-color), transparent 36%);
+}
+
+.sm-lab-button-token-map__grade[data-token-button-active="true"] {
+  box-shadow: 0 0 0 3px var(--sm-current-accent-color);
+}
+
+.sm-lab-button-token-map__grade[data-token-shadow-active="true"] {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--sm-current-fg2-color), transparent 22%);
+}
+
 .sm-lab-button-token-map__canvas {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-template-rows: auto minmax(64px, 1fr) auto;
-  gap: 8px;
-  min-height: 154px;
-  padding: 10px;
+  min-height: 286px;
+  padding: 16px;
   border-radius: 6px;
-  background: color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 4%);
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 84%);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--sm-current-fg1-color), transparent 94%) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in srgb, var(--sm-current-fg1-color), transparent 94%) 1px, transparent 1px),
+    color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 4%);
+  background-size: 24px 24px, 24px 24px, auto;
   overflow: hidden;
 }
 
-.sm-lab-button-token-map__callout {
+.sm-lab-button-token-map__wires {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sm-lab-button-token-map__wires path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.sm-lab-button-token-map__wires [data-sm-lab-token-wire="label"] {
+  stroke: color-mix(in srgb, var(--sm-current-fg1-color), var(--sm-current-bg-color) 28%);
+}
+
+.sm-lab-button-token-map__wires [data-sm-lab-token-wire="button"] {
+  stroke: var(--sm-current-accent-color);
+  stroke-width: 2.5;
+}
+
+.sm-lab-button-token-map__wires [data-sm-lab-token-wire="shadow"] {
+  stroke: color-mix(in srgb, var(--sm-current-fg2-color), var(--sm-current-accent-color) 18%);
+}
+
+.sm-lab-button-token-map__block {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  gap: 2px 6px;
+  gap: 8px;
+  min-height: 250px;
+  padding: 82px 16px 74px;
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 82%);
+  border-radius: 8px;
+  background: var(--sm-current-bg-color);
+  color: var(--sm-current-fg1-color);
+  box-shadow:
+    0 14px 0 color-mix(in srgb, var(--sm-current-fg2-color), transparent 48%),
+    0 26px 34px color-mix(in srgb, var(--sm-current-fg1-color), transparent 92%);
+}
+
+.sm-lab-button-token-map__block h3,
+.sm-lab-button-token-map__block p {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+}
+
+.sm-lab-button-token-map__block h3 {
+  max-width: 12rem;
+  font-size: 18px;
+  line-height: 1.08;
+}
+
+.sm-lab-button-token-map__block > p:not(.sm-lab-button-token-map__eyebrow) {
+  max-width: 14rem;
+  color: var(--sm-current-fg2-color);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.sm-lab-button-token-map__eyebrow {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.sm-lab-button-token-map__pin {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 2px 5px;
   align-items: center;
-  width: 100%;
-  max-width: 100%;
+  width: min(148px, calc(50% - 8px));
   min-width: 0;
   padding: 5px 7px;
-  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 78%);
+  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 72%);
   border-radius: 999px;
   background: var(--sm-current-bg-color);
   color: var(--sm-current-fg1-color);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--sm-current-fg1-color), transparent 92%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--sm-current-bg-color), transparent 12%),
+    0 10px 22px color-mix(in srgb, var(--sm-current-fg1-color), transparent 90%);
   font-size: 10px;
   line-height: 1.1;
 }
 
-.sm-lab-button-token-map__callout strong {
+.sm-lab-button-token-map__pin strong {
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--sm-current-accent-color);
   color: var(--sm-current-bg-color);
   font-size: 11px;
 }
 
-.sm-lab-button-token-map__callout code {
+.sm-lab-button-token-map__pin em {
+  display: block;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.sm-lab-button-token-map__pin code {
   grid-column: 2;
   max-width: 100%;
   color: var(--sm-current-fg2-color);
-  font-size: 9px;
+  font-size: 8px;
+  line-height: 1.05;
   overflow-wrap: anywhere;
   white-space: normal;
 }
 
-.sm-lab-button-token-map__callout--label {
-  grid-column: 1 / 4;
-  grid-row: 1;
+.sm-lab-button-token-map__pin--label {
+  top: 12px;
+  left: 12px;
 }
 
-.sm-lab-button-token-map__callout--button {
-  grid-column: 4 / 7;
-  grid-row: 1;
+.sm-lab-button-token-map__pin--button {
+  right: 10px;
+  top: 12px;
 }
 
-.sm-lab-button-token-map__callout--shadow {
-  grid-column: 2 / 6;
-  grid-row: 3;
+.sm-lab-button-token-map__pin--shadow {
+  right: 18px;
+  bottom: 8px;
+  width: min(168px, calc(100% - 36px));
+}
+
+.sm-lab-button-token-map__action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-top: 6px;
 }
 
 .sm-lab-button-token-map__button {
   position: relative;
   z-index: 2;
-  grid-column: 2 / 6;
-  grid-row: 2;
-  justify-self: center;
-  align-self: center;
+  display: inline-flex;
+  align-items: center;
   min-height: 42px;
   max-width: 100%;
-  padding: 11px 18px;
+  padding: 11px 16px;
   border: 0;
   border-radius: 6px;
   background: var(--sm-current-accent-color);
@@ -575,49 +692,15 @@
   overflow-wrap: break-word;
 }
 
-.sm-lab-button-token-map__line {
+.sm-lab-button-token-map__shadow-shelf {
   position: absolute;
-  z-index: 1;
-  display: block;
-  pointer-events: none;
-}
-
-.sm-lab-button-token-map__line::before {
-  content: "";
-  position: absolute;
-  background: color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 18%);
-}
-
-.sm-lab-button-token-map__line--label {
-  top: 38px;
-  left: 20%;
-  width: 26%;
-  height: 48px;
-  border-left: 2px solid color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 18%);
-  border-bottom: 2px solid color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 18%);
-  border-radius: 0 0 0 10px;
-}
-
-.sm-lab-button-token-map__line--button {
-  top: 38px;
-  left: 58%;
-  width: 2px;
-  height: 58px;
-}
-
-.sm-lab-button-token-map__line--button::before {
-  inset: 0;
-  width: 2px;
-}
-
-.sm-lab-button-token-map__line--shadow {
-  right: 16%;
-  bottom: 30px;
-  width: 24%;
-  height: 46px;
-  border-right: 2px solid color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 18%);
-  border-bottom: 2px solid color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 18%);
-  border-radius: 0 0 10px 0;
+  right: 18px;
+  bottom: 32px;
+  left: 44px;
+  height: 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sm-current-fg2-color), transparent 38%);
+  filter: blur(1px);
 }
 
 .sm-lab-contract-explorer__workspace {

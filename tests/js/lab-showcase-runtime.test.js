@@ -536,6 +536,26 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '9',
       'button shadow callout should track the deeper support grade'
     );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="2"]' )?.getAttribute( 'data-token-label-active' ),
+      'true',
+      'label token source should mark the contrast grade on the rail'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-token-button-active' ),
+      'true',
+      'button token source should mark the signal-resolved grade on the rail'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="9"]' )?.getAttribute( 'data-token-shadow-active' ),
+      'true',
+      'shadow token source should mark the deeper support grade on the rail'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-token-button-active' ),
+      'false',
+      'body variation should not be marked as the button token source'
+    );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );
     assert.equal( result.contextualReadout?.surface, '#d14600', 'applyShowcaseState should return the contextual proof readout for the active dark mode' );

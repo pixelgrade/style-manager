@@ -214,31 +214,50 @@ final class ShowcaseRenderer {
 										data-resolved-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
 										data-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
 										data-signal-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
+										data-token-label-active="<?php echo esc_attr( $grade === $label_grade ? 'true' : 'false' ); ?>"
+										data-token-button-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
+										data-token-shadow-active="<?php echo esc_attr( $grade === $shadow_grade ? 'true' : 'false' ); ?>"
 									><?php echo esc_html( (string) $grade ); ?></span>
 								<?php endfor; ?>
 							</div>
-							<div class="sm-lab-button-token-map__canvas">
-								<span class="sm-lab-button-token-map__line sm-lab-button-token-map__line--label" aria-hidden="true"></span>
-								<span class="sm-lab-button-token-map__line sm-lab-button-token-map__line--button" aria-hidden="true"></span>
-								<span class="sm-lab-button-token-map__line sm-lab-button-token-map__line--shadow" aria-hidden="true"></span>
-								<span class="sm-lab-button-token-map__callout sm-lab-button-token-map__callout--label" data-sm-lab-component-callout="label">
-									<strong data-sm-lab-component-grade="label"><?php echo esc_html( (string) $label_grade ); ?></strong>
-									<span><?php esc_html_e( 'Label', '__plugin_txtd' ); ?></span>
-									<code>--sm-current-bg-color</code>
-								</span>
-								<button type="button" class="sm-lab-button-token-map__button" data-sm-lab-component-callout="action">
-									<span><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
-								</button>
-								<span class="sm-lab-button-token-map__callout sm-lab-button-token-map__callout--button" data-sm-lab-component-callout="button">
-									<strong data-sm-lab-component-grade="button"><?php echo esc_html( (string) $signal_variation ); ?></strong>
-									<span><?php esc_html_e( 'Button fill', '__plugin_txtd' ); ?></span>
-									<code>--sm-current-accent-color</code>
-								</span>
-								<span class="sm-lab-button-token-map__callout sm-lab-button-token-map__callout--shadow" data-sm-lab-component-callout="shadow">
-									<strong data-sm-lab-component-grade="shadow"><?php echo esc_html( (string) $shadow_grade ); ?></strong>
-									<span><?php esc_html_e( 'Shadow', '__plugin_txtd' ); ?></span>
-									<code>--sm-current-fg2-color</code>
-								</span>
+							<div class="sm-lab-button-token-map__canvas" data-sm-lab-token-circuit>
+								<svg class="sm-lab-button-token-map__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+									<path data-sm-lab-token-wire="label" d="M 13 0 C 13 16 18 21 24 31" />
+									<path data-sm-lab-token-wire="button" d="M 54 0 C 57 12 66 22 74 31" />
+									<path data-sm-lab-token-wire="shadow" d="M 74 0 C 88 30 90 75 77 88" />
+								</svg>
+								<article class="sm-lab-button-token-map__block" data-sm-lab-token-target="surface">
+									<span class="sm-lab-button-token-map__pin sm-lab-button-token-map__pin--label" data-sm-lab-token-pin="label" data-sm-lab-component-callout="label">
+										<strong data-sm-lab-component-grade="label"><?php echo esc_html( (string) $label_grade ); ?></strong>
+										<span>
+											<em><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></em>
+											<code>--sm-current-bg-color</code>
+										</span>
+									</span>
+									<p class="sm-lab-button-token-map__eyebrow"><?php esc_html_e( 'Color-aware section', '__plugin_txtd' ); ?></p>
+									<h3><?php esc_html_e( 'Seasonal menu', '__plugin_txtd' ); ?></h3>
+									<p><?php esc_html_e( 'Fresh courses, nested copy, and action state all consume the inherited scope.', '__plugin_txtd' ); ?></p>
+									<div class="sm-lab-button-token-map__action-row">
+										<button type="button" class="sm-lab-button-token-map__button" data-sm-lab-component-callout="action" data-sm-lab-token-target="action">
+											<span><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
+										</button>
+										<span class="sm-lab-button-token-map__pin sm-lab-button-token-map__pin--button" data-sm-lab-token-pin="button" data-sm-lab-component-callout="button">
+											<strong data-sm-lab-component-grade="button"><?php echo esc_html( (string) $signal_variation ); ?></strong>
+											<span>
+												<em><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></em>
+												<code>--sm-current-accent-color</code>
+											</span>
+										</span>
+									</div>
+									<span class="sm-lab-button-token-map__shadow-shelf" data-sm-lab-token-target="shadow" aria-hidden="true"></span>
+									<span class="sm-lab-button-token-map__pin sm-lab-button-token-map__pin--shadow" data-sm-lab-token-pin="shadow" data-sm-lab-component-callout="shadow">
+										<strong data-sm-lab-component-grade="shadow"><?php echo esc_html( (string) $shadow_grade ); ?></strong>
+										<span>
+											<em><?php esc_html_e( 'Depth', '__plugin_txtd' ); ?></em>
+											<code>--sm-current-fg2-color</code>
+										</span>
+									</span>
+								</article>
 							</div>
 						</div>
 					</div>

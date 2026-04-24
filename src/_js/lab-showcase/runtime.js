@@ -675,14 +675,19 @@ const updateSignalPreviewScopes = ( documentRef, state ) => {
 const writeVisualProofState = ( documentRef, state ) => {
   const signalVariation = getSignalResultVariation( state );
   const signalShifted = signalVariation !== state.parentVariation;
+  const componentTokenGrades = getComponentTokenGrades( signalVariation );
 
   documentRef.querySelectorAll( '[data-sm-lab-grade-swatch]' ).forEach( ( node ) => {
-    const isActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( state.parentVariation );
-    const isSignalActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( signalVariation );
+    const grade = node.getAttribute( 'data-sm-lab-grade-swatch' );
+    const isActive = grade === String( state.parentVariation );
+    const isSignalActive = grade === String( signalVariation );
     node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
     node.setAttribute( 'data-parent-active', isActive ? 'true' : 'false' );
     node.setAttribute( 'data-signal-active', isSignalActive ? 'true' : 'false' );
     node.setAttribute( 'data-resolved-active', isSignalActive ? 'true' : 'false' );
+    node.setAttribute( 'data-token-label-active', grade === String( componentTokenGrades.label ) ? 'true' : 'false' );
+    node.setAttribute( 'data-token-button-active', grade === String( componentTokenGrades.button ) ? 'true' : 'false' );
+    node.setAttribute( 'data-token-shadow-active', grade === String( componentTokenGrades.shadow ) ? 'true' : 'false' );
   } );
 
   documentRef.querySelectorAll( '[data-sm-lab-grade-rail]' ).forEach( ( node ) => {
@@ -706,7 +711,7 @@ const writeVisualProofState = ( documentRef, state ) => {
     } );
   } );
 
-  Object.entries( getComponentTokenGrades( signalVariation ) ).forEach( ( [ key, value ] ) => {
+  Object.entries( componentTokenGrades ).forEach( ( [ key, value ] ) => {
     documentRef.querySelectorAll( `[data-sm-lab-component-grade="${ key }"]` ).forEach( ( node ) => {
       node.textContent = String( value );
     } );
