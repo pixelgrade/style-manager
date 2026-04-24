@@ -258,6 +258,18 @@ const createShowcaseDocument = () => {
     documentRef.body.appendChild( chip );
   }
 
+  for ( let signal = 0; signal <= 3; signal += 1 ) {
+    const option = documentRef.createElement( 'span' );
+    option.setAttribute( 'data-sm-lab-signal-option', String( signal ) );
+    documentRef.body.appendChild( option );
+  }
+
+  [ 'signal', 'parent', 'variation' ].forEach( ( key ) => {
+    const value = documentRef.createElement( 'span' );
+    value.setAttribute( 'data-sm-lab-signal-result', key );
+    documentRef.body.appendChild( value );
+  } );
+
   [ 'bg', 'accent', 'fg1', 'fg2' ].forEach( ( token ) => {
     documentRef.body.appendChild( createSwatch( documentRef, token ) );
   } );
@@ -413,6 +425,31 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-grade-swatch="1"]' )?.getAttribute( 'data-active' ),
       'false',
       'inactive grade markers should be cleared when variation changes'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-option="2"]' )?.getAttribute( 'data-active' ),
+      'true',
+      'active signal marker should follow selected color signal'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-option="0"]' )?.getAttribute( 'data-active' ),
+      'false',
+      'inactive signal markers should be cleared when signal changes'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-result="signal"]' )?.textContent,
+      '2',
+      'signal result should expose the selected signal level'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-result="parent"]' )?.textContent,
+      '5',
+      'signal result should expose the parent variation'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-result="variation"]' )?.textContent,
+      '7',
+      'signal result should expose the resolved child variation'
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );

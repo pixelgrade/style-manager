@@ -651,10 +651,27 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
     } );
 };
 
+const getSignalResultVariation = ( state ) => Math.min( state.parentVariation + state.signal, 12 );
+
 const writeVisualProofState = ( documentRef, state ) => {
   documentRef.querySelectorAll( '[data-sm-lab-grade-swatch]' ).forEach( ( node ) => {
     const isActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( state.variation );
     node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
+  } );
+
+  documentRef.querySelectorAll( '[data-sm-lab-signal-option]' ).forEach( ( node ) => {
+    const isActive = node.getAttribute( 'data-sm-lab-signal-option' ) === String( state.signal );
+    node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
+  } );
+
+  Object.entries( {
+    signal: state.signal,
+    parent: state.parentVariation,
+    variation: getSignalResultVariation( state ),
+  } ).forEach( ( [ key, value ] ) => {
+    documentRef.querySelectorAll( `[data-sm-lab-signal-result="${ key }"]` ).forEach( ( node ) => {
+      node.textContent = String( value );
+    } );
   } );
 };
 

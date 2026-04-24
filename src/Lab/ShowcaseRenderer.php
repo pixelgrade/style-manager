@@ -84,71 +84,111 @@ final class ShowcaseRenderer {
 	}
 
 	private function render_runtime_visual_strip( QueryParams $params ): void {
+		$signal_variation = min( $params->parent_variation() + $params->signal(), 12 );
 		?>
-		<div class="sm-lab-runtime-strip" data-sm-lab-visual-strip>
-			<div class="sm-lab-runtime-strip__panel">
-				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Active role rail', '__plugin_txtd' ); ?></p>
-				<div class="sm-lab-runtime-strip__rail" data-sm-lab-grade-rail data-sm-lab-proof="grade-rail">
-					<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
-						<span
-							class="sm-lab-runtime-strip__grade"
-							data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
-							style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
-							aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
-							<?php echo $grade === $params->variation() ? 'data-active="true"' : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						></span>
-					<?php endfor; ?>
-				</div>
-				<dl class="sm-lab-runtime-strip__facts">
-					<div>
-						<dt><?php esc_html_e( 'Palette', '__plugin_txtd' ); ?></dt>
-						<dd data-sm-lab-status-value="palette"><?php echo esc_html( $params->palette() ); ?></dd>
-					</div>
-					<div>
-						<dt><?php esc_html_e( 'Variation', '__plugin_txtd' ); ?></dt>
-						<dd data-sm-lab-status-value="variation"><?php echo esc_html( (string) $params->variation() ); ?></dd>
-					</div>
-				</dl>
+		<div class="sm-lab-runtime-strip sm-lab-resolution-path" data-sm-lab-visual-strip data-sm-lab-resolution-path>
+			<div class="sm-lab-resolution-path__header">
+				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Runtime resolution path', '__plugin_txtd' ); ?></p>
+				<p><?php esc_html_e( 'Context, signal, palette grades, and component parts are one runtime decision chain. The cards below show what Style Manager resolves before a theme, block, product, or builder API consumes color.', '__plugin_txtd' ); ?></p>
 			</div>
-			<div class="sm-lab-runtime-strip__panel">
-				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal', '__plugin_txtd' ); ?></p>
-				<div class="sm-lab-signal-bars" data-sm-lab-signal-bars data-sm-lab-proof="signal-levels">
-					<?php
-					foreach ( [
-						0 => __( 'None', '__plugin_txtd' ),
-						1 => __( 'Low', '__plugin_txtd' ),
-						2 => __( 'Medium', '__plugin_txtd' ),
-						3 => __( 'High', '__plugin_txtd' ),
-					] as $signal => $label ) :
-						?>
-						<span class="sm-lab-signal-bars__item">
-							<span class="sm-lab-signal-bars__icon" aria-hidden="true">
-								<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
-									<span class="<?php echo esc_attr( $bar <= $signal ? 'is-active' : '' ); ?>"></span>
-								<?php endfor; ?>
+			<div class="sm-lab-resolution-path__stages" aria-label="<?php esc_attr_e( 'Style Manager runtime resolution path', '__plugin_txtd' ); ?>">
+				<article class="sm-lab-resolution-stage sm-lab-context-stack" data-sm-lab-resolution-stage="context" data-sm-lab-proof="context-stack">
+					<div class="sm-lab-resolution-stage__topline">
+						<span><?php esc_html_e( '01', '__plugin_txtd' ); ?></span>
+						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Context stack', '__plugin_txtd' ); ?></p>
+					</div>
+					<h2><?php esc_html_e( 'Context scope', '__plugin_txtd' ); ?></h2>
+					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'Context decides where the component lives.', '__plugin_txtd' ); ?></p>
+					<div class="sm-lab-context-stack__layers">
+						<span><strong><?php esc_html_e( 'Page palette', '__plugin_txtd' ); ?></strong><small data-sm-lab-status-value="palette"><?php echo esc_html( $params->palette() ); ?></small></span>
+						<span><strong><?php esc_html_e( 'Section context', '__plugin_txtd' ); ?></strong><small><?php esc_html_e( 'inherit or override', '__plugin_txtd' ); ?></small></span>
+						<span><strong><?php esc_html_e( 'Block signal', '__plugin_txtd' ); ?></strong><small><?php esc_html_e( 'local intensity', '__plugin_txtd' ); ?></small></span>
+						<span><strong><?php esc_html_e( 'Nested component', '__plugin_txtd' ); ?></strong><small><?php esc_html_e( 'consumer scope', '__plugin_txtd' ); ?></small></span>
+					</div>
+				</article>
+
+				<article class="sm-lab-resolution-stage sm-lab-resolution-stage--signal" data-sm-lab-resolution-stage="signal">
+					<div class="sm-lab-resolution-stage__topline">
+						<span><?php esc_html_e( '02', '__plugin_txtd' ); ?></span>
+						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal', '__plugin_txtd' ); ?></p>
+					</div>
+					<h2><?php esc_html_e( 'Signal intensity', '__plugin_txtd' ); ?></h2>
+					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'Signal shifts inherited variation.', '__plugin_txtd' ); ?></p>
+					<div class="sm-lab-signal-bars" data-sm-lab-signal-bars data-sm-lab-proof="signal-levels">
+						<?php
+						foreach ( [
+							0 => [ __( 'None', '__plugin_txtd' ), __( 'keep parent', '__plugin_txtd' ) ],
+							1 => [ __( 'Low', '__plugin_txtd' ), __( '+1 grade', '__plugin_txtd' ) ],
+							2 => [ __( 'Medium', '__plugin_txtd' ), __( '+2 grades', '__plugin_txtd' ) ],
+							3 => [ __( 'High', '__plugin_txtd' ), __( '+3 grades', '__plugin_txtd' ) ],
+						] as $signal => $labels ) :
+							?>
+							<span
+								class="sm-lab-signal-bars__item"
+								data-sm-lab-signal-option="<?php echo esc_attr( (string) $signal ); ?>"
+								data-active="<?php echo esc_attr( $signal === $params->signal() ? 'true' : 'false' ); ?>"
+							>
+								<span class="sm-lab-signal-bars__icon" aria-hidden="true">
+									<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
+										<span class="<?php echo esc_attr( $bar <= $signal ? 'is-active' : '' ); ?>"></span>
+									<?php endfor; ?>
+								</span>
+								<span class="sm-lab-signal-bars__copy">
+									<strong><?php echo esc_html( $labels[0] ); ?></strong>
+									<small><?php echo esc_html( $labels[1] ); ?></small>
+								</span>
 							</span>
-							<span><?php echo esc_html( $label ); ?></span>
-						</span>
-					<?php endforeach; ?>
-				</div>
-			</div>
-			<div class="sm-lab-runtime-strip__panel sm-lab-block-map" data-sm-lab-proof="block-mapping">
-				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Block mapping', '__plugin_txtd' ); ?></p>
-				<div class="sm-lab-block-map__sample">
-					<span class="sm-lab-block-map__surface"><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></span>
-					<span class="sm-lab-block-map__text"><?php esc_html_e( 'Text', '__plugin_txtd' ); ?></span>
-					<span class="sm-lab-block-map__action"><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></span>
-					<span class="sm-lab-block-map__shadow"><?php esc_html_e( 'Border / shadow', '__plugin_txtd' ); ?></span>
-				</div>
-			</div>
-			<div class="sm-lab-runtime-strip__panel sm-lab-context-stack" data-sm-lab-proof="context-stack">
-				<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Context stack', '__plugin_txtd' ); ?></p>
-				<div class="sm-lab-context-stack__layers">
-					<span><?php esc_html_e( 'Page palette', '__plugin_txtd' ); ?></span>
-					<span><?php esc_html_e( 'Section context', '__plugin_txtd' ); ?></span>
-					<span><?php esc_html_e( 'Block signal', '__plugin_txtd' ); ?></span>
-					<span><?php esc_html_e( 'Nested component', '__plugin_txtd' ); ?></span>
-				</div>
+						<?php endforeach; ?>
+					</div>
+					<p class="sm-lab-signal-result">
+						<?php esc_html_e( 'Signal', '__plugin_txtd' ); ?>
+						<strong data-sm-lab-signal-result="signal"><?php echo esc_html( (string) $params->signal() ); ?></strong>
+						<?php esc_html_e( 'turns parent', '__plugin_txtd' ); ?>
+						<strong data-sm-lab-signal-result="parent"><?php echo esc_html( (string) $params->parent_variation() ); ?></strong>
+						<?php esc_html_e( 'into grade', '__plugin_txtd' ); ?>
+						<strong data-sm-lab-signal-result="variation"><?php echo esc_html( (string) $signal_variation ); ?></strong>
+					</p>
+				</article>
+
+				<article class="sm-lab-resolution-stage" data-sm-lab-resolution-stage="roles">
+					<div class="sm-lab-resolution-stage__topline">
+						<span><?php esc_html_e( '03', '__plugin_txtd' ); ?></span>
+						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Role rail', '__plugin_txtd' ); ?></p>
+					</div>
+					<h2><?php esc_html_e( 'Resolved role rail', '__plugin_txtd' ); ?></h2>
+					<div class="sm-lab-runtime-strip__rail" data-sm-lab-grade-rail data-sm-lab-proof="grade-rail">
+						<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
+							<span
+								class="sm-lab-runtime-strip__grade"
+								data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
+								style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
+								aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
+								data-active="<?php echo esc_attr( $grade === $params->variation() ? 'true' : 'false' ); ?>"
+							></span>
+						<?php endfor; ?>
+					</div>
+					<div class="sm-lab-role-markers">
+						<span data-sm-lab-role-marker="palette"><small><?php esc_html_e( 'Palette', '__plugin_txtd' ); ?></small><strong data-sm-lab-status-value="palette"><?php echo esc_html( $params->palette() ); ?></strong></span>
+						<span data-sm-lab-role-marker="active"><small><?php esc_html_e( 'Variation', '__plugin_txtd' ); ?></small><strong data-sm-lab-status-value="variation"><?php echo esc_html( (string) $params->variation() ); ?></strong></span>
+						<span data-sm-lab-role-marker="source"><small><?php esc_html_e( 'Source anchor', '__plugin_txtd' ); ?></small><strong><?php esc_html_e( 'grade 7', '__plugin_txtd' ); ?></strong></span>
+					</div>
+				</article>
+
+				<article class="sm-lab-resolution-stage sm-lab-block-map" data-sm-lab-resolution-stage="mapping" data-sm-lab-proof="block-mapping">
+					<div class="sm-lab-resolution-stage__topline">
+						<span><?php esc_html_e( '04', '__plugin_txtd' ); ?></span>
+						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Block mapping', '__plugin_txtd' ); ?></p>
+					</div>
+					<h2><?php esc_html_e( 'Component anatomy', '__plugin_txtd' ); ?></h2>
+					<div class="sm-lab-block-map__sample">
+						<div class="sm-lab-block-map__component" data-sm-lab-component-callout="surface">
+							<span class="sm-lab-block-map__surface"><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></span>
+							<strong class="sm-lab-block-map__text" data-sm-lab-component-callout="text"><?php esc_html_e( 'Heading and copy', '__plugin_txtd' ); ?></strong>
+							<span class="sm-lab-block-map__action" data-sm-lab-component-callout="action"><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></span>
+							<span class="sm-lab-block-map__shadow" data-sm-lab-component-callout="shadow"><?php esc_html_e( 'Border / shadow', '__plugin_txtd' ); ?></span>
+						</div>
+					</div>
+				</article>
 			</div>
 		</div>
 		<?php
