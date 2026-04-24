@@ -302,6 +302,14 @@ const createShowcaseDocument = () => {
   nestedVariationZone.className = 'wp-block-group sm-palette-1 sm-variation-1 sm-color-signal-2';
   documentRef.body.appendChild( nestedVariationZone );
 
+  const signalPreview = documentRef.createElement( 'div' );
+  signalPreview.setAttribute( 'data-sm-lab-signal-preview', '1' );
+  signalPreview.setAttribute( 'data-palette', '1' );
+  signalPreview.setAttribute( 'data-palette-variation', '1' );
+  signalPreview.setAttribute( 'data-color-signal', '0' );
+  signalPreview.className = 'sm-palette-1 sm-variation-1 sm-color-signal-0';
+  documentRef.body.appendChild( signalPreview );
+
   return documentRef;
 };
 
@@ -422,6 +430,11 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'active grade marker should follow selected variation'
     );
     assert.equal(
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-signal-active' ),
+      'true',
+      'signal grade marker should follow the resolved child variation'
+    );
+    assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="1"]' )?.getAttribute( 'data-active' ),
       'false',
       'inactive grade markers should be cleared when variation changes'
@@ -450,6 +463,33 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-signal-result="variation"]' )?.textContent,
       '7',
       'signal result should expose the resolved child variation'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette' ),
+      'contextual-lab',
+      'signal preview scope should follow the selected palette'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette-variation' ),
+      '7',
+      'signal preview scope should use the resolved child variation'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-color-signal' ),
+      '2',
+      'signal preview scope should expose the selected signal level'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-palette-contextual-lab' ),
+      'signal preview scope should update its palette class'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-variation-7' ),
+      'signal preview scope should update its variation class'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-color-signal-2' ),
+      'signal preview scope should update its signal class'
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );

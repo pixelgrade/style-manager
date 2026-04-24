@@ -164,12 +164,14 @@ final class ShowcaseRenderer {
 								style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
 								aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
 								data-active="<?php echo esc_attr( $grade === $params->variation() ? 'true' : 'false' ); ?>"
+								data-signal-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
 							></span>
 						<?php endfor; ?>
 					</div>
 					<div class="sm-lab-role-markers">
 						<span data-sm-lab-role-marker="palette"><small><?php esc_html_e( 'Palette', '__plugin_txtd' ); ?></small><strong data-sm-lab-status-value="palette"><?php echo esc_html( $params->palette() ); ?></strong></span>
 						<span data-sm-lab-role-marker="active"><small><?php esc_html_e( 'Variation', '__plugin_txtd' ); ?></small><strong data-sm-lab-status-value="variation"><?php echo esc_html( (string) $params->variation() ); ?></strong></span>
+						<span data-sm-lab-role-marker="signal"><small><?php esc_html_e( 'Signal grade', '__plugin_txtd' ); ?></small><strong data-sm-lab-signal-result="variation"><?php echo esc_html( (string) $signal_variation ); ?></strong></span>
 						<span data-sm-lab-role-marker="source"><small><?php esc_html_e( 'Source anchor', '__plugin_txtd' ); ?></small><strong><?php esc_html_e( 'grade 7', '__plugin_txtd' ); ?></strong></span>
 					</div>
 				</article>
@@ -181,7 +183,14 @@ final class ShowcaseRenderer {
 					</div>
 					<h2><?php esc_html_e( 'Component anatomy', '__plugin_txtd' ); ?></h2>
 					<div class="sm-lab-block-map__sample">
-						<div class="sm-lab-block-map__component" data-sm-lab-component-callout="surface">
+						<div
+							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $signal_variation ); ?> sm-color-signal-<?php echo esc_attr( (string) $params->signal() ); ?>"
+							data-sm-lab-component-callout="surface"
+							data-sm-lab-signal-preview
+							data-palette="<?php echo esc_attr( $params->palette() ); ?>"
+							data-palette-variation="<?php echo esc_attr( (string) $signal_variation ); ?>"
+							data-color-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
+						>
 							<span class="sm-lab-block-map__surface"><?php esc_html_e( 'Surface', '__plugin_txtd' ); ?></span>
 							<strong class="sm-lab-block-map__text" data-sm-lab-component-callout="text"><?php esc_html_e( 'Heading and copy', '__plugin_txtd' ); ?></strong>
 							<span class="sm-lab-block-map__action" data-sm-lab-component-callout="action"><?php esc_html_e( 'Action', '__plugin_txtd' ); ?></span>

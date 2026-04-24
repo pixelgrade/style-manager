@@ -645,7 +645,7 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
   windowRef.styleManager.siteColorVariation = state.variation;
 
   Array.from( documentRef.querySelectorAll( '[data-color-signal]' ) )
-    .filter( ( element ) => ! hasNovaSignalAncestor( element ) )
+    .filter( ( element ) => element.getAttribute?.( 'data-sm-lab-signal-preview' ) === null && ! hasNovaSignalAncestor( element ) )
     .forEach( ( element ) => {
       syncNovaSignalScope( element, state.variation, windowRef, state.variation );
     } );
@@ -653,10 +653,27 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
 
 const getSignalResultVariation = ( state ) => Math.min( state.parentVariation + state.signal, 12 );
 
+const updateSignalPreviewScopes = ( documentRef, state ) => {
+  const signalVariation = getSignalResultVariation( state );
+
+  documentRef.querySelectorAll( '[data-sm-lab-signal-preview]' ).forEach( ( node ) => {
+    node.setAttribute( 'data-palette', state.palette );
+    node.setAttribute( 'data-palette-variation', String( signalVariation ) );
+    node.setAttribute( 'data-color-signal', String( state.signal ) );
+    replaceClassByPattern( node, /^sm-palette-[a-z0-9_-]+$/i, `sm-palette-${ state.palette }` );
+    replaceClassByPattern( node, /^sm-variation-\d+$/, `sm-variation-${ signalVariation }` );
+    replaceClassByPattern( node, /^sm-color-signal-\d+$/, `sm-color-signal-${ state.signal }` );
+  } );
+};
+
 const writeVisualProofState = ( documentRef, state ) => {
+  const signalVariation = getSignalResultVariation( state );
+
   documentRef.querySelectorAll( '[data-sm-lab-grade-swatch]' ).forEach( ( node ) => {
     const isActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( state.variation );
+    const isSignalActive = node.getAttribute( 'data-sm-lab-grade-swatch' ) === String( signalVariation );
     node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
+    node.setAttribute( 'data-signal-active', isSignalActive ? 'true' : 'false' );
   } );
 
   documentRef.querySelectorAll( '[data-sm-lab-signal-option]' ).forEach( ( node ) => {
@@ -667,7 +684,7 @@ const writeVisualProofState = ( documentRef, state ) => {
   Object.entries( {
     signal: state.signal,
     parent: state.parentVariation,
-    variation: getSignalResultVariation( state ),
+    variation: signalVariation,
   } ).forEach( ( [ key, value ] ) => {
     documentRef.querySelectorAll( `[data-sm-lab-signal-result="${ key }"]` ).forEach( ( node ) => {
       node.textContent = String( value );
@@ -716,6 +733,7 @@ export const applyShowcaseState = ( {
   } );
 
   syncNovaSignalScopes( document, windowRef, normalizedState );
+  updateSignalPreviewScopes( document, normalizedState );
 
   const colors = readResolvedColors( { document, getComputedStyle } );
   writeResolvedColors( document, colors, getComputedStyle );

@@ -48,6 +48,9 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-signal-result="variation"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-callout="action"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="active"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-role-marker="signal"', $html );
+		$this->assertStringContainsString( 'data-signal-active="true"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-signal-preview', $html );
 		$this->assertStringContainsString( 'data-sm-lab-grade-rail', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-bars', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="grade-rail"', $html );
