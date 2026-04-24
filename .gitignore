@@ -15,6 +15,7 @@ build
 tmp/
 *-ck.js
 npm-debug.log
+.phpunit.result.cache
 
 # Private local overlays
 .env
@@ -23,8 +24,10 @@ npm-debug.log
 AGENTS.local.md
 .ai/
 .claude/napkin.md
+.claude/settings.local.json
 .claude/local/
 .private/
+.superpowers/
 
 /vendor/
 /php-scoper/vendor/
