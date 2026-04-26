@@ -93,7 +93,7 @@ final class ShowcaseRoute extends AbstractHookProvider {
 			<?php wp_head(); ?>
 			<?php $this->render_contextual_palette_css( $params ); ?>
 		</head>
-		<body <?php body_class( $params->body_classes() ); ?> data-sm-lab-site-variation="<?php echo esc_attr( (string) \Pixelgrade\StyleManager\get_option( 'sm_site_color_variation', 1 ) ); ?>">
+		<body class="<?php echo esc_attr( implode( ' ', self::filter_showcase_body_classes( get_body_class( $params->body_classes() ) ) ) ); ?>" data-sm-lab-site-variation="<?php echo esc_attr( (string) \Pixelgrade\StyleManager\get_option( 'sm_site_color_variation', 1 ) ); ?>">
 			<?php echo $this->renderer->render( $params ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<script id="style-manager-lab-color-system-config">
 				window.styleManagerLabColorSystem = <?php echo wp_json_encode( $this->config->color_system_preview_config( $params ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
@@ -104,6 +104,20 @@ final class ShowcaseRoute extends AbstractHookProvider {
 		<?php
 
 		return (string) ob_get_clean();
+	}
+
+	public static function filter_showcase_body_classes( array $classes ): array {
+		$filtered = array_filter( $classes, static function( $class ): bool {
+			$class = (string) $class;
+
+			if ( 'is-loading' === $class ) {
+				return false;
+			}
+
+			return 0 !== strpos( $class, 'has-intro-animations' );
+		} );
+
+		return array_values( array_unique( $filtered ) );
 	}
 
 	private function render_contextual_palette_css( QueryParams $params ): void {

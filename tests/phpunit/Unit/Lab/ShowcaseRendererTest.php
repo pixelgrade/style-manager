@@ -66,7 +66,6 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-token-lane="component"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-wire="label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-wire="button"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-wire="shadow"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-label="1"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-button="6"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-shadow="8"', $html );
@@ -127,9 +126,20 @@ class ShowcaseRendererTest extends TestCase {
 		$block_map_end   = strpos( $html, '</article>', (int) $block_map_start );
 		$block_map_html  = substr( $html, (int) $block_map_start, (int) $block_map_end - (int) $block_map_start );
 
+		$this->assertLessThan(
+			strpos( $block_map_html, 'sm-lab-button-token-map__rail' ),
+			strpos( $block_map_html, 'sm-lab-button-token-map__brief' ),
+			'The Button block brief should appear before the color rail.'
+		);
+		$this->assertGreaterThan(
+			strpos( $block_map_html, 'sm-lab-button-token-map__button' ),
+			strpos( $block_map_html, 'sm-lab-button-token-map__pin--shadow' ),
+			'The shadow pointer should be rendered after the button so it can sit below it.'
+		);
 		$this->assertStringNotContainsString( '<code>--sm-current-bg-color</code>', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-accent-color</code>', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-fg2-color</code>', $block_map_html );
+		$this->assertStringNotContainsString( 'data-sm-lab-token-wire="shadow"', $block_map_html );
 		$this->assertStringNotContainsString( 'sm-lab-button-token-map__shadow-shelf', $block_map_html );
 	}
 }

@@ -389,11 +389,11 @@ const createShowcaseDocument = () => {
   [
     [ 'label', 120 ],
     [ 'button', 400 ],
-    [ 'shadow', 680 ],
-  ].forEach( ( [ part, left ] ) => {
+    [ 'shadow', 680, 350 ],
+  ].forEach( ( [ part, left, top = 120 ] ) => {
     const pin = documentRef.createElement( 'span' );
     pin.setAttribute( 'data-sm-lab-token-pin', part );
-    pin.setRect( { left, top: 120, width: 180, height: 48 } );
+    pin.setRect( { left, top, width: 180, height: 48 } );
     signalPreview.appendChild( pin );
   } );
 
@@ -689,8 +689,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
-      /^M 446 58 L 446 102 Q 446 112 456 112 L 762 112 Q 770 112 770 120$/,
-      'shadow wire should connect the grade 8 role chip to the visible shadow callout on a separate lane'
+      /^M 446 58 L 446 104 Q 446 114 456 114 L 760 114 Q 770 114 770 124 L 770 350$/,
+      'shadow wire should connect the grade 8 role chip to the shadow callout below the button'
     );
     assert.notEqual(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),

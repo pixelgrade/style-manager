@@ -214,6 +214,10 @@ final class ShowcaseRenderer {
 								<path data-sm-lab-token-source-wire="button" />
 								<path data-sm-lab-token-source-wire="shadow" />
 							</svg>
+							<div class="sm-lab-button-token-map__brief">
+								<h3><?php esc_html_e( 'Button block', '__plugin_txtd' ); ?></h3>
+								<p><?php esc_html_e( 'Each visible part consumes one resolved role from the same runtime grade rail.', '__plugin_txtd' ); ?></p>
+							</div>
 							<div class="sm-lab-button-token-map__rail" aria-hidden="true">
 								<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
 									<span
@@ -253,15 +257,10 @@ final class ShowcaseRenderer {
 								<?php endfor; ?>
 							</div>
 							<div class="sm-lab-button-token-map__canvas" data-sm-lab-token-circuit>
-								<div class="sm-lab-button-token-map__brief">
-									<h3><?php esc_html_e( 'Button block', '__plugin_txtd' ); ?></h3>
-									<p><?php esc_html_e( 'Each visible part consumes one resolved role from the same runtime grade rail.', '__plugin_txtd' ); ?></p>
-								</div>
 								<div class="sm-lab-button-token-map__diagram">
 									<svg class="sm-lab-button-token-map__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
 										<path data-sm-lab-token-wire="label" d="M 14 0 V 42 Q 14 50 22 50 H 36" />
 										<path data-sm-lab-token-wire="button" d="M 54 0 V 60" />
-										<path data-sm-lab-token-wire="shadow" d="M 78 0 V 32 Q 78 40 86 40 H 88 V 62 Q 88 70 80 70 H 62" />
 									</svg>
 									<div class="sm-lab-button-token-map__labels" data-sm-lab-token-lane="labels">
 										<span class="sm-lab-button-token-map__pin sm-lab-button-token-map__pin--label" data-sm-lab-token-pin="label" data-sm-lab-component-callout="label" data-sm-lab-token-target="surface">
@@ -278,6 +277,11 @@ final class ShowcaseRenderer {
 												<small><?php esc_html_e( 'Fill grade', '__plugin_txtd' ); ?></small>
 											</span>
 										</span>
+									</div>
+									<div class="sm-lab-button-token-map__component-stage" data-sm-lab-token-lane="component">
+										<button type="button" class="sm-lab-button-token-map__button" data-sm-lab-component-callout="action" data-sm-lab-token-target="action">
+											<span data-sm-lab-token-target="label"><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
+										</button>
 										<span class="sm-lab-button-token-map__pin sm-lab-button-token-map__pin--shadow" data-sm-lab-token-pin="shadow" data-sm-lab-component-callout="shadow">
 											<strong data-sm-lab-component-grade="shadow"><?php echo esc_html( (string) $shadow_grade ); ?></strong>
 											<span>
@@ -285,11 +289,6 @@ final class ShowcaseRenderer {
 												<small><?php esc_html_e( 'Depth grade', '__plugin_txtd' ); ?></small>
 											</span>
 										</span>
-									</div>
-									<div class="sm-lab-button-token-map__component-stage" data-sm-lab-token-lane="component">
-										<button type="button" class="sm-lab-button-token-map__button" data-sm-lab-component-callout="action" data-sm-lab-token-target="action">
-											<span data-sm-lab-token-target="label"><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
-										</button>
 									</div>
 								</div>
 							</div>
