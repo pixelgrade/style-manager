@@ -502,6 +502,35 @@
   z-index: 2;
 }
 
+.sm-lab-button-token-map__source-chips {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.sm-lab-button-token-map__source-chip {
+  width: 8px;
+  height: 8px;
+  border: 1px solid color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 22%);
+  border-radius: 999px;
+  background: var(--sm-lab-token-source-color);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--sm-current-fg1-color), transparent 72%);
+  opacity: 0;
+  transform: scale(0.55);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.sm-lab-button-token-map__source-chip[data-active="true"] {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .sm-lab-button-token-map__source-wires {
   position: absolute;
   inset: 0;
@@ -694,11 +723,13 @@
   font-weight: 800;
 }
 
-.sm-lab-button-token-map__pin code {
+.sm-lab-button-token-map__pin small {
   grid-column: 2;
+  display: block;
   max-width: 100%;
   color: var(--sm-current-fg2-color);
   font-size: 10px;
+  font-weight: 700;
   line-height: 1.1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -739,16 +770,16 @@
   padding: 16px 34px;
   border: 0;
   border-radius: 6px;
-  background: var(--sm-current-accent-color);
-  color: var(--sm-current-bg-color);
-  box-shadow: 0 12px 0 color-mix(in srgb, var(--sm-current-fg2-color), transparent 28%);
+  background: var(--sm-lab-component-button-color, var(--sm-current-accent-color));
+  color: var(--sm-lab-component-label-color, var(--sm-current-bg-color));
+  box-shadow: 0 12px 0 var(--sm-lab-component-shadow-color, var(--sm-current-fg2-color));
   font: inherit;
   font-size: 24px;
   font-weight: 800;
 }
 
 .is-dark .sm-lab-button-token-map__button {
-  color: color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 84%);
+  color: var(--sm-lab-component-label-color, color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 84%));
 }
 
 .sm-lab-button-token-map__button span {
@@ -756,17 +787,6 @@
   max-width: 100%;
   overflow-wrap: normal;
   text-align: center;
-}
-
-.sm-lab-button-token-map__shadow-shelf {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  height: 16px;
-  border-radius: 0 0 8px 8px;
-  background: color-mix(in srgb, var(--sm-current-fg2-color), transparent 38%);
 }
 
 @media (max-width: 900px) {
@@ -820,7 +840,7 @@
     font-size: 12px;
   }
 
-  .sm-lab-button-token-map__pin code {
+  .sm-lab-button-token-map__pin small {
     font-size: 10px;
   }
 
@@ -883,7 +903,7 @@
     line-height: 1.1;
   }
 
-  .sm-lab-button-token-map__pin code {
+  .sm-lab-button-token-map__pin small {
     display: none;
   }
 

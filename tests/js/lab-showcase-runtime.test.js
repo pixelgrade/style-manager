@@ -122,6 +122,20 @@ class FakeElement {
   querySelectorAll( selector ) {
     return this.ownerDocument.querySelectorAllFrom( selector, this );
   }
+
+  closest( selector ) {
+    let cursor = this;
+
+    while ( cursor ) {
+      if ( this.ownerDocument.matchesSelector( cursor, selector ) ) {
+        return cursor;
+      }
+
+      cursor = cursor.parentElement;
+    }
+
+    return null;
+  }
 }
 
 class FakeDocument {
@@ -350,6 +364,20 @@ const createShowcaseDocument = () => {
     chip.setAttribute( 'data-sm-lab-grade-swatch', String( grade ) );
     chip.setRect( { left: 80 + ( grade - 1 ) * 48, top: 20, width: 36, height: 36 } );
     componentRail.appendChild( chip );
+
+    const sourceGroup = documentRef.createElement( 'span' );
+    chip.appendChild( sourceGroup );
+
+    [
+      [ 'label', 0 ],
+      [ 'button', 1 ],
+      [ 'shadow', 2 ],
+    ].forEach( ( [ part, index ] ) => {
+      const source = documentRef.createElement( 'span' );
+      source.setAttribute( 'data-sm-lab-token-source-chip', part );
+      source.setRect( { left: 88 + ( grade - 1 ) * 48 + index * 9, top: 50, width: 8, height: 8 } );
+      sourceGroup.appendChild( source );
+    } );
   }
 
   [ 'label', 'button', 'shadow' ].forEach( ( part ) => {
@@ -423,6 +451,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     assert.ok( css.includes( '.sm-palette-brand {' ), 'runtime palette CSS should target each palette selector' );
     assert.ok( css.includes( '--sm-bg-color-1: #000004;' ), 'runtime palette CSS should offset light variables by the selected variation' );
     assert.ok( css.includes( '--sm-lab-reference-bg-color-1: #000001;' ), 'runtime palette CSS should keep grade 1 fixed for the anatomy rail' );
+    assert.ok( css.includes( '--sm-lab-reference-accent-color-1: #000101;' ), 'runtime palette CSS should expose fixed action-role colors for anatomy sources' );
+    assert.ok( css.includes( '--sm-lab-reference-fg2-color-8: #000308;' ), 'runtime palette CSS should expose fixed depth-role colors for anatomy sources' );
     assert.ok( css.includes( '--sm-lab-reference-bg-color-12: #000012;' ), 'runtime palette CSS should keep grade 12 fixed for the anatomy rail' );
     assert.ok( css.includes( '.is-dark .sm-palette-brand {' ), 'runtime palette CSS should include dark variables' );
     assert.ok( css.includes( '--sm-bg-color-1: #000404;' ), 'runtime palette CSS should offset dark variables by the selected variation' );
@@ -623,6 +653,15 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '8',
       'shadow source pointer should expose the resolved grade it points to'
     );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'style' )?.includes( '--sm-lab-component-button-color: var(--sm-lab-reference-bg-color-6' ),
+      'button sample should consume the same fixed grade color that the connector points to'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-chip="label"]' )?.getAttribute( 'data-active' ),
+      'true',
+      'label wire should originate from the active role-color source chip'
+    );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
       '1',
@@ -640,18 +679,23 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ) || '',
-      /^M 98 56 L 98 76 Q 98 86 108 86 L 200 86 Q 210 86 210 96 L 210 120$/,
-      'label wire should connect grade 1 to the visible text-label callout'
+      /^M 92 58 L 92 72 Q 92 82 102 82 L 200 82 Q 210 82 210 92 L 210 120$/,
+      'label wire should connect the grade 1 role chip to the visible text-label callout'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ) || '',
-      /^M 338 56 L 338 76 Q 338 86 348 86 L 480 86 Q 490 86 490 96 L 490 120$/,
-      'button fill wire should connect grade 6 to the visible button-fill callout'
+      /^M 341 58 L 341 88 Q 341 98 351 98 L 480 98 Q 490 98 490 108 L 490 120$/,
+      'button fill wire should connect the grade 6 role chip to the visible button-fill callout'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
-      /^M 434 56 L 434 76 Q 434 86 444 86 L 760 86 Q 770 86 770 96 L 770 120$/,
-      'shadow wire should connect grade 8 to the visible shadow callout'
+      /^M 446 58 L 446 102 Q 446 112 456 112 L 762 112 Q 770 112 770 120$/,
+      'shadow wire should connect the grade 8 role chip to the visible shadow callout on a separate lane'
+    );
+    assert.notEqual(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ),
+      'role source wires should not reuse the same geometry'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="1"]' )?.getAttribute( 'data-token-label-active' ),
@@ -691,7 +735,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'AA',
       'contextual proof contrast labels should update from the generated palette'
     );
-    const labelWireAtVariation4 = documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' );
+    const buttonWireAtVariation4 = documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' );
 
     applyShowcaseState( {
       document: documentRef,
@@ -716,10 +760,15 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '10',
       'changing the active variation should move the button connector to the new resolved grade on the fixed rail'
     );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-label' ),
+      '1',
+      'dark resolved fill grades should keep the text connector on the light contrast grade'
+    );
     assert.notEqual(
-      documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),
-      labelWireAtVariation4,
-      'changing the active variation should redraw the connector geometry'
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ),
+      buttonWireAtVariation4,
+      'changing the active variation should redraw the fill connector geometry'
     );
 
     let receivedEvent = null;

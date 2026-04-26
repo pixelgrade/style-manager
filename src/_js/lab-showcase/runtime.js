@@ -9,6 +9,11 @@ const COMPONENT_TOKEN_TARGETS = {
   button: 'button',
   shadow: 'shadow',
 };
+const COMPONENT_SOURCE_LANES = {
+  label: 0,
+  button: 1,
+  shadow: 2,
+};
 const MIXES = [
   [ '#ffffff', 0.92 ],
   [ '#ffffff', 0.84 ],
@@ -220,11 +225,13 @@ const buildVariationCssVariables = ( variations, index, offset = 0 ) => {
     .join( ' ' );
 };
 
-const buildReferencePaletteCssVariables = ( variations = [] ) => Array.from( { length: 12 }, ( _, index ) => {
-  const color = variations?.[ index ]?.bg || '';
+const buildReferencePaletteCssVariables = ( variations = [] ) => Array.from( { length: 12 }, ( _, index ) => (
+  TOKENS.map( ( token ) => {
+    const color = variations?.[ index ]?.[ token ] || '';
 
-  return color ? `--sm-lab-reference-bg-color-${ index + 1 }: ${ color };` : '';
-} ).filter( Boolean ).join( ' ' );
+    return color ? `--sm-lab-reference-${ token }-color-${ index + 1 }: ${ color };` : '';
+  } ).filter( Boolean ).join( ' ' )
+) ).filter( Boolean ).join( ' ' );
 
 const buildPaletteCssBlock = ( selector, variations, offset, extraVariables = '' ) => `${ selector } { ${ [
   extraVariables,
@@ -669,8 +676,10 @@ const getInheritedVariation = ( state ) => normalizeSiteVariation( state.variati
 
 const getSignalResultVariation = ( state ) => Math.min( getInheritedVariation( state ) + state.signal, 12 );
 
+const getContrastGrade = ( grade ) => ( grade >= 5 ? 1 : 12 );
+
 const getComponentTokenGrades = ( signalVariation ) => ( {
-  label: Math.max( 1, signalVariation - 5 ),
+  label: getContrastGrade( signalVariation ),
   button: signalVariation,
   shadow: Math.min( 12, signalVariation + 2 ),
 } );
@@ -709,7 +718,7 @@ const getRelativePoint = ( rect, containerRect, xRatio, yRatio ) => ( {
 
 const getComponentCalloutPoint = ( rect, containerRect ) => getRelativePoint( rect, containerRect, 0.5, 0 );
 
-const buildComponentWirePath = ( source, target ) => {
+const buildComponentWirePath = ( source, target, lane = 0 ) => {
   const horizontalDistance = Math.abs( target.x - source.x );
   const verticalDistance = Math.abs( target.y - source.y );
 
@@ -726,13 +735,14 @@ const buildComponentWirePath = ( source, target ) => {
 
   const horizontalDirection = target.x >= source.x ? 1 : -1;
   const verticalDirection = target.y >= source.y ? 1 : -1;
-  const radius = Math.min( 10, horizontalDistance / 2, verticalDistance / 3 );
-  const elbowOffset = Math.min( Math.max( verticalDistance * 0.44, 30 ), verticalDistance - radius );
-  const elbowY = source.y + verticalDirection * elbowOffset;
-  const beforeElbowY = elbowY - verticalDirection * radius;
-  const afterElbowY = elbowY + verticalDirection * radius;
+  const laneOffset = Math.min( 24 + lane * 16, Math.max( verticalDistance - 8, 16 ) );
+  const elbowY = source.y + verticalDirection * laneOffset;
+  const sourceRadius = Math.min( 10, horizontalDistance / 2, Math.abs( elbowY - source.y ) / 2 );
+  const targetRadius = Math.min( 10, horizontalDistance / 2, Math.abs( target.y - elbowY ) );
+  const beforeElbowY = elbowY - verticalDirection * sourceRadius;
+  const afterElbowY = elbowY + verticalDirection * targetRadius;
 
-  return [
+  const path = [
     'M',
     formatWireNumber( source.x ),
     formatWireNumber( source.y ),
@@ -742,26 +752,46 @@ const buildComponentWirePath = ( source, target ) => {
     'Q',
     formatWireNumber( source.x ),
     formatWireNumber( elbowY ),
-    formatWireNumber( source.x + horizontalDirection * radius ),
+    formatWireNumber( source.x + horizontalDirection * sourceRadius ),
     formatWireNumber( elbowY ),
     'L',
-    formatWireNumber( target.x - horizontalDirection * radius ),
+    formatWireNumber( target.x - horizontalDirection * targetRadius ),
     formatWireNumber( elbowY ),
     'Q',
     formatWireNumber( target.x ),
     formatWireNumber( elbowY ),
     formatWireNumber( target.x ),
     formatWireNumber( afterElbowY ),
-    'L',
-    formatWireNumber( target.x ),
-    formatWireNumber( target.y ),
-  ].join( ' ' );
+  ];
+
+  if ( Math.abs( afterElbowY - target.y ) > 0.5 ) {
+    path.push(
+      'L',
+      formatWireNumber( target.x ),
+      formatWireNumber( target.y )
+    );
+  }
+
+  return path.join( ' ' );
 };
 
 const findComponentSourceSwatch = ( map, part ) => (
+  Array.from( map.querySelectorAll( `[data-sm-lab-token-source-chip="${ part }"]` ) )
+    .find( ( source ) => source.getAttribute( 'data-active' ) === 'true' )
+  ||
   Array.from( map.querySelectorAll( '[data-sm-lab-grade-swatch]' ) )
     .find( ( swatch ) => swatch.getAttribute( `data-token-${ part }-active` ) === 'true' )
 );
+
+const buildReferenceGradeColor = ( grade, fallback = 'var(--sm-current-bg-color)' ) => (
+  `var(--sm-lab-reference-bg-color-${ grade }, var(--sm-bg-color-${ grade }, ${ fallback }))`
+);
+
+const buildComponentTokenStyle = ( grades ) => [
+  `--sm-lab-component-label-color: ${ buildReferenceGradeColor( grades.label ) };`,
+  `--sm-lab-component-button-color: ${ buildReferenceGradeColor( grades.button, 'var(--sm-current-accent-color)' ) };`,
+  `--sm-lab-component-shadow-color: ${ buildReferenceGradeColor( grades.shadow, 'var(--sm-current-fg2-color)' ) };`,
+].join( ' ' );
 
 const updateButtonTokenSourceWires = ( documentRef ) => {
   documentRef.querySelectorAll( '[data-sm-lab-button-token-map]' ).forEach( ( map ) => {
@@ -789,9 +819,11 @@ const updateButtonTokenSourceWires = ( documentRef ) => {
 
       const sourcePoint = getRelativePoint( sourceRect, containerRect, 0.5, 1 );
       const targetPoint = getComponentCalloutPoint( targetRect, containerRect );
-      const sourceGrade = source.getAttribute( 'data-sm-lab-grade-swatch' ) || '';
+      const sourceGrade = source.getAttribute( 'data-sm-lab-grade-swatch' )
+        || source.closest?.( '[data-sm-lab-grade-swatch]' )?.getAttribute?.( 'data-sm-lab-grade-swatch' )
+        || '';
 
-      path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint ) );
+      path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint, COMPONENT_SOURCE_LANES[ part ] || 0 ) );
       path.setAttribute( 'data-sm-lab-token-source-grade', sourceGrade );
       path.setAttribute( 'data-sm-lab-token-target-kind', targetName );
       path.setAttribute( 'data-sm-lab-token-wire-active', 'true' );
@@ -841,6 +873,13 @@ const writeVisualProofState = ( documentRef, state ) => {
     node.setAttribute( 'data-token-label-active', grade === String( componentTokenGrades.label ) ? 'true' : 'false' );
     node.setAttribute( 'data-token-button-active', grade === String( componentTokenGrades.button ) ? 'true' : 'false' );
     node.setAttribute( 'data-token-shadow-active', grade === String( componentTokenGrades.shadow ) ? 'true' : 'false' );
+
+    node.querySelectorAll( '[data-sm-lab-token-source-chip]' ).forEach( ( chip ) => {
+      const part = chip.getAttribute( 'data-sm-lab-token-source-chip' );
+      const isSourceActive = part && grade === String( componentTokenGrades[ part ] );
+
+      chip.setAttribute( 'data-active', isSourceActive ? 'true' : 'false' );
+    } );
   } );
 
   documentRef.querySelectorAll( '[data-sm-lab-grade-rail]' ).forEach( ( node ) => {
@@ -871,6 +910,8 @@ const writeVisualProofState = ( documentRef, state ) => {
   } );
 
   documentRef.querySelectorAll( '[data-sm-lab-button-token-map]' ).forEach( ( node ) => {
+    node.setAttribute( 'style', buildComponentTokenStyle( componentTokenGrades ) );
+
     Object.entries( componentTokenGrades ).forEach( ( [ key, value ] ) => {
       node.setAttribute( `data-sm-lab-token-source-grade-${ key }`, String( value ) );
     } );

@@ -74,6 +74,9 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="button"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="shadow"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-chip="label"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-chip="button"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-chip="shadow"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-target="label"', $html );
 		$this->assertStringContainsString( 'data-token-label-active="true"', $html );
 		$this->assertStringContainsString( 'data-token-button-active="true"', $html );
@@ -83,16 +86,19 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-token-pin="shadow"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-target="surface"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-target="action"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-target="shadow"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-grade="button"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-grade="label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-grade="shadow"', $html );
 		$this->assertStringContainsString( 'Button block', $html );
 		$this->assertStringContainsString( 'Text label', $html );
 		$this->assertStringContainsString( 'Button fill', $html );
+		$this->assertStringContainsString( 'Contrast grade', $html );
+		$this->assertStringContainsString( 'Fill grade', $html );
+		$this->assertStringContainsString( 'Depth grade', $html );
 		$this->assertStringContainsString( 'Make a reservation', $html );
 		$this->assertStringContainsString( '--sm-current-accent-color', $html );
 		$this->assertStringContainsString( '--sm-lab-reference-bg-color-1', $html );
+		$this->assertStringContainsString( '--sm-lab-component-button-color', $html );
 		$this->assertStringContainsString( 'data-sm-lab-grade-rail', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-bars', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="grade-rail"', $html );
@@ -116,5 +122,14 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'theme.json', $html );
 		$this->assertStringContainsString( 'Anima', $html );
 		$this->assertStringContainsString( 'Nova Blocks', $html );
+
+		$block_map_start = strpos( $html, 'data-sm-lab-proof="block-mapping"' );
+		$block_map_end   = strpos( $html, '</article>', (int) $block_map_start );
+		$block_map_html  = substr( $html, (int) $block_map_start, (int) $block_map_end - (int) $block_map_start );
+
+		$this->assertStringNotContainsString( '<code>--sm-current-bg-color</code>', $block_map_html );
+		$this->assertStringNotContainsString( '<code>--sm-current-accent-color</code>', $block_map_html );
+		$this->assertStringNotContainsString( '<code>--sm-current-fg2-color</code>', $block_map_html );
+		$this->assertStringNotContainsString( 'sm-lab-button-token-map__shadow-shelf', $block_map_html );
 	}
 }
