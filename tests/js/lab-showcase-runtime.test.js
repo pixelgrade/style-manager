@@ -65,6 +65,7 @@ class FakeElement {
     this.textContent = '';
     this.classList = new FakeClassList( this );
     this._className = '';
+    this.rect = { left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0 };
   }
 
   get className() {
@@ -97,6 +98,21 @@ class FakeElement {
 
   getAttribute( name ) {
     return this.attributes.has( name ) ? this.attributes.get( name ) : null;
+  }
+
+  getBoundingClientRect() {
+    return this.rect;
+  }
+
+  setRect( rect ) {
+    this.rect = {
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height,
+      right: rect.left + rect.width,
+      bottom: rect.top + rect.height,
+    };
   }
 
   querySelector( selector ) {
@@ -313,13 +329,60 @@ const createShowcaseDocument = () => {
   signalPreview.setAttribute( 'data-palette-variation', '1' );
   signalPreview.setAttribute( 'data-color-signal', '0' );
   signalPreview.className = 'sm-palette-1 sm-variation-1 sm-color-signal-0';
+  signalPreview.setRect( { left: 0, top: 0, width: 1000, height: 420 } );
   documentRef.body.appendChild( signalPreview );
+
+  const sourceWires = documentRef.createElement( 'svg' );
+  sourceWires.setAttribute( 'data-sm-lab-token-source-wires', '1' );
+  signalPreview.appendChild( sourceWires );
+
+  [ 'label', 'button', 'shadow' ].forEach( ( part ) => {
+    const path = documentRef.createElement( 'path' );
+    path.setAttribute( 'data-sm-lab-token-source-wire', part );
+    sourceWires.appendChild( path );
+  } );
+
+  const componentRail = documentRef.createElement( 'div' );
+  signalPreview.appendChild( componentRail );
+
+  for ( let grade = 1; grade <= 12; grade += 1 ) {
+    const chip = documentRef.createElement( 'span' );
+    chip.setAttribute( 'data-sm-lab-grade-swatch', String( grade ) );
+    chip.setRect( { left: 80 + ( grade - 1 ) * 48, top: 20, width: 36, height: 36 } );
+    componentRail.appendChild( chip );
+  }
 
   [ 'label', 'button', 'shadow' ].forEach( ( part ) => {
     const grade = documentRef.createElement( 'strong' );
     grade.setAttribute( 'data-sm-lab-component-grade', part );
     signalPreview.appendChild( grade );
   } );
+
+  [
+    [ 'label', 120 ],
+    [ 'button', 400 ],
+    [ 'shadow', 680 ],
+  ].forEach( ( [ part, left ] ) => {
+    const pin = documentRef.createElement( 'span' );
+    pin.setAttribute( 'data-sm-lab-token-pin', part );
+    pin.setRect( { left, top: 120, width: 180, height: 48 } );
+    signalPreview.appendChild( pin );
+  } );
+
+  const labelTarget = documentRef.createElement( 'span' );
+  labelTarget.setAttribute( 'data-sm-lab-token-target', 'label' );
+  labelTarget.setRect( { left: 520, top: 274, width: 180, height: 28 } );
+  signalPreview.appendChild( labelTarget );
+
+  const actionTarget = documentRef.createElement( 'button' );
+  actionTarget.setAttribute( 'data-sm-lab-token-target', 'action' );
+  actionTarget.setRect( { left: 470, top: 250, width: 380, height: 72 } );
+  signalPreview.appendChild( actionTarget );
+
+  const shadowTarget = documentRef.createElement( 'span' );
+  shadowTarget.setAttribute( 'data-sm-lab-token-target', 'shadow' );
+  shadowTarget.setRect( { left: 470, top: 322, width: 380, height: 16 } );
+  signalPreview.appendChild( shadowTarget );
 
   return documentRef;
 };
@@ -551,6 +614,36 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-shadow' ),
       '9',
       'shadow source pointer should expose the resolved grade it points to'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
+      '2',
+      'label wire should terminate at the resolved label source grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
+      '7',
+      'button fill wire should terminate at the resolved button source grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
+      '9',
+      'shadow wire should terminate at the resolved shadow source grade'
+    );
+    assert.match(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ) || '',
+      /^M 146 56 L 146 76 Q 146 86 156 86 L 200 86 Q 210 86 210 96 L 210 120$/,
+      'label wire should connect grade 2 to the visible text-label callout'
+    );
+    assert.match(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ) || '',
+      /^M 386 56 L 386 76 Q 386 86 396 86 L 480 86 Q 490 86 490 96 L 490 120$/,
+      'button fill wire should connect grade 7 to the visible button-fill callout'
+    );
+    assert.match(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
+      /^M 482 56 L 482 76 Q 482 86 492 86 L 760 86 Q 770 86 770 96 L 770 120$/,
+      'shadow wire should connect grade 9 to the visible shadow callout'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="2"]' )?.getAttribute( 'data-token-label-active' ),

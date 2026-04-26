@@ -4,6 +4,11 @@ import { normalizeLabState, parseLabState } from '../lab/state.js';
 const CONTEXTUAL_ID = 'contextual-lab';
 const CONTEXTUAL_LABEL = 'Contextual Lab';
 const TOKENS = [ 'bg', 'accent', 'fg1', 'fg2' ];
+const COMPONENT_TOKEN_TARGETS = {
+  label: 'label',
+  button: 'button',
+  shadow: 'shadow',
+};
 const MIXES = [
   [ '#ffffff', 0.92 ],
   [ '#ffffff', 0.84 ],
@@ -659,6 +664,142 @@ const getComponentTokenGrades = ( signalVariation ) => ( {
   shadow: Math.min( 12, signalVariation + 2 ),
 } );
 
+const formatWireNumber = ( value ) => {
+  const rounded = Math.round( value * 100 ) / 100;
+
+  return Number.isInteger( rounded ) ? String( rounded ) : String( rounded );
+};
+
+const readWireRect = ( element ) => {
+  if ( ! element || typeof element.getBoundingClientRect !== 'function' ) {
+    return null;
+  }
+
+  const rect = element.getBoundingClientRect();
+  const left = Number( rect.left ) || 0;
+  const top = Number( rect.top ) || 0;
+  const width = Number( rect.width ) || 0;
+  const height = Number( rect.height ) || 0;
+
+  return {
+    left,
+    top,
+    width,
+    height,
+    right: Number( rect.right ) || left + width,
+    bottom: Number( rect.bottom ) || top + height,
+  };
+};
+
+const getRelativePoint = ( rect, containerRect, xRatio, yRatio ) => ( {
+  x: rect.left - containerRect.left + rect.width * xRatio,
+  y: rect.top - containerRect.top + rect.height * yRatio,
+} );
+
+const getComponentCalloutPoint = ( rect, containerRect ) => getRelativePoint( rect, containerRect, 0.5, 0 );
+
+const buildComponentWirePath = ( source, target ) => {
+  const horizontalDistance = Math.abs( target.x - source.x );
+  const verticalDistance = Math.abs( target.y - source.y );
+
+  if ( horizontalDistance < 1 || verticalDistance < 12 ) {
+    return [
+      'M',
+      formatWireNumber( source.x ),
+      formatWireNumber( source.y ),
+      'L',
+      formatWireNumber( target.x ),
+      formatWireNumber( target.y ),
+    ].join( ' ' );
+  }
+
+  const horizontalDirection = target.x >= source.x ? 1 : -1;
+  const verticalDirection = target.y >= source.y ? 1 : -1;
+  const radius = Math.min( 10, horizontalDistance / 2, verticalDistance / 3 );
+  const elbowOffset = Math.min( Math.max( verticalDistance * 0.44, 30 ), verticalDistance - radius );
+  const elbowY = source.y + verticalDirection * elbowOffset;
+  const beforeElbowY = elbowY - verticalDirection * radius;
+  const afterElbowY = elbowY + verticalDirection * radius;
+
+  return [
+    'M',
+    formatWireNumber( source.x ),
+    formatWireNumber( source.y ),
+    'L',
+    formatWireNumber( source.x ),
+    formatWireNumber( beforeElbowY ),
+    'Q',
+    formatWireNumber( source.x ),
+    formatWireNumber( elbowY ),
+    formatWireNumber( source.x + horizontalDirection * radius ),
+    formatWireNumber( elbowY ),
+    'L',
+    formatWireNumber( target.x - horizontalDirection * radius ),
+    formatWireNumber( elbowY ),
+    'Q',
+    formatWireNumber( target.x ),
+    formatWireNumber( elbowY ),
+    formatWireNumber( target.x ),
+    formatWireNumber( afterElbowY ),
+    'L',
+    formatWireNumber( target.x ),
+    formatWireNumber( target.y ),
+  ].join( ' ' );
+};
+
+const findComponentSourceSwatch = ( map, part ) => (
+  Array.from( map.querySelectorAll( '[data-sm-lab-grade-swatch]' ) )
+    .find( ( swatch ) => swatch.getAttribute( `data-token-${ part }-active` ) === 'true' )
+);
+
+const updateButtonTokenSourceWires = ( documentRef ) => {
+  documentRef.querySelectorAll( '[data-sm-lab-button-token-map]' ).forEach( ( map ) => {
+    const containerRect = readWireRect( map );
+    const svg = map.querySelector( '[data-sm-lab-token-source-wires]' );
+
+    if ( ! containerRect || ! svg ) {
+      return;
+    }
+
+    svg.setAttribute( 'viewBox', `0 0 ${ formatWireNumber( containerRect.width ) } ${ formatWireNumber( containerRect.height ) }` );
+
+    Object.entries( COMPONENT_TOKEN_TARGETS ).forEach( ( [ part, targetName ] ) => {
+      const path = map.querySelector( `[data-sm-lab-token-source-wire="${ part }"]` );
+      const source = findComponentSourceSwatch( map, part );
+      const target = map.querySelector( `[data-sm-lab-token-pin="${ targetName }"]` );
+      const sourceRect = readWireRect( source );
+      const targetRect = readWireRect( target );
+
+      if ( ! path || ! source || ! target || ! sourceRect || ! targetRect ) {
+        path?.setAttribute( 'data-sm-lab-token-wire-active', 'false' );
+        path?.removeAttribute( 'd' );
+        return;
+      }
+
+      const sourcePoint = getRelativePoint( sourceRect, containerRect, 0.5, 1 );
+      const targetPoint = getComponentCalloutPoint( targetRect, containerRect );
+      const sourceGrade = source.getAttribute( 'data-sm-lab-grade-swatch' ) || '';
+
+      path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint ) );
+      path.setAttribute( 'data-sm-lab-token-source-grade', sourceGrade );
+      path.setAttribute( 'data-sm-lab-token-target-kind', targetName );
+      path.setAttribute( 'data-sm-lab-token-wire-active', 'true' );
+    } );
+  } );
+};
+
+const syncButtonTokenSourceWires = ( documentRef, windowRef ) => {
+  updateButtonTokenSourceWires( documentRef );
+
+  if ( typeof windowRef?.requestAnimationFrame === 'function' ) {
+    windowRef.requestAnimationFrame( () => updateButtonTokenSourceWires( documentRef ) );
+  }
+
+  if ( typeof windowRef?.setTimeout === 'function' ) {
+    windowRef.setTimeout( () => updateButtonTokenSourceWires( documentRef ), 190 );
+  }
+};
+
 const updateSignalPreviewScopes = ( documentRef, state ) => {
   const signalVariation = getSignalResultVariation( state );
 
@@ -770,6 +911,7 @@ export const applyShowcaseState = ( {
   const colors = readResolvedColors( { document, getComputedStyle } );
   writeResolvedColors( document, colors, getComputedStyle );
   writeContextualProof( document, contextualReadout );
+  syncButtonTokenSourceWires( document, windowRef );
 
   return {
     colors,
@@ -812,6 +954,7 @@ export const installShowcaseRuntime = ( windowRef = window ) => {
   const getComputedStyle = windowRef.getComputedStyle.bind( windowRef );
   let currentState = parseLabState( windowRef.location.search );
   let siteVariation = normalizeSiteVariation( documentRef.body?.getAttribute( 'data-sm-lab-site-variation' ) || 1 );
+  let resizeFrame = null;
   const palettes = Array.isArray( windowRef.styleManagerLabColorSystem?.palettes )
     ? windowRef.styleManagerLabColorSystem.palettes
     : [];
@@ -848,7 +991,24 @@ export const installShowcaseRuntime = ( windowRef = window ) => {
     scheduleSync();
   };
 
+  const handleResize = () => {
+    if ( typeof windowRef.requestAnimationFrame !== 'function' ) {
+      syncAndPublish();
+      return;
+    }
+
+    if ( resizeFrame ) {
+      windowRef.cancelAnimationFrame?.( resizeFrame );
+    }
+
+    resizeFrame = windowRef.requestAnimationFrame( () => {
+      resizeFrame = null;
+      syncAndPublish();
+    } );
+  };
+
   windowRef.addEventListener( 'message', handleMessage );
+  windowRef.addEventListener( 'resize', handleResize );
 
   if ( documentRef.readyState === 'complete' ) {
     syncAndPublish();
@@ -862,5 +1022,8 @@ export const installShowcaseRuntime = ( windowRef = window ) => {
 
   windowRef.setTimeout( syncAndPublish, 250 );
 
-  return () => windowRef.removeEventListener( 'message', handleMessage );
+  return () => {
+    windowRef.removeEventListener( 'message', handleMessage );
+    windowRef.removeEventListener( 'resize', handleResize );
+  };
 };

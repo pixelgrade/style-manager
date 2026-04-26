@@ -70,9 +70,11 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-label="2"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-button="7"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-shadow="9"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-source-anchor="label"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-source-anchor="button"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-source-anchor="shadow"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-wires', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="label"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="button"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="shadow"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-target="label"', $html );
 		$this->assertStringContainsString( 'data-token-label-active="true"', $html );
 		$this->assertStringContainsString( 'data-token-button-active="true"', $html );
 		$this->assertStringContainsString( 'data-token-shadow-active="true"', $html );

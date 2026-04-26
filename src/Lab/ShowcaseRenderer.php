@@ -208,6 +208,11 @@ final class ShowcaseRenderer {
 							data-palette-variation="<?php echo esc_attr( (string) $signal_variation ); ?>"
 							data-color-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
 						>
+							<svg class="sm-lab-button-token-map__source-wires" data-sm-lab-token-source-wires aria-hidden="true" focusable="false">
+								<path data-sm-lab-token-source-wire="label" />
+								<path data-sm-lab-token-source-wire="button" />
+								<path data-sm-lab-token-source-wire="shadow" />
+							</svg>
 							<div class="sm-lab-button-token-map__rail" aria-hidden="true">
 								<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
 									<span
@@ -223,9 +228,6 @@ final class ShowcaseRenderer {
 										data-token-shadow-active="<?php echo esc_attr( $grade === $shadow_grade ? 'true' : 'false' ); ?>"
 									>
 										<span class="sm-lab-button-token-map__grade-value"><?php echo esc_html( (string) $grade ); ?></span>
-										<span class="sm-lab-button-token-map__source-anchor sm-lab-button-token-map__source-anchor--label" data-sm-lab-token-source-anchor="label" aria-hidden="true"></span>
-										<span class="sm-lab-button-token-map__source-anchor sm-lab-button-token-map__source-anchor--button" data-sm-lab-token-source-anchor="button" aria-hidden="true"></span>
-										<span class="sm-lab-button-token-map__source-anchor sm-lab-button-token-map__source-anchor--shadow" data-sm-lab-token-source-anchor="shadow" aria-hidden="true"></span>
 									</span>
 								<?php endfor; ?>
 							</div>
@@ -236,9 +238,9 @@ final class ShowcaseRenderer {
 								</div>
 								<div class="sm-lab-button-token-map__diagram">
 									<svg class="sm-lab-button-token-map__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-										<path data-sm-lab-token-wire="label" d="M 14 0 V 42 C 14 53 24 55 36 55" />
+										<path data-sm-lab-token-wire="label" d="M 14 0 V 42 Q 14 50 22 50 H 36" />
 										<path data-sm-lab-token-wire="button" d="M 54 0 V 60" />
-										<path data-sm-lab-token-wire="shadow" d="M 78 0 V 32 C 78 46 88 48 88 62 C 88 78 70 80 62 80" />
+										<path data-sm-lab-token-wire="shadow" d="M 78 0 V 32 Q 78 40 86 40 H 88 V 62 Q 88 70 80 70 H 62" />
 									</svg>
 									<div class="sm-lab-button-token-map__labels" data-sm-lab-token-lane="labels">
 										<span class="sm-lab-button-token-map__pin sm-lab-button-token-map__pin--label" data-sm-lab-token-pin="label" data-sm-lab-component-callout="label" data-sm-lab-token-target="surface">
@@ -266,7 +268,7 @@ final class ShowcaseRenderer {
 									<div class="sm-lab-button-token-map__component-stage" data-sm-lab-token-lane="component">
 										<span class="sm-lab-button-token-map__shadow-shelf" data-sm-lab-token-target="shadow" aria-hidden="true"></span>
 										<button type="button" class="sm-lab-button-token-map__button" data-sm-lab-component-callout="action" data-sm-lab-token-target="action">
-											<span><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
+											<span data-sm-lab-token-target="label"><?php esc_html_e( 'Make a reservation', '__plugin_txtd' ); ?></span>
 										</button>
 									</div>
 								</div>

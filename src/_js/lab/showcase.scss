@@ -449,6 +449,7 @@
 }
 
 .sm-lab-block-map__component {
+  position: relative;
   display: grid;
   gap: 0;
   align-content: start;
@@ -501,57 +502,41 @@
   z-index: 2;
 }
 
-.sm-lab-button-token-map__source-anchor {
+.sm-lab-button-token-map__source-wires {
   position: absolute;
-  z-index: 5;
-  bottom: -2px;
-  left: 50%;
-  width: 2px;
-  height: 96px;
-  color: var(--sm-current-accent-color);
-  opacity: 0;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
   pointer-events: none;
-  transform: translateX(-50%);
-  transition: opacity 160ms ease, transform 160ms ease;
 }
 
-.sm-lab-button-token-map__source-anchor::before,
-.sm-lab-button-token-map__source-anchor::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  display: block;
-  transform: translateX(-50%);
+.sm-lab-button-token-map__source-wires path {
+  fill: none;
+  opacity: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.25;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 160ms ease;
 }
 
-.sm-lab-button-token-map__source-anchor::before {
-  top: -4px;
-  width: 8px;
-  height: 8px;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-  background: var(--sm-current-bg-color);
+.sm-lab-button-token-map__source-wires [data-sm-lab-token-source-wire="label"] {
+  stroke: color-mix(in srgb, var(--sm-current-fg1-color), var(--sm-current-bg-color) 18%);
 }
 
-.sm-lab-button-token-map__source-anchor::after {
-  top: 7px;
-  bottom: 0;
-  width: 2px;
-  background: currentColor;
+.sm-lab-button-token-map__source-wires [data-sm-lab-token-source-wire="button"] {
+  stroke: var(--sm-current-accent-color);
+  stroke-width: 2.75;
 }
 
-.sm-lab-button-token-map__source-anchor--label {
-  color: color-mix(in srgb, var(--sm-current-fg1-color), var(--sm-current-bg-color) 18%);
-  transform: translateX(calc(-50% - 8px));
+.sm-lab-button-token-map__source-wires [data-sm-lab-token-source-wire="shadow"] {
+  stroke: color-mix(in srgb, var(--sm-current-fg2-color), var(--sm-current-accent-color) 24%);
 }
 
-.sm-lab-button-token-map__source-anchor--button {
-  color: var(--sm-current-accent-color);
-}
-
-.sm-lab-button-token-map__source-anchor--shadow {
-  color: color-mix(in srgb, var(--sm-current-fg2-color), var(--sm-current-accent-color) 24%);
-  transform: translateX(calc(-50% + 8px));
+.sm-lab-button-token-map__source-wires [data-sm-lab-token-wire-active="true"] {
+  opacity: 0.62;
 }
 
 .sm-lab-button-token-map__grade[data-parent-active="true"] {
@@ -581,12 +566,6 @@
 
 .sm-lab-button-token-map__grade[data-token-shadow-active="true"] {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--sm-current-fg2-color), transparent 22%);
-}
-
-.sm-lab-button-token-map__grade[data-token-label-active="true"] .sm-lab-button-token-map__source-anchor--label,
-.sm-lab-button-token-map__grade[data-token-button-active="true"] .sm-lab-button-token-map__source-anchor--button,
-.sm-lab-button-token-map__grade[data-token-shadow-active="true"] .sm-lab-button-token-map__source-anchor--shadow {
-  opacity: 1;
 }
 
 .sm-lab-button-token-map__canvas {
@@ -768,6 +747,10 @@
   font-weight: 800;
 }
 
+.is-dark .sm-lab-button-token-map__button {
+  color: color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 84%);
+}
+
 .sm-lab-button-token-map__button span {
   display: block;
   max-width: 100%;
@@ -784,6 +767,138 @@
   height: 16px;
   border-radius: 0 0 8px 8px;
   background: color-mix(in srgb, var(--sm-current-fg2-color), transparent 38%);
+}
+
+@media (max-width: 900px) {
+  .sm-lab-button-token-map__rail {
+    grid-template-columns: repeat(12, minmax(38px, 1fr));
+    gap: 3px;
+    padding: 0 14px;
+  }
+
+  .sm-lab-button-token-map__grade {
+    min-height: 42px;
+    font-size: 14px;
+  }
+
+  .sm-lab-button-token-map__canvas {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    min-height: 300px;
+    padding: 18px 14px 20px;
+  }
+
+  .sm-lab-button-token-map__brief {
+    max-width: 100%;
+  }
+
+  .sm-lab-button-token-map__brief h3 {
+    font-size: 24px;
+  }
+
+  .sm-lab-button-token-map__diagram {
+    min-height: 190px;
+  }
+
+  .sm-lab-button-token-map__labels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding-inline: 0;
+  }
+
+  .sm-lab-button-token-map__pin {
+    width: 100%;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 3px 7px;
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .sm-lab-button-token-map__pin strong {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .sm-lab-button-token-map__pin code {
+    font-size: 10px;
+  }
+
+  .sm-lab-button-token-map__component-stage {
+    right: 6%;
+    bottom: 20px;
+    left: 6%;
+    min-height: 66px;
+  }
+
+  .sm-lab-button-token-map__button {
+    min-height: 56px;
+    padding: 14px 22px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sm-lab-button-token-map__rail {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2px;
+    padding: 0 6px;
+  }
+
+  .sm-lab-button-token-map__grade {
+    min-height: 32px;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .sm-lab-button-token-map__canvas {
+    min-height: 330px;
+    padding: 14px 10px 16px;
+  }
+
+  .sm-lab-button-token-map__brief p {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .sm-lab-button-token-map__labels {
+    gap: 6px;
+  }
+
+  .sm-lab-button-token-map__pin {
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 3px 6px;
+    padding: 7px;
+    font-size: 10px;
+  }
+
+  .sm-lab-button-token-map__pin strong {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .sm-lab-button-token-map__pin em {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .sm-lab-button-token-map__pin code {
+    display: none;
+  }
+
+  .sm-lab-button-token-map__component-stage {
+    right: 8%;
+    bottom: 18px;
+    left: 8%;
+    min-height: 62px;
+  }
+
+  .sm-lab-button-token-map__button {
+    min-height: 54px;
+    padding: 12px 16px;
+    font-size: 16px;
+  }
 }
 
 .sm-lab-contract-explorer__workspace {
@@ -1287,6 +1402,7 @@
   }
 
   .sm-lab-status {
+    position: static;
     padding-right: 14px;
     padding-left: 14px;
     margin-right: -14px;
@@ -1339,6 +1455,6 @@
 
   .sm-lab-button-token-map__rail,
   .sm-lab-button-token-map__canvas {
-    min-width: 680px;
+    min-width: 0;
   }
 }
