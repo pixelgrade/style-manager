@@ -496,6 +496,64 @@
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
+.sm-lab-button-token-map__grade-value {
+  position: relative;
+  z-index: 2;
+}
+
+.sm-lab-button-token-map__source-anchor {
+  position: absolute;
+  z-index: 5;
+  bottom: -2px;
+  left: 50%;
+  width: 2px;
+  height: 96px;
+  color: var(--sm-current-accent-color);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.sm-lab-button-token-map__source-anchor::before,
+.sm-lab-button-token-map__source-anchor::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  display: block;
+  transform: translateX(-50%);
+}
+
+.sm-lab-button-token-map__source-anchor::before {
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: var(--sm-current-bg-color);
+}
+
+.sm-lab-button-token-map__source-anchor::after {
+  top: 7px;
+  bottom: 0;
+  width: 2px;
+  background: currentColor;
+}
+
+.sm-lab-button-token-map__source-anchor--label {
+  color: color-mix(in srgb, var(--sm-current-fg1-color), var(--sm-current-bg-color) 18%);
+  transform: translateX(calc(-50% - 8px));
+}
+
+.sm-lab-button-token-map__source-anchor--button {
+  color: var(--sm-current-accent-color);
+}
+
+.sm-lab-button-token-map__source-anchor--shadow {
+  color: color-mix(in srgb, var(--sm-current-fg2-color), var(--sm-current-accent-color) 24%);
+  transform: translateX(calc(-50% + 8px));
+}
+
 .sm-lab-button-token-map__grade[data-parent-active="true"] {
   box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--sm-current-fg1-color), transparent 42%);
 }
@@ -523,6 +581,12 @@
 
 .sm-lab-button-token-map__grade[data-token-shadow-active="true"] {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--sm-current-fg2-color), transparent 22%);
+}
+
+.sm-lab-button-token-map__grade[data-token-label-active="true"] .sm-lab-button-token-map__source-anchor--label,
+.sm-lab-button-token-map__grade[data-token-button-active="true"] .sm-lab-button-token-map__source-anchor--button,
+.sm-lab-button-token-map__grade[data-token-shadow-active="true"] .sm-lab-button-token-map__source-anchor--shadow {
+  opacity: 1;
 }
 
 .sm-lab-button-token-map__canvas {

@@ -200,6 +200,9 @@ final class ShowcaseRenderer {
 							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $signal_variation ); ?> sm-color-signal-<?php echo esc_attr( (string) $params->signal() ); ?>"
 							data-sm-lab-button-token-map
 							data-sm-lab-token-layout="horizontal"
+							data-sm-lab-token-source-grade-label="<?php echo esc_attr( (string) $label_grade ); ?>"
+							data-sm-lab-token-source-grade-button="<?php echo esc_attr( (string) $signal_variation ); ?>"
+							data-sm-lab-token-source-grade-shadow="<?php echo esc_attr( (string) $shadow_grade ); ?>"
 							data-sm-lab-signal-preview
 							data-palette="<?php echo esc_attr( $params->palette() ); ?>"
 							data-palette-variation="<?php echo esc_attr( (string) $signal_variation ); ?>"
@@ -218,7 +221,12 @@ final class ShowcaseRenderer {
 										data-token-label-active="<?php echo esc_attr( $grade === $label_grade ? 'true' : 'false' ); ?>"
 										data-token-button-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
 										data-token-shadow-active="<?php echo esc_attr( $grade === $shadow_grade ? 'true' : 'false' ); ?>"
-									><?php echo esc_html( (string) $grade ); ?></span>
+									>
+										<span class="sm-lab-button-token-map__grade-value"><?php echo esc_html( (string) $grade ); ?></span>
+										<span class="sm-lab-button-token-map__source-anchor sm-lab-button-token-map__source-anchor--label" data-sm-lab-token-source-anchor="label" aria-hidden="true"></span>
+										<span class="sm-lab-button-token-map__source-anchor sm-lab-button-token-map__source-anchor--button" data-sm-lab-token-source-anchor="button" aria-hidden="true"></span>
+										<span class="sm-lab-button-token-map__source-anchor sm-lab-button-token-map__source-anchor--shadow" data-sm-lab-token-source-anchor="shadow" aria-hidden="true"></span>
+									</span>
 								<?php endfor; ?>
 							</div>
 							<div class="sm-lab-button-token-map__canvas" data-sm-lab-token-circuit>

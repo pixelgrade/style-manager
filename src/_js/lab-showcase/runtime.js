@@ -716,6 +716,12 @@ const writeVisualProofState = ( documentRef, state ) => {
       node.textContent = String( value );
     } );
   } );
+
+  documentRef.querySelectorAll( '[data-sm-lab-button-token-map]' ).forEach( ( node ) => {
+    Object.entries( componentTokenGrades ).forEach( ( [ key, value ] ) => {
+      node.setAttribute( `data-sm-lab-token-source-grade-${ key }`, String( value ) );
+    } );
+  } );
 };
 
 export const applyShowcaseState = ( {

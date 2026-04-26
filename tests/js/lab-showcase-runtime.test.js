@@ -308,6 +308,7 @@ const createShowcaseDocument = () => {
 
   const signalPreview = documentRef.createElement( 'div' );
   signalPreview.setAttribute( 'data-sm-lab-signal-preview', '1' );
+  signalPreview.setAttribute( 'data-sm-lab-button-token-map', '1' );
   signalPreview.setAttribute( 'data-palette', '1' );
   signalPreview.setAttribute( 'data-palette-variation', '1' );
   signalPreview.setAttribute( 'data-color-signal', '0' );
@@ -535,6 +536,21 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-component-grade="shadow"]' )?.textContent,
       '9',
       'button shadow callout should track the deeper support grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-label' ),
+      '2',
+      'label source pointer should expose the resolved grade it points to'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-button' ),
+      '7',
+      'button source pointer should expose the resolved grade it points to'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-shadow' ),
+      '9',
+      'shadow source pointer should expose the resolved grade it points to'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="2"]' )?.getAttribute( 'data-token-label-active' ),
