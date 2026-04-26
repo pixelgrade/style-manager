@@ -84,7 +84,7 @@ final class ShowcaseRenderer {
 	}
 
 	private function render_runtime_visual_strip( QueryParams $params ): void {
-		$parent_variation = $params->parent_variation();
+		$parent_variation = $params->variation();
 		$signal_variation = min( $parent_variation + $params->signal(), 12 );
 		$signal_shifted   = $signal_variation !== $parent_variation;
 		$label_grade      = max( 1, $signal_variation - 5 );
@@ -172,7 +172,7 @@ final class ShowcaseRenderer {
 							<span
 								class="sm-lab-runtime-strip__grade"
 								data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
-								style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
+								style="<?php echo esc_attr( $this->get_reference_grade_background_style( $params, $grade ) ); ?>"
 								aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
 								data-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
 								data-parent-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
@@ -218,7 +218,7 @@ final class ShowcaseRenderer {
 									<span
 										class="sm-lab-button-token-map__grade"
 										data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
-										style="background: var(--sm-bg-color-<?php echo esc_attr( (string) $grade ); ?>);"
+										style="<?php echo esc_attr( $this->get_reference_grade_background_style( $params, $grade ) ); ?>"
 										data-parent-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
 										data-resolved-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
 										data-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
@@ -279,6 +279,14 @@ final class ShowcaseRenderer {
 			</div>
 		</div>
 		<?php
+	}
+
+	private function get_reference_grade_background_style( QueryParams $params, int $grade ): string {
+		return sprintf(
+			'background: var(--sm-lab-reference-bg-color-%1$d, var(--sm-color-palette-%2$s-color-%1$d, var(--sm-bg-color-%1$d)));',
+			$grade,
+			$params->palette()
+		);
 	}
 
 	private function render_contract_matrix(): void {

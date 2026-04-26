@@ -133,7 +133,7 @@ export const buildAdminUrl = ( baseUrl, state ) => {
 };
 
 export const getSignalVariations = ( parentVariation ) => {
-  const base = normalizeParentVariation( parentVariation );
+  const base = clamp( parentVariation, 1, 12 );
 
   return [ 0, 1, 2, 3 ].map( ( signal ) => ( {
     signal,

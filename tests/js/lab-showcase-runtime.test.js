@@ -412,6 +412,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
 
     assert.ok( css.includes( '.sm-palette-contextual-lab {' ), 'contextual CSS should target the Lab palette selector' );
     assert.ok( css.includes( '--sm-bg-color-1: #fff1eb;' ), 'contextual CSS should expose palette variables for the first variation' );
+    assert.ok( css.includes( '--sm-lab-reference-bg-color-1: #fff1eb;' ), 'contextual CSS should expose a fixed reference rail for grade 1' );
+    assert.ok( css.includes( '--sm-lab-reference-bg-color-12: #2e0f00;' ), 'contextual CSS should expose a fixed reference rail for grade 12' );
     assert.ok( css.includes( '.is-dark .sm-palette-contextual-lab {' ), 'contextual CSS should include the dark palette selector' );
   }
 
@@ -420,6 +422,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
 
     assert.ok( css.includes( '.sm-palette-brand {' ), 'runtime palette CSS should target each palette selector' );
     assert.ok( css.includes( '--sm-bg-color-1: #000004;' ), 'runtime palette CSS should offset light variables by the selected variation' );
+    assert.ok( css.includes( '--sm-lab-reference-bg-color-1: #000001;' ), 'runtime palette CSS should keep grade 1 fixed for the anatomy rail' );
+    assert.ok( css.includes( '--sm-lab-reference-bg-color-12: #000012;' ), 'runtime palette CSS should keep grade 12 fixed for the anatomy rail' );
     assert.ok( css.includes( '.is-dark .sm-palette-brand {' ), 'runtime palette CSS should include dark variables' );
     assert.ok( css.includes( '--sm-bg-color-1: #000404;' ), 'runtime palette CSS should offset dark variables by the selected variation' );
     assert.ok( css.includes( '.sm-palette-brand.sm-palette--shifted {' ), 'runtime palette CSS should preserve shifted selectors' );
@@ -489,6 +493,10 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '#style-manager-lab-runtime-palettes' )?.textContent.includes( '--sm-bg-color-1: #000004;' ),
       'the runtime palette style element should refresh with the live variation offset'
     );
+    assert.ok(
+      documentRef.querySelector( '#style-manager-lab-runtime-palettes' )?.textContent.includes( '--sm-lab-reference-bg-color-1: #000001;' ),
+      'the runtime palette style element should keep the anatomy rail reference scale unshifted'
+    );
     assert.equal(
       documentRef.querySelector( '[data-palette-variation]' )?.getAttribute( 'data-palette-variation' ),
       '4',
@@ -500,12 +508,12 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-parent-grade' ),
-      '5',
-      'grade rail should expose the parent context grade'
+      '4',
+      'grade rail should expose the active runtime variation as the parent context grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-resolved-grade' ),
-      '7',
+      '6',
       'grade rail should expose the signal-resolved grade'
     );
     assert.equal(
@@ -515,21 +523,21 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="5"]' )?.getAttribute( 'data-parent-active' ),
-      'true',
-      'parent grade marker should follow the parent context'
+      'false',
+      'legacy Color Signal parent controls should not move the active runtime context marker'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-parent-active' ),
-      'false',
-      'body variation should not be treated as the Color Signal parent marker'
+      'true',
+      'parent grade marker should follow the active runtime variation'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-signal-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="6"]' )?.getAttribute( 'data-signal-active' ),
       'true',
       'signal grade marker should follow the resolved child variation'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-resolved-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="6"]' )?.getAttribute( 'data-resolved-active' ),
       'true',
       'resolved grade marker should follow the signal-resolved child variation'
     );
@@ -550,12 +558,12 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-result="parent"]' )?.textContent,
-      '5',
-      'signal result should expose the parent variation'
+      '4',
+      'signal result should expose the inherited active runtime variation'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-result="variation"]' )?.textContent,
-      '7',
+      '6',
       'signal result should expose the resolved child variation'
     );
     assert.equal(
@@ -565,7 +573,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette-variation' ),
-      '7',
+      '6',
       'signal preview scope should use the resolved child variation'
     );
     assert.equal(
@@ -578,7 +586,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'signal preview scope should update its palette class'
     );
     assert.ok(
-      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-variation-7' ),
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-variation-6' ),
       'signal preview scope should update its variation class'
     );
     assert.ok(
@@ -587,83 +595,83 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-component-grade="label"]' )?.textContent,
-      '2',
+      '1',
       'button label callout should track the resolved contrast grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-component-grade="button"]' )?.textContent,
-      '7',
+      '6',
       'button fill callout should track the signal-resolved grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-component-grade="shadow"]' )?.textContent,
-      '9',
+      '8',
       'button shadow callout should track the deeper support grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-label' ),
-      '2',
+      '1',
       'label source pointer should expose the resolved grade it points to'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-button' ),
-      '7',
+      '6',
       'button source pointer should expose the resolved grade it points to'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-shadow' ),
-      '9',
+      '8',
       'shadow source pointer should expose the resolved grade it points to'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
-      '2',
+      '1',
       'label wire should terminate at the resolved label source grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
-      '7',
+      '6',
       'button fill wire should terminate at the resolved button source grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
-      '9',
+      '8',
       'shadow wire should terminate at the resolved shadow source grade'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ) || '',
-      /^M 146 56 L 146 76 Q 146 86 156 86 L 200 86 Q 210 86 210 96 L 210 120$/,
-      'label wire should connect grade 2 to the visible text-label callout'
+      /^M 98 56 L 98 76 Q 98 86 108 86 L 200 86 Q 210 86 210 96 L 210 120$/,
+      'label wire should connect grade 1 to the visible text-label callout'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ) || '',
-      /^M 386 56 L 386 76 Q 386 86 396 86 L 480 86 Q 490 86 490 96 L 490 120$/,
-      'button fill wire should connect grade 7 to the visible button-fill callout'
+      /^M 338 56 L 338 76 Q 338 86 348 86 L 480 86 Q 490 86 490 96 L 490 120$/,
+      'button fill wire should connect grade 6 to the visible button-fill callout'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
-      /^M 482 56 L 482 76 Q 482 86 492 86 L 760 86 Q 770 86 770 96 L 770 120$/,
-      'shadow wire should connect grade 9 to the visible shadow callout'
+      /^M 434 56 L 434 76 Q 434 86 444 86 L 760 86 Q 770 86 770 96 L 770 120$/,
+      'shadow wire should connect grade 8 to the visible shadow callout'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="2"]' )?.getAttribute( 'data-token-label-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="1"]' )?.getAttribute( 'data-token-label-active' ),
       'true',
       'label token source should mark the contrast grade on the rail'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="7"]' )?.getAttribute( 'data-token-button-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="6"]' )?.getAttribute( 'data-token-button-active' ),
       'true',
       'button token source should mark the signal-resolved grade on the rail'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="9"]' )?.getAttribute( 'data-token-shadow-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="8"]' )?.getAttribute( 'data-token-shadow-active' ),
       'true',
       'shadow token source should mark the deeper support grade on the rail'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-token-button-active' ),
       'false',
-      'body variation should not be marked as the button token source'
+      'parent runtime variation should not be marked as the button token source when signal shifts it'
     );
     assert.equal( result.colors.bg, '#101010', 'applyShowcaseState should return the live readback payload' );
     assert.equal( result.contextualPalette?.source?.[0], '#ff5500', 'applyShowcaseState should return the synthesized contextual palette payload' );
@@ -682,6 +690,36 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-contextual-value="text-status"]' )?.textContent,
       'AA',
       'contextual proof contrast labels should update from the generated palette'
+    );
+    const labelWireAtVariation4 = documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' );
+
+    applyShowcaseState( {
+      document: documentRef,
+      getComputedStyle: () => ( {
+        getPropertyValue: ( property ) => computedValues[ property ] || '',
+      } ),
+      state: {
+        palette: 'contextual-lab',
+        variation: 8,
+        signal: 2,
+        parentVariation: 5,
+        dark: true,
+        shifted: true,
+        contextual: '#ff5500',
+      },
+      siteVariation: 1,
+      palettes: [ createRuntimePalette() ],
+    } );
+
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-button' ),
+      '10',
+      'changing the active variation should move the button connector to the new resolved grade on the fixed rail'
+    );
+    assert.notEqual(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),
+      labelWireAtVariation4,
+      'changing the active variation should redraw the connector geometry'
     );
 
     let receivedEvent = null;

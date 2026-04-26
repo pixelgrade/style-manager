@@ -220,9 +220,18 @@ const buildVariationCssVariables = ( variations, index, offset = 0 ) => {
     .join( ' ' );
 };
 
-const buildPaletteCssBlock = ( selector, variations, offset ) => `${ selector } { ${ Array.from( { length: 12 }, ( _, index ) => (
-  buildVariationCssVariables( variations, index, offset )
-) ).join( ' ' ) } }`;
+const buildReferencePaletteCssVariables = ( variations = [] ) => Array.from( { length: 12 }, ( _, index ) => {
+  const color = variations?.[ index ]?.bg || '';
+
+  return color ? `--sm-lab-reference-bg-color-${ index + 1 }: ${ color };` : '';
+} ).filter( Boolean ).join( ' ' );
+
+const buildPaletteCssBlock = ( selector, variations, offset, extraVariables = '' ) => `${ selector } { ${ [
+  extraVariables,
+  Array.from( { length: 12 }, ( _, index ) => (
+    buildVariationCssVariables( variations, index, offset )
+  ) ).join( ' ' ),
+].filter( Boolean ).join( ' ' ) } }`;
 
 export const buildRuntimePaletteCss = ( palettes = [], siteVariation = 1 ) => {
   const variationOffset = normalizeSiteVariation( siteVariation ) - 1;
@@ -237,7 +246,7 @@ export const buildRuntimePaletteCss = ( palettes = [], siteVariation = 1 ) => {
       const shiftedOffset = Number.isNaN( sourceIndex ) ? 0 : sourceIndex;
 
       return [
-        buildPaletteCssBlock( selector, palette.variations, variationOffset ),
+        buildPaletteCssBlock( selector, palette.variations, variationOffset, buildReferencePaletteCssVariables( palette.variations ) ),
         Array.isArray( palette.darkVariations )
           ? buildPaletteCssBlock( darkSelector, palette.darkVariations, variationOffset )
           : '',
@@ -255,7 +264,7 @@ export const buildContextualPaletteCss = ( palette, siteVariation = 1 ) => {
   const variationOffset = normalizeSiteVariation( siteVariation ) - 1;
 
   return [
-    buildPaletteCssBlock( `.sm-palette-${ palette.id }`, palette.variations, variationOffset ),
+    buildPaletteCssBlock( `.sm-palette-${ palette.id }`, palette.variations, variationOffset, buildReferencePaletteCssVariables( palette.variations ) ),
     buildPaletteCssBlock( `.is-dark .sm-palette-${ palette.id }`, palette.darkVariations, variationOffset ),
     buildPaletteCssBlock( `.sm-palette-${ palette.id }.sm-palette--shifted`, palette.variations, palette.sourceIndex ),
   ].join( '\n' );
@@ -656,7 +665,9 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
     } );
 };
 
-const getSignalResultVariation = ( state ) => Math.min( state.parentVariation + state.signal, 12 );
+const getInheritedVariation = ( state ) => normalizeSiteVariation( state.variation );
+
+const getSignalResultVariation = ( state ) => Math.min( getInheritedVariation( state ) + state.signal, 12 );
 
 const getComponentTokenGrades = ( signalVariation ) => ( {
   label: Math.max( 1, signalVariation - 5 ),
@@ -814,13 +825,14 @@ const updateSignalPreviewScopes = ( documentRef, state ) => {
 };
 
 const writeVisualProofState = ( documentRef, state ) => {
+  const inheritedVariation = getInheritedVariation( state );
   const signalVariation = getSignalResultVariation( state );
-  const signalShifted = signalVariation !== state.parentVariation;
+  const signalShifted = signalVariation !== inheritedVariation;
   const componentTokenGrades = getComponentTokenGrades( signalVariation );
 
   documentRef.querySelectorAll( '[data-sm-lab-grade-swatch]' ).forEach( ( node ) => {
     const grade = node.getAttribute( 'data-sm-lab-grade-swatch' );
-    const isActive = grade === String( state.parentVariation );
+    const isActive = grade === String( inheritedVariation );
     const isSignalActive = grade === String( signalVariation );
     node.setAttribute( 'data-active', isActive ? 'true' : 'false' );
     node.setAttribute( 'data-parent-active', isActive ? 'true' : 'false' );
@@ -832,7 +844,7 @@ const writeVisualProofState = ( documentRef, state ) => {
   } );
 
   documentRef.querySelectorAll( '[data-sm-lab-grade-rail]' ).forEach( ( node ) => {
-    node.setAttribute( 'data-sm-lab-parent-grade', String( state.parentVariation ) );
+    node.setAttribute( 'data-sm-lab-parent-grade', String( inheritedVariation ) );
     node.setAttribute( 'data-sm-lab-resolved-grade', String( signalVariation ) );
     node.setAttribute( 'data-sm-lab-signal-shifted', signalShifted ? 'true' : 'false' );
   } );
@@ -844,7 +856,7 @@ const writeVisualProofState = ( documentRef, state ) => {
 
   Object.entries( {
     signal: state.signal,
-    parent: state.parentVariation,
+    parent: inheritedVariation,
     variation: signalVariation,
   } ).forEach( ( [ key, value ] ) => {
     documentRef.querySelectorAll( `[data-sm-lab-signal-result="${ key }"]` ).forEach( ( node ) => {
