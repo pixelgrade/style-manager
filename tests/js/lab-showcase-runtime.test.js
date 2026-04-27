@@ -398,6 +398,10 @@ const createShowcaseDocument = () => {
       node.appendChild( createCascadeValue( documentRef, key ) );
     } );
 
+    const captionSignal = documentRef.createElement( 'small' );
+    captionSignal.setAttribute( 'data-sm-lab-cascade-caption-signal', '1' );
+    node.appendChild( captionSignal );
+
     const signalLabelChip = documentRef.createElement( 'span' );
     signalLabelChip.setAttribute( 'data-sm-lab-cascade-chip', 'signal-label' );
     signalLabelChip.setAttribute( 'data-sm-lab-cascade-chip-signal-label', '1' );
@@ -737,6 +741,11 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'signal cascade should expose the human Color Signal label separately from the saved value'
     );
     assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-caption-signal]' )?.textContent,
+      'Color Signal: Low.',
+      'signal cascade captions should expose the current human Color Signal label'
+    );
+    assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-input-code]' )?.textContent,
       'data-color-signal="1"',
       'signal cascade should expose the saved numeric block attribute separately from the human label'
@@ -849,6 +858,11 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-label]' )?.textContent,
       'Color Signal: Medium',
       'clicking a cascade signal control should update the human signal chip'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-caption-signal]' )?.textContent,
+      'Color Signal: Medium.',
+      'clicking a cascade signal control should update the human signal caption'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-input-code]' )?.textContent,

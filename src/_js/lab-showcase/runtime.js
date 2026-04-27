@@ -933,6 +933,10 @@ const updateCascadeSignalUi = ( node, signal ) => {
     chip.textContent = `Color Signal: ${ label }`;
   } );
 
+  node.querySelectorAll( '[data-sm-lab-cascade-caption-signal]' ).forEach( ( caption ) => {
+    caption.textContent = `Color Signal: ${ label }.`;
+  } );
+
   node.querySelectorAll( '[data-sm-lab-cascade-chip-signal-input]' ).forEach( ( chip ) => {
     chip.setAttribute( 'data-sm-lab-cascade-chip-signal-input', String( signal ) );
   } );

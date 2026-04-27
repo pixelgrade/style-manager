@@ -420,7 +420,10 @@ final class ShowcaseRenderer {
 				<span data-sm-lab-cascade-value="signal"><?php echo esc_html( $node['signal_label'] ); ?></span>
 			</button>
 			<strong><?php echo esc_html( $node['label'] ); ?></strong>
-			<small><?php echo esc_html( $node['caption'] ); ?></small>
+			<small>
+				<span data-sm-lab-cascade-caption-signal><?php echo esc_html( sprintf( __( 'Color Signal: %s.', '__plugin_txtd' ), $node['signal_label'] ) ); ?></span>
+				<?php echo esc_html( $node['caption'] ); ?>
+			</small>
 			<div class="sm-lab-cascade-chips" aria-hidden="true">
 				<span class="sm-lab-cascade-chip" data-sm-lab-cascade-chip="signal-label" data-sm-lab-cascade-chip-signal-label>
 					<?php esc_html_e( 'Color Signal:', '__plugin_txtd' ); ?> <?php echo esc_html( $node['signal_label'] ); ?>
@@ -493,42 +496,42 @@ final class ShowcaseRenderer {
 				'parent'  => '',
 				'signal'  => 0,
 				'label'   => __( 'Page container', '__plugin_txtd' ),
-				'caption' => __( 'Color Signal: None. Sets the page surface — everything below resolves against it.', '__plugin_txtd' ),
+				'caption' => __( 'Sets the page surface — everything below resolves against it.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'header',
 				'parent'  => 'page',
 				'signal'  => 3,
 				'label'   => __( 'Header block', '__plugin_txtd' ),
-				'caption' => __( 'Color Signal: High. Resolved against the page surface, not against another block.', '__plugin_txtd' ),
+				'caption' => __( 'Resolved against the page surface, not against another block.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'content',
 				'parent'  => 'page',
 				'signal'  => 1,
 				'label'   => __( 'Content block', '__plugin_txtd' ),
-				'caption' => __( 'Color Signal: Low. First layer below page; the parent for any nested block.', '__plugin_txtd' ),
+				'caption' => __( 'First layer below page; the parent for any nested block.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'inner',
 				'parent'  => 'content',
 				'signal'  => 2,
 				'label'   => __( 'First inner block', '__plugin_txtd' ),
-				'caption' => __( 'Color Signal: Medium. Resolved against the content surface, not against page.', '__plugin_txtd' ),
+				'caption' => __( 'Resolved against the content surface, not against page.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'second-inner',
 				'parent'  => 'inner',
 				'signal'  => 3,
 				'label'   => __( 'Second inner block', '__plugin_txtd' ),
-				'caption' => __( 'Color Signal: High. Resolved against inner — flips to the opposite end of the rail.', '__plugin_txtd' ),
+				'caption' => __( 'Resolved against inner — flips to the opposite end of the rail.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'footer',
 				'parent'  => 'page',
 				'signal'  => 3,
 				'label'   => __( 'Footer block', '__plugin_txtd' ),
-				'caption' => __( 'Color Signal: High. Same input as Header, same parent — same resolved grade.', '__plugin_txtd' ),
+				'caption' => __( 'Same input as Header, same parent — same resolved grade.', '__plugin_txtd' ),
 			],
 		];
 		$resolved_by_id = [];
