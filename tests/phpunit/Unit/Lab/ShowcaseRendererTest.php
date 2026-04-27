@@ -43,12 +43,27 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'Signal shifts inherited variation', $html );
 		$this->assertStringContainsString( 'preset anchor', $html );
 		$this->assertStringContainsString( 'Resolved role rail', $html );
+		$this->assertStringContainsString( 'Color Signal cascade', $html );
+		$this->assertStringContainsString( 'A block resolves against its parent surface', $html );
 		$this->assertStringContainsString( 'Component anatomy', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="context"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="signal"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="roles"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="cascade"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="mapping"', $html );
 		$this->assertStringContainsString( 'sm-lab-resolution-stage--wide', $html );
+		$this->assertStringContainsString( 'data-sm-lab-signal-cascade', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-node="page"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-node="content"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-node="inner"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-node="second-inner"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-parent="inner"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-signal="3"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="8"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="1"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-active="true"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-value="parent"', $html );
+		$this->assertStringContainsString( '--sm-lab-cascade-surface-color', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-result="variation"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-callout="action"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="parent"', $html );
@@ -97,6 +112,7 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-signal-bars', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="grade-rail"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="signal-levels"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-proof="signal-cascade"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="block-mapping"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="context-stack"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-proof="context-resilience"', $html );
@@ -120,6 +136,12 @@ class ShowcaseRendererTest extends TestCase {
 		$block_map_start = strpos( $html, 'data-sm-lab-proof="block-mapping"' );
 		$block_map_end   = strpos( $html, '</article>', (int) $block_map_start );
 		$block_map_html  = substr( $html, (int) $block_map_start, (int) $block_map_end - (int) $block_map_start );
+
+		$this->assertLessThan(
+			$block_map_start,
+			strpos( $html, 'data-sm-lab-proof="signal-cascade"' ),
+			'The Color Signal cascade should appear before Component anatomy.'
+		);
 
 		$this->assertLessThan(
 			strpos( $block_map_html, 'sm-lab-button-token-map__rail' ),

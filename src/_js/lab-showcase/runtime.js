@@ -4,6 +4,7 @@ import { normalizeLabState, parseLabState } from '../lab/state.js';
 const CONTEXTUAL_ID = 'contextual-lab';
 const CONTEXTUAL_LABEL = 'Contextual Lab';
 const TOKENS = [ 'bg', 'accent', 'fg1', 'fg2' ];
+const SIGNAL_LABELS = [ 'None', 'Low', 'Medium', 'High' ];
 const COMPONENT_TOKEN_TARGETS = {
   label: {
     kind: 'label',
@@ -691,8 +692,22 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
 
 const getInheritedVariation = ( state ) => normalizeSiteVariation( state.variation );
 
-const getSignalResultVariation = ( state, windowRef ) => normalizeVariationValue(
-  computeColorSignal( getInheritedVariation( state ), state.signal, state.palette, false, windowRef )
+const normalizeSignalValue = ( signal ) => {
+  const parsed = Number.parseInt( signal, 10 );
+
+  if ( Number.isNaN( parsed ) ) {
+    return 0;
+  }
+
+  return Math.min( Math.max( parsed, 0 ), 3 );
+};
+
+const getSignalVariationFromReference = ( reference, signal, paletteId, windowRef ) => normalizeVariationValue(
+  computeColorSignal( normalizeSiteVariation( reference ), normalizeSignalValue( signal ), paletteId, false, windowRef )
+);
+
+const getSignalResultVariation = ( state, windowRef ) => (
+  getSignalVariationFromReference( getInheritedVariation( state ), state.signal, state.palette, windowRef )
 );
 
 const getContrastGrade = ( grade ) => ( grade >= 5 ? 1 : 12 );
@@ -894,6 +909,55 @@ const buildComponentTokenStyle = ( grades ) => [
   `--sm-lab-component-border-color: ${ buildReferenceGradeColor( grades.border, 'var(--sm-current-fg2-color)' ) };`,
 ].join( ' ' );
 
+const buildSignalCascadeStyle = ( resolvedGrade, textGrade ) => [
+  `--sm-lab-cascade-surface-color: ${ buildReferenceGradeColor( resolvedGrade ) };`,
+  `--sm-lab-cascade-text-color: ${ buildReferenceGradeColor( textGrade, 'var(--sm-current-fg1-color)' ) };`,
+  `--sm-lab-cascade-border-color: ${ buildReferenceGradeColor( Math.min( 12, resolvedGrade + 1 ), 'var(--sm-current-fg2-color)' ) };`,
+].join( ' ' );
+
+const setSignalCascadeValue = ( node, key, value ) => {
+  node.querySelectorAll( `[data-sm-lab-cascade-value="${ key }"]` ).forEach( ( valueNode ) => {
+    valueNode.textContent = String( value );
+  } );
+};
+
+const updateSignalCascade = ( documentRef, state, windowRef ) => {
+  const inheritedVariation = getInheritedVariation( state );
+
+  documentRef.querySelectorAll( '[data-sm-lab-signal-cascade]' ).forEach( ( cascade ) => {
+    const resolvedByNode = new Map();
+
+    cascade.setAttribute( 'data-sm-lab-cascade-palette', state.palette );
+    cascade.setAttribute( 'data-sm-lab-cascade-active-signal', String( state.signal ) );
+
+    Array.from( cascade.querySelectorAll( '[data-sm-lab-cascade-node]' ) ).forEach( ( node ) => {
+      const id = node.getAttribute( 'data-sm-lab-cascade-node' ) || '';
+      const parentId = node.getAttribute( 'data-sm-lab-cascade-parent' ) || '';
+      const signal = normalizeSignalValue( node.getAttribute( 'data-sm-lab-cascade-signal' ) );
+      const parentGrade = parentId && resolvedByNode.has( parentId )
+        ? resolvedByNode.get( parentId )
+        : inheritedVariation;
+      const resolvedGrade = getSignalVariationFromReference( parentGrade, signal, state.palette, windowRef );
+      const textGrade = getContrastGrade( resolvedGrade );
+      const isActiveSignal = signal === normalizeSignalValue( state.signal );
+
+      if ( id ) {
+        resolvedByNode.set( id, resolvedGrade );
+      }
+
+      node.setAttribute( 'data-sm-lab-cascade-parent-grade', String( parentGrade ) );
+      node.setAttribute( 'data-sm-lab-cascade-resolved-grade', String( resolvedGrade ) );
+      node.setAttribute( 'data-sm-lab-cascade-text-grade', String( textGrade ) );
+      node.setAttribute( 'data-sm-lab-cascade-active', isActiveSignal ? 'true' : 'false' );
+      node.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade ) );
+
+      setSignalCascadeValue( node, 'signal', SIGNAL_LABELS[ signal ] || SIGNAL_LABELS[0] );
+      setSignalCascadeValue( node, 'parent', parentGrade );
+      setSignalCascadeValue( node, 'resolved', resolvedGrade );
+    } );
+  } );
+};
+
 const updateButtonTokenSourceWires = ( documentRef, windowRef = {} ) => {
   documentRef.querySelectorAll( '[data-sm-lab-button-token-map]' ).forEach( ( map ) => {
     const containerRect = readWireRect( map );
@@ -1025,6 +1089,8 @@ const writeVisualProofState = ( documentRef, state, windowRef ) => {
       node.setAttribute( `data-sm-lab-token-source-grade-${ key }`, String( value ) );
     } );
   } );
+
+  updateSignalCascade( documentRef, state, windowRef );
 };
 
 export const applyShowcaseState = ( {

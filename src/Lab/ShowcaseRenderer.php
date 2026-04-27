@@ -191,9 +191,69 @@ final class ShowcaseRenderer {
 					</div>
 				</article>
 
-				<article class="sm-lab-resolution-stage sm-lab-resolution-stage--wide sm-lab-block-map" data-sm-lab-resolution-stage="mapping" data-sm-lab-proof="block-mapping">
+				<article class="sm-lab-resolution-stage sm-lab-resolution-stage--wide sm-lab-signal-cascade-stage" data-sm-lab-resolution-stage="cascade" data-sm-lab-proof="signal-cascade">
 					<div class="sm-lab-resolution-stage__topline">
 						<span><?php esc_html_e( '04', '__plugin_txtd' ); ?></span>
+						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal cascade', '__plugin_txtd' ); ?></p>
+					</div>
+					<h2><?php esc_html_e( 'Color Signal cascade', '__plugin_txtd' ); ?></h2>
+					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'A block resolves against its parent surface, so the same signal can land on a light or dark grade.', '__plugin_txtd' ); ?></p>
+					<div
+						class="sm-lab-signal-cascade"
+						data-sm-lab-signal-cascade
+						data-sm-lab-cascade-palette="<?php echo esc_attr( $params->palette() ); ?>"
+						data-sm-lab-cascade-active-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
+					>
+						<div class="sm-lab-signal-cascade__brief">
+							<h3><?php esc_html_e( 'Page stack', '__plugin_txtd' ); ?></h3>
+							<p><?php esc_html_e( 'Each layer receives a signal value, resolves it from its parent grade, then becomes the reference for anything nested inside.', '__plugin_txtd' ); ?></p>
+						</div>
+						<div class="sm-lab-signal-cascade__scene" aria-label="<?php esc_attr_e( 'Color Signal cascade through nested page blocks', '__plugin_txtd' ); ?>">
+							<svg class="sm-lab-signal-cascade__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+								<path d="M 28 22 L 28 42 L 42 42" />
+								<path d="M 50 28 L 50 52 L 58 52" />
+								<path d="M 68 42 L 68 24 L 82 24" />
+								<path d="M 44 68 L 44 82 L 70 82" />
+							</svg>
+							<?php foreach ( $this->get_signal_cascade_nodes( $params, $parent_variation ) as $node ) : ?>
+								<section
+									class="sm-lab-signal-cascade__node sm-lab-signal-cascade__node--<?php echo esc_attr( $node['id'] ); ?>"
+									data-sm-lab-cascade-node="<?php echo esc_attr( $node['id'] ); ?>"
+									data-sm-lab-cascade-signal="<?php echo esc_attr( (string) $node['signal'] ); ?>"
+									<?php if ( '' !== $node['parent'] ) : ?>
+										data-sm-lab-cascade-parent="<?php echo esc_attr( $node['parent'] ); ?>"
+									<?php endif; ?>
+									data-sm-lab-cascade-parent-grade="<?php echo esc_attr( (string) $node['parent_grade'] ); ?>"
+									data-sm-lab-cascade-resolved-grade="<?php echo esc_attr( (string) $node['resolved_grade'] ); ?>"
+									data-sm-lab-cascade-text-grade="<?php echo esc_attr( (string) $node['text_grade'] ); ?>"
+									data-sm-lab-cascade-active="<?php echo esc_attr( $node['active'] ? 'true' : 'false' ); ?>"
+									style="<?php echo esc_attr( $node['style'] ); ?>"
+								>
+									<span class="sm-lab-signal-cascade__signal">
+										<span class="sm-lab-signal-bars__icon" aria-hidden="true">
+											<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
+												<span class="<?php echo esc_attr( $bar <= $node['signal'] ? 'is-active' : '' ); ?>"></span>
+											<?php endfor; ?>
+										</span>
+										<span data-sm-lab-cascade-value="signal"><?php echo esc_html( $node['signal_label'] ); ?></span>
+									</span>
+									<strong><?php echo esc_html( $node['label'] ); ?></strong>
+									<small><?php echo esc_html( $node['caption'] ); ?></small>
+									<span class="sm-lab-signal-cascade__grades">
+										<?php esc_html_e( 'from', '__plugin_txtd' ); ?>
+										<b data-sm-lab-cascade-value="parent"><?php echo esc_html( (string) $node['parent_grade'] ); ?></b>
+										<?php esc_html_e( 'to grade', '__plugin_txtd' ); ?>
+										<b data-sm-lab-cascade-value="resolved"><?php echo esc_html( (string) $node['resolved_grade'] ); ?></b>
+									</span>
+								</section>
+							<?php endforeach; ?>
+						</div>
+					</div>
+				</article>
+
+				<article class="sm-lab-resolution-stage sm-lab-resolution-stage--wide sm-lab-block-map" data-sm-lab-resolution-stage="mapping" data-sm-lab-proof="block-mapping">
+					<div class="sm-lab-resolution-stage__topline">
+						<span><?php esc_html_e( '05', '__plugin_txtd' ); ?></span>
 						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Block mapping', '__plugin_txtd' ); ?></p>
 					</div>
 					<h2><?php esc_html_e( 'Component anatomy', '__plugin_txtd' ); ?></h2>
@@ -302,6 +362,105 @@ final class ShowcaseRenderer {
 		return sprintf(
 			'--sm-lab-token-source-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color)));',
 			$grade
+		);
+	}
+
+	/**
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function get_signal_cascade_nodes( QueryParams $params, int $root_variation ): array {
+		$definitions = [
+			[
+				'id'      => 'page',
+				'parent'  => '',
+				'signal'  => 0,
+				'label'   => __( 'Page container', '__plugin_txtd' ),
+				'caption' => __( 'Base runtime surface', '__plugin_txtd' ),
+			],
+			[
+				'id'      => 'header',
+				'parent'  => 'page',
+				'signal'  => 3,
+				'label'   => __( 'Header block', '__plugin_txtd' ),
+				'caption' => __( 'High attention from page', '__plugin_txtd' ),
+			],
+			[
+				'id'      => 'content',
+				'parent'  => 'page',
+				'signal'  => 1,
+				'label'   => __( 'Content block', '__plugin_txtd' ),
+				'caption' => __( 'Low contrast from page', '__plugin_txtd' ),
+			],
+			[
+				'id'      => 'inner',
+				'parent'  => 'content',
+				'signal'  => 2,
+				'label'   => __( 'First inner block', '__plugin_txtd' ),
+				'caption' => __( 'Medium from content', '__plugin_txtd' ),
+			],
+			[
+				'id'      => 'second-inner',
+				'parent'  => 'inner',
+				'signal'  => 3,
+				'label'   => __( 'Second inner block', '__plugin_txtd' ),
+				'caption' => __( 'High relative to inner', '__plugin_txtd' ),
+			],
+			[
+				'id'      => 'footer',
+				'parent'  => 'page',
+				'signal'  => 3,
+				'label'   => __( 'Footer block', '__plugin_txtd' ),
+				'caption' => __( 'High attention from page', '__plugin_txtd' ),
+			],
+		];
+		$resolved_by_id = [];
+		$nodes          = [];
+
+		foreach ( $definitions as $definition ) {
+			$parent_id      = (string) $definition['parent'];
+			$parent_grade   = '' !== $parent_id && isset( $resolved_by_id[ $parent_id ] )
+				? $resolved_by_id[ $parent_id ]
+				: $root_variation;
+			$signal         = (int) $definition['signal'];
+			$resolved_grade = $this->get_signal_variation( $parent_grade, $signal );
+			$text_grade     = $this->get_contrast_grade( $resolved_grade );
+
+			$resolved_by_id[ (string) $definition['id'] ] = $resolved_grade;
+			$nodes[]                                     = [
+				'id'             => (string) $definition['id'],
+				'parent'         => $parent_id,
+				'signal'         => $signal,
+				'signal_label'   => $this->get_signal_label( $signal ),
+				'label'          => (string) $definition['label'],
+				'caption'        => (string) $definition['caption'],
+				'parent_grade'   => $parent_grade,
+				'resolved_grade' => $resolved_grade,
+				'text_grade'     => $text_grade,
+				'active'         => $signal === $params->signal(),
+				'style'          => $this->get_signal_cascade_style( $resolved_grade, $text_grade ),
+			];
+		}
+
+		return $nodes;
+	}
+
+	private function get_signal_label( int $signal ): string {
+		return match ( max( 0, min( 3, $signal ) ) ) {
+			1 => __( 'Low', '__plugin_txtd' ),
+			2 => __( 'Medium', '__plugin_txtd' ),
+			3 => __( 'High', '__plugin_txtd' ),
+			default => __( 'None', '__plugin_txtd' ),
+		};
+	}
+
+	private function get_signal_cascade_style( int $surface_grade, int $text_grade ): string {
+		$border_grade = min( 12, $surface_grade + 1 );
+
+		return sprintf(
+			'--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color))); --sm-lab-cascade-text-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-bg-color-%2$d, var(--sm-current-fg1-color))); --sm-lab-cascade-border-color: var(--sm-lab-reference-bg-color-%3$d, var(--sm-bg-color-%3$d, var(--sm-current-fg2-color)));',
+			$surface_grade,
+			$text_grade,
+			$border_grade
 		);
 	}
 

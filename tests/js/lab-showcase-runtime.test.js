@@ -251,6 +251,12 @@ const createContextualReadout = ( documentRef, key ) => {
   return value;
 };
 
+const createCascadeValue = ( documentRef, key ) => {
+  const value = documentRef.createElement( 'span' );
+  value.setAttribute( 'data-sm-lab-cascade-value', key );
+  return value;
+};
+
 const createRuntimePalette = () => ( {
   id: 'brand',
   sourceIndex: 6,
@@ -335,6 +341,33 @@ const createShowcaseDocument = () => {
   nestedVariationZone.setAttribute( 'data-color-signal', '2' );
   nestedVariationZone.className = 'wp-block-group sm-palette-1 sm-variation-1 sm-color-signal-2';
   documentRef.body.appendChild( nestedVariationZone );
+
+  const signalCascade = documentRef.createElement( 'div' );
+  signalCascade.setAttribute( 'data-sm-lab-signal-cascade', '1' );
+  documentRef.body.appendChild( signalCascade );
+
+  [
+    [ 'page', 0, '' ],
+    [ 'header', 3, 'page' ],
+    [ 'content', 1, 'page' ],
+    [ 'inner', 2, 'content' ],
+    [ 'second-inner', 3, 'inner' ],
+    [ 'footer', 3, 'page' ],
+  ].forEach( ( [ id, signal, parent ] ) => {
+    const node = documentRef.createElement( 'section' );
+    node.setAttribute( 'data-sm-lab-cascade-node', id );
+    node.setAttribute( 'data-sm-lab-cascade-signal', String( signal ) );
+
+    if ( parent ) {
+      node.setAttribute( 'data-sm-lab-cascade-parent', parent );
+    }
+
+    [ 'signal', 'parent', 'resolved' ].forEach( ( key ) => {
+      node.appendChild( createCascadeValue( documentRef, key ) );
+    } );
+
+    signalCascade.appendChild( node );
+  } );
 
   const signalPreview = documentRef.createElement( 'div' );
   signalPreview.setAttribute( 'data-sm-lab-signal-preview', '1' );
@@ -595,6 +628,55 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-signal-result="variation"]' )?.textContent,
       '8',
       'signal result should expose the Nova preset resolved child variation'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="page"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
+      '4',
+      'signal cascade should keep the page node on the inherited runtime grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
+      '4',
+      'signal cascade should resolve content blocks against the page grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
+      '2',
+      'low signal should move content to the nearest Nova preset relative to its parent'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-value="signal"]' )?.textContent,
+      'Low',
+      'signal cascade should label Low signal nodes'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
+      '2',
+      'nested signal nodes should use their parent resolved grade as reference'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
+      '8',
+      'medium signal should resolve the inner block from the content grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-active' ),
+      'true',
+      'cascade nodes matching the selected signal should be marked active'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-8' ),
+      'cascade nodes should consume the fixed reference grade rail for their resolved surface'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
+      '8',
+      'second-level nested signal nodes should inherit the already resolved inner grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
+      '2',
+      'high signal should resolve back to a light grade when the parent context is dark'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette' ),
