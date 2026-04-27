@@ -22,9 +22,9 @@ const COMPONENT_TOKEN_TARGETS = {
     x: 0.5,
     y: 0,
   },
-  shadow: {
-    kind: 'shadow',
-    selector: '[data-sm-lab-token-target="shadow"]',
+  border: {
+    kind: 'border',
+    selector: '[data-sm-lab-token-target="border"]',
     side: 'bottom',
     terminal: 32,
     x: 0.5,
@@ -700,7 +700,7 @@ const getContrastGrade = ( grade ) => ( grade >= 5 ? 1 : 12 );
 const getComponentTokenGrades = ( signalVariation ) => ( {
   label: getContrastGrade( signalVariation ),
   button: signalVariation,
-  shadow: Math.min( 12, signalVariation + 2 ),
+  border: Math.min( 12, signalVariation + 2 ),
 } );
 
 const formatWireNumber = ( value ) => {
@@ -891,7 +891,7 @@ const buildReferenceGradeColor = ( grade, fallback = 'var(--sm-current-bg-color)
 const buildComponentTokenStyle = ( grades ) => [
   `--sm-lab-component-label-color: ${ buildReferenceGradeColor( grades.label ) };`,
   `--sm-lab-component-button-color: ${ buildReferenceGradeColor( grades.button, 'var(--sm-current-accent-color)' ) };`,
-  `--sm-lab-component-shadow-color: ${ buildReferenceGradeColor( grades.shadow, 'var(--sm-current-fg2-color)' ) };`,
+  `--sm-lab-component-border-color: ${ buildReferenceGradeColor( grades.border, 'var(--sm-current-fg2-color)' ) };`,
 ].join( ' ' );
 
 const updateButtonTokenSourceWires = ( documentRef, windowRef = {} ) => {
@@ -981,7 +981,7 @@ const writeVisualProofState = ( documentRef, state, windowRef ) => {
     node.setAttribute( 'data-resolved-active', isSignalActive ? 'true' : 'false' );
     node.setAttribute( 'data-token-label-active', grade === String( componentTokenGrades.label ) ? 'true' : 'false' );
     node.setAttribute( 'data-token-button-active', grade === String( componentTokenGrades.button ) ? 'true' : 'false' );
-    node.setAttribute( 'data-token-shadow-active', grade === String( componentTokenGrades.shadow ) ? 'true' : 'false' );
+    node.setAttribute( 'data-token-border-active', grade === String( componentTokenGrades.border ) ? 'true' : 'false' );
 
     node.querySelectorAll( '[data-sm-lab-token-source-chip]' ).forEach( ( chip ) => {
       const part = chip.getAttribute( 'data-sm-lab-token-source-chip' );

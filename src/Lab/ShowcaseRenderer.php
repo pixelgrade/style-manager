@@ -90,7 +90,7 @@ final class ShowcaseRenderer {
 		$signal_variation = $this->get_signal_variation( $parent_variation, $params->signal() );
 		$signal_shifted   = $signal_variation !== $parent_variation;
 		$label_grade      = $this->get_contrast_grade( $signal_variation );
-		$shadow_grade     = min( 12, $signal_variation + 2 );
+		$border_grade     = min( 12, $signal_variation + 2 );
 		?>
 		<div class="sm-lab-runtime-strip sm-lab-resolution-path" data-sm-lab-visual-strip data-sm-lab-resolution-path>
 			<div class="sm-lab-resolution-path__header">
@@ -200,13 +200,13 @@ final class ShowcaseRenderer {
 					<div class="sm-lab-block-map__sample">
 						<div
 							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $parent_variation ); ?>"
-							style="<?php echo esc_attr( $this->get_component_token_style( $label_grade, $signal_variation, $shadow_grade ) ); ?>"
+							style="<?php echo esc_attr( $this->get_component_token_style( $label_grade, $signal_variation, $border_grade ) ); ?>"
 							data-sm-lab-button-token-map
 							data-sm-lab-signal-preview-surface="stable"
 							data-sm-lab-token-layout="horizontal"
 							data-sm-lab-token-source-grade-label="<?php echo esc_attr( (string) $label_grade ); ?>"
 							data-sm-lab-token-source-grade-button="<?php echo esc_attr( (string) $signal_variation ); ?>"
-							data-sm-lab-token-source-grade-shadow="<?php echo esc_attr( (string) $shadow_grade ); ?>"
+							data-sm-lab-token-source-grade-border="<?php echo esc_attr( (string) $border_grade ); ?>"
 							data-sm-lab-signal-preview
 							data-palette="<?php echo esc_attr( $params->palette() ); ?>"
 							data-palette-variation="<?php echo esc_attr( (string) $parent_variation ); ?>"
@@ -215,7 +215,7 @@ final class ShowcaseRenderer {
 							<svg class="sm-lab-button-token-map__source-wires" data-sm-lab-token-source-wires aria-hidden="true" focusable="false">
 								<path data-sm-lab-token-source-wire="label" />
 								<path data-sm-lab-token-source-wire="button" />
-								<path data-sm-lab-token-source-wire="shadow" />
+								<path data-sm-lab-token-source-wire="border" />
 							</svg>
 							<div class="sm-lab-button-token-map__brief">
 								<h3><?php esc_html_e( 'Button block', '__plugin_txtd' ); ?></h3>
@@ -233,7 +233,7 @@ final class ShowcaseRenderer {
 										data-signal-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
 										data-token-label-active="<?php echo esc_attr( $grade === $label_grade ? 'true' : 'false' ); ?>"
 										data-token-button-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
-										data-token-shadow-active="<?php echo esc_attr( $grade === $shadow_grade ? 'true' : 'false' ); ?>"
+										data-token-border-active="<?php echo esc_attr( $grade === $border_grade ? 'true' : 'false' ); ?>"
 									>
 										<span class="sm-lab-button-token-map__grade-value"><?php echo esc_html( (string) $grade ); ?></span>
 										<span class="sm-lab-button-token-map__source-chips" aria-hidden="true">
@@ -251,8 +251,8 @@ final class ShowcaseRenderer {
 											></span>
 											<span
 												class="sm-lab-button-token-map__source-chip"
-												data-sm-lab-token-source-chip="shadow"
-												data-active="<?php echo esc_attr( $grade === $shadow_grade ? 'true' : 'false' ); ?>"
+												data-sm-lab-token-source-chip="border"
+												data-active="<?php echo esc_attr( $grade === $border_grade ? 'true' : 'false' ); ?>"
 												style="<?php echo esc_attr( $this->get_source_chip_style( $grade ) ); ?>"
 											></span>
 										</span>
@@ -268,8 +268,7 @@ final class ShowcaseRenderer {
 												<span class="sm-lab-button-token-map__target-port sm-lab-button-token-map__target-port--label" data-sm-lab-token-target="label" aria-hidden="true"></span>
 												<span class="sm-lab-button-token-map__target-port sm-lab-button-token-map__target-port--fill" data-sm-lab-token-target="action" aria-hidden="true"></span>
 											</button>
-											<span class="sm-lab-button-token-map__button-shadow" aria-hidden="true"></span>
-											<span class="sm-lab-button-token-map__target-port sm-lab-button-token-map__target-port--shadow" data-sm-lab-token-target="shadow" aria-hidden="true"></span>
+											<span class="sm-lab-button-token-map__target-port sm-lab-button-token-map__target-port--border" data-sm-lab-token-target="border" aria-hidden="true"></span>
 										</span>
 									</div>
 								</div>
@@ -290,12 +289,12 @@ final class ShowcaseRenderer {
 		);
 	}
 
-	private function get_component_token_style( int $label_grade, int $button_grade, int $shadow_grade ): string {
+	private function get_component_token_style( int $label_grade, int $button_grade, int $border_grade ): string {
 		return sprintf(
-			'--sm-lab-component-label-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color))); --sm-lab-component-button-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-bg-color-%2$d, var(--sm-current-accent-color))); --sm-lab-component-shadow-color: var(--sm-lab-reference-bg-color-%3$d, var(--sm-bg-color-%3$d, var(--sm-current-fg2-color)));',
+			'--sm-lab-component-label-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color))); --sm-lab-component-button-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-bg-color-%2$d, var(--sm-current-accent-color))); --sm-lab-component-border-color: var(--sm-lab-reference-bg-color-%3$d, var(--sm-bg-color-%3$d, var(--sm-current-fg2-color)));',
 			$label_grade,
 			$button_grade,
-			$shadow_grade
+			$border_grade
 		);
 	}
 

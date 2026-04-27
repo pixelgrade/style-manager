@@ -351,7 +351,7 @@ const createShowcaseDocument = () => {
   sourceWires.setAttribute( 'data-sm-lab-token-source-wires', '1' );
   signalPreview.appendChild( sourceWires );
 
-  [ 'label', 'button', 'shadow' ].forEach( ( part ) => {
+  [ 'label', 'button', 'border' ].forEach( ( part ) => {
     const path = documentRef.createElement( 'path' );
     path.setAttribute( 'data-sm-lab-token-source-wire', part );
     sourceWires.appendChild( path );
@@ -372,7 +372,7 @@ const createShowcaseDocument = () => {
     [
       [ 'label', 0 ],
       [ 'button', 1 ],
-      [ 'shadow', 2 ],
+      [ 'border', 2 ],
     ].forEach( ( [ part, index ] ) => {
       const source = documentRef.createElement( 'span' );
       source.setAttribute( 'data-sm-lab-token-source-chip', part );
@@ -391,10 +391,10 @@ const createShowcaseDocument = () => {
   actionTarget.setRect( { left: 720, top: 250, width: 10, height: 10 } );
   signalPreview.appendChild( actionTarget );
 
-  const shadowTarget = documentRef.createElement( 'span' );
-  shadowTarget.setAttribute( 'data-sm-lab-token-target', 'shadow' );
-  shadowTarget.setRect( { left: 800, top: 329, width: 10, height: 10 } );
-  signalPreview.appendChild( shadowTarget );
+  const borderTarget = documentRef.createElement( 'span' );
+  borderTarget.setAttribute( 'data-sm-lab-token-target', 'border' );
+  borderTarget.setRect( { left: 800, top: 329, width: 10, height: 10 } );
+  signalPreview.appendChild( borderTarget );
 
   return documentRef;
 };
@@ -635,9 +635,9 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'button source pointer should expose the Nova preset grade it points to'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-shadow' ),
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-border' ),
       '10',
-      'shadow source pointer should expose the resolved grade it points to'
+      'border source pointer should expose the resolved grade it points to'
     );
     assert.ok(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'style' )?.includes( '--sm-lab-component-button-color: var(--sm-lab-reference-bg-color-8' ),
@@ -659,9 +659,9 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'button fill wire should terminate at the resolved button source grade'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="border"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
       '10',
-      'shadow wire should terminate at the resolved shadow source grade'
+      'border wire should terminate at the resolved border source grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'data-sm-lab-token-entry-side' ),
@@ -674,9 +674,9 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'button fill wire should expose the side it uses to enter the component'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'data-sm-lab-token-entry-side' ),
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="border"]' )?.getAttribute( 'data-sm-lab-token-entry-side' ),
       'bottom',
-      'shadow wire should expose the side it uses to enter the component'
+      'border wire should expose the side it uses to enter the component'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ) || '',
@@ -689,9 +689,9 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'button fill wire should enter the fill surface through its top-side port'
     );
     assert.match(
-      documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="border"]' )?.getAttribute( 'd' ) || '',
       /^M 542 58 L 542 361 Q 542 371 552 371 L 795 371 Q 805 371 805 361 L 805 339$/,
-      'shadow wire should enter the shadow surface from below'
+      'border wire should enter the button border from below'
     );
     assert.notEqual(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),
@@ -709,9 +709,9 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'button token source should mark the Nova preset grade on the rail'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="10"]' )?.getAttribute( 'data-token-shadow-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="10"]' )?.getAttribute( 'data-token-border-active' ),
       'true',
-      'shadow token source should mark the deeper support grade on the rail'
+      'border token source should mark the deeper support grade on the rail'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-swatch="4"]' )?.getAttribute( 'data-token-button-active' ),
