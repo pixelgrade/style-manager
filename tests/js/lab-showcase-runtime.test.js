@@ -382,7 +382,7 @@ const createShowcaseDocument = () => {
 
   const labelTarget = documentRef.createElement( 'span' );
   labelTarget.setAttribute( 'data-sm-lab-token-target', 'label' );
-  labelTarget.setRect( { left: 610, top: 278, width: 10, height: 10 } );
+  labelTarget.setRect( { left: 500, top: 278, width: 10, height: 10 } );
   signalPreview.appendChild( labelTarget );
 
   const actionTarget = documentRef.createElement( 'button' );
@@ -645,20 +645,35 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '8',
       'shadow wire should terminate at the resolved shadow source grade'
     );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'data-sm-lab-token-entry-side' ),
+      'left',
+      'label wire should expose the side it uses to enter the component'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'data-sm-lab-token-entry-side' ),
+      'top',
+      'button fill wire should expose the side it uses to enter the component'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'data-sm-lab-token-entry-side' ),
+      'bottom',
+      'shadow wire should expose the side it uses to enter the component'
+    );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ) || '',
-      /^M 92 58 L 92 72 Q 92 82 102 82 L 605 82 Q 615 82 615 92 L 615 283$/,
-      'label wire should connect the grade 1 role chip directly to the visible button label'
+      /^M 92 58 L 92 80 Q 92 90 102 90 L 466 90 Q 476 90 476 100 L 476 273 Q 476 283 486 283 L 500 283$/,
+      'label wire should enter the button label through its left-side port'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ) || '',
-      /^M 341 58 L 341 88 Q 341 98 351 98 L 715 98 Q 725 98 725 108 L 725 255$/,
-      'button fill wire should connect the grade 6 role chip directly to the visible button fill'
+      /^M 341 58 L 341 104 Q 341 114 351 114 L 715 114 Q 725 114 725 124 L 725 250$/,
+      'button fill wire should enter the fill surface through its top-side port'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
-      /^M 446 58 L 446 104 Q 446 114 456 114 L 795 114 Q 805 114 805 124 L 805 334$/,
-      'shadow wire should connect the grade 8 role chip directly to the visible shadow surface'
+      /^M 446 58 L 446 361 Q 446 371 456 371 L 795 371 Q 805 371 805 361 L 805 339$/,
+      'shadow wire should enter the shadow surface from below'
     );
     assert.notEqual(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),

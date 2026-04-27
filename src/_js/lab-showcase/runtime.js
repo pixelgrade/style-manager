@@ -8,26 +8,28 @@ const COMPONENT_TOKEN_TARGETS = {
   label: {
     kind: 'label',
     selector: '[data-sm-lab-token-target="label"]',
-    x: 0.5,
+    side: 'left',
+    laneOffset: 32,
+    terminal: 24,
+    x: 0,
     y: 0.5,
   },
   button: {
     kind: 'action',
     selector: '[data-sm-lab-token-target="action"]',
+    side: 'top',
+    laneOffset: 56,
     x: 0.5,
-    y: 0.5,
+    y: 0,
   },
   shadow: {
     kind: 'shadow',
     selector: '[data-sm-lab-token-target="shadow"]',
+    side: 'bottom',
+    terminal: 32,
     x: 0.5,
-    y: 0.5,
+    y: 1,
   },
-};
-const COMPONENT_SOURCE_LANES = {
-  label: 0,
-  button: 1,
-  shadow: 2,
 };
 const MIXES = [
   [ '#ffffff', 0.92 ],
@@ -738,61 +740,95 @@ const getComponentTargetPoint = ( rect, containerRect, target ) => getRelativePo
   typeof target.y === 'number' ? target.y : 0
 );
 
-const buildComponentWirePath = ( source, target, lane = 0 ) => {
-  const horizontalDistance = Math.abs( target.x - source.x );
-  const verticalDistance = Math.abs( target.y - source.y );
+const filterWirePoints = ( points ) => points.filter( ( point, index ) => {
+  const previous = points[ index - 1 ];
 
-  if ( horizontalDistance < 1 || verticalDistance < 12 ) {
-    return [
-      'M',
-      formatWireNumber( source.x ),
-      formatWireNumber( source.y ),
-      'L',
-      formatWireNumber( target.x ),
-      formatWireNumber( target.y ),
-    ].join( ' ' );
+  return ! previous || Math.abs( point.x - previous.x ) > 0.5 || Math.abs( point.y - previous.y ) > 0.5;
+} );
+
+const getTurnPoint = ( point, adjacent, radius ) => {
+  if ( Math.abs( adjacent.x - point.x ) > Math.abs( adjacent.y - point.y ) ) {
+    return {
+      x: point.x + Math.sign( adjacent.x - point.x ) * radius,
+      y: point.y,
+    };
   }
 
-  const horizontalDirection = target.x >= source.x ? 1 : -1;
-  const verticalDirection = target.y >= source.y ? 1 : -1;
-  const laneOffset = Math.min( 24 + lane * 16, Math.max( verticalDistance - 8, 16 ) );
-  const elbowY = source.y + verticalDirection * laneOffset;
-  const sourceRadius = Math.min( 10, horizontalDistance / 2, Math.abs( elbowY - source.y ) / 2 );
-  const targetRadius = Math.min( 10, horizontalDistance / 2, Math.abs( target.y - elbowY ) );
-  const beforeElbowY = elbowY - verticalDirection * sourceRadius;
-  const afterElbowY = elbowY + verticalDirection * targetRadius;
+  return {
+    x: point.x,
+    y: point.y + Math.sign( adjacent.y - point.y ) * radius,
+  };
+};
+
+const buildRoundedOrthogonalPath = ( points ) => {
+  const filteredPoints = filterWirePoints( points );
+  const [ firstPoint ] = filteredPoints;
+
+  if ( filteredPoints.length < 2 || ! firstPoint ) {
+    return '';
+  }
 
   const path = [
     'M',
-    formatWireNumber( source.x ),
-    formatWireNumber( source.y ),
-    'L',
-    formatWireNumber( source.x ),
-    formatWireNumber( beforeElbowY ),
-    'Q',
-    formatWireNumber( source.x ),
-    formatWireNumber( elbowY ),
-    formatWireNumber( source.x + horizontalDirection * sourceRadius ),
-    formatWireNumber( elbowY ),
-    'L',
-    formatWireNumber( target.x - horizontalDirection * targetRadius ),
-    formatWireNumber( elbowY ),
-    'Q',
-    formatWireNumber( target.x ),
-    formatWireNumber( elbowY ),
-    formatWireNumber( target.x ),
-    formatWireNumber( afterElbowY ),
+    formatWireNumber( firstPoint.x ),
+    formatWireNumber( firstPoint.y ),
   ];
 
-  if ( Math.abs( afterElbowY - target.y ) > 0.5 ) {
+  filteredPoints.slice( 1, -1 ).forEach( ( point, index ) => {
+    const previous = filteredPoints[ index ];
+    const next = filteredPoints[ index + 2 ];
+    const previousDistance = Math.abs( point.x - previous.x ) + Math.abs( point.y - previous.y );
+    const nextDistance = Math.abs( next.x - point.x ) + Math.abs( next.y - point.y );
+    const radius = Math.min( 10, previousDistance / 2, nextDistance / 2 );
+
+    if ( radius < 1 ) {
+      path.push( 'L', formatWireNumber( point.x ), formatWireNumber( point.y ) );
+      return;
+    }
+
+    const beforePoint = getTurnPoint( point, previous, radius );
+    const afterPoint = getTurnPoint( point, next, radius );
+
     path.push(
       'L',
-      formatWireNumber( target.x ),
-      formatWireNumber( target.y )
+      formatWireNumber( beforePoint.x ),
+      formatWireNumber( beforePoint.y ),
+      'Q',
+      formatWireNumber( point.x ),
+      formatWireNumber( point.y ),
+      formatWireNumber( afterPoint.x ),
+      formatWireNumber( afterPoint.y )
     );
-  }
+  } );
+
+  const lastPoint = filteredPoints[ filteredPoints.length - 1 ];
+  path.push( 'L', formatWireNumber( lastPoint.x ), formatWireNumber( lastPoint.y ) );
 
   return path.join( ' ' );
+};
+
+const buildComponentWirePath = ( source, target, targetConfig ) => {
+  const terminal = Number.isFinite( targetConfig.terminal ) ? targetConfig.terminal : 24;
+  const side = targetConfig.side || 'top';
+  const laneY = 'bottom' === side
+    ? target.y + terminal
+    : source.y + ( Number.isFinite( targetConfig.laneOffset ) ? targetConfig.laneOffset : 24 );
+  const points = [
+    source,
+    { x: source.x, y: laneY },
+  ];
+
+  if ( 'left' === side ) {
+    const entryX = target.x - terminal;
+    points.push( { x: entryX, y: laneY }, { x: entryX, y: target.y }, target );
+  } else if ( 'right' === side ) {
+    const entryX = target.x + terminal;
+    points.push( { x: entryX, y: laneY }, { x: entryX, y: target.y }, target );
+  } else {
+    points.push( { x: target.x, y: laneY }, target );
+  }
+
+  return buildRoundedOrthogonalPath( points );
 };
 
 const findComponentSourceSwatch = ( map, part ) => (
@@ -847,9 +883,10 @@ const updateButtonTokenSourceWires = ( documentRef ) => {
         || source.closest?.( '[data-sm-lab-grade-swatch]' )?.getAttribute?.( 'data-sm-lab-grade-swatch' )
         || '';
 
-      path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint, COMPONENT_SOURCE_LANES[ part ] || 0 ) );
+      path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint, targetConfig ) );
       path.setAttribute( 'data-sm-lab-token-source-grade', sourceGrade );
       path.setAttribute( 'data-sm-lab-token-target-kind', targetConfig.kind );
+      path.setAttribute( 'data-sm-lab-token-entry-side', targetConfig.side || 'top' );
       path.setAttribute( 'data-sm-lab-token-wire-active', 'true' );
     } );
   } );

@@ -775,13 +775,13 @@
 
 .sm-lab-button-token-map__target-port--label {
   top: 50%;
-  left: 50%;
+  left: 34%;
   background: var(--sm-lab-component-label-color, var(--sm-current-bg-color));
-  transform: translate(-50%, calc(-50% - 17px));
+  transform: translate(-50%, -50%);
 }
 
 .sm-lab-button-token-map__target-port--fill {
-  top: 12px;
+  top: 0;
   left: 68%;
   background: var(--sm-lab-component-button-color, var(--sm-current-accent-color));
   transform: translate(-50%, -50%);
@@ -789,7 +789,7 @@
 
 .sm-lab-button-token-map__target-port--shadow {
   right: 22%;
-  bottom: 7px;
+  bottom: 4px;
   background: var(--sm-lab-component-shadow-color, var(--sm-current-fg2-color));
   transform: translate(50%, 50%);
 }
