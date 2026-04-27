@@ -5,6 +5,7 @@ const CONTEXTUAL_ID = 'contextual-lab';
 const CONTEXTUAL_LABEL = 'Contextual Lab';
 const TOKENS = [ 'bg', 'accent', 'fg1', 'fg2' ];
 const SIGNAL_LABELS = [ 'None', 'Low', 'Medium', 'High' ];
+const LAB_COLOR_SIGNAL_VARIATIONS = [ 1, 2, 5, 9 ];
 const COMPONENT_TOKEN_TARGETS = {
   label: {
     kind: 'label',
@@ -449,16 +450,7 @@ const updatePaletteVariationScopes = ( documentRef, state ) => {
 const getSignalAttribute = ( element, name ) => element.getAttribute?.( `data-${ name }` );
 
 const getSignalsForPalette = ( windowRef, paletteId ) => {
-  const signalOptions = windowRef?.novablocks?.utils?.getSignals?.( paletteId );
-
-  if ( Array.isArray( signalOptions ) && signalOptions.length ) {
-    return signalOptions
-      .map( ( signal ) => Number.parseInt( signal, 10 ) )
-      .filter( ( signal ) => ! Number.isNaN( signal ) )
-      .map( normalizeVariationValue );
-  }
-
-  return [ 1, 3, 8, 11 ];
+  return LAB_COLOR_SIGNAL_VARIATIONS;
 };
 
 const getPaletteConfig = ( windowRef, paletteId ) => {

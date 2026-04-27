@@ -11,7 +11,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Lab;
 
 final class ShowcaseRenderer {
-	private const COLOR_SIGNAL_PRESETS = [ 1, 3, 8, 11 ];
+	private const COLOR_SIGNAL_PRESETS = [ 1, 2, 5, 9 ];
 
 	public function render( QueryParams $params ): string {
 		ob_start();

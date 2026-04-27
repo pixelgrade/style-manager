@@ -76,8 +76,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="footer"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-bridge="header"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-anatomy-bridge="header"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="8"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="1"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="5"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="9"', $html );
 		$this->assertStringNotContainsString( 'sm-lab-signal-cascade__wires', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-chip="signal-label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-chip="saved-attribute"', $html );
@@ -100,7 +100,7 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="parent"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="signal"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-parent-grade="4"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-resolved-grade="8"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-resolved-grade="1"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-shifted="true"', $html );
 		$this->assertStringContainsString( 'data-parent-active="true"', $html );
 		$this->assertStringContainsString( 'data-resolved-active="true"', $html );
@@ -112,9 +112,9 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-token-circuit', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-canvas-variation="1"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-lane="component"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-label="1"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-button="8"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-border="10"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-label="12"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-button="1"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-border="3"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-wires', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-wire="button"', $html );
