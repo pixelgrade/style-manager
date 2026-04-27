@@ -590,7 +590,7 @@
   stroke-linejoin: round;
   stroke-width: 2.25;
   vector-effect: non-scaling-stroke;
-  transition: opacity 160ms ease;
+  transition: opacity 160ms ease, stroke-dashoffset 320ms ease;
 }
 
 .sm-lab-button-token-map__source-wires [data-sm-lab-token-source-wire="label"] {

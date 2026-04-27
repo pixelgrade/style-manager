@@ -60,6 +60,7 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-signal-active="true"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-preview', $html );
 		$this->assertStringContainsString( 'data-sm-lab-button-token-map', $html );
+		$this->assertStringContainsString( 'data-sm-lab-signal-preview-surface="stable"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-layout="horizontal"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-circuit', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-lane="component"', $html );
@@ -123,6 +124,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringNotContainsString( 'sm-lab-button-token-map__labels', $block_map_html );
 		$this->assertStringNotContainsString( 'data-sm-lab-token-lane="labels"', $block_map_html );
 		$this->assertStringNotContainsString( 'data-sm-lab-token-pin=', $block_map_html );
+		$this->assertStringContainsString( 'sm-lab-block-map__component sm-palette-1 sm-variation-4', $block_map_html );
+		$this->assertStringNotContainsString( 'sm-color-signal-2', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-bg-color</code>', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-accent-color</code>', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-fg2-color</code>', $block_map_html );

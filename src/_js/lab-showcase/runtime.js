@@ -843,6 +843,45 @@ const findComponentTokenTarget = ( map, target ) => (
   map.querySelector( target.selector )
 );
 
+const getWireLength = ( path ) => {
+  if ( path && typeof path.getTotalLength === 'function' ) {
+    const length = Number( path.getTotalLength() );
+
+    if ( Number.isFinite( length ) && length > 0 ) {
+      return Math.ceil( length );
+    }
+  }
+
+  return 640;
+};
+
+const setWireDrawStyle = ( path, length, offset ) => {
+  path.setAttribute(
+    'style',
+    `stroke-dasharray: ${ length }; stroke-dashoffset: ${ offset };`
+  );
+};
+
+const animateWirePathChange = ( path, previousPath, nextPath, windowRef ) => {
+  if ( ! previousPath || previousPath === nextPath ) {
+    path.removeAttribute?.( 'data-sm-lab-token-wire-motion' );
+    return;
+  }
+
+  const length = getWireLength( path );
+  path.setAttribute( 'data-sm-lab-token-wire-motion', 'draw' );
+  setWireDrawStyle( path, length, length );
+
+  const finishAnimation = () => setWireDrawStyle( path, length, 0 );
+
+  if ( typeof windowRef?.requestAnimationFrame === 'function' ) {
+    windowRef.requestAnimationFrame( finishAnimation );
+    return;
+  }
+
+  finishAnimation();
+};
+
 const buildReferenceGradeColor = ( grade, fallback = 'var(--sm-current-bg-color)' ) => (
   `var(--sm-lab-reference-bg-color-${ grade }, var(--sm-bg-color-${ grade }, ${ fallback }))`
 );
@@ -853,7 +892,7 @@ const buildComponentTokenStyle = ( grades ) => [
   `--sm-lab-component-shadow-color: ${ buildReferenceGradeColor( grades.shadow, 'var(--sm-current-fg2-color)' ) };`,
 ].join( ' ' );
 
-const updateButtonTokenSourceWires = ( documentRef ) => {
+const updateButtonTokenSourceWires = ( documentRef, windowRef = {} ) => {
   documentRef.querySelectorAll( '[data-sm-lab-button-token-map]' ).forEach( ( map ) => {
     const containerRect = readWireRect( map );
     const svg = map.querySelector( '[data-sm-lab-token-source-wires]' );
@@ -883,24 +922,28 @@ const updateButtonTokenSourceWires = ( documentRef ) => {
         || source.closest?.( '[data-sm-lab-grade-swatch]' )?.getAttribute?.( 'data-sm-lab-grade-swatch' )
         || '';
 
-      path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint, targetConfig ) );
+      const nextPath = buildComponentWirePath( sourcePoint, targetPoint, targetConfig );
+      const previousPath = path.getAttribute( 'd' );
+
+      path.setAttribute( 'd', nextPath );
       path.setAttribute( 'data-sm-lab-token-source-grade', sourceGrade );
       path.setAttribute( 'data-sm-lab-token-target-kind', targetConfig.kind );
       path.setAttribute( 'data-sm-lab-token-entry-side', targetConfig.side || 'top' );
       path.setAttribute( 'data-sm-lab-token-wire-active', 'true' );
+      animateWirePathChange( path, previousPath, nextPath, windowRef );
     } );
   } );
 };
 
 const syncButtonTokenSourceWires = ( documentRef, windowRef ) => {
-  updateButtonTokenSourceWires( documentRef );
+  updateButtonTokenSourceWires( documentRef, windowRef );
 
   if ( typeof windowRef?.requestAnimationFrame === 'function' ) {
-    windowRef.requestAnimationFrame( () => updateButtonTokenSourceWires( documentRef ) );
+    windowRef.requestAnimationFrame( () => updateButtonTokenSourceWires( documentRef, windowRef ) );
   }
 
   if ( typeof windowRef?.setTimeout === 'function' ) {
-    windowRef.setTimeout( () => updateButtonTokenSourceWires( documentRef ), 190 );
+    windowRef.setTimeout( () => updateButtonTokenSourceWires( documentRef, windowRef ), 190 );
   }
 };
 
@@ -908,12 +951,15 @@ const updateSignalPreviewScopes = ( documentRef, state ) => {
   const signalVariation = getSignalResultVariation( state );
 
   documentRef.querySelectorAll( '[data-sm-lab-signal-preview]' ).forEach( ( node ) => {
+    const keepsStableSurface = node.getAttribute( 'data-sm-lab-signal-preview-surface' ) === 'stable';
+    const previewVariation = keepsStableSurface ? state.variation : signalVariation;
+
     node.setAttribute( 'data-palette', state.palette );
-    node.setAttribute( 'data-palette-variation', String( signalVariation ) );
+    node.setAttribute( 'data-palette-variation', String( previewVariation ) );
     node.setAttribute( 'data-color-signal', String( state.signal ) );
     replaceClassByPattern( node, /^sm-palette-[a-z0-9_-]+$/i, `sm-palette-${ state.palette }` );
-    replaceClassByPattern( node, /^sm-variation-\d+$/, `sm-variation-${ signalVariation }` );
-    replaceClassByPattern( node, /^sm-color-signal-\d+$/, `sm-color-signal-${ state.signal }` );
+    replaceClassByPattern( node, /^sm-variation-\d+$/, `sm-variation-${ previewVariation }` );
+    replaceClassByPattern( node, /^sm-color-signal-\d+$/, keepsStableSurface ? '' : `sm-color-signal-${ state.signal }` );
   } );
 };
 

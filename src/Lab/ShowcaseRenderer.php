@@ -197,16 +197,17 @@ final class ShowcaseRenderer {
 					<h2><?php esc_html_e( 'Component anatomy', '__plugin_txtd' ); ?></h2>
 					<div class="sm-lab-block-map__sample">
 						<div
-							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $signal_variation ); ?> sm-color-signal-<?php echo esc_attr( (string) $params->signal() ); ?>"
+							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $parent_variation ); ?>"
 							style="<?php echo esc_attr( $this->get_component_token_style( $label_grade, $signal_variation, $shadow_grade ) ); ?>"
 							data-sm-lab-button-token-map
+							data-sm-lab-signal-preview-surface="stable"
 							data-sm-lab-token-layout="horizontal"
 							data-sm-lab-token-source-grade-label="<?php echo esc_attr( (string) $label_grade ); ?>"
 							data-sm-lab-token-source-grade-button="<?php echo esc_attr( (string) $signal_variation ); ?>"
 							data-sm-lab-token-source-grade-shadow="<?php echo esc_attr( (string) $shadow_grade ); ?>"
 							data-sm-lab-signal-preview
 							data-palette="<?php echo esc_attr( $params->palette() ); ?>"
-							data-palette-variation="<?php echo esc_attr( (string) $signal_variation ); ?>"
+							data-palette-variation="<?php echo esc_attr( (string) $parent_variation ); ?>"
 							data-color-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
 						>
 							<svg class="sm-lab-button-token-map__source-wires" data-sm-lab-token-source-wires aria-hidden="true" focusable="false">

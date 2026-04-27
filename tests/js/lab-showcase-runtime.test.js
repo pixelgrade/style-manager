@@ -339,6 +339,7 @@ const createShowcaseDocument = () => {
   const signalPreview = documentRef.createElement( 'div' );
   signalPreview.setAttribute( 'data-sm-lab-signal-preview', '1' );
   signalPreview.setAttribute( 'data-sm-lab-button-token-map', '1' );
+  signalPreview.setAttribute( 'data-sm-lab-signal-preview-surface', 'stable' );
   signalPreview.setAttribute( 'data-palette', '1' );
   signalPreview.setAttribute( 'data-palette-variation', '1' );
   signalPreview.setAttribute( 'data-color-signal', '0' );
@@ -452,6 +453,16 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '--sm-current-fg2-color': '#d7d7d7',
     };
 
+    const animationFrames = [];
+    const windowRef = {
+      requestAnimationFrame: ( callback ) => {
+        animationFrames.push( callback );
+
+        return animationFrames.length;
+      },
+      setTimeout: () => 1,
+    };
+
     const result = applyShowcaseState( {
       document: documentRef,
       getComputedStyle: () => ( {
@@ -468,6 +479,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       },
       siteVariation: 1,
       palettes: [ createRuntimePalette() ],
+      windowRef,
     } );
 
     assert.ok( documentRef.documentElement.classList.contains( 'is-dark' ), 'dark mode should be applied to the iframe document element' );
@@ -586,8 +598,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette-variation' ),
-      '6',
-      'signal preview scope should use the resolved child variation'
+      '4',
+      'component anatomy scope should keep the inherited variation so its canvas background stays stable'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-color-signal' ),
@@ -599,12 +611,13 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'signal preview scope should update its palette class'
     );
     assert.ok(
-      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-variation-6' ),
-      'signal preview scope should update its variation class'
+      documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-variation-4' ),
+      'component anatomy scope should keep the inherited variation class'
     );
-    assert.ok(
+    assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.classList.contains( 'sm-color-signal-2' ),
-      'signal preview scope should update its signal class'
+      false,
+      'component anatomy scope should not apply a signal class to its own canvas'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-label' ),
@@ -736,6 +749,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       },
       siteVariation: 1,
       palettes: [ createRuntimePalette() ],
+      windowRef,
     } );
 
     assert.equal(
@@ -752,6 +766,16 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ),
       buttonWireAtVariation4,
       'changing the active variation should redraw the fill connector geometry'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'data-sm-lab-token-wire-motion' ),
+      'draw',
+      'changed connector wires should be marked for draw animation'
+    );
+    assert.match(
+      documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'style' ) || '',
+      /stroke-dashoffset:\s*640/,
+      'changed connector wires should start from a hidden dash offset before animating in'
     );
 
     let receivedEvent = null;
