@@ -379,7 +379,7 @@ final class ShowcaseRenderer {
 		<div class="sm-lab-signal-cascade__inspector" data-sm-lab-cascade-view="inspector" aria-label="<?php esc_attr_e( 'Exploded Color Signal contract inspector', '__plugin_txtd' ); ?>">
 			<?php
 			foreach ( $by_parent[''] ?? [] as $node ) {
-				$this->render_cascade_inspector_node( $node, $by_parent );
+				$this->render_cascade_inspector_node( $node, $by_parent, $params );
 			}
 			?>
 		</div>
@@ -390,7 +390,7 @@ final class ShowcaseRenderer {
 	 * @param array<string, mixed> $node
 	 * @param array<string, array<int, array<string, mixed>>> $by_parent
 	 */
-	private function render_cascade_inspector_node( array $node, array $by_parent ): void {
+	private function render_cascade_inspector_node( array $node, array $by_parent, QueryParams $params ): void {
 		?>
 		<section
 			class="sm-lab-signal-cascade__node sm-lab-signal-cascade__node--<?php echo esc_attr( $node['id'] ); ?>"
@@ -415,15 +415,50 @@ final class ShowcaseRenderer {
 			</span>
 			<strong><?php echo esc_html( $node['label'] ); ?></strong>
 			<small><?php echo esc_html( $node['caption'] ); ?></small>
-			<span class="sm-lab-signal-cascade__grades">
-				<?php esc_html_e( 'from', '__plugin_txtd' ); ?>
+			<div class="sm-lab-cascade-chips" aria-hidden="true">
+				<span
+					class="sm-lab-cascade-chip"
+					data-sm-lab-cascade-chip="signal-input"
+					data-sm-lab-cascade-chip-signal-input="<?php echo esc_attr( (string) $node['signal'] ); ?>"
+				>
+					<code>data-color-signal="<?php echo esc_html( (string) $node['signal'] ); ?>"</code>
+				</span>
+				<span class="sm-lab-cascade-chip" data-sm-lab-cascade-chip="scope-class">
+					<code data-sm-lab-cascade-chip-scope>.sm-palette-<?php echo esc_html( $params->palette() ); ?>.sm-variation-<?php echo esc_html( (string) $node['resolved_grade'] ); ?></code>
+				</span>
+			</div>
+			<div class="sm-lab-cascade-rail" data-sm-lab-cascade-rail aria-hidden="true">
+				<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
+					<?php
+					$marker = 'none';
+					if ( $grade === $node['parent_grade'] ) {
+						$marker = 'parent';
+					} elseif ( $grade === $node['resolved_grade'] ) {
+						$marker = 'resolved';
+					}
+					?>
+					<span
+						class="sm-lab-cascade-rail__segment"
+						data-sm-lab-cascade-rail-grade="<?php echo esc_attr( (string) $grade ); ?>"
+						data-sm-lab-cascade-rail-marker="<?php echo esc_attr( $marker ); ?>"
+						style="<?php echo esc_attr( $this->get_reference_grade_background_style( $params, $grade ) ); ?>"
+					></span>
+				<?php endfor; ?>
+			</div>
+			<span class="sm-lab-signal-cascade__readbacks" aria-hidden="true">
 				<b data-sm-lab-cascade-value="parent"><?php echo esc_html( (string) $node['parent_grade'] ); ?></b>
-				<?php esc_html_e( 'to grade', '__plugin_txtd' ); ?>
 				<b data-sm-lab-cascade-value="resolved"><?php echo esc_html( (string) $node['resolved_grade'] ); ?></b>
 			</span>
+			<?php if ( 'second-inner' === $node['id'] ) : ?>
+				<p
+					class="sm-lab-cascade-inversion"
+					data-sm-lab-cascade-inversion="second-inner"
+					data-sm-lab-cascade-inversion-visible="<?php echo esc_attr( $node['resolved_grade'] !== $node['parent_grade'] ? 'true' : 'false' ); ?>"
+				><?php esc_html_e( 'Same signal as Header. Opposite end of the rail. Parent context decides.', '__plugin_txtd' ); ?></p>
+			<?php endif; ?>
 			<?php
 			foreach ( $by_parent[ $node['id'] ] ?? [] as $child ) {
-				$this->render_cascade_inspector_node( $child, $by_parent );
+				$this->render_cascade_inspector_node( $child, $by_parent, $params );
 			}
 			?>
 		</section>
@@ -447,42 +482,42 @@ final class ShowcaseRenderer {
 				'parent'  => '',
 				'signal'  => 0,
 				'label'   => __( 'Page container', '__plugin_txtd' ),
-				'caption' => __( 'Base runtime surface', '__plugin_txtd' ),
+				'caption' => __( 'Input: signal=none. Sets the page surface — everything below resolves against it.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'header',
 				'parent'  => 'page',
 				'signal'  => 3,
 				'label'   => __( 'Header block', '__plugin_txtd' ),
-				'caption' => __( 'High attention from page', '__plugin_txtd' ),
+				'caption' => __( 'Input: signal=high. Resolved against the page surface, not against another block.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'content',
 				'parent'  => 'page',
 				'signal'  => 1,
 				'label'   => __( 'Content block', '__plugin_txtd' ),
-				'caption' => __( 'Low contrast from page', '__plugin_txtd' ),
+				'caption' => __( 'Input: signal=low. First layer below page; the parent for any nested block.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'inner',
 				'parent'  => 'content',
 				'signal'  => 2,
 				'label'   => __( 'First inner block', '__plugin_txtd' ),
-				'caption' => __( 'Medium from content', '__plugin_txtd' ),
+				'caption' => __( 'Input: signal=medium. Resolved against the content surface, not against page.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'second-inner',
 				'parent'  => 'inner',
 				'signal'  => 3,
 				'label'   => __( 'Second inner block', '__plugin_txtd' ),
-				'caption' => __( 'High relative to inner', '__plugin_txtd' ),
+				'caption' => __( 'Input: signal=high. Resolved against inner — flips to the opposite end of the rail.', '__plugin_txtd' ),
 			],
 			[
 				'id'      => 'footer',
 				'parent'  => 'page',
 				'signal'  => 3,
 				'label'   => __( 'Footer block', '__plugin_txtd' ),
-				'caption' => __( 'High attention from page', '__plugin_txtd' ),
+				'caption' => __( 'Input: signal=high. Same input as Header, same parent — same resolved grade.', '__plugin_txtd' ),
 			],
 		];
 		$resolved_by_id = [];

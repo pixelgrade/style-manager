@@ -73,6 +73,18 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="8"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="1"', $html );
 		$this->assertStringNotContainsString( 'sm-lab-signal-cascade__wires', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-chip="signal-input"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-chip="scope-class"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-chip-signal-input="3"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-chip-signal-input="0"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-rail', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-grade="1"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-grade="12"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-marker="parent"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-marker="resolved"', $html );
+		$this->assertStringContainsString( 'Input: signal=high', $html );
+		$this->assertStringContainsString( 'Input: signal=none', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-inversion="second-inner"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-result="variation"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-callout="action"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="parent"', $html );
