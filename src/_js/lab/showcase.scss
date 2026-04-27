@@ -755,6 +755,18 @@
   outline-offset: 2px;
 }
 
+[data-sm-lab-cascade-bridge="header"] {
+  outline: 2px dashed color-mix(in srgb, var(--sm-current-accent-color), transparent 50%);
+  outline-offset: 3px;
+}
+
+.sm-lab-block-map__bridge {
+  margin-left: 8px;
+  color: color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 30%);
+  font-size: 12px;
+  font-weight: 600;
+}
+
 @media (max-width: 850px) {
   [data-sm-lab-cascade-node="header"],
   [data-sm-lab-cascade-node="content"],

@@ -213,12 +213,12 @@ final class ShowcaseRenderer {
 					</div>
 				</article>
 
-				<article class="sm-lab-resolution-stage sm-lab-resolution-stage--wide sm-lab-block-map" data-sm-lab-resolution-stage="mapping" data-sm-lab-proof="block-mapping">
+				<article class="sm-lab-resolution-stage sm-lab-resolution-stage--wide sm-lab-block-map" data-sm-lab-resolution-stage="mapping" data-sm-lab-proof="block-mapping" data-sm-lab-anatomy-bridge="header">
 					<div class="sm-lab-resolution-stage__topline">
 						<span><?php esc_html_e( '05', '__plugin_txtd' ); ?></span>
 						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Block mapping', '__plugin_txtd' ); ?></p>
 					</div>
-					<h2><?php esc_html_e( 'Component anatomy', '__plugin_txtd' ); ?></h2>
+					<h2><?php esc_html_e( 'Component anatomy', '__plugin_txtd' ); ?><span class="sm-lab-block-map__bridge"><?php esc_html_e( '↑ from Header signal', '__plugin_txtd' ); ?></span></h2>
 					<div class="sm-lab-block-map__sample">
 						<div
 							class="sm-lab-block-map__component sm-palette-<?php echo esc_attr( $params->palette() ); ?> sm-variation-<?php echo esc_attr( (string) $parent_variation ); ?>"

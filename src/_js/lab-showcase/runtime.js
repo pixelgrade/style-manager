@@ -921,12 +921,40 @@ const setSignalCascadeValue = ( node, key, value ) => {
   } );
 };
 
+const wireCascadeHoverBond = ( cascade ) => {
+  if ( cascade.getAttribute( 'data-sm-lab-cascade-bond' ) === 'true' ) {
+    return;
+  }
+
+  const setHighlight = ( id ) => {
+    if ( id ) {
+      cascade.setAttribute( 'data-sm-lab-cascade-highlight', id );
+      return;
+    }
+
+    cascade.removeAttribute?.( 'data-sm-lab-cascade-highlight' );
+  };
+
+  cascade.addEventListener( 'pointerover', ( event ) => {
+    const node = event.target.closest?.( '[data-sm-lab-cascade-node]' );
+    setHighlight( node?.getAttribute( 'data-sm-lab-cascade-node' ) || null );
+  } );
+  cascade.addEventListener( 'pointerleave', () => setHighlight( null ) );
+  cascade.addEventListener( 'focusin', ( event ) => {
+    const node = event.target.closest?.( '[data-sm-lab-cascade-node]' );
+    setHighlight( node?.getAttribute( 'data-sm-lab-cascade-node' ) || null );
+  } );
+  cascade.addEventListener( 'focusout', () => setHighlight( null ) );
+  cascade.setAttribute( 'data-sm-lab-cascade-bond', 'true' );
+};
+
 const updateSignalCascade = ( documentRef, state, windowRef ) => {
   const inheritedVariation = getInheritedVariation( state );
 
   documentRef.querySelectorAll( '[data-sm-lab-signal-cascade]' ).forEach( ( cascade ) => {
     const resolvedByNode = new Map();
 
+    wireCascadeHoverBond( cascade );
     cascade.setAttribute( 'data-sm-lab-cascade-palette', state.palette );
     cascade.setAttribute( 'data-sm-lab-cascade-active-signal', String( state.signal ) );
 

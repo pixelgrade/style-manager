@@ -70,6 +70,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="inner"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="second-inner"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="footer"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-bridge="header"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-anatomy-bridge="header"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="8"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="1"', $html );
 		$this->assertStringNotContainsString( 'sm-lab-signal-cascade__wires', $html );

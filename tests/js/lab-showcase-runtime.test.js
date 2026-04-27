@@ -65,6 +65,7 @@ class FakeElement {
     this.textContent = '';
     this.classList = new FakeClassList( this );
     this._className = '';
+    this.listeners = new Map();
     this.rect = { left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0 };
   }
 
@@ -100,6 +101,10 @@ class FakeElement {
     return this.attributes.has( name ) ? this.attributes.get( name ) : null;
   }
 
+  removeAttribute( name ) {
+    this.attributes.delete( name );
+  }
+
   getBoundingClientRect() {
     return this.rect;
   }
@@ -113,6 +118,12 @@ class FakeElement {
       right: rect.left + rect.width,
       bottom: rect.top + rect.height,
     };
+  }
+
+  addEventListener( type, listener ) {
+    const listeners = this.listeners.get( type ) || [];
+    listeners.push( listener );
+    this.listeners.set( type, listeners );
   }
 
   querySelector( selector ) {
@@ -727,6 +738,37 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-cascade-inversion="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-inversion-visible' ),
       'true',
       'inversion callout should be marked visible when resolved differs from parent'
+    );
+    const cascade = documentRef.querySelector( '[data-sm-lab-signal-cascade]' );
+    const contentCascadeNode = documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' );
+    cascade.listeners.get( 'pointerover' )?.[0]?.( { target: contentCascadeNode } );
+    assert.equal(
+      cascade.getAttribute( 'data-sm-lab-cascade-highlight' ),
+      'content',
+      'hovering an inspector node should highlight the matching assembled preview node'
+    );
+    cascade.listeners.get( 'pointerleave' )?.[0]?.();
+    assert.equal(
+      cascade.getAttribute( 'data-sm-lab-cascade-highlight' ),
+      null,
+      'leaving the inspector should clear the cascade preview highlight'
+    );
+    cascade.listeners.get( 'focusin' )?.[0]?.( { target: documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' ) } );
+    assert.equal(
+      cascade.getAttribute( 'data-sm-lab-cascade-highlight' ),
+      'inner',
+      'focusing an inspector node should highlight the matching assembled preview node'
+    );
+    cascade.listeners.get( 'focusout' )?.[0]?.();
+    assert.equal(
+      cascade.getAttribute( 'data-sm-lab-cascade-highlight' ),
+      null,
+      'moving focus away from the inspector should clear the cascade preview highlight'
+    );
+    assert.equal(
+      cascade.listeners.get( 'pointerover' )?.length,
+      1,
+      'cascade hover bond should bind pointer listeners once'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette' ),
