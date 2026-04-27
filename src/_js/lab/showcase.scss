@@ -587,8 +587,9 @@
 .sm-lab-signal-cascade__node {
   position: relative;
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
-  gap: 8px;
+  gap: 8px 12px;
   min-width: 0;
   padding: 14px 16px;
   border: var(--sm-lab-cascade-border-width, 1px) solid color-mix(in srgb, var(--sm-lab-cascade-border-color, var(--sm-current-fg2-color)), transparent var(--sm-lab-cascade-border-transparency, 32%));
@@ -599,6 +600,7 @@
 }
 
 .sm-lab-signal-cascade__node .sm-lab-signal-cascade__node {
+  grid-column: 1 / -1;
   margin-top: 10px;
 }
 
@@ -634,6 +636,7 @@
   display: inline-flex;
   gap: 6px;
   align-items: stretch;
+  grid-row: 1 / span 3;
   justify-self: start;
   color: currentColor;
   font-size: 11px;
@@ -720,12 +723,14 @@
 }
 
 .sm-lab-signal-cascade__node strong {
+  grid-column: 2;
   color: currentColor;
   font-size: 16px;
   line-height: 1.1;
 }
 
 .sm-lab-signal-cascade__node small {
+  grid-column: 2;
   color: color-mix(in srgb, currentColor, transparent 18%);
   font-size: 12px;
   line-height: 1.25;
@@ -734,6 +739,7 @@
 .sm-lab-cascade-chips {
   display: flex;
   flex-wrap: wrap;
+  grid-column: 2;
   gap: 6px;
 }
 
@@ -760,6 +766,7 @@
 .sm-lab-cascade-rail {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-column: 1 / -1;
   gap: 2px;
   height: 14px;
   overflow: hidden;
@@ -791,6 +798,7 @@
 }
 
 .sm-lab-signal-cascade__readbacks {
+  grid-column: 1 / -1;
   position: absolute;
   width: 1px;
   height: 1px;
@@ -801,6 +809,7 @@
 }
 
 .sm-lab-cascade-inversion {
+  grid-column: 1 / -1;
   margin: 0;
   padding: 8px 10px;
   border-left: 3px solid var(--sm-current-accent-color);
