@@ -5,7 +5,7 @@ const CONTEXTUAL_ID = 'contextual-lab';
 const CONTEXTUAL_LABEL = 'Contextual Lab';
 const TOKENS = [ 'bg', 'accent', 'fg1', 'fg2' ];
 const SIGNAL_LABELS = [ 'None', 'Low', 'Medium', 'High' ];
-const LAB_COLOR_SIGNAL_VARIATIONS = [ 1, 2, 5, 9 ];
+const LAB_COLOR_SIGNAL_VARIATIONS = [ 1, 3, 6, 10 ];
 const COMPONENT_TOKEN_TARGETS = {
   label: {
     kind: 'label',
@@ -901,10 +901,12 @@ const buildComponentTokenStyle = ( grades ) => [
   `--sm-lab-component-border-color: ${ buildReferenceGradeColor( grades.border, 'var(--sm-current-fg2-color)' ) };`,
 ].join( ' ' );
 
-const buildSignalCascadeStyle = ( resolvedGrade, textGrade ) => [
+const buildSignalCascadeStyle = ( resolvedGrade, textGrade, signal = 0 ) => [
   `--sm-lab-cascade-surface-color: ${ buildReferenceGradeColor( resolvedGrade ) };`,
   `--sm-lab-cascade-text-color: ${ buildReferenceGradeColor( textGrade, 'var(--sm-current-fg1-color)' ) };`,
   `--sm-lab-cascade-border-color: ${ buildReferenceGradeColor( Math.min( 12, resolvedGrade + 1 ), 'var(--sm-current-fg2-color)' ) };`,
+  `--sm-lab-cascade-border-width: ${ signal === 0 ? '2px' : '1px' };`,
+  `--sm-lab-cascade-border-transparency: ${ signal === 0 ? '0%' : '32%' };`,
 ].join( ' ' );
 
 const setSignalCascadeValue = ( node, key, value ) => {
@@ -1020,7 +1022,7 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
       node.setAttribute( 'data-sm-lab-cascade-resolved-grade', String( resolvedGrade ) );
       node.setAttribute( 'data-sm-lab-cascade-text-grade', String( textGrade ) );
       node.setAttribute( 'data-sm-lab-cascade-active', isActiveSignal ? 'true' : 'false' );
-      node.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade ) );
+      node.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade, signal ) );
 
       const rail = node.querySelector( '[data-sm-lab-cascade-rail]' );
       if ( rail ) {
@@ -1049,7 +1051,7 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
 
       const previewNode = cascade.querySelector( `[data-sm-lab-cascade-preview-node="${ id }"]` );
       if ( previewNode ) {
-        previewNode.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade ) );
+        previewNode.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade, signal ) );
       }
 
       updateCascadeSignalUi( node, signal );

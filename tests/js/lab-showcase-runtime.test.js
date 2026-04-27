@@ -704,14 +704,26 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       '4',
       'signal cascade should keep the page node on the inherited runtime grade'
     );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="page"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-border-width: 2px' ),
+      'None signal cascade nodes should expose a quiet 2px local border'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="page"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-border-color: var(--sm-lab-reference-bg-color-5' ),
+      'None signal cascade nodes should use the resolved surface +1 variation for the border'
+    );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
       '4',
       'signal cascade should resolve content blocks against the page grade'
     );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-border-width: 1px' ),
+      'active signal cascade nodes should keep the normal thin border and use the signal halo for emphasis'
+    );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
-      '2',
+      '6',
       'low signal should move content to the nearest Lab signal anchor relative to its parent'
     );
     assert.equal(
@@ -731,12 +743,12 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
-      '2',
+      '6',
       'nested signal nodes should use their parent resolved grade as reference'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
-      '5',
+      '10',
       'medium signal should resolve the inner block from the content grade'
     );
     assert.equal(
@@ -750,36 +762,36 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'cascade nodes should not consume the old signal anchor for their resolved surface'
     );
     assert.ok(
-      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-5' ),
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-10' ),
       'cascade nodes should consume the fixed reference grade rail for their resolved surface'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="2"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="6"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
       'parent',
-      'inner rail should mark grade 2 as parent'
+      'inner rail should mark grade 6 as parent'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="5"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="10"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
       'resolved',
-      'inner rail should mark grade 5 as resolved'
+      'inner rail should mark grade 10 as resolved'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-chip-scope]' )?.textContent,
-      '.sm-palette-contextual-lab.sm-variation-5',
+      '.sm-palette-contextual-lab.sm-variation-10',
       'inner scope chip should reflect palette and resolved grade'
     );
     assert.ok(
-      documentRef.querySelector( '[data-sm-lab-cascade-preview-node="content"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-2' ),
+      documentRef.querySelector( '[data-sm-lab-cascade-preview-node="content"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-6' ),
       'assembled preview content node should consume its resolved grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
-      '5',
+      '10',
       'second-level nested signal nodes should inherit the already resolved inner grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
-      '9',
+      '1',
       'high signal should resolve to the strongest Lab signal anchor from the parent context'
     );
     assert.equal(
@@ -1016,7 +1028,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
 
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-button' ),
-      '2',
+      '3',
       'changing the active variation should move the button connector to the new resolved grade on the fixed rail'
     );
     assert.equal(

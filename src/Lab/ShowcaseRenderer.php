@@ -11,7 +11,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Lab;
 
 final class ShowcaseRenderer {
-	private const COLOR_SIGNAL_PRESETS = [ 1, 2, 5, 9 ];
+	private const COLOR_SIGNAL_PRESETS = [ 1, 3, 6, 10 ];
 
 	public function render( QueryParams $params ): string {
 		ob_start();
@@ -332,35 +332,35 @@ final class ShowcaseRenderer {
 			<div
 				class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--page"
 				data-sm-lab-cascade-preview-node="page"
-				style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['page']['resolved_grade'], $by_id['page']['text_grade'] ) ); ?>"
+				style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['page']['resolved_grade'], $by_id['page']['text_grade'], $by_id['page']['signal'] ) ); ?>"
 			>
 				<div
 					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--header"
 					data-sm-lab-cascade-preview-node="header"
 					data-sm-lab-cascade-bridge="header"
-					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['header']['resolved_grade'], $by_id['header']['text_grade'] ) ); ?>"
+					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['header']['resolved_grade'], $by_id['header']['text_grade'], $by_id['header']['signal'] ) ); ?>"
 				></div>
 				<div
 					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--content"
 					data-sm-lab-cascade-preview-node="content"
-					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['content']['resolved_grade'], $by_id['content']['text_grade'] ) ); ?>"
+					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['content']['resolved_grade'], $by_id['content']['text_grade'], $by_id['content']['signal'] ) ); ?>"
 				>
 					<div
 						class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--inner"
 						data-sm-lab-cascade-preview-node="inner"
-						style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['inner']['resolved_grade'], $by_id['inner']['text_grade'] ) ); ?>"
+						style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['inner']['resolved_grade'], $by_id['inner']['text_grade'], $by_id['inner']['signal'] ) ); ?>"
 					>
 						<div
 							class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--second-inner"
 							data-sm-lab-cascade-preview-node="second-inner"
-							style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['second-inner']['resolved_grade'], $by_id['second-inner']['text_grade'] ) ); ?>"
+							style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['second-inner']['resolved_grade'], $by_id['second-inner']['text_grade'], $by_id['second-inner']['signal'] ) ); ?>"
 						></div>
 					</div>
 				</div>
 				<div
 					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--footer"
 					data-sm-lab-cascade-preview-node="footer"
-					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['footer']['resolved_grade'], $by_id['footer']['text_grade'] ) ); ?>"
+					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['footer']['resolved_grade'], $by_id['footer']['text_grade'], $by_id['footer']['signal'] ) ); ?>"
 				></div>
 			</div>
 		</div>
@@ -555,7 +555,7 @@ final class ShowcaseRenderer {
 				'resolved_grade' => $resolved_grade,
 				'text_grade'     => $text_grade,
 				'active'         => $signal === $params->signal(),
-				'style'          => $this->get_signal_cascade_style( $resolved_grade, $text_grade ),
+				'style'          => $this->get_signal_cascade_style( $resolved_grade, $text_grade, $signal ),
 			];
 		}
 
@@ -571,14 +571,18 @@ final class ShowcaseRenderer {
 		};
 	}
 
-	private function get_signal_cascade_style( int $surface_grade, int $text_grade ): string {
-		$border_grade = min( 12, $surface_grade + 1 );
+	private function get_signal_cascade_style( int $surface_grade, int $text_grade, int $signal ): string {
+		$border_grade        = min( 12, $surface_grade + 1 );
+		$border_width        = 0 === $signal ? '2px' : '1px';
+		$border_transparency = 0 === $signal ? '0%' : '32%';
 
 		return sprintf(
-			'--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color))); --sm-lab-cascade-text-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-bg-color-%2$d, var(--sm-current-fg1-color))); --sm-lab-cascade-border-color: var(--sm-lab-reference-bg-color-%3$d, var(--sm-bg-color-%3$d, var(--sm-current-fg2-color)));',
+			'--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color))); --sm-lab-cascade-text-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-bg-color-%2$d, var(--sm-current-fg1-color))); --sm-lab-cascade-border-color: var(--sm-lab-reference-bg-color-%3$d, var(--sm-bg-color-%3$d, var(--sm-current-fg2-color))); --sm-lab-cascade-border-width: %4$s; --sm-lab-cascade-border-transparency: %5$s;',
 			$surface_grade,
 			$text_grade,
-			$border_grade
+			$border_grade,
+			$border_width,
+			$border_transparency
 		);
 	}
 

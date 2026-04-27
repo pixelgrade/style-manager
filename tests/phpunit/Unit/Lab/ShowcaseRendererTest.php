@@ -68,6 +68,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-active="true"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-value="parent"', $html );
 		$this->assertStringContainsString( '--sm-lab-cascade-surface-color', $html );
+		$this->assertStringContainsString( '--sm-lab-cascade-border-width: 2px;', $html );
+		$this->assertStringContainsString( '--sm-lab-cascade-border-width: 1px;', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="page"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="header"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="content"', $html );
@@ -76,8 +78,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="footer"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-bridge="header"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-anatomy-bridge="header"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="5"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="9"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="6"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="10"', $html );
 		$this->assertStringNotContainsString( 'sm-lab-signal-cascade__wires', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-chip="signal-label"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-chip="saved-attribute"', $html );
