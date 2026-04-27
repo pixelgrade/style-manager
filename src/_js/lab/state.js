@@ -8,6 +8,8 @@ export const DEFAULT_LAB_STATE = {
   contextual: '',
 };
 
+export const DEFAULT_COLOR_SIGNAL_PRESETS = [ 1, 3, 8, 11 ];
+
 const clamp = ( value, min, max ) => {
   const parsed = Number.parseInt( value, 10 );
 
@@ -47,6 +49,16 @@ const normalizePalette = ( value ) => {
   const palette = String( value ).trim();
 
   return /^[a-zA-Z0-9_-]+$/.test( palette ) ? palette : DEFAULT_LAB_STATE.palette;
+};
+
+const normalizeSignalPresets = ( signalPresets = DEFAULT_COLOR_SIGNAL_PRESETS ) => {
+  const normalized = Array.isArray( signalPresets )
+    ? signalPresets
+      .map( ( variation ) => clamp( variation, 1, 12 ) )
+      .filter( ( variation, index, variations ) => variations.indexOf( variation ) === index )
+    : [];
+
+  return normalized.length ? normalized.slice( 0, 4 ) : DEFAULT_COLOR_SIGNAL_PRESETS;
 };
 
 export const normalizeLabState = ( input = {} ) => ( {
@@ -132,11 +144,23 @@ export const buildAdminUrl = ( baseUrl, state ) => {
   return url.toString();
 };
 
-export const getSignalVariations = ( parentVariation ) => {
+export const getSignalVariation = ( parentVariation, signal, signalPresets = DEFAULT_COLOR_SIGNAL_PRESETS ) => {
   const base = clamp( parentVariation, 1, 12 );
+  const signalOptions = normalizeSignalPresets( signalPresets )
+    .map( ( variation, index ) => ( { variation, index } ) )
+    .sort( ( first, second ) => (
+      Math.abs( base - first.variation ) - Math.abs( base - second.variation )
+      || first.index - second.index
+    ) );
 
+  signalOptions[0].variation = base;
+
+  return signalOptions[ Math.min( clamp( signal, 0, 3 ), signalOptions.length - 1 ) ].variation;
+};
+
+export const getSignalVariations = ( parentVariation, signalPresets = DEFAULT_COLOR_SIGNAL_PRESETS ) => {
   return [ 0, 1, 2, 3 ].map( ( signal ) => ( {
     signal,
-    variation: Math.min( base + signal, 12 ),
+    variation: getSignalVariation( parentVariation, signal, signalPresets ),
   } ) );
 };

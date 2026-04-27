@@ -691,7 +691,9 @@ const syncNovaSignalScopes = ( documentRef, windowRef, state ) => {
 
 const getInheritedVariation = ( state ) => normalizeSiteVariation( state.variation );
 
-const getSignalResultVariation = ( state ) => Math.min( getInheritedVariation( state ) + state.signal, 12 );
+const getSignalResultVariation = ( state, windowRef ) => normalizeVariationValue(
+  computeColorSignal( getInheritedVariation( state ), state.signal, state.palette, false, windowRef )
+);
 
 const getContrastGrade = ( grade ) => ( grade >= 5 ? 1 : 12 );
 
@@ -947,8 +949,8 @@ const syncButtonTokenSourceWires = ( documentRef, windowRef ) => {
   }
 };
 
-const updateSignalPreviewScopes = ( documentRef, state ) => {
-  const signalVariation = getSignalResultVariation( state );
+const updateSignalPreviewScopes = ( documentRef, state, windowRef ) => {
+  const signalVariation = getSignalResultVariation( state, windowRef );
 
   documentRef.querySelectorAll( '[data-sm-lab-signal-preview]' ).forEach( ( node ) => {
     const keepsStableSurface = node.getAttribute( 'data-sm-lab-signal-preview-surface' ) === 'stable';
@@ -963,9 +965,9 @@ const updateSignalPreviewScopes = ( documentRef, state ) => {
   } );
 };
 
-const writeVisualProofState = ( documentRef, state ) => {
+const writeVisualProofState = ( documentRef, state, windowRef ) => {
   const inheritedVariation = getInheritedVariation( state );
-  const signalVariation = getSignalResultVariation( state );
+  const signalVariation = getSignalResultVariation( state, windowRef );
   const signalShifted = signalVariation !== inheritedVariation;
   const componentTokenGrades = getComponentTokenGrades( signalVariation );
 
@@ -1052,7 +1054,7 @@ export const applyShowcaseState = ( {
 
   updateContextualZone( document, normalizedState );
   updatePaletteVariationScopes( document, normalizedState );
-  writeVisualProofState( document, normalizedState );
+  writeVisualProofState( document, normalizedState, windowRef );
 
   const runtimePaletteStyleNode = ensureRuntimePaletteStyleNode( document );
   runtimePaletteStyleNode.textContent = buildRuntimePaletteCss( palettes, normalizedState.variation );
@@ -1066,7 +1068,7 @@ export const applyShowcaseState = ( {
   } );
 
   syncNovaSignalScopes( document, windowRef, normalizedState );
-  updateSignalPreviewScopes( document, normalizedState );
+  updateSignalPreviewScopes( document, normalizedState, windowRef );
 
   const colors = readResolvedColors( { document, getComputedStyle } );
   writeResolvedColors( document, colors, getComputedStyle );

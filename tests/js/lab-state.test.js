@@ -1,6 +1,7 @@
 import {
   buildAdminUrl,
   buildShowcaseUrl,
+  getSignalVariations,
   normalizeLabState,
   parseLabState,
   serializeLabState,
@@ -88,6 +89,32 @@ export const runLabStateTests = async ( assert ) => {
       ),
       'https://example.test/?sm_lab_showcase=1&_wpnonce=nonce123&palette=contextual-lab&variation=4&dark=1&shifted=1&contextual=%23112233',
       'showcase URLs should include route flag, nonce, and normalized lab state'
+    );
+  }
+
+  {
+    assert.deepEqual(
+      getSignalVariations( 4, [ 2, 5, 8, 11 ] ),
+      [
+        { signal: 0, variation: 4 },
+        { signal: 1, variation: 2 },
+        { signal: 2, variation: 8 },
+        { signal: 3, variation: 11 },
+      ],
+      'signal variation readouts should use Nova preset anchors instead of arithmetic offsets'
+    );
+  }
+
+  {
+    assert.deepEqual(
+      getSignalVariations( 8, [ 2, 5, 8, 11 ] ),
+      [
+        { signal: 0, variation: 8 },
+        { signal: 1, variation: 5 },
+        { signal: 2, variation: 11 },
+        { signal: 3, variation: 2 },
+      ],
+      'signal presets should be sorted around the current inherited variation'
     );
   }
 

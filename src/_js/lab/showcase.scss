@@ -521,7 +521,7 @@
   grid-template-columns: repeat(12, minmax(34px, 1fr));
   gap: 4px;
   padding: 0 24px;
-  margin-bottom: 0;
+  margin-bottom: 14px;
 }
 
 .sm-lab-button-token-map__grade {
@@ -640,17 +640,20 @@
 }
 
 .sm-lab-button-token-map__canvas {
+  --sm-lab-canvas-bg-color: var(--sm-lab-reference-bg-color-1, var(--sm-bg-color-1, var(--sm-current-bg-color)));
+  --sm-lab-canvas-grid-color: color-mix(in srgb, var(--sm-lab-reference-fg1-color-1, var(--sm-current-fg1-color)), transparent 94%);
+
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   min-height: 286px;
   padding: 22px 24px 26px;
   border-radius: 6px;
-  border: 1px solid color-mix(in srgb, var(--sm-current-fg1-color), transparent 84%);
+  border: 1px solid color-mix(in srgb, var(--sm-lab-reference-fg1-color-1, var(--sm-current-fg1-color)), transparent 84%);
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--sm-current-fg1-color), transparent 94%) 1px, transparent 1px),
-    linear-gradient(0deg, color-mix(in srgb, var(--sm-current-fg1-color), transparent 94%) 1px, transparent 1px),
-    color-mix(in srgb, var(--sm-current-bg-color), var(--sm-current-fg1-color) 4%);
+    linear-gradient(90deg, var(--sm-lab-canvas-grid-color) 1px, transparent 1px),
+    linear-gradient(0deg, var(--sm-lab-canvas-grid-color) 1px, transparent 1px),
+    var(--sm-lab-canvas-bg-color);
   background-size: 24px 24px, 24px 24px, auto;
   overflow: hidden;
 }
@@ -1414,8 +1417,11 @@
     margin-left: -14px;
   }
 
-  .sm-lab-contract-explorer__intro h1 {
-    font-size: 34px;
+  .sm-lab-showcase .sm-lab-contract-explorer__intro h1 {
+    --current-font-size: 34px;
+    width: calc(100vw - 28px);
+    max-width: calc(100vw - 28px);
+    white-space: normal;
   }
 
   .sm-lab-status {

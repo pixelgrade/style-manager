@@ -18,35 +18,47 @@ const SignalBars = ( { value } ) => (
   </span>
 );
 
-export const ColorSignalPanel = ( { state, onChange } ) => (
-  <PanelBody title="Block Color Signal" initialOpen={ false }>
-    <div className="sm-lab-signal-control">
-      <p className="sm-lab-signal-control__label">Signal strength</p>
-      <div className="sm-lab-signal-options">
-        { signalOptions.map( ( option ) => (
-          <button
-            key={ option.value }
-            type="button"
-            aria-pressed={ Number( state.signal ) === option.value }
-            onClick={ () => onChange( { signal: option.value } ) }
-          >
-            <SignalBars value={ option.value } />
-            <span>{ option.label }</span>
-          </button>
-        ) ) }
-      </div>
-    </div>
-    <dl className="sm-lab-readonly-list">
-      <div>
-        <dt>Inherited variation</dt>
-        <dd>Variation { state.variation }</dd>
-      </div>
-      { getSignalVariations( state.variation ).map( ( item ) => (
-        <div key={ item.signal }>
-          <dt>Signal { item.signal }</dt>
-          <dd>Variation { item.variation }</dd>
+const getNovaSignalPresets = ( palette ) => {
+  const signals = typeof window !== 'undefined'
+    ? window?.novablocks?.utils?.getSignals?.( palette )
+    : null;
+
+  return Array.isArray( signals ) && signals.length ? signals : undefined;
+};
+
+export const ColorSignalPanel = ( { state, onChange } ) => {
+  const signalVariations = getSignalVariations( state.variation, getNovaSignalPresets( state.palette ) );
+
+  return (
+    <PanelBody title="Block Color Signal" initialOpen={ false }>
+      <div className="sm-lab-signal-control">
+        <p className="sm-lab-signal-control__label">Signal strength</p>
+        <div className="sm-lab-signal-options">
+          { signalOptions.map( ( option ) => (
+            <button
+              key={ option.value }
+              type="button"
+              aria-pressed={ Number( state.signal ) === option.value }
+              onClick={ () => onChange( { signal: option.value } ) }
+            >
+              <SignalBars value={ option.value } />
+              <span>{ option.label }</span>
+            </button>
+          ) ) }
         </div>
-      ) ) }
-    </dl>
-  </PanelBody>
-);
+      </div>
+      <dl className="sm-lab-readonly-list">
+        <div>
+          <dt>Inherited variation</dt>
+          <dd>Variation { state.variation }</dd>
+        </div>
+        { signalVariations.map( ( item ) => (
+          <div key={ item.signal }>
+            <dt>Signal { item.signal }</dt>
+            <dd>Variation { item.variation }</dd>
+          </div>
+        ) ) }
+      </dl>
+    </PanelBody>
+  );
+};

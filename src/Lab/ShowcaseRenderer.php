@@ -11,6 +11,8 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Lab;
 
 final class ShowcaseRenderer {
+	private const COLOR_SIGNAL_PRESETS = [ 1, 3, 8, 11 ];
+
 	public function render( QueryParams $params ): string {
 		ob_start();
 		?>
@@ -85,7 +87,7 @@ final class ShowcaseRenderer {
 
 	private function render_runtime_visual_strip( QueryParams $params ): void {
 		$parent_variation = $params->variation();
-		$signal_variation = min( $parent_variation + $params->signal(), 12 );
+		$signal_variation = $this->get_signal_variation( $parent_variation, $params->signal() );
 		$signal_shifted   = $signal_variation !== $parent_variation;
 		$label_grade      = $this->get_contrast_grade( $signal_variation );
 		$shadow_grade     = min( 12, $signal_variation + 2 );
@@ -117,14 +119,14 @@ final class ShowcaseRenderer {
 						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal', '__plugin_txtd' ); ?></p>
 					</div>
 					<h2><?php esc_html_e( 'Signal intensity', '__plugin_txtd' ); ?></h2>
-					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'Signal shifts inherited variation.', '__plugin_txtd' ); ?></p>
+					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'Signal shifts inherited variation through preset anchors.', '__plugin_txtd' ); ?></p>
 					<div class="sm-lab-signal-bars" data-sm-lab-signal-bars data-sm-lab-proof="signal-levels">
 						<?php
 						foreach ( [
 							0 => [ __( 'None', '__plugin_txtd' ), __( 'keep parent', '__plugin_txtd' ) ],
-							1 => [ __( 'Low', '__plugin_txtd' ), __( '+1 grade', '__plugin_txtd' ) ],
-							2 => [ __( 'Medium', '__plugin_txtd' ), __( '+2 grades', '__plugin_txtd' ) ],
-							3 => [ __( 'High', '__plugin_txtd' ), __( '+3 grades', '__plugin_txtd' ) ],
+							1 => [ __( 'Low', '__plugin_txtd' ), __( 'nearest preset anchor', '__plugin_txtd' ) ],
+							2 => [ __( 'Medium', '__plugin_txtd' ), __( 'next preset anchor', '__plugin_txtd' ) ],
+							3 => [ __( 'High', '__plugin_txtd' ), __( 'outer preset anchor', '__plugin_txtd' ) ],
 						] as $signal => $labels ) :
 							?>
 							<span
@@ -257,7 +259,7 @@ final class ShowcaseRenderer {
 									</span>
 								<?php endfor; ?>
 							</div>
-							<div class="sm-lab-button-token-map__canvas" data-sm-lab-token-circuit>
+							<div class="sm-lab-button-token-map__canvas" data-sm-lab-token-circuit data-sm-lab-token-canvas-variation="1">
 								<div class="sm-lab-button-token-map__diagram">
 									<div class="sm-lab-button-token-map__component-stage" data-sm-lab-token-lane="component">
 										<span class="sm-lab-button-token-map__button-shell">
@@ -302,6 +304,32 @@ final class ShowcaseRenderer {
 			'--sm-lab-token-source-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color)));',
 			$grade
 		);
+	}
+
+	private function get_signal_variation( int $parent_variation, int $signal ): int {
+		$parent_variation = max( 1, min( 12, $parent_variation ) );
+		$signal           = max( 0, min( 3, $signal ) );
+		$options          = [];
+
+		foreach ( self::COLOR_SIGNAL_PRESETS as $index => $variation ) {
+			$options[] = [
+				'index'     => $index,
+				'variation' => $variation,
+			];
+		}
+
+		usort(
+			$options,
+			static function ( array $first, array $second ) use ( $parent_variation ): int {
+				$distance = abs( $parent_variation - $first['variation'] ) <=> abs( $parent_variation - $second['variation'] );
+
+				return 0 !== $distance ? $distance : $first['index'] <=> $second['index'];
+			}
+		);
+
+		$options[0]['variation'] = $parent_variation;
+
+		return (int) $options[ min( $signal, count( $options ) - 1 ) ]['variation'];
 	}
 
 	private function get_contrast_grade( int $grade ): int {

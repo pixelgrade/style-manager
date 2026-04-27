@@ -455,6 +455,11 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
 
     const animationFrames = [];
     const windowRef = {
+      novablocks: {
+        utils: {
+          getSignals: () => [ 2, 5, 8, 11 ],
+        },
+      },
       requestAnimationFrame: ( callback ) => {
         animationFrames.push( callback );
 
@@ -538,8 +543,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-resolved-grade' ),
-      '6',
-      'grade rail should expose the signal-resolved grade'
+      '8',
+      'grade rail should expose the Nova preset signal-resolved grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-grade-rail]' )?.getAttribute( 'data-sm-lab-signal-shifted' ),
@@ -557,14 +562,14 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'parent grade marker should follow the active runtime variation'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="6"]' )?.getAttribute( 'data-signal-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="8"]' )?.getAttribute( 'data-signal-active' ),
       'true',
-      'signal grade marker should follow the resolved child variation'
+      'signal grade marker should follow the Nova preset child variation'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="6"]' )?.getAttribute( 'data-resolved-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="8"]' )?.getAttribute( 'data-resolved-active' ),
       'true',
-      'resolved grade marker should follow the signal-resolved child variation'
+      'resolved grade marker should follow the Nova preset child variation'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-option="2"]' )?.getAttribute( 'data-active' ),
@@ -588,8 +593,8 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-result="variation"]' )?.textContent,
-      '6',
-      'signal result should expose the resolved child variation'
+      '8',
+      'signal result should expose the Nova preset resolved child variation'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette' ),
@@ -626,16 +631,16 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-button' ),
-      '6',
-      'button source pointer should expose the resolved grade it points to'
+      '8',
+      'button source pointer should expose the Nova preset grade it points to'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-shadow' ),
-      '8',
+      '10',
       'shadow source pointer should expose the resolved grade it points to'
     );
     assert.ok(
-      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'style' )?.includes( '--sm-lab-component-button-color: var(--sm-lab-reference-bg-color-6' ),
+      documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'style' )?.includes( '--sm-lab-component-button-color: var(--sm-lab-reference-bg-color-8' ),
       'button sample should consume the same fixed grade color that the connector points to'
     );
     assert.equal(
@@ -650,12 +655,12 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
-      '6',
+      '8',
       'button fill wire should terminate at the resolved button source grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'data-sm-lab-token-source-grade' ),
-      '8',
+      '10',
       'shadow wire should terminate at the resolved shadow source grade'
     );
     assert.equal(
@@ -680,12 +685,12 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ) || '',
-      /^M 341 58 L 341 104 Q 341 114 351 114 L 715 114 Q 725 114 725 124 L 725 250$/,
+      /^M 437 58 L 437 104 Q 437 114 447 114 L 715 114 Q 725 114 725 124 L 725 250$/,
       'button fill wire should enter the fill surface through its top-side port'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
-      /^M 446 58 L 446 361 Q 446 371 456 371 L 795 371 Q 805 371 805 361 L 805 339$/,
+      /^M 542 58 L 542 361 Q 542 371 552 371 L 795 371 Q 805 371 805 361 L 805 339$/,
       'shadow wire should enter the shadow surface from below'
     );
     assert.notEqual(
@@ -699,12 +704,12 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'label token source should mark the contrast grade on the rail'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="6"]' )?.getAttribute( 'data-token-button-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="8"]' )?.getAttribute( 'data-token-button-active' ),
       'true',
-      'button token source should mark the signal-resolved grade on the rail'
+      'button token source should mark the Nova preset grade on the rail'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-grade-swatch="8"]' )?.getAttribute( 'data-token-shadow-active' ),
+      documentRef.querySelector( '[data-sm-lab-grade-swatch="10"]' )?.getAttribute( 'data-token-shadow-active' ),
       'true',
       'shadow token source should mark the deeper support grade on the rail'
     );
@@ -754,7 +759,7 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
 
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-button' ),
-      '10',
+      '11',
       'changing the active variation should move the button connector to the new resolved grade on the fixed rail'
     );
     assert.equal(
