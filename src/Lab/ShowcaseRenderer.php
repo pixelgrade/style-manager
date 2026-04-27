@@ -406,38 +406,55 @@ final class ShowcaseRenderer {
 			tabindex="0"
 			style="<?php echo esc_attr( $node['style'] ); ?>"
 		>
-			<button
-				type="button"
-				class="sm-lab-signal-cascade__signal"
-				data-sm-lab-cascade-signal-control
-				aria-label="<?php echo esc_attr( sprintf( __( 'Change %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
-			>
-				<span class="sm-lab-signal-bars__icon" data-sm-lab-cascade-signal-icon aria-hidden="true">
-					<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
-						<span class="<?php echo esc_attr( $bar <= $node['signal'] ? 'is-active' : '' ); ?>" data-sm-lab-cascade-signal-bar="<?php echo esc_attr( (string) $bar ); ?>"></span>
-					<?php endfor; ?>
+			<div class="sm-lab-signal-cascade__signal">
+				<button
+					type="button"
+					class="sm-lab-signal-cascade__signal-summary"
+					data-sm-lab-cascade-signal-control
+					data-sm-lab-cascade-signal-summary
+					data-sm-lab-cascade-signal-step="1"
+					aria-label="<?php echo esc_attr( sprintf( __( 'Change %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
+				>
+					<span class="sm-lab-signal-bars__icon" data-sm-lab-cascade-signal-icon aria-hidden="true">
+						<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
+							<span class="<?php echo esc_attr( $bar <= $node['signal'] ? 'is-active' : '' ); ?>" data-sm-lab-cascade-signal-bar="<?php echo esc_attr( (string) $bar ); ?>"></span>
+						<?php endfor; ?>
+					</span>
+					<span class="sm-lab-signal-cascade__signal-copy">
+						<span data-sm-lab-cascade-signal-kicker><?php esc_html_e( 'LEVEL', '__plugin_txtd' ); ?></span>
+						<span data-sm-lab-cascade-value="signal"><?php echo esc_html( $node['signal_label'] ); ?></span>
+					</span>
+				</button>
+				<span class="sm-lab-signal-cascade__signal-actions" aria-hidden="false">
+					<button
+						type="button"
+						class="sm-lab-signal-cascade__signal-step"
+						data-sm-lab-cascade-signal-control
+						data-sm-lab-cascade-signal-step="-1"
+						aria-label="<?php echo esc_attr( sprintf( __( 'Decrease %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
+					>−</button>
+					<button
+						type="button"
+						class="sm-lab-signal-cascade__signal-step"
+						data-sm-lab-cascade-signal-control
+						data-sm-lab-cascade-signal-step="1"
+						aria-label="<?php echo esc_attr( sprintf( __( 'Increase %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
+					>+</button>
 				</span>
-				<span data-sm-lab-cascade-value="signal"><?php echo esc_html( $node['signal_label'] ); ?></span>
-			</button>
+			</div>
 			<strong><?php echo esc_html( $node['label'] ); ?></strong>
-			<small>
-				<span data-sm-lab-cascade-caption-signal><?php echo esc_html( sprintf( __( 'Color Signal: %s.', '__plugin_txtd' ), $node['signal_label'] ) ); ?></span>
-				<?php echo esc_html( $node['caption'] ); ?>
-			</small>
+			<small><?php echo esc_html( $node['caption'] ); ?></small>
 			<div class="sm-lab-cascade-chips" aria-hidden="true">
-				<span class="sm-lab-cascade-chip" data-sm-lab-cascade-chip="signal-label" data-sm-lab-cascade-chip-signal-label>
-					<?php esc_html_e( 'Color Signal:', '__plugin_txtd' ); ?> <?php echo esc_html( $node['signal_label'] ); ?>
-				</span>
 				<span
 					class="sm-lab-cascade-chip"
 					data-sm-lab-cascade-chip="saved-attribute"
 					data-sm-lab-cascade-chip-signal-input="<?php echo esc_attr( (string) $node['signal'] ); ?>"
 				>
-					<span><?php esc_html_e( 'Saved attribute:', '__plugin_txtd' ); ?></span>
+					<span><?php esc_html_e( 'Saved:', '__plugin_txtd' ); ?></span>
 					<code data-sm-lab-cascade-chip-signal-input-code>data-color-signal="<?php echo esc_html( (string) $node['signal'] ); ?>"</code>
 				</span>
 				<span class="sm-lab-cascade-chip" data-sm-lab-cascade-chip="scope-class">
-					<span><?php esc_html_e( 'Resolved scope:', '__plugin_txtd' ); ?></span>
+					<span><?php esc_html_e( 'Scope:', '__plugin_txtd' ); ?></span>
 					<code data-sm-lab-cascade-chip-scope>.sm-palette-<?php echo esc_html( $params->palette() ); ?>.sm-variation-<?php echo esc_html( (string) $node['resolved_grade'] ); ?></code>
 				</span>
 			</div>

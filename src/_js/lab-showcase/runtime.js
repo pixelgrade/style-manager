@@ -917,24 +917,20 @@ const setSignalCascadeValue = ( node, key, value ) => {
 
 const updateCascadeSignalUi = ( node, signal ) => {
   const label = SIGNAL_LABELS[ signal ] || SIGNAL_LABELS[0];
-  const control = node.querySelector( '[data-sm-lab-cascade-signal-control]' );
   const title = node.querySelector( 'strong' )?.textContent?.trim() || 'block';
 
-  if ( control ) {
-    control.setAttribute( 'aria-label', `Change ${ title } Color Signal. Current: ${ label }` );
-  }
+  node.querySelectorAll( '[data-sm-lab-cascade-signal-control]' ).forEach( ( control ) => {
+    const step = Number( control.getAttribute( 'data-sm-lab-cascade-signal-step' ) || 1 );
+    const action = control.getAttribute( 'data-sm-lab-cascade-signal-summary' ) !== null
+      ? 'Change'
+      : ( step < 0 ? 'Decrease' : 'Increase' );
+
+    control.setAttribute( 'aria-label', `${ action } ${ title } Color Signal. Current: ${ label }` );
+  } );
 
   node.querySelectorAll( '[data-sm-lab-cascade-signal-bar]' ).forEach( ( bar ) => {
     const barValue = Number( bar.getAttribute( 'data-sm-lab-cascade-signal-bar' ) );
     bar.classList.toggle( 'is-active', barValue <= signal );
-  } );
-
-  node.querySelectorAll( '[data-sm-lab-cascade-chip-signal-label]' ).forEach( ( chip ) => {
-    chip.textContent = `Color Signal: ${ label }`;
-  } );
-
-  node.querySelectorAll( '[data-sm-lab-cascade-caption-signal]' ).forEach( ( caption ) => {
-    caption.textContent = `Color Signal: ${ label }.`;
   } );
 
   node.querySelectorAll( '[data-sm-lab-cascade-chip-signal-input]' ).forEach( ( chip ) => {
@@ -988,7 +984,10 @@ const wireCascadeInteractions = ( cascade, documentRef ) => {
       return;
     }
 
-    const nextSignal = ( normalizeSignalValue( node.getAttribute( 'data-sm-lab-cascade-signal' ) ) + 1 ) % SIGNAL_LABELS.length;
+    const step = Number( control.getAttribute( 'data-sm-lab-cascade-signal-step' ) || 1 );
+    const normalizedStep = Number.isNaN( step ) ? 1 : step;
+    const currentSignal = normalizeSignalValue( node.getAttribute( 'data-sm-lab-cascade-signal' ) );
+    const nextSignal = ( currentSignal + normalizedStep + SIGNAL_LABELS.length ) % SIGNAL_LABELS.length;
     node.setAttribute( 'data-sm-lab-cascade-signal', String( nextSignal ) );
     updateSignalCascade( documentRef, state, cascade.__smLabCascadeWindowRef || {} );
   } );
