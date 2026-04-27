@@ -206,48 +206,10 @@ final class ShowcaseRenderer {
 					>
 						<div class="sm-lab-signal-cascade__brief">
 							<h3><?php esc_html_e( 'Page stack', '__plugin_txtd' ); ?></h3>
-							<p><?php esc_html_e( 'Each layer receives a signal value, resolves it from its parent grade, then becomes the reference for anything nested inside.', '__plugin_txtd' ); ?></p>
+							<p><?php esc_html_e( 'Each layer declares a Color Signal. Style Manager resolves it against the parent surface. The resolved block then becomes the parent for anything nested inside.', '__plugin_txtd' ); ?></p>
 						</div>
-						<div class="sm-lab-signal-cascade__scene" aria-label="<?php esc_attr_e( 'Color Signal cascade through nested page blocks', '__plugin_txtd' ); ?>">
-							<svg class="sm-lab-signal-cascade__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-								<path d="M 28 22 L 28 42 L 42 42" />
-								<path d="M 50 28 L 50 52 L 58 52" />
-								<path d="M 68 42 L 68 24 L 82 24" />
-								<path d="M 44 68 L 44 82 L 70 82" />
-							</svg>
-							<?php foreach ( $this->get_signal_cascade_nodes( $params, $parent_variation ) as $node ) : ?>
-								<section
-									class="sm-lab-signal-cascade__node sm-lab-signal-cascade__node--<?php echo esc_attr( $node['id'] ); ?>"
-									data-sm-lab-cascade-node="<?php echo esc_attr( $node['id'] ); ?>"
-									data-sm-lab-cascade-signal="<?php echo esc_attr( (string) $node['signal'] ); ?>"
-									<?php if ( '' !== $node['parent'] ) : ?>
-										data-sm-lab-cascade-parent="<?php echo esc_attr( $node['parent'] ); ?>"
-									<?php endif; ?>
-									data-sm-lab-cascade-parent-grade="<?php echo esc_attr( (string) $node['parent_grade'] ); ?>"
-									data-sm-lab-cascade-resolved-grade="<?php echo esc_attr( (string) $node['resolved_grade'] ); ?>"
-									data-sm-lab-cascade-text-grade="<?php echo esc_attr( (string) $node['text_grade'] ); ?>"
-									data-sm-lab-cascade-active="<?php echo esc_attr( $node['active'] ? 'true' : 'false' ); ?>"
-									style="<?php echo esc_attr( $node['style'] ); ?>"
-								>
-									<span class="sm-lab-signal-cascade__signal">
-										<span class="sm-lab-signal-bars__icon" aria-hidden="true">
-											<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
-												<span class="<?php echo esc_attr( $bar <= $node['signal'] ? 'is-active' : '' ); ?>"></span>
-											<?php endfor; ?>
-										</span>
-										<span data-sm-lab-cascade-value="signal"><?php echo esc_html( $node['signal_label'] ); ?></span>
-									</span>
-									<strong><?php echo esc_html( $node['label'] ); ?></strong>
-									<small><?php echo esc_html( $node['caption'] ); ?></small>
-									<span class="sm-lab-signal-cascade__grades">
-										<?php esc_html_e( 'from', '__plugin_txtd' ); ?>
-										<b data-sm-lab-cascade-value="parent"><?php echo esc_html( (string) $node['parent_grade'] ); ?></b>
-										<?php esc_html_e( 'to grade', '__plugin_txtd' ); ?>
-										<b data-sm-lab-cascade-value="resolved"><?php echo esc_html( (string) $node['resolved_grade'] ); ?></b>
-									</span>
-								</section>
-							<?php endforeach; ?>
-						</div>
+						<?php $this->render_cascade_assembled_preview( $params, $parent_variation ); ?>
+						<?php $this->render_cascade_inspector( $params, $parent_variation ); ?>
 					</div>
 				</article>
 
@@ -356,6 +318,116 @@ final class ShowcaseRenderer {
 			$button_grade,
 			$border_grade
 		);
+	}
+
+	private function render_cascade_assembled_preview( QueryParams $params, int $root_variation ): void {
+		$nodes = $this->get_signal_cascade_nodes( $params, $root_variation );
+		$by_id = [];
+
+		foreach ( $nodes as $node ) {
+			$by_id[ $node['id'] ] = $node;
+		}
+		?>
+		<div class="sm-lab-signal-cascade__assembled" data-sm-lab-cascade-view="assembled" aria-label="<?php esc_attr_e( 'Assembled page preview with resolved block surfaces', '__plugin_txtd' ); ?>">
+			<div
+				class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--page"
+				data-sm-lab-cascade-preview-node="page"
+				style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['page']['resolved_grade'], $by_id['page']['text_grade'] ) ); ?>"
+			>
+				<div
+					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--header"
+					data-sm-lab-cascade-preview-node="header"
+					data-sm-lab-cascade-bridge="header"
+					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['header']['resolved_grade'], $by_id['header']['text_grade'] ) ); ?>"
+				></div>
+				<div
+					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--content"
+					data-sm-lab-cascade-preview-node="content"
+					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['content']['resolved_grade'], $by_id['content']['text_grade'] ) ); ?>"
+				>
+					<div
+						class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--inner"
+						data-sm-lab-cascade-preview-node="inner"
+						style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['inner']['resolved_grade'], $by_id['inner']['text_grade'] ) ); ?>"
+					>
+						<div
+							class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--second-inner"
+							data-sm-lab-cascade-preview-node="second-inner"
+							style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['second-inner']['resolved_grade'], $by_id['second-inner']['text_grade'] ) ); ?>"
+						></div>
+					</div>
+				</div>
+				<div
+					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--footer"
+					data-sm-lab-cascade-preview-node="footer"
+					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['footer']['resolved_grade'], $by_id['footer']['text_grade'] ) ); ?>"
+				></div>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function render_cascade_inspector( QueryParams $params, int $root_variation ): void {
+		$nodes = $this->get_signal_cascade_nodes( $params, $root_variation );
+		$by_parent = [];
+
+		foreach ( $nodes as $node ) {
+			$parent = (string) $node['parent'];
+			$by_parent[ $parent ][] = $node;
+		}
+		?>
+		<div class="sm-lab-signal-cascade__inspector" data-sm-lab-cascade-view="inspector" aria-label="<?php esc_attr_e( 'Exploded Color Signal contract inspector', '__plugin_txtd' ); ?>">
+			<?php
+			foreach ( $by_parent[''] ?? [] as $node ) {
+				$this->render_cascade_inspector_node( $node, $by_parent );
+			}
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * @param array<string, mixed> $node
+	 * @param array<string, array<int, array<string, mixed>>> $by_parent
+	 */
+	private function render_cascade_inspector_node( array $node, array $by_parent ): void {
+		?>
+		<section
+			class="sm-lab-signal-cascade__node sm-lab-signal-cascade__node--<?php echo esc_attr( $node['id'] ); ?>"
+			data-sm-lab-cascade-node="<?php echo esc_attr( $node['id'] ); ?>"
+			data-sm-lab-cascade-signal="<?php echo esc_attr( (string) $node['signal'] ); ?>"
+			<?php if ( '' !== $node['parent'] ) : ?>
+				data-sm-lab-cascade-parent="<?php echo esc_attr( $node['parent'] ); ?>"
+			<?php endif; ?>
+			data-sm-lab-cascade-parent-grade="<?php echo esc_attr( (string) $node['parent_grade'] ); ?>"
+			data-sm-lab-cascade-resolved-grade="<?php echo esc_attr( (string) $node['resolved_grade'] ); ?>"
+			data-sm-lab-cascade-text-grade="<?php echo esc_attr( (string) $node['text_grade'] ); ?>"
+			data-sm-lab-cascade-active="<?php echo esc_attr( $node['active'] ? 'true' : 'false' ); ?>"
+			style="<?php echo esc_attr( $node['style'] ); ?>"
+		>
+			<span class="sm-lab-signal-cascade__signal">
+				<span class="sm-lab-signal-bars__icon" aria-hidden="true">
+					<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
+						<span class="<?php echo esc_attr( $bar <= $node['signal'] ? 'is-active' : '' ); ?>"></span>
+					<?php endfor; ?>
+				</span>
+				<span data-sm-lab-cascade-value="signal"><?php echo esc_html( $node['signal_label'] ); ?></span>
+			</span>
+			<strong><?php echo esc_html( $node['label'] ); ?></strong>
+			<small><?php echo esc_html( $node['caption'] ); ?></small>
+			<span class="sm-lab-signal-cascade__grades">
+				<?php esc_html_e( 'from', '__plugin_txtd' ); ?>
+				<b data-sm-lab-cascade-value="parent"><?php echo esc_html( (string) $node['parent_grade'] ); ?></b>
+				<?php esc_html_e( 'to grade', '__plugin_txtd' ); ?>
+				<b data-sm-lab-cascade-value="resolved"><?php echo esc_html( (string) $node['resolved_grade'] ); ?></b>
+			</span>
+			<?php
+			foreach ( $by_parent[ $node['id'] ] ?? [] as $child ) {
+				$this->render_cascade_inspector_node( $child, $by_parent );
+			}
+			?>
+		</section>
+		<?php
 	}
 
 	private function get_source_chip_style( int $grade ): string {
