@@ -652,8 +652,10 @@
   display: grid;
   grid-template-columns: 18px minmax(0, auto);
   gap: 6px;
-  align-items: end;
-  min-height: 34px;
+  align-items: center;
+  box-sizing: border-box;
+  width: 82px;
+  height: 40px;
   padding: 5px 7px;
   text-align: left;
 }
@@ -685,9 +687,9 @@
 .sm-lab-signal-cascade__signal-step {
   display: grid;
   place-items: center;
-  min-width: 28px;
-  min-height: 34px;
-  padding: 0 6px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
@@ -703,6 +705,7 @@
 }
 
 .sm-lab-signal-cascade__signal-summary .sm-lab-signal-bars__icon {
+  align-self: center;
   grid-template-columns: repeat(3, 3px);
   width: auto;
   height: 14px;
