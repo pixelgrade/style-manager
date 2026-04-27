@@ -5,9 +5,24 @@ const CONTEXTUAL_ID = 'contextual-lab';
 const CONTEXTUAL_LABEL = 'Contextual Lab';
 const TOKENS = [ 'bg', 'accent', 'fg1', 'fg2' ];
 const COMPONENT_TOKEN_TARGETS = {
-  label: 'label',
-  button: 'button',
-  shadow: 'shadow',
+  label: {
+    kind: 'label',
+    selector: '[data-sm-lab-token-target="label"]',
+    x: 0.5,
+    y: 0.5,
+  },
+  button: {
+    kind: 'action',
+    selector: '[data-sm-lab-token-target="action"]',
+    x: 0.5,
+    y: 0.5,
+  },
+  shadow: {
+    kind: 'shadow',
+    selector: '[data-sm-lab-token-target="shadow"]',
+    x: 0.5,
+    y: 0.5,
+  },
 };
 const COMPONENT_SOURCE_LANES = {
   label: 0,
@@ -716,7 +731,12 @@ const getRelativePoint = ( rect, containerRect, xRatio, yRatio ) => ( {
   y: rect.top - containerRect.top + rect.height * yRatio,
 } );
 
-const getComponentCalloutPoint = ( rect, containerRect ) => getRelativePoint( rect, containerRect, 0.5, 0 );
+const getComponentTargetPoint = ( rect, containerRect, target ) => getRelativePoint(
+  rect,
+  containerRect,
+  typeof target.x === 'number' ? target.x : 0.5,
+  typeof target.y === 'number' ? target.y : 0
+);
 
 const buildComponentWirePath = ( source, target, lane = 0 ) => {
   const horizontalDistance = Math.abs( target.x - source.x );
@@ -783,6 +803,10 @@ const findComponentSourceSwatch = ( map, part ) => (
     .find( ( swatch ) => swatch.getAttribute( `data-token-${ part }-active` ) === 'true' )
 );
 
+const findComponentTokenTarget = ( map, target ) => (
+  map.querySelector( target.selector )
+);
+
 const buildReferenceGradeColor = ( grade, fallback = 'var(--sm-current-bg-color)' ) => (
   `var(--sm-lab-reference-bg-color-${ grade }, var(--sm-bg-color-${ grade }, ${ fallback }))`
 );
@@ -804,28 +828,28 @@ const updateButtonTokenSourceWires = ( documentRef ) => {
 
     svg.setAttribute( 'viewBox', `0 0 ${ formatWireNumber( containerRect.width ) } ${ formatWireNumber( containerRect.height ) }` );
 
-    Object.entries( COMPONENT_TOKEN_TARGETS ).forEach( ( [ part, targetName ] ) => {
+    Object.entries( COMPONENT_TOKEN_TARGETS ).forEach( ( [ part, targetConfig ] ) => {
       const path = map.querySelector( `[data-sm-lab-token-source-wire="${ part }"]` );
       const source = findComponentSourceSwatch( map, part );
-      const target = map.querySelector( `[data-sm-lab-token-pin="${ targetName }"]` );
+      const target = findComponentTokenTarget( map, targetConfig );
       const sourceRect = readWireRect( source );
       const targetRect = readWireRect( target );
 
       if ( ! path || ! source || ! target || ! sourceRect || ! targetRect ) {
         path?.setAttribute( 'data-sm-lab-token-wire-active', 'false' );
-        path?.removeAttribute( 'd' );
+        path?.removeAttribute?.( 'd' );
         return;
       }
 
       const sourcePoint = getRelativePoint( sourceRect, containerRect, 0.5, 1 );
-      const targetPoint = getComponentCalloutPoint( targetRect, containerRect );
+      const targetPoint = getComponentTargetPoint( targetRect, containerRect, targetConfig );
       const sourceGrade = source.getAttribute( 'data-sm-lab-grade-swatch' )
         || source.closest?.( '[data-sm-lab-grade-swatch]' )?.getAttribute?.( 'data-sm-lab-grade-swatch' )
         || '';
 
       path.setAttribute( 'd', buildComponentWirePath( sourcePoint, targetPoint, COMPONENT_SOURCE_LANES[ part ] || 0 ) );
       path.setAttribute( 'data-sm-lab-token-source-grade', sourceGrade );
-      path.setAttribute( 'data-sm-lab-token-target-kind', targetName );
+      path.setAttribute( 'data-sm-lab-token-target-kind', targetConfig.kind );
       path.setAttribute( 'data-sm-lab-token-wire-active', 'true' );
     } );
   } );

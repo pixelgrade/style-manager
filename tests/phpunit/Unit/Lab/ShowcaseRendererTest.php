@@ -62,10 +62,7 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-button-token-map', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-layout="horizontal"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-circuit', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-lane="labels"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-lane="component"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-wire="label"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-wire="button"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-label="1"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-button="6"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-grade-shadow="8"', $html );
@@ -77,23 +74,12 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-token-source-chip="button"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-source-chip="shadow"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-token-target="label"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-target="action"', $html );
+		$this->assertStringContainsString( 'data-sm-lab-token-target="shadow"', $html );
 		$this->assertStringContainsString( 'data-token-label-active="true"', $html );
 		$this->assertStringContainsString( 'data-token-button-active="true"', $html );
 		$this->assertStringContainsString( 'data-token-shadow-active="true"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-pin="label"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-pin="button"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-pin="shadow"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-target="surface"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-token-target="action"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-component-grade="button"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-component-grade="label"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-component-grade="shadow"', $html );
 		$this->assertStringContainsString( 'Button block', $html );
-		$this->assertStringContainsString( 'Text label', $html );
-		$this->assertStringContainsString( 'Button fill', $html );
-		$this->assertStringContainsString( 'Contrast grade', $html );
-		$this->assertStringContainsString( 'Fill grade', $html );
-		$this->assertStringContainsString( 'Depth grade', $html );
 		$this->assertStringContainsString( 'Make a reservation', $html );
 		$this->assertStringContainsString( '--sm-current-accent-color', $html );
 		$this->assertStringContainsString( '--sm-lab-reference-bg-color-1', $html );
@@ -131,15 +117,14 @@ class ShowcaseRendererTest extends TestCase {
 			strpos( $block_map_html, 'sm-lab-button-token-map__brief' ),
 			'The Button block brief should appear before the color rail.'
 		);
-		$this->assertGreaterThan(
-			strpos( $block_map_html, 'sm-lab-button-token-map__button' ),
-			strpos( $block_map_html, 'sm-lab-button-token-map__pin--shadow' ),
-			'The shadow pointer should be rendered after the button so it can sit below it.'
-		);
+		$this->assertStringNotContainsString( 'sm-lab-button-token-map__labels', $block_map_html );
+		$this->assertStringNotContainsString( 'data-sm-lab-token-lane="labels"', $block_map_html );
+		$this->assertStringNotContainsString( 'data-sm-lab-token-pin=', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-bg-color</code>', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-accent-color</code>', $block_map_html );
 		$this->assertStringNotContainsString( '<code>--sm-current-fg2-color</code>', $block_map_html );
+		$this->assertStringNotContainsString( 'data-sm-lab-token-wire="label"', $block_map_html );
+		$this->assertStringNotContainsString( 'data-sm-lab-token-wire="button"', $block_map_html );
 		$this->assertStringNotContainsString( 'data-sm-lab-token-wire="shadow"', $block_map_html );
-		$this->assertStringNotContainsString( 'sm-lab-button-token-map__shadow-shelf', $block_map_html );
 	}
 }

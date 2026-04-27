@@ -380,36 +380,19 @@ const createShowcaseDocument = () => {
     } );
   }
 
-  [ 'label', 'button', 'shadow' ].forEach( ( part ) => {
-    const grade = documentRef.createElement( 'strong' );
-    grade.setAttribute( 'data-sm-lab-component-grade', part );
-    signalPreview.appendChild( grade );
-  } );
-
-  [
-    [ 'label', 120 ],
-    [ 'button', 400 ],
-    [ 'shadow', 680, 350 ],
-  ].forEach( ( [ part, left, top = 120 ] ) => {
-    const pin = documentRef.createElement( 'span' );
-    pin.setAttribute( 'data-sm-lab-token-pin', part );
-    pin.setRect( { left, top, width: 180, height: 48 } );
-    signalPreview.appendChild( pin );
-  } );
-
   const labelTarget = documentRef.createElement( 'span' );
   labelTarget.setAttribute( 'data-sm-lab-token-target', 'label' );
-  labelTarget.setRect( { left: 520, top: 274, width: 180, height: 28 } );
+  labelTarget.setRect( { left: 610, top: 278, width: 10, height: 10 } );
   signalPreview.appendChild( labelTarget );
 
   const actionTarget = documentRef.createElement( 'button' );
   actionTarget.setAttribute( 'data-sm-lab-token-target', 'action' );
-  actionTarget.setRect( { left: 470, top: 250, width: 380, height: 72 } );
+  actionTarget.setRect( { left: 720, top: 250, width: 10, height: 10 } );
   signalPreview.appendChild( actionTarget );
 
   const shadowTarget = documentRef.createElement( 'span' );
   shadowTarget.setAttribute( 'data-sm-lab-token-target', 'shadow' );
-  shadowTarget.setRect( { left: 470, top: 322, width: 380, height: 16 } );
+  shadowTarget.setRect( { left: 800, top: 329, width: 10, height: 10 } );
   signalPreview.appendChild( shadowTarget );
 
   return documentRef;
@@ -624,21 +607,6 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'signal preview scope should update its signal class'
     );
     assert.equal(
-      documentRef.querySelector( '[data-sm-lab-component-grade="label"]' )?.textContent,
-      '1',
-      'button label callout should track the resolved contrast grade'
-    );
-    assert.equal(
-      documentRef.querySelector( '[data-sm-lab-component-grade="button"]' )?.textContent,
-      '6',
-      'button fill callout should track the signal-resolved grade'
-    );
-    assert.equal(
-      documentRef.querySelector( '[data-sm-lab-component-grade="shadow"]' )?.textContent,
-      '8',
-      'button shadow callout should track the deeper support grade'
-    );
-    assert.equal(
       documentRef.querySelector( '[data-sm-lab-button-token-map]' )?.getAttribute( 'data-sm-lab-token-source-grade-label' ),
       '1',
       'label source pointer should expose the resolved grade it points to'
@@ -679,18 +647,18 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ) || '',
-      /^M 92 58 L 92 72 Q 92 82 102 82 L 200 82 Q 210 82 210 92 L 210 120$/,
-      'label wire should connect the grade 1 role chip to the visible text-label callout'
+      /^M 92 58 L 92 72 Q 92 82 102 82 L 605 82 Q 615 82 615 92 L 615 283$/,
+      'label wire should connect the grade 1 role chip directly to the visible button label'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="button"]' )?.getAttribute( 'd' ) || '',
-      /^M 341 58 L 341 88 Q 341 98 351 98 L 480 98 Q 490 98 490 108 L 490 120$/,
-      'button fill wire should connect the grade 6 role chip to the visible button-fill callout'
+      /^M 341 58 L 341 88 Q 341 98 351 98 L 715 98 Q 725 98 725 108 L 725 255$/,
+      'button fill wire should connect the grade 6 role chip directly to the visible button fill'
     );
     assert.match(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="shadow"]' )?.getAttribute( 'd' ) || '',
-      /^M 446 58 L 446 104 Q 446 114 456 114 L 760 114 Q 770 114 770 124 L 770 350$/,
-      'shadow wire should connect the grade 8 role chip to the shadow callout below the button'
+      /^M 446 58 L 446 104 Q 446 114 456 114 L 795 114 Q 805 114 805 124 L 805 334$/,
+      'shadow wire should connect the grade 8 role chip directly to the visible shadow surface'
     );
     assert.notEqual(
       documentRef.querySelector( '[data-sm-lab-token-source-wire="label"]' )?.getAttribute( 'd' ),
