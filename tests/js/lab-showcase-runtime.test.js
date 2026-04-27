@@ -346,6 +346,12 @@ const createShowcaseDocument = () => {
   signalCascade.setAttribute( 'data-sm-lab-signal-cascade', '1' );
   documentRef.body.appendChild( signalCascade );
 
+  [ 'page', 'header', 'content', 'inner', 'second-inner', 'footer' ].forEach( ( id ) => {
+    const previewNode = documentRef.createElement( 'div' );
+    previewNode.setAttribute( 'data-sm-lab-cascade-preview-node', id );
+    signalCascade.appendChild( previewNode );
+  } );
+
   [
     [ 'page', 0, '' ],
     [ 'header', 3, 'page' ],
@@ -365,6 +371,26 @@ const createShowcaseDocument = () => {
     [ 'signal', 'parent', 'resolved' ].forEach( ( key ) => {
       node.appendChild( createCascadeValue( documentRef, key ) );
     } );
+
+    const scopeChip = documentRef.createElement( 'code' );
+    scopeChip.setAttribute( 'data-sm-lab-cascade-chip-scope', '1' );
+    node.appendChild( scopeChip );
+
+    const rail = documentRef.createElement( 'div' );
+    rail.setAttribute( 'data-sm-lab-cascade-rail', '1' );
+    node.appendChild( rail );
+
+    for ( let grade = 1; grade <= 12; grade += 1 ) {
+      const segment = documentRef.createElement( 'span' );
+      segment.setAttribute( 'data-sm-lab-cascade-rail-grade', String( grade ) );
+      rail.appendChild( segment );
+    }
+
+    if ( id === 'second-inner' ) {
+      const inversion = documentRef.createElement( 'p' );
+      inversion.setAttribute( 'data-sm-lab-cascade-inversion', 'second-inner' );
+      node.appendChild( inversion );
+    }
 
     signalCascade.appendChild( node );
   } );
@@ -669,6 +695,25 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'cascade nodes should consume the fixed reference grade rail for their resolved surface'
     );
     assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="2"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
+      'parent',
+      'inner rail should mark grade 2 as parent'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="8"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
+      'resolved',
+      'inner rail should mark grade 8 as resolved'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-chip-scope]' )?.textContent,
+      '.sm-palette-contextual-lab.sm-variation-8',
+      'inner scope chip should reflect palette and resolved grade'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-preview-node="content"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-surface-color: var(--sm-lab-reference-bg-color-2' ),
+      'assembled preview content node should consume its resolved grade'
+    );
+    assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
       '8',
       'second-level nested signal nodes should inherit the already resolved inner grade'
@@ -677,6 +722,11 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
       '2',
       'high signal should resolve back to a light grade when the parent context is dark'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-inversion="second-inner"]' )?.getAttribute( 'data-sm-lab-cascade-inversion-visible' ),
+      'true',
+      'inversion callout should be marked visible when resolved differs from parent'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette' ),

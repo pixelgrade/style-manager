@@ -951,6 +951,36 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
       node.setAttribute( 'data-sm-lab-cascade-active', isActiveSignal ? 'true' : 'false' );
       node.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade ) );
 
+      const rail = node.querySelector( '[data-sm-lab-cascade-rail]' );
+      if ( rail ) {
+        rail.querySelectorAll( '[data-sm-lab-cascade-rail-grade]' ).forEach( ( segment ) => {
+          const grade = Number( segment.getAttribute( 'data-sm-lab-cascade-rail-grade' ) );
+          const marker = grade === parentGrade ? 'parent' : ( grade === resolvedGrade ? 'resolved' : 'none' );
+          segment.setAttribute( 'data-sm-lab-cascade-rail-marker', marker );
+          segment.setAttribute( 'style', `background: ${ buildReferenceGradeColor( grade ) };` );
+        } );
+      }
+
+      const scopeChip = node.querySelector( '[data-sm-lab-cascade-chip-scope]' );
+      if ( scopeChip ) {
+        scopeChip.textContent = `.sm-palette-${ state.palette }.sm-variation-${ resolvedGrade }`;
+      }
+
+      if ( id === 'second-inner' ) {
+        const inversion = cascade.querySelector( '[data-sm-lab-cascade-inversion="second-inner"]' );
+        if ( inversion ) {
+          inversion.setAttribute(
+            'data-sm-lab-cascade-inversion-visible',
+            resolvedGrade !== parentGrade ? 'true' : 'false'
+          );
+        }
+      }
+
+      const previewNode = cascade.querySelector( `[data-sm-lab-cascade-preview-node="${ id }"]` );
+      if ( previewNode ) {
+        previewNode.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade ) );
+      }
+
       setSignalCascadeValue( node, 'signal', SIGNAL_LABELS[ signal ] || SIGNAL_LABELS[0] );
       setSignalCascadeValue( node, 'parent', parentGrade );
       setSignalCascadeValue( node, 'resolved', resolvedGrade );
