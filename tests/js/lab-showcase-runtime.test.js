@@ -379,9 +379,37 @@ const createShowcaseDocument = () => {
       node.setAttribute( 'data-sm-lab-cascade-parent', parent );
     }
 
-    [ 'signal', 'parent', 'resolved' ].forEach( ( key ) => {
+    const signalControl = documentRef.createElement( 'button' );
+    signalControl.setAttribute( 'data-sm-lab-cascade-signal-control', '1' );
+    const signalIcon = documentRef.createElement( 'span' );
+    signalIcon.setAttribute( 'data-sm-lab-cascade-signal-icon', '1' );
+    signalControl.appendChild( signalIcon );
+
+    for ( let bar = 1; bar <= 3; bar += 1 ) {
+      const barNode = documentRef.createElement( 'span' );
+      barNode.setAttribute( 'data-sm-lab-cascade-signal-bar', String( bar ) );
+      signalIcon.appendChild( barNode );
+    }
+
+    signalControl.appendChild( createCascadeValue( documentRef, 'signal' ) );
+    node.appendChild( signalControl );
+
+    [ 'parent', 'resolved' ].forEach( ( key ) => {
       node.appendChild( createCascadeValue( documentRef, key ) );
     } );
+
+    const signalLabelChip = documentRef.createElement( 'span' );
+    signalLabelChip.setAttribute( 'data-sm-lab-cascade-chip', 'signal-label' );
+    signalLabelChip.setAttribute( 'data-sm-lab-cascade-chip-signal-label', '1' );
+    node.appendChild( signalLabelChip );
+
+    const savedAttributeChip = documentRef.createElement( 'span' );
+    savedAttributeChip.setAttribute( 'data-sm-lab-cascade-chip', 'saved-attribute' );
+    savedAttributeChip.setAttribute( 'data-sm-lab-cascade-chip-signal-input', String( signal ) );
+    const savedAttributeCode = documentRef.createElement( 'code' );
+    savedAttributeCode.setAttribute( 'data-sm-lab-cascade-chip-signal-input-code', '1' );
+    savedAttributeChip.appendChild( savedAttributeCode );
+    node.appendChild( savedAttributeChip );
 
     const scopeChip = documentRef.createElement( 'code' );
     scopeChip.setAttribute( 'data-sm-lab-cascade-chip-scope', '1' );
@@ -687,6 +715,16 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'signal cascade should label Low signal nodes'
     );
     assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-label]' )?.textContent,
+      'Color Signal: Low',
+      'signal cascade should expose the human Color Signal label separately from the saved value'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-input-code]' )?.textContent,
+      'data-color-signal="1"',
+      'signal cascade should expose the saved numeric block attribute separately from the human label'
+    );
+    assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
       '2',
       'nested signal nodes should use their parent resolved grade as reference'
@@ -769,6 +807,41 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       cascade.listeners.get( 'pointerover' )?.length,
       1,
       'cascade hover bond should bind pointer listeners once'
+    );
+    const contentSignalControl = documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-signal-control]' );
+    cascade.listeners.get( 'click' )?.[0]?.( {
+      target: contentSignalControl,
+      preventDefault: () => {},
+    } );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'data-sm-lab-cascade-signal' ),
+      '2',
+      'clicking a cascade signal control should cycle that node to the next saved signal value'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-value="signal"]' )?.textContent,
+      'Medium',
+      'clicking a cascade signal control should update the visible human signal name'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-label]' )?.textContent,
+      'Color Signal: Medium',
+      'clicking a cascade signal control should update the human signal chip'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"] [data-sm-lab-cascade-chip-signal-input-code]' )?.textContent,
+      'data-color-signal="2"',
+      'clicking a cascade signal control should update the saved attribute chip'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' )?.getAttribute( 'data-sm-lab-cascade-resolved-grade' ),
+      '8',
+      'clicking a cascade signal control should recompute that node resolved grade'
+    );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"]' )?.getAttribute( 'data-sm-lab-cascade-parent-grade' ),
+      '8',
+      'clicking a parent cascade signal control should recompute descendants from the new parent grade'
     );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-signal-preview]' )?.getAttribute( 'data-palette' ),

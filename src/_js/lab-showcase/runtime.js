@@ -921,7 +921,36 @@ const setSignalCascadeValue = ( node, key, value ) => {
   } );
 };
 
-const wireCascadeHoverBond = ( cascade ) => {
+const updateCascadeSignalUi = ( node, signal ) => {
+  const label = SIGNAL_LABELS[ signal ] || SIGNAL_LABELS[0];
+  const control = node.querySelector( '[data-sm-lab-cascade-signal-control]' );
+  const title = node.querySelector( 'strong' )?.textContent?.trim() || 'block';
+
+  if ( control ) {
+    control.setAttribute( 'aria-label', `Change ${ title } Color Signal. Current: ${ label }` );
+  }
+
+  node.querySelectorAll( '[data-sm-lab-cascade-signal-bar]' ).forEach( ( bar ) => {
+    const barValue = Number( bar.getAttribute( 'data-sm-lab-cascade-signal-bar' ) );
+    bar.classList.toggle( 'is-active', barValue <= signal );
+  } );
+
+  node.querySelectorAll( '[data-sm-lab-cascade-chip-signal-label]' ).forEach( ( chip ) => {
+    chip.textContent = `Color Signal: ${ label }`;
+  } );
+
+  node.querySelectorAll( '[data-sm-lab-cascade-chip-signal-input]' ).forEach( ( chip ) => {
+    chip.setAttribute( 'data-sm-lab-cascade-chip-signal-input', String( signal ) );
+  } );
+
+  node.querySelectorAll( '[data-sm-lab-cascade-chip-signal-input-code]' ).forEach( ( chip ) => {
+    chip.textContent = `data-color-signal="${ signal }"`;
+  } );
+
+  setSignalCascadeValue( node, 'signal', label );
+};
+
+const wireCascadeInteractions = ( cascade, documentRef ) => {
   if ( cascade.getAttribute( 'data-sm-lab-cascade-bond' ) === 'true' ) {
     return;
   }
@@ -945,6 +974,26 @@ const wireCascadeHoverBond = ( cascade ) => {
     setHighlight( node?.getAttribute( 'data-sm-lab-cascade-node' ) || null );
   } );
   cascade.addEventListener( 'focusout', () => setHighlight( null ) );
+  cascade.addEventListener( 'click', ( event ) => {
+    const control = event.target.closest?.( '[data-sm-lab-cascade-signal-control]' );
+
+    if ( ! control ) {
+      return;
+    }
+
+    event.preventDefault?.();
+
+    const node = control.closest?.( '[data-sm-lab-cascade-node]' );
+    const state = cascade.__smLabCascadeState;
+
+    if ( ! node || ! state ) {
+      return;
+    }
+
+    const nextSignal = ( normalizeSignalValue( node.getAttribute( 'data-sm-lab-cascade-signal' ) ) + 1 ) % SIGNAL_LABELS.length;
+    node.setAttribute( 'data-sm-lab-cascade-signal', String( nextSignal ) );
+    updateSignalCascade( documentRef, state, cascade.__smLabCascadeWindowRef || {} );
+  } );
   cascade.setAttribute( 'data-sm-lab-cascade-bond', 'true' );
 };
 
@@ -954,7 +1003,9 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
   documentRef.querySelectorAll( '[data-sm-lab-signal-cascade]' ).forEach( ( cascade ) => {
     const resolvedByNode = new Map();
 
-    wireCascadeHoverBond( cascade );
+    cascade.__smLabCascadeState = state;
+    cascade.__smLabCascadeWindowRef = windowRef;
+    wireCascadeInteractions( cascade, documentRef );
     cascade.setAttribute( 'data-sm-lab-cascade-palette', state.palette );
     cascade.setAttribute( 'data-sm-lab-cascade-active-signal', String( state.signal ) );
 
@@ -1009,7 +1060,7 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
         previewNode.setAttribute( 'style', buildSignalCascadeStyle( resolvedGrade, textGrade ) );
       }
 
-      setSignalCascadeValue( node, 'signal', SIGNAL_LABELS[ signal ] || SIGNAL_LABELS[0] );
+      updateCascadeSignalUi( node, signal );
       setSignalCascadeValue( node, 'parent', parentGrade );
       setSignalCascadeValue( node, 'resolved', resolvedGrade );
     } );
