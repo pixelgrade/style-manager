@@ -817,7 +817,25 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'true',
       'inversion callout should be marked visible when resolved differs from parent'
     );
+    assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-inversion="second-inner"]' )?.textContent,
+      'High resolves from parent grade 10 to grade 1. Parent context decides.',
+      'inversion callout should describe the current second inner parent-to-resolved movement'
+    );
     const cascade = documentRef.querySelector( '[data-sm-lab-signal-cascade]' );
+    const secondInnerDecreaseControl = documentRef.querySelector( '[data-sm-lab-cascade-node="second-inner"] [data-sm-lab-cascade-signal-step="-1"]' );
+    cascade.listeners.get( 'click' )?.[0]?.( {
+      target: secondInnerDecreaseControl,
+      preventDefault: () => {},
+    } );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-inversion="second-inner"]' )?.textContent?.startsWith( 'Medium resolves from parent grade 10 to grade ' ),
+      'changing the second inner signal should refresh the inversion callout copy'
+    );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-inversion="second-inner"]' )?.textContent?.endsWith( '. Parent context decides.' ),
+      'refreshed inversion callout copy should keep the parent-context explanation'
+    );
     const contentCascadeNode = documentRef.querySelector( '[data-sm-lab-cascade-node="content"]' );
     cascade.listeners.get( 'pointerover' )?.[0]?.( { target: contentCascadeNode } );
     assert.equal(

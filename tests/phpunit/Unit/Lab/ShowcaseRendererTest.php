@@ -102,6 +102,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringNotContainsString( 'signal=high', $html );
 		$this->assertStringNotContainsString( 'signal=none', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-inversion="second-inner"', $html );
+		$this->assertStringContainsString( 'High resolves from parent grade 10 to grade 1. Parent context decides.', $html );
+		$this->assertStringNotContainsString( 'Same signal as Header', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-result="variation"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-component-callout="action"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-role-marker="parent"', $html );

@@ -485,7 +485,7 @@ final class ShowcaseRenderer {
 					class="sm-lab-cascade-inversion"
 					data-sm-lab-cascade-inversion="second-inner"
 					data-sm-lab-cascade-inversion-visible="<?php echo esc_attr( $node['resolved_grade'] !== $node['parent_grade'] ? 'true' : 'false' ); ?>"
-				><?php esc_html_e( 'Same signal as Header. Opposite end of the rail. Parent context decides.', '__plugin_txtd' ); ?></p>
+				><?php echo esc_html( $this->get_cascade_inversion_copy( $node ) ); ?></p>
 			<?php endif; ?>
 			<?php
 			foreach ( $by_parent[ $node['id'] ] ?? [] as $child ) {
@@ -589,6 +589,19 @@ final class ShowcaseRenderer {
 			3 => __( 'High', '__plugin_txtd' ),
 			default => __( 'None', '__plugin_txtd' ),
 		};
+	}
+
+	/**
+	 * @param array<string, mixed> $node
+	 */
+	private function get_cascade_inversion_copy( array $node ): string {
+		return sprintf(
+			/* translators: 1: color signal label, 2: parent grade, 3: resolved grade. */
+			__( '%1$s resolves from parent grade %2$s to grade %3$s. Parent context decides.', '__plugin_txtd' ),
+			(string) $node['signal_label'],
+			(string) $node['parent_grade'],
+			(string) $node['resolved_grade']
+		);
 	}
 
 	private function get_signal_cascade_style( int $surface_grade, int $text_grade, int $signal ): string {

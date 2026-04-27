@@ -915,8 +915,14 @@ const setSignalCascadeValue = ( node, key, value ) => {
   } );
 };
 
+const getSignalLabel = ( signal ) => SIGNAL_LABELS[ normalizeSignalValue( signal ) ] || SIGNAL_LABELS[0];
+
+const getCascadeInversionCopy = ( signal, parentGrade, resolvedGrade ) => (
+  `${ getSignalLabel( signal ) } resolves from parent grade ${ parentGrade } to grade ${ resolvedGrade }. Parent context decides.`
+);
+
 const updateCascadeSignalUi = ( node, signal ) => {
-  const label = SIGNAL_LABELS[ signal ] || SIGNAL_LABELS[0];
+  const label = getSignalLabel( signal );
   const title = node.querySelector( 'strong' )?.textContent?.trim() || 'block';
 
   node.querySelectorAll( '[data-sm-lab-cascade-signal-control]' ).forEach( ( control ) => {
@@ -1049,6 +1055,7 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
             'data-sm-lab-cascade-inversion-visible',
             resolvedGrade !== parentGrade ? 'true' : 'false'
           );
+          inversion.textContent = getCascadeInversionCopy( signal, parentGrade, resolvedGrade );
         }
       }
 
