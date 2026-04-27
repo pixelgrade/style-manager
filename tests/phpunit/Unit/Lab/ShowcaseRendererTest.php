@@ -61,6 +61,7 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-node="second-inner"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-parent="inner"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-signal="3"', $html );
+		$this->assertStringContainsString( 'tabindex="0"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-active="true"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-value="parent"', $html );
 		$this->assertStringContainsString( '--sm-lab-cascade-surface-color', $html );

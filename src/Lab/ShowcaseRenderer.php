@@ -403,6 +403,7 @@ final class ShowcaseRenderer {
 			data-sm-lab-cascade-resolved-grade="<?php echo esc_attr( (string) $node['resolved_grade'] ); ?>"
 			data-sm-lab-cascade-text-grade="<?php echo esc_attr( (string) $node['text_grade'] ); ?>"
 			data-sm-lab-cascade-active="<?php echo esc_attr( $node['active'] ? 'true' : 'false' ); ?>"
+			tabindex="0"
 			style="<?php echo esc_attr( $node['style'] ); ?>"
 		>
 			<span class="sm-lab-signal-cascade__signal">
