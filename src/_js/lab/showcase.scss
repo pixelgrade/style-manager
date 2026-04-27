@@ -693,10 +693,14 @@
   line-height: 1.4;
 }
 
+.sm-lab-cascade-chip > span {
+  font-size: inherit;
+}
+
 .sm-lab-cascade-chip code {
   color: currentColor;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 11px;
+  font-size: inherit;
   background: transparent;
 }
 
@@ -801,10 +805,6 @@
   .sm-lab-cascade-chips {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .sm-lab-cascade-chip code {
-    font-size: 10px;
   }
 
   .sm-lab-cascade-rail {
