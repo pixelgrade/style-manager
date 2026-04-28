@@ -1046,7 +1046,9 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
       if ( rail ) {
         rail.querySelectorAll( '[data-sm-lab-cascade-rail-grade]' ).forEach( ( segment ) => {
           const grade = Number( segment.getAttribute( 'data-sm-lab-cascade-rail-grade' ) );
-          const marker = grade === parentGrade ? 'parent' : ( grade === resolvedGrade ? 'resolved' : 'none' );
+          const marker = grade === resolvedGrade ? 'resolved' : (
+            resolvedGrade !== parentGrade && grade === parentGrade ? 'parent' : 'none'
+          );
           segment.setAttribute( 'data-sm-lab-cascade-rail-marker', marker );
           segment.setAttribute( 'style', buildCascadeRailGradeStyle( grade, state.palette, windowRef ) );
         } );

@@ -789,6 +789,11 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'inner rail should mark grade 6 as parent'
     );
     assert.equal(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="page"] [data-sm-lab-cascade-rail-grade="4"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
+      'resolved',
+      'unshifted cascade nodes should show only the resolved marker on the shared parent/resolved grade'
+    );
+    assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="10"]' )?.getAttribute( 'data-sm-lab-cascade-rail-marker' ),
       'resolved',
       'inner rail should mark grade 10 as resolved'

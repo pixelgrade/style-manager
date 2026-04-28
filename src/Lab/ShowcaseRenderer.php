@@ -473,10 +473,10 @@ final class ShowcaseRenderer {
 				<?php for ( $grade = 1; $grade <= 12; $grade++ ) : ?>
 					<?php
 					$marker = 'none';
-					if ( $grade === $node['parent_grade'] ) {
-						$marker = 'parent';
-					} elseif ( $grade === $node['resolved_grade'] ) {
+					if ( $grade === $node['resolved_grade'] ) {
 						$marker = 'resolved';
+					} elseif ( $node['parent_grade'] !== $node['resolved_grade'] && $grade === $node['parent_grade'] ) {
+						$marker = 'parent';
 					}
 					?>
 					<span
