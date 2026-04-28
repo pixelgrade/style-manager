@@ -204,7 +204,6 @@ final class ShowcaseRenderer {
 						data-sm-lab-cascade-palette="<?php echo esc_attr( $params->palette() ); ?>"
 						data-sm-lab-cascade-active-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
 					>
-						<?php $this->render_cascade_assembled_preview( $params, $parent_variation ); ?>
 						<?php $this->render_cascade_inspector( $params, $parent_variation ); ?>
 					</div>
 				</article>
@@ -325,53 +324,6 @@ final class ShowcaseRenderer {
 			$button_grade,
 			$border_grade
 		);
-	}
-
-	private function render_cascade_assembled_preview( QueryParams $params, int $root_variation ): void {
-		$nodes = $this->get_signal_cascade_nodes( $params, $root_variation );
-		$by_id = [];
-
-		foreach ( $nodes as $node ) {
-			$by_id[ $node['id'] ] = $node;
-		}
-		?>
-		<div class="sm-lab-signal-cascade__assembled" data-sm-lab-cascade-view="assembled" aria-label="<?php esc_attr_e( 'Assembled page preview with resolved block surfaces', '__plugin_txtd' ); ?>">
-			<div
-				class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--page"
-				data-sm-lab-cascade-preview-node="page"
-				style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['page']['resolved_grade'], $by_id['page']['text_grade'], $by_id['page']['signal'] ) ); ?>"
-			>
-				<div
-					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--header"
-					data-sm-lab-cascade-preview-node="header"
-					data-sm-lab-cascade-bridge="header"
-					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['header']['resolved_grade'], $by_id['header']['text_grade'], $by_id['header']['signal'] ) ); ?>"
-				></div>
-				<div
-					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--content"
-					data-sm-lab-cascade-preview-node="content"
-					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['content']['resolved_grade'], $by_id['content']['text_grade'], $by_id['content']['signal'] ) ); ?>"
-				>
-					<div
-						class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--inner"
-						data-sm-lab-cascade-preview-node="inner"
-						style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['inner']['resolved_grade'], $by_id['inner']['text_grade'], $by_id['inner']['signal'] ) ); ?>"
-					>
-						<div
-							class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--second-inner"
-							data-sm-lab-cascade-preview-node="second-inner"
-							style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['second-inner']['resolved_grade'], $by_id['second-inner']['text_grade'], $by_id['second-inner']['signal'] ) ); ?>"
-						></div>
-					</div>
-				</div>
-				<div
-					class="sm-lab-cascade-preview-node sm-lab-cascade-preview-node--footer"
-					data-sm-lab-cascade-preview-node="footer"
-					style="<?php echo esc_attr( $this->get_signal_cascade_style( $by_id['footer']['resolved_grade'], $by_id['footer']['text_grade'], $by_id['footer']['signal'] ) ); ?>"
-				></div>
-			</div>
-		</div>
-		<?php
 	}
 
 	private function render_cascade_inspector( QueryParams $params, int $root_variation ): void {

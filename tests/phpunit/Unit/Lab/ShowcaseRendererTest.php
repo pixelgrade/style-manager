@@ -55,7 +55,6 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="mapping"', $html );
 		$this->assertStringContainsString( 'sm-lab-resolution-stage--wide', $html );
 		$this->assertStringContainsString( 'data-sm-lab-signal-cascade', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-view="assembled"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-view="inspector"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-node="page"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-node="content"', $html );
@@ -76,13 +75,9 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( '--sm-lab-cascade-surface-color', $html );
 		$this->assertStringContainsString( '--sm-lab-cascade-border-width: 2px;', $html );
 		$this->assertStringContainsString( '--sm-lab-cascade-border-width: 1px;', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="page"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="header"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="content"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="inner"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="second-inner"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-preview-node="footer"', $html );
-		$this->assertStringContainsString( 'data-sm-lab-cascade-bridge="header"', $html );
+		$this->assertStringNotContainsString( 'data-sm-lab-cascade-view="assembled"', $html );
+		$this->assertStringNotContainsString( 'data-sm-lab-cascade-preview-node', $html );
+		$this->assertStringNotContainsString( 'data-sm-lab-cascade-bridge="header"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-anatomy-bridge="header"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="6"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-resolved-grade="10"', $html );
