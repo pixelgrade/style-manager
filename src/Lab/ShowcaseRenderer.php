@@ -311,6 +311,17 @@ final class ShowcaseRenderer {
 		);
 	}
 
+	private function get_cascade_rail_grade_style( QueryParams $params, int $grade ): string {
+		$dot_grade = $this->get_signal_variation( $grade, 3 );
+
+		return sprintf(
+			'%1$s --sm-lab-cascade-dot-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-color-palette-%3$s-color-%2$d, var(--sm-bg-color-%2$d)));',
+			$this->get_reference_grade_background_style( $params, $grade ),
+			$dot_grade,
+			$params->palette()
+		);
+	}
+
 	private function get_component_token_style( int $label_grade, int $button_grade, int $border_grade ): string {
 		return sprintf(
 			'--sm-lab-component-label-color: var(--sm-lab-reference-bg-color-%1$d, var(--sm-bg-color-%1$d, var(--sm-current-bg-color))); --sm-lab-component-button-color: var(--sm-lab-reference-bg-color-%2$d, var(--sm-bg-color-%2$d, var(--sm-current-accent-color))); --sm-lab-component-border-color: var(--sm-lab-reference-bg-color-%3$d, var(--sm-bg-color-%3$d, var(--sm-current-fg2-color)));',
@@ -472,7 +483,7 @@ final class ShowcaseRenderer {
 						class="sm-lab-cascade-rail__segment"
 						data-sm-lab-cascade-rail-grade="<?php echo esc_attr( (string) $grade ); ?>"
 						data-sm-lab-cascade-rail-marker="<?php echo esc_attr( $marker ); ?>"
-						style="<?php echo esc_attr( $this->get_reference_grade_background_style( $params, $grade ) ); ?>"
+						style="<?php echo esc_attr( $this->get_cascade_rail_grade_style( $params, $grade ) ); ?>"
 					></span>
 				<?php endfor; ?>
 			</div>

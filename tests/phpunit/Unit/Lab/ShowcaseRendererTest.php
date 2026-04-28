@@ -99,6 +99,8 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-grade="12"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-marker="parent"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-rail-marker="resolved"', $html );
+		$this->assertStringContainsString( '--sm-lab-cascade-dot-color: var(--sm-lab-reference-bg-color-10', $html );
+		$this->assertStringContainsString( '--sm-lab-cascade-dot-color: var(--sm-lab-reference-bg-color-1', $html );
 		$this->assertStringNotContainsString( 'signal=high', $html );
 		$this->assertStringNotContainsString( 'signal=none', $html );
 		$this->assertStringContainsString( 'data-sm-lab-cascade-inversion="second-inner"', $html );

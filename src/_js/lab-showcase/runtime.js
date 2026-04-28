@@ -895,6 +895,15 @@ const buildReferenceGradeColor = ( grade, fallback = 'var(--sm-current-bg-color)
   `var(--sm-lab-reference-bg-color-${ grade }, var(--sm-bg-color-${ grade }, ${ fallback }))`
 );
 
+const buildCascadeRailGradeStyle = ( grade, paletteId, windowRef ) => {
+  const dotGrade = getSignalVariationFromReference( grade, 3, paletteId, windowRef );
+
+  return [
+    `background: ${ buildReferenceGradeColor( grade ) };`,
+    `--sm-lab-cascade-dot-color: ${ buildReferenceGradeColor( dotGrade ) };`,
+  ].join( ' ' );
+};
+
 const buildComponentTokenStyle = ( grades ) => [
   `--sm-lab-component-label-color: ${ buildReferenceGradeColor( grades.label ) };`,
   `--sm-lab-component-button-color: ${ buildReferenceGradeColor( grades.button, 'var(--sm-current-accent-color)' ) };`,
@@ -1039,7 +1048,7 @@ const updateSignalCascade = ( documentRef, state, windowRef ) => {
           const grade = Number( segment.getAttribute( 'data-sm-lab-cascade-rail-grade' ) );
           const marker = grade === parentGrade ? 'parent' : ( grade === resolvedGrade ? 'resolved' : 'none' );
           segment.setAttribute( 'data-sm-lab-cascade-rail-marker', marker );
-          segment.setAttribute( 'style', `background: ${ buildReferenceGradeColor( grade ) };` );
+          segment.setAttribute( 'style', buildCascadeRailGradeStyle( grade, state.palette, windowRef ) );
         } );
       }
 

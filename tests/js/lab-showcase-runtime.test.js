@@ -793,6 +793,10 @@ export const runLabShowcaseRuntimeTests = async ( assert ) => {
       'resolved',
       'inner rail should mark grade 10 as resolved'
     );
+    assert.ok(
+      documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-rail-grade="10"]' )?.getAttribute( 'style' )?.includes( '--sm-lab-cascade-dot-color: var(--sm-lab-reference-bg-color-1' ),
+      'resolved rail markers should use a High signal color resolved from their own grade'
+    );
     assert.equal(
       documentRef.querySelector( '[data-sm-lab-cascade-node="inner"] [data-sm-lab-cascade-chip-scope]' )?.textContent,
       '.sm-palette-contextual-lab.sm-variation-10',

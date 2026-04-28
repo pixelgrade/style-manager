@@ -12,6 +12,9 @@ export const runLabShowcaseStyleTests = async ( assert ) => {
   const cascadeNodeStrongBlockMatch = source.match( /\.sm-lab-signal-cascade__node strong\s*\{([\s\S]*?)\n\}/ );
   const cascadeNodeSmallBlockMatch = source.match( /\.sm-lab-signal-cascade__node small\s*\{([\s\S]*?)\n\}/ );
   const cascadeRailBlockMatch = source.match( /\.sm-lab-cascade-rail\s*\{([\s\S]*?)\n\}/ );
+  const cascadeRailMarkerBlockMatch = source.match( /\.sm-lab-cascade-rail__segment\[data-sm-lab-cascade-rail-marker="parent"\]::after,\n\.sm-lab-cascade-rail__segment\[data-sm-lab-cascade-rail-marker="resolved"\]::after\s*\{([\s\S]*?)\n\}/ );
+  const cascadeRailResolvedMarkerBlockMatch = Array.from( source.matchAll( /\.sm-lab-cascade-rail__segment\[data-sm-lab-cascade-rail-marker="resolved"\]::after\s*\{([\s\S]*?)\n\}/g ) )
+    .find( ( match ) => /background\s*:\s*var\(--sm-lab-cascade-dot-color\)\s*;/.test( match[1] ) );
   const signalSummaryBlockMatch = source.match( /\.sm-lab-signal-cascade__signal-summary\s*\{([\s\S]*?)\n\}/ );
   const signalIconBlockMatch = source.match( /\.sm-lab-signal-cascade__signal-summary \.sm-lab-signal-bars__icon\s*\{([\s\S]*?)\n\}/ );
   const signalStepBlockMatch = Array.from( source.matchAll( /\.sm-lab-signal-cascade__signal-step\s*\{([\s\S]*?)\n\}/g ) )
@@ -27,6 +30,8 @@ export const runLabShowcaseStyleTests = async ( assert ) => {
   assert.ok( cascadeNodeStrongBlockMatch, 'expected the cascade title style block to exist' );
   assert.ok( cascadeNodeSmallBlockMatch, 'expected the cascade description style block to exist' );
   assert.ok( cascadeRailBlockMatch, 'expected the cascade rail style block to exist' );
+  assert.ok( cascadeRailMarkerBlockMatch, 'expected the cascade rail marker style block to exist' );
+  assert.ok( cascadeRailResolvedMarkerBlockMatch, 'expected the cascade resolved marker style block to exist' );
   assert.ok( signalSummaryBlockMatch, 'expected the signal summary style block to exist' );
   assert.ok( signalIconBlockMatch, 'expected the signal icon style block to exist' );
   assert.ok( signalStepBlockMatch, 'expected the signal step style block to exist' );
@@ -81,5 +86,13 @@ export const runLabShowcaseStyleTests = async ( assert ) => {
   assert.ok(
     /grid-column\s*:\s*1\s*\/\s*-1\s*;/.test( cascadeRailBlockMatch[1] ),
     'cascade rail should span the full node width below the header'
+  );
+  assert.ok(
+    /border\s*:\s*1\.5px\s+solid\s+var\(--sm-lab-cascade-dot-color\)\s*;/.test( cascadeRailMarkerBlockMatch[1] ),
+    'cascade rail marker border should use the High signal dot color'
+  );
+  assert.ok(
+    /background\s*:\s*var\(--sm-lab-cascade-dot-color\)\s*;/.test( cascadeRailResolvedMarkerBlockMatch[1] ),
+    'resolved cascade rail marker should fill with the High signal dot color'
   );
 };

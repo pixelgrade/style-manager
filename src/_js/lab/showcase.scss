@@ -783,7 +783,7 @@
   inset: 50% auto auto 50%;
   width: 8px;
   height: 8px;
-  border: 1.5px solid color-mix(in srgb, var(--sm-current-accent-color), var(--sm-current-fg1-color) 30%);
+  border: 1.5px solid var(--sm-lab-cascade-dot-color);
   border-radius: 50%;
   content: '';
   transform: translate(-50%, -50%);
@@ -794,7 +794,7 @@
 }
 
 .sm-lab-cascade-rail__segment[data-sm-lab-cascade-rail-marker="resolved"]::after {
-  background: var(--sm-current-accent-color);
+  background: var(--sm-lab-cascade-dot-color);
 }
 
 .sm-lab-signal-cascade__readbacks {
