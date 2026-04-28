@@ -197,17 +197,13 @@ final class ShowcaseRenderer {
 						<p class="sm-lab-runtime-strip__label"><?php esc_html_e( 'Color Signal cascade', '__plugin_txtd' ); ?></p>
 					</div>
 					<h2><?php esc_html_e( 'Color Signal cascade', '__plugin_txtd' ); ?></h2>
-					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'A block resolves against its parent surface, so the same signal can land on a light or dark grade.', '__plugin_txtd' ); ?></p>
+					<p class="sm-lab-resolution-stage__lead"><?php esc_html_e( 'Each layer resolves against its parent surface.', '__plugin_txtd' ); ?></p>
 					<div
 						class="sm-lab-signal-cascade"
 						data-sm-lab-signal-cascade
 						data-sm-lab-cascade-palette="<?php echo esc_attr( $params->palette() ); ?>"
 						data-sm-lab-cascade-active-signal="<?php echo esc_attr( (string) $params->signal() ); ?>"
 					>
-						<div class="sm-lab-signal-cascade__brief">
-							<h3><?php esc_html_e( 'Page stack', '__plugin_txtd' ); ?></h3>
-							<p><?php esc_html_e( 'Each layer declares a Color Signal. Style Manager resolves it against the parent surface. The resolved block then becomes the parent for anything nested inside.', '__plugin_txtd' ); ?></p>
-						</div>
 						<?php $this->render_cascade_assembled_preview( $params, $parent_variation ); ?>
 						<?php $this->render_cascade_inspector( $params, $parent_variation ); ?>
 					</div>

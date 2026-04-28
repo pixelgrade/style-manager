@@ -44,7 +44,9 @@ class ShowcaseRendererTest extends TestCase {
 		$this->assertStringContainsString( 'preset anchor', $html );
 		$this->assertStringContainsString( 'Resolved role rail', $html );
 		$this->assertStringContainsString( 'Color Signal cascade', $html );
-		$this->assertStringContainsString( 'A block resolves against its parent surface', $html );
+		$this->assertStringContainsString( 'Each layer resolves against its parent surface.', $html );
+		$this->assertStringNotContainsString( 'Page stack', $html );
+		$this->assertStringNotContainsString( 'Each layer declares a Color Signal.', $html );
 		$this->assertStringContainsString( 'Component anatomy', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="context"', $html );
 		$this->assertStringContainsString( 'data-sm-lab-resolution-stage="signal"', $html );
