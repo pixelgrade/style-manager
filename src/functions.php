@@ -11,6 +11,8 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager;
 
+\defined( 'ABSPATH' ) || exit;
+
 /**
  * Retrieve the main plugin instance.
  *

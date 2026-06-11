@@ -10,6 +10,8 @@
 
 namespace { // global code
 
+	\defined( 'ABSPATH' ) || exit;
+
 	use function Pixelgrade\StyleManager\get_customizer_config;
 	use function Pixelgrade\StyleManager\get_option_details;
 	use function Pixelgrade\StyleManager\get_option_details_all;

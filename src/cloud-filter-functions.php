@@ -11,6 +11,8 @@
 
 declare ( strict_types=1 );
 
+\defined( 'ABSPATH' ) || exit;
+
 /**
  * Adjust a hex color brightness
  * Allows us to create hover styles for custom link colors

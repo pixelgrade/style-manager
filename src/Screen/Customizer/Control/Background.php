@@ -94,7 +94,7 @@ class Background extends BaseControl {
 			$placeholder = $this->field['placeholder'] ?? __( 'No media selected', '__plugin_txtd' );
 
 			echo '<input type="text" 
-				class="style-manager_background_input background-image ' . $hide . 'upload ' . esc_attr( $this->field['class'] ) . '"
+				class="style-manager_background_input background-image ' . esc_attr( $hide ) . 'upload' . esc_attr( $this->field['class'] ) . '"
 				name="' . esc_attr( $this->setting->id ) . '[background-image]" 
 				id="_customize-input-' . esc_attr( $this->setting->id ) . '[background-image]" 
 				value="' . esc_url( $this->value['background-image'] ) . '"
@@ -138,7 +138,7 @@ class Background extends BaseControl {
 				}
 			}
 
-			echo '<div class="' . $hide . 'preview_screenshot">';
+			echo '<div class="' . esc_attr( $hide ) . 'preview_screenshot">';
 			echo '<a class="of-uploaded-image" href="' . esc_url( $this->value['background-image'] ) . '" target="_blank">';
 			echo '<img class="preview_image" id="image_' . esc_attr( $this->value['media']['id'] ) . '" src="' . esc_url( $this->value['media']['thumbnail'] ) . '" alt="" target="_blank" rel="external" />';
 			echo '</a>';
@@ -155,7 +155,7 @@ class Background extends BaseControl {
 				$hide = ' hide';
 			}
 
-			echo '<span class="button remove-image' . $hide . '" id="reset_' . esc_attr( $this->id ) . '" rel="' . esc_attr( $this->id ) . '">' . esc_html__( 'Remove', '__plugin_txtd' ) . '</span>';
+			echo '<span class="button remove-image' . esc_attr( $hide ) . '" id="reset_' . esc_attr( $this->id ) . '" rel="' . esc_attr( $this->id ) . '">' . esc_html__( 'Remove', '__plugin_txtd' ) . '</span>';
 
 			echo '</div>';
 		}
@@ -175,7 +175,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . esc_attr( $this->id ) . '-repeat-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-repeat]" 
-				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . $hide . '"
+				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . esc_attr( $hide ) . '"
 				data-select_name="background-repeat" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-repeat]">';
 			echo '<option disabled ' . selected( $this->value['background-repeat'], '', false ) . '>' . esc_html__( 'Background repeat..', '__plugin_txtd' ) . '</option>';
@@ -199,7 +199,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . esc_attr( $this->id ) . '-clip-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-clip]" 
-				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . $hide . '"
+				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . esc_attr( $hide ) . '"
 				data-select_name="background-clip" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-clip]">';
 			echo '<option disabled ' . selected( $this->value['background-clip'], '', false ) . '>' . esc_html__( 'Background clip..', '__plugin_txtd' ) . '</option>';
@@ -223,7 +223,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . esc_attr( $this->id ) . '-origin-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-origin]" 
-				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . $hide . '"
+				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . esc_attr( $hide ) . '"
 				data-select_name="background-origin" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-origin]">';
 			echo '<option disabled ' . selected( $this->value['background-origin'], '', false ) . '>' . esc_html__( 'Background origin..', '__plugin_txtd' ) . '</option>';
@@ -246,7 +246,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . esc_attr( $this->id ) . '-size-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-size]" 
-				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . $hide . '"
+				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . esc_attr( $hide ) . '"
 				data-select_name="background-size" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-size]">';
 			echo '<option disabled ' . selected( $this->value['background-size'], '', false ) . '>' . esc_html__( 'Background size..', '__plugin_txtd' ) . '</option>';
@@ -267,7 +267,7 @@ class Background extends BaseControl {
 				$this->value['background-attachment'] = '';
 			}
 
-			echo '<select id="' . esc_attr( $this->id ) . '-attachment-select" name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-attachment]" class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . $hide . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
+			echo '<select id="' . esc_attr( $this->id ) . '-attachment-select" name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-attachment]" class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . esc_attr( $hide ) . '" data-select_name="background-attachment" data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-attachment]">';
 			echo '<option disabled ' . selected( $this->value['background-attachment'], '', false ) . '>' . esc_html__( 'Background attachment..', '__plugin_txtd' ) . '</option>';
 			foreach ( $array as $k => $v ) {
 				echo '<option value="' . esc_attr( $k ) . '"' . selected( $this->value['background-attachment'], $k, false ) . '>' . esc_html( $v ) . '</option>';
@@ -294,7 +294,7 @@ class Background extends BaseControl {
 
 			echo '<select id="' . esc_attr( $this->id ) . '-position-select" 
 				name="_customize-input-' . esc_attr( $this->setting->id ) . '[background-position]" 
-				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . $hide . '"
+				class="style-manager_background_select ' . esc_attr( $this->field['class'] ) . ' ' . esc_attr( $hide ) . '"
 				placeholder="Background position?"
 				data-select_name="background-position" 
 				data-customize-setting-link="' . esc_attr( $this->setting->id ) . '[background-position]">';

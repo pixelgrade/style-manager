@@ -106,6 +106,18 @@ src/_js
 src/_css
 src/_scss
 
+# Stray, hidden, and developer-sample files flagged by WordPress.org Plugin Check.
+# (.editorconfig is listed above but only matches the root copy; **/ catches
+# nested vendored ones such as vendor_js/select2-*/.editorconfig.)
+.superpowers
+.phpunit.result.cache
+**/.editorconfig
+# Developer debug sample only: loaded from the THEME root behind the
+# STYLE_MANAGER_LOAD_THEME_ROOT_CONFIG constant, never from the plugin's
+# resources/ — shipping it tripped ~36 Plugin Check findings (foreign text
+# domains, empty translatable strings, undefined constants).
+resources/sm_theme_root.php
+
 #
 # Composer related
 #

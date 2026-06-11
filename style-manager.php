@@ -25,9 +25,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager;
 
 // Exit if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) {
-	exit;
-}
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Plugin version.

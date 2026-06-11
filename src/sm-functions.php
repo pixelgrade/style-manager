@@ -9,6 +9,8 @@
 
 declare ( strict_types=1 );
 
+\defined( 'ABSPATH' ) || exit;
+
 /**
  * @since   2.0.0
  *
