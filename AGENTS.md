@@ -177,7 +177,8 @@ This applies to both this repo (`pixelgrade/style-manager`) and the theme repo (
   - For editor/admin runtime toggles that must reflect latest value, prefer direct `\get_option( 'sm_dark_mode_advanced', 'off' )`.
 - Customizer preview callbacks should avoid hard dependency on `window.parent.sm.customizer`.
   - Add guarded fallbacks (`window.sm.customizer`) and return safe defaults when unavailable.
-- Editor dynamic CSS injection should use `enqueue_block_editor_assets` only.
+- Editor dynamic CSS injection should use `enqueue_block_assets` with an admin block-editor guard, so WP 7.0 places the CSS directly in the editor iframe.
+  - Keep editor UI scripts on `enqueue_block_editor_assets`.
   - Avoid duplicate paths that can inject style-manager inline CSS twice.
 - QA with versioned plugin folders (`style-manager-2-2-9-*`) is valid, but only one Style Manager copy can be active at a time.
   - Deactivate canonical plugin before activating a QA copy.

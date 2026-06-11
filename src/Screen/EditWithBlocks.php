@@ -195,7 +195,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	public function register_hooks() {
 		// Styles and scripts when editing.
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
-		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_editor_dynamic_css', 999 );
+		$this->add_action( 'enqueue_block_assets', 'enqueue_editor_dynamic_css', 999 );
 
 		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
 		$this->add_action( 'admin_enqueue_scripts', 'print_script_to_move_dark_classname_to_html' );
@@ -231,6 +231,10 @@ class EditWithBlocks extends AbstractHookProvider {
 	 * Replaces the previous __unstableResolvedAssets injection which is removed in WP 7.0.
 	 */
 	public function enqueue_editor_dynamic_css() {
+		if ( ! $this->is_admin_block_editor_screen() ) {
+			return;
+		}
+
 		$this->sm_fonts->enqueue_frontend_scripts_styles();
 
 		add_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );
@@ -250,6 +254,28 @@ class EditWithBlocks extends AbstractHookProvider {
 		wp_register_style( 'style-manager-editor-dynamic', false );
 		wp_enqueue_style( 'style-manager-editor-dynamic' );
 		wp_add_inline_style( 'style-manager-editor-dynamic', $css );
+	}
+
+	/**
+	 * Determine whether the current request is for an admin block editor canvas.
+	 *
+	 * @return bool
+	 */
+	protected function is_admin_block_editor_screen(): bool {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$current_screen = get_current_screen();
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
+			return true;
+		}
+
+		return in_array( $current_screen->id, [ 'site-editor', 'site-editor-v2' ], true );
 	}
 
 	/**
