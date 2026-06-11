@@ -1,0 +1,16 @@
+# Additional files stripped from a WordPress.org-targeted build, on top of
+# .zipignore.
+#
+# Everything listed here is commercial-distribution-only logic. The plugin must
+# keep working without these files: style-manager.php loads them through a
+# file_exists() guard.
+#
+# NOTE: a dedicated wp.org gulp build variant is not wired up yet (the current
+# `npm run zip` produces the commercial/WUpdates package). When that variant is
+# added, it must also: remove the `Update URI: false` header so WordPress.org can
+# deliver updates, and run Plugin Check (PCP) on the result. See
+# anima/.ai/docs/2026-06-11-style-manager-wporg-resubmission.md.
+
+# The WUpdates self-update mechanism.
+distribution/wupdates.php
+distribution

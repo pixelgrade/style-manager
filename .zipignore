@@ -87,6 +87,7 @@ tslint.json
 .jscsrc
 .jshintignore
 .zipignore
+.zipignore-wporg
 phpcs.xml.dist
 phpunit.xml.dist
 bin

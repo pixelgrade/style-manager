@@ -52,7 +52,35 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 * [CarbonFields](https://carbonfields.net/) WordPress Custom Fields Library - License: GPLv2
 * Default [image](https://unsplash.com/photos/OgM4RKdr2kY) for Style Manager Color Palette control - License: [Unsplash](https://unsplash.com/license)
 
+== Privacy & External Services ==
+
+Style Manager relies on one external service to deliver its design assets.
+
+**Pixelgrade Cloud (cloud.pixelgrade.com)**
+
+To provide the color palettes, font palettes, and curated design configurations
+that power the Customizer, the plugin fetches design assets from Pixelgrade Cloud.
+This request is made from the WordPress admin (not from your site's frontend) and
+the response is cached locally.
+
+When fetching design assets, the plugin sends: your site URL, whether the site
+uses SSL, your WordPress version, the Style Manager version, and your active
+theme's slug, name, URI, version, and text domain. No personal data about your
+site's visitors is sent or collected, and the plugin does not load any tracking
+or analytics scripts.
+
+* Service: Pixelgrade Cloud
+* Provider: Pixelgrade — https://pixelgrade.com
+* Privacy Policy: https://pixelgrade.com/privacy/
+* Web fonts referenced by font palettes are served by Google Fonts
+  (https://fonts.googleapis.com / https://fonts.gstatic.com) — see Google's
+  Privacy Policy at https://policies.google.com/privacy.
+
 == Changelog ==
+
+= 2.2.13 =
+* Security: constrain and escape the dark-mode appearance attribute printed on the site's `<html>` tag.
+* Isolate the WUpdates self-update mechanism so it can be excluded from WordPress.org-targeted builds.
 
 = 2.2.12 =
 * Apply connected fields presets when switching font palettes that define a palette-specific preset.
