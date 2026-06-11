@@ -938,6 +938,7 @@ if ( ! function_exists( 'pixelgrade_option' ) ) {
 }
 
 if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- intentionally theme-overridable legacy function name.
 	function sm_filter_user_palettes( $palette ): bool {
 		$id = (string) $palette->id;
 		return substr( $id, 0, 1 ) !== '_';

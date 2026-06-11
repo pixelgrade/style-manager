@@ -305,11 +305,13 @@ class Settings extends AbstractHookProvider {
 	private function get_nonce() {
 		$nonce = null;
 
+		// phpcs:disable WordPress.Security.NonceVerification -- this IS the nonce read; it is verified in permission_nonce_callback().
 		if ( isset( $_REQUEST['style_manager_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_REQUEST['style_manager_settings_nonce'] );
+			$nonce = sanitize_text_field( wp_unslash( $_REQUEST['style_manager_settings_nonce'] ) );
 		} elseif ( isset( $_POST['style_manager_settings_nonce'] ) ) {
-			$nonce = wp_unslash( $_POST['style_manager_settings_nonce'] );
+			$nonce = sanitize_text_field( wp_unslash( $_POST['style_manager_settings_nonce'] ) );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification
 
 		return $nonce;
 	}

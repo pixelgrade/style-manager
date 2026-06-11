@@ -648,11 +648,11 @@ class Customize extends AbstractHookProvider {
 			wp_send_json_error( esc_html__( 'No rating provided', '__plugin_txtd' ) );
 		}
 
-		$type    = sanitize_text_field( $_POST['type'] );
+		$type    = sanitize_text_field( wp_unslash( $_POST['type'] ) );
 		$rating  = intval( $_POST['rating'] );
 		$message = '';
 		if ( ! empty( $_POST['message'] ) ) {
-			$message = wp_kses_post( $_POST['message'] );
+			$message = wp_kses_post( wp_unslash( $_POST['message'] ) );
 		}
 
 		$request_data = [

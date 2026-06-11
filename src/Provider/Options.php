@@ -699,11 +699,13 @@ class Options extends AbstractHookProvider {
 
 		// If we are in the Customizer and the request has a $_POST['customized'] parameter, we will skip the cache
 		// since this means that the preview is being reloaded with temporary settings values.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended -- read-only cache decision during a Customizer preview; WordPress handles preview authentication.
 		if ( ! empty( $_POST['customized'] ) ) {
 			return true;
 		}
 
 		// If we are currently previewing a theme without being actually active, we should not use cached data.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only cache decision during theme preview; WordPress handles preview authentication.
 		if ( ! empty( $_REQUEST['theme'] ) || ! empty( $_REQUEST['customize_theme'] ) ) {
 			return true;
 		}

@@ -69,11 +69,12 @@ class FileBody implements ResponseBody {
 		}
 
 		if ( $this->function_exists( 'ini_set' ) ) {
-			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_ini_set
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_ini_set, Squiz.PHP.DiscouragedFunctions.Discouraged -- streaming download: turn off output compression so chunks flush.
 			ini_set( 'zlib.output_compression', 'Off' );
 		}
 
 		if ( $this->function_exists( 'set_time_limit' ) ) {
+			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- streaming download: prevent a PHP timeout while sending a large file.
 			set_time_limit( 0 );
 		}
 	}

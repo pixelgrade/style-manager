@@ -1,6 +1,6 @@
-=== Style Manager - Auto-magical system to style your entire WordPress site ===
+=== Style Manager ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
-Tags: design, customizer, fonts, colors, gutenberg, font palettes, color palettes, global styles
+Tags: design, customizer, fonts, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
 Stable tag: 2.2.13
