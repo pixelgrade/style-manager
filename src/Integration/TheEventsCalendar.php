@@ -41,9 +41,9 @@ class TheEventsCalendar extends AbstractHookProvider {
 		}
 
 		wp_deregister_script( 'tribe-select2' );
-		wp_register_script( 'tribe-select2', '' );
+		wp_register_script( 'tribe-select2', '', [], \Pixelgrade\StyleManager\VERSION, true );
 
 		wp_deregister_style( 'tribe-select2-css' );
-		wp_register_style( 'tribe-select2-css', '' );
+		wp_register_style( 'tribe-select2-css', '', [], \Pixelgrade\StyleManager\VERSION );
 	}
 }

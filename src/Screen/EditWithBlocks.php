@@ -253,7 +253,7 @@ class EditWithBlocks extends AbstractHookProvider {
 			return;
 		}
 
-		wp_register_style( 'style-manager-editor-dynamic', false );
+		wp_register_style( 'style-manager-editor-dynamic', false, [], \Pixelgrade\StyleManager\VERSION );
 		wp_enqueue_style( 'style-manager-editor-dynamic' );
 		wp_add_inline_style( 'style-manager-editor-dynamic', $css );
 	}

@@ -131,7 +131,7 @@ class EditWithClassicEditor extends AbstractHookProvider {
 				'pixelgrade_style_manager-web-font-loader',
 				$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ),
 				['jquery'],
-				null,
+				\Pixelgrade\StyleManager\VERSION,
 				true );
 			wp_enqueue_script( 'pixelgrade_style_manager-web-font-loader' );
 			wp_add_inline_script( 'pixelgrade_style_manager-web-font-loader', $script );

@@ -90,7 +90,8 @@ class GeneralAssets extends AbstractHookProvider {
 			'pixelgrade_style_manager-dark-mode',
 			$this->plugin->get_url( 'dist/js/dark-mode.js' ),
 			[ 'jquery' ],
-			VERSION
+			VERSION,
+			true
 		);
 	}
 

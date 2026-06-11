@@ -229,7 +229,7 @@ class Fonts extends AbstractHookProvider {
 		// Add preconnect links as early as possible for faster external fonts loading.
 		add_action( 'wp_head', [ $this, 'add_preconnect_links' ], 0 );
 		wp_register_script( 'pixelgrade_style_manager-web-font-loader',
-			$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ), [], null, ! ( 'wp_head' === $load_location ) );
+			$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ), [], \Pixelgrade\StyleManager\VERSION, ! ( 'wp_head' === $load_location ) );
 		add_action( 'wp_enqueue_scripts', [ $this, 'add_webfont_loader_inline_scripts' ], -1 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts_styles' ], 0 );
 
@@ -1383,7 +1383,7 @@ class Fonts extends AbstractHookProvider {
 		$fontStylesheetUrls = $this->getFontsStylesheetUrls();
 		if ( ! empty( $fontStylesheetUrls ) ) {
 			foreach ( $fontStylesheetUrls as $key => $fontStylesheetUrl ) {
-				wp_enqueue_style( 'style-manager-font-stylesheet-' . $key, $fontStylesheetUrl, [], null );
+				wp_enqueue_style( 'style-manager-font-stylesheet-' . $key, $fontStylesheetUrl, [], \Pixelgrade\StyleManager\VERSION );
 			}
 
 			// Now we need to output the JavaScript logic for detecting the fonts loaded event, just like WebFontLoader does.

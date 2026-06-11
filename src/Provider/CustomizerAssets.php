@@ -43,19 +43,19 @@ class CustomizerAssets extends AbstractHookProvider {
 		wp_register_script( 'pixelgrade_style_manager-select2',
 			$this->plugin->get_url( 'vendor_js/select2-4.0.13/dist/js/select2.full' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
-			VERSION );
+			VERSION, true );
 		wp_register_script( 'jquery-react',
 			$this->plugin->get_url( 'vendor_js/jquery-react' . $scripts_suffix . '.js' ),
 			[ 'jquery' ],
-			VERSION );
+			VERSION, true );
 		wp_register_script( 'pixelgrade_style_manager-regression',
 			$this->plugin->get_url( 'vendor_js/regression' . $scripts_suffix . '.js' ),
 			[],
-			VERSION );
+			VERSION, true );
 		wp_register_script( 'pixelgrade_style_manager-chroma',
 			$this->plugin->get_url( 'vendor_js/chroma' . $scripts_suffix . '.js' ),
 			[],
-			VERSION );
+			VERSION, true );
 		wp_register_script( 'pixelgrade_style_manager-customizer',
 			$this->plugin->get_url( 'dist/js/customizer.js' ),
 			[
@@ -71,7 +71,7 @@ class CustomizerAssets extends AbstractHookProvider {
 				'wp-element',
 				'customize-controls',
 			],
-			VERSION );
+			VERSION, true );
 		wp_localize_script( 'pixelgrade_style_manager-customizer', 'WP_API_Settings', [
 			'root'  => esc_url_raw( rest_url() ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -117,12 +117,12 @@ class CustomizerAssets extends AbstractHookProvider {
 		wp_register_script( 'pixelgrade_style_manager-fuse',
 			$this->plugin->get_url( 'vendor_js/fuse-6.0.0/fuse.basic' . $scripts_suffix . '.js' ),
 			[],
-			null );
+			VERSION, true );
 
 		wp_register_script( 'pixelgrade_style_manager-customizer-search',
 			$this->plugin->get_url( 'dist/js/customizer-search.js' ),
 			[ 'jquery', 'pixelgrade_style_manager-fuse', ],
-			VERSION );
+			VERSION, true );
 
 
 	}

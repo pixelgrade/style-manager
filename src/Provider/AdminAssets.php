@@ -105,6 +105,6 @@ class AdminAssets extends AbstractHookProvider {
 		wp_register_script(
 			'pixelgrade_style_manager-web-font-loader',
 			$this->plugin->get_url( 'vendor_js/webfontloader-1-6-28.min.js' ),
-			[ 'wp-block-editor' ], null );
+			[ 'wp-block-editor' ], \Pixelgrade\StyleManager\VERSION, true );
 	}
 }
