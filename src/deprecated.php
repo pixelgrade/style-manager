@@ -52,6 +52,7 @@ namespace { // global code
 		 *
 		 * @author     Pixelgrade <contact@pixelgrade.com>
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- legacy back-compat class; deprecated in favour of Pixelgrade\StyleManager\Plugin.
 		class PixCustomifyPlugin {
 
 			/**

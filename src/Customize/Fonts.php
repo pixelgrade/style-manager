@@ -177,6 +177,7 @@ class Fonts extends AbstractHookProvider {
 
 		$this->theme_fonts = apply_filters( 'style_manager/theme_fonts', [] );
 		// This is just for backwards compatibility.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy Customify-era hook kept for back-compat with existing integrations.
 		$this->theme_fonts = apply_filters( 'customify_theme_fonts', $this->theme_fonts );
 		$this->theme_fonts = FontsHelper::standardizeFontsList( $this->theme_fonts );
 		// Add the fonts to selects of the Customizer controls.

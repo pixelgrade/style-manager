@@ -811,6 +811,7 @@ class Options extends AbstractHookProvider {
 			// Allow themes or other plugins to filter the config.
 			$data = \apply_filters( 'style_manager/filter_fields', [] );
 			// This is just for backwards compatibility.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy Customify-era hook kept for back-compat with existing integrations.
 			$data = apply_filters( 'customify_filter_fields', $data );
 			// Make sure that we have an array.
 			if ( ! is_array( $data ) ) {
@@ -821,6 +822,7 @@ class Options extends AbstractHookProvider {
 			// We apply a second filter for those that wish to work with the final config and not rely on a huge priority number.
 			$data = apply_filters( 'style_manager/final_config', $data );
 			// This is just for backwards compatibility.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy Customify-era hook kept for back-compat with existing integrations.
 			$data = apply_filters( 'customify_final_config', $data );
 			// Make sure that we have an array.
 			if ( ! is_array( $data ) ) {

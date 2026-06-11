@@ -458,6 +458,7 @@ class Customize extends AbstractHookProvider {
 	public static function get_all_wupdates_identification_data(): array {
 		if ( empty( self::$wupdates_ids ) ) {
 			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- third-party WUpdates hook consumed to gather product IDs; not owned by this plugin.
 			self::$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
 		}
 

@@ -21,7 +21,7 @@ declare ( strict_types=1 );
  *
  * @return array
  */
-function sm_get_color_select_darker_config( $label, $selector, $default, $properties = [ 'color' ] ): array {
+function style_manager_get_color_select_darker_config( $label, $selector, $default, $properties = [ 'color' ] ): array {
 	return sm_get_color_select_dark_config( $label, $selector, $default, $properties, true );
 }
 
@@ -36,7 +36,7 @@ function sm_get_color_select_darker_config( $label, $selector, $default, $proper
  *
  * @return array
  */
-function sm_get_color_select_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ): array {
+function style_manager_get_color_select_dark_config( $label, $selector, $default, $properties = [ 'color' ], $isDarker = false ): array {
 
 	$callback = 'sm_color_select_dark_cb';
 	$choices  = [
@@ -87,7 +87,7 @@ function sm_get_color_select_dark_config( $label, $selector, $default, $properti
  *
  * @return string
  */
-function sm_color_select_dark_cb( string $value, string $selector, string $property ): string {
+function style_manager_color_select_dark_cb( string $value, string $selector, string $property ): string {
 	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
 }
 
@@ -100,7 +100,7 @@ function sm_color_select_dark_cb( string $value, string $selector, string $prope
  *
  * @return string
  */
-function sm_color_select_darker_cb( string $value, string $selector, string $property ): string {
+function style_manager_color_select_darker_cb( string $value, string $selector, string $property ): string {
 	return $selector . ' { ' . $property . ': var(--sm-current-' . $value . '-color); }' . PHP_EOL;
 }
 
@@ -114,7 +114,7 @@ function sm_color_select_darker_cb( string $value, string $selector, string $pro
  *
  * @return array
  */
-function sm_get_color_switch_darker_config( $label, $selector, $default, $coloration = 2, $properties = [ 'color' ] ): array {
+function style_manager_get_color_switch_darker_config( $label, $selector, $default, $coloration = 2, $properties = [ 'color' ] ): array {
 	return sm_get_color_switch_dark_config( $label, $selector, $default, $coloration, $properties, true );
 }
 
@@ -129,7 +129,7 @@ function sm_get_color_switch_darker_config( $label, $selector, $default, $colora
  *
  * @return array
  */
-function sm_get_color_switch_dark_config( $label, $selector, $default, $coloration = 2, $properties = [ 'color' ], $isDarker = false ): array {
+function style_manager_get_color_switch_dark_config( $label, $selector, $default, $coloration = 2, $properties = [ 'color' ], $isDarker = false ): array {
 
 	$css      = [];
 	$callback = 'sm_color_switch_dark_cb';
@@ -169,7 +169,7 @@ function sm_get_color_switch_dark_config( $label, $selector, $default, $colorati
  *
  * @return string
  */
-function sm_color_switch_dark_cb( bool $value, string $selector, string $property ): string {
+function style_manager_color_switch_dark_cb( bool $value, string $selector, string $property ): string {
 	$color = 'fg1';
 
 	if ( $value === true ) {
@@ -188,7 +188,7 @@ function sm_color_switch_dark_cb( bool $value, string $selector, string $propert
  *
  * @return string
  */
-function sm_color_switch_darker_cb( bool $value, string $selector, string $property ): string {
+function style_manager_color_switch_darker_cb( bool $value, string $selector, string $property ): string {
 	$color = 'fg2';
 
 	if ( $value === true ) {
@@ -205,7 +205,7 @@ function sm_color_switch_darker_cb( bool $value, string $selector, string $prope
  *
  * @return string
  */
-function sm_get_palette_output_from_color_config( string $value ): string {
+function style_manager_get_palette_output_from_color_config( string $value ): string {
 	$output = '';
 
 	$palettes = json_decode( $value );
@@ -226,7 +226,7 @@ function sm_get_palette_output_from_color_config( string $value ): string {
  *
  * @return array
  */
-function sm_get_saved_palettes(): array {
+function style_manager_get_saved_palettes(): array {
 	$palettes = json_decode( (string) get_option( 'sm_advanced_palette_output', '[]' ) );
 
 	if ( empty( $palettes ) ) {
@@ -246,7 +246,7 @@ function sm_get_saved_palettes(): array {
  *
  * @return array
  */
-function sm_get_runtime_palettes( array $saved_palettes = [], array $context = [] ): array {
+function style_manager_get_runtime_palettes( array $saved_palettes = [], array $context = [] ): array {
 	$runtime_palettes = apply_filters( 'style_manager/runtime_palettes', [], $saved_palettes, $context );
 
 	return is_array( $runtime_palettes ) ? array_values( array_filter( $runtime_palettes ) ) : [];
@@ -261,7 +261,7 @@ function sm_get_runtime_palettes( array $saved_palettes = [], array $context = [
  *
  * @return array
  */
-function sm_get_palette_runtime_payload( array $context = [] ): array {
+function style_manager_get_palette_runtime_payload( array $context = [] ): array {
 	$saved_palettes   = sm_get_saved_palettes();
 	$runtime_palettes = sm_get_runtime_palettes( $saved_palettes, $context );
 	$palettes         = sm_merge_palettes_by_id( $saved_palettes, $runtime_palettes );
@@ -283,7 +283,7 @@ function sm_get_palette_runtime_payload( array $context = [] ): array {
  *
  * @return array
  */
-function sm_merge_palettes_by_id( array $palettes, array $runtime_palettes = [] ): array {
+function style_manager_merge_palettes_by_id( array $palettes, array $runtime_palettes = [] ): array {
 	$by_id = [];
 
 	foreach ( array_merge( $palettes, $runtime_palettes ) as $palette ) {
@@ -306,7 +306,7 @@ function sm_merge_palettes_by_id( array $palettes, array $runtime_palettes = [] 
  *
  * @return array
  */
-function sm_get_palettes_for_runtime_context( array $context = [] ): array {
+function style_manager_get_palettes_for_runtime_context( array $context = [] ): array {
 	$payload = sm_get_palette_runtime_payload( $context );
 
 	return $payload['palettes'];
@@ -319,7 +319,7 @@ function sm_get_palettes_for_runtime_context( array $context = [] ): array {
  *
  * @return array
  */
-function sm_get_palettes_for_current_request(): array {
+function style_manager_get_palettes_for_current_request(): array {
 	return sm_get_palettes_for_runtime_context();
 }
 
@@ -332,7 +332,7 @@ function sm_get_palettes_for_current_request(): array {
  *
  * @return string
  */
-function sm_get_palette_output_for_runtime_context( array $context = [] ): string {
+function style_manager_get_palette_output_for_runtime_context( array $context = [] ): string {
 	$payload = sm_get_palette_runtime_payload( $context );
 
 	return sm_palettes_output( $payload['palettes'] );
@@ -345,7 +345,7 @@ function sm_get_palette_output_for_runtime_context( array $context = [] ): strin
  *
  * @return string
  */
-function sm_get_palette_output_for_current_request(): string {
+function style_manager_get_palette_output_for_current_request(): string {
 	return sm_get_palette_output_for_runtime_context();
 }
 
@@ -358,7 +358,7 @@ function sm_get_palette_output_for_current_request(): string {
  *
  * @return array
  */
-function sm_get_palette_runtime_preview_payload( array $context = [] ): array {
+function style_manager_get_palette_runtime_preview_payload( array $context = [] ): array {
 	return sm_get_palette_runtime_payload( $context );
 }
 
@@ -376,7 +376,7 @@ function sm_get_palette_runtime_preview_payload( array $context = [] ): array {
  *
  * @return object|null
  */
-function sm_build_contextual_palette_from_color( string $color, string $id = 'contextual-post', string $label = 'Contextual Post' ) {
+function style_manager_build_contextual_palette_from_color( string $color, string $id = 'contextual-post', string $label = 'Contextual Post' ) {
 	$color = strtolower( (string) sanitize_hex_color( $color ) );
 
 	if ( empty( $color ) ) {
@@ -431,7 +431,7 @@ function sm_build_contextual_palette_from_color( string $color, string $id = 'co
  *
  * @return object
  */
-function sm_build_contextual_palette_variation( string $background, string $source ): object {
+function style_manager_build_contextual_palette_variation( string $background, string $source ): object {
 	$foreground = sm_pick_contextual_text_color( $background );
 	$accent     = sm_get_accessible_contextual_accent( $background, $source, $foreground );
 
@@ -452,7 +452,7 @@ function sm_build_contextual_palette_variation( string $background, string $sour
  *
  * @return string
  */
-function sm_pick_contextual_text_color( string $background ): string {
+function style_manager_pick_contextual_text_color( string $background ): string {
 	$black_contrast = sm_hex_color_contrast_ratio( $background, '#111111' );
 	$white_contrast = sm_hex_color_contrast_ratio( $background, '#ffffff' );
 
@@ -470,7 +470,7 @@ function sm_pick_contextual_text_color( string $background ): string {
  *
  * @return string
  */
-function sm_get_accessible_contextual_accent( string $background, string $source, string $fallback ): string {
+function style_manager_get_accessible_contextual_accent( string $background, string $source, string $fallback ): string {
 	if ( sm_hex_color_contrast_ratio( $background, $source ) >= 2.5 ) {
 		return $source;
 	}
@@ -497,7 +497,7 @@ function sm_get_accessible_contextual_accent( string $background, string $source
  *
  * @return string
  */
-function sm_mix_hex_colors( string $base, string $mix, float $ratio ): string {
+function style_manager_mix_hex_colors( string $base, string $mix, float $ratio ): string {
 	$ratio = max( 0, min( 1, $ratio ) );
 	$base_rgb = sm_hex_to_rgb_channels( $base );
 	$mix_rgb  = sm_hex_to_rgb_channels( $mix );
@@ -519,7 +519,7 @@ function sm_mix_hex_colors( string $base, string $mix, float $ratio ): string {
  *
  * @return float
  */
-function sm_hex_color_contrast_ratio( string $color_a, string $color_b ): float {
+function style_manager_hex_color_contrast_ratio( string $color_a, string $color_b ): float {
 	$luminance_a = sm_hex_color_relative_luminance( $color_a );
 	$luminance_b = sm_hex_color_relative_luminance( $color_b );
 	$light       = max( $luminance_a, $luminance_b );
@@ -537,7 +537,7 @@ function sm_hex_color_contrast_ratio( string $color_a, string $color_b ): float 
  *
  * @return float
  */
-function sm_hex_color_relative_luminance( string $color ): float {
+function style_manager_hex_color_relative_luminance( string $color ): float {
 	$channels = sm_hex_to_rgb_channels( $color );
 	$linear   = array_map(
 		static function ( int $channel ): float {
@@ -564,7 +564,7 @@ function sm_hex_color_relative_luminance( string $color ): float {
  *
  * @return int[]
  */
-function sm_hex_to_rgb_channels( string $color ): array {
+function style_manager_hex_to_rgb_channels( string $color ): array {
 	$color = ltrim( strtolower( $color ), '#' );
 
 	if ( strlen( $color ) === 3 ) {
@@ -585,7 +585,7 @@ function sm_hex_to_rgb_channels( string $color ): array {
  *
  * @return string
  */
-function sm_palettes_output( array $palettes ): string {
+function style_manager_palettes_output( array $palettes ): string {
 	$output = '';
 
 	foreach ( $palettes as $palette ) {
@@ -605,7 +605,7 @@ function sm_palettes_output( array $palettes ): string {
  *
  * @return string
  */
-function sm_get_palette_css( $palette ): string {
+function style_manager_get_palette_css( $palette ): string {
 	$output = '';
 	$id = $palette->id;
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
@@ -640,7 +640,7 @@ function sm_get_palette_css( $palette ): string {
 	return $output;
 }
 
-function sm_get_variation_css_variables( $variations, $index, $offset = 0 ): string {
+function style_manager_get_variation_css_variables( $variations, $index, $offset = 0 ): string {
 	$output = '';
 
 	$variation = $variations[ ( $index + $offset ) % 12 ];
@@ -657,7 +657,7 @@ function sm_get_variation_css_variables( $variations, $index, $offset = 0 ): str
  *
  * @return string
  */
-function sm_get_legacy_palette_css( $palette ): string {
+function style_manager_get_legacy_palette_css( $palette ): string {
 	$output = '';
 
 	$variation = intval( get_option( 'sm_site_color_variation', 1 ) );
@@ -691,7 +691,7 @@ function sm_get_legacy_palette_css( $palette ): string {
 	return $output;
 }
 
-function sm_get_apply_palette_variables( $id, $suffix = '' ): string {
+function style_manager_get_apply_palette_variables( $id, $suffix = '' ): string {
 	$output = '';
 
 	for ( $i = 1; $i <= 12; $i++ ) {
@@ -711,7 +711,7 @@ function sm_get_apply_palette_variables( $id, $suffix = '' ): string {
  *
  * @return string
  */
-function sm_get_initial_color_variables( $palette ): string {
+function style_manager_get_initial_color_variables( $palette ): string {
 	$colors = $palette->colors;
 	$textColors = $palette->textColors;
 	$id = $palette->id;
@@ -740,7 +740,7 @@ function sm_get_initial_color_variables( $palette ): string {
  *
  * @return string
  */
-function sm_get_variables_css( $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ): string {
+function style_manager_get_variables_css( $palette, int $offset = 0, bool $isDark = false, bool $isShifted = false ): string {
 	$colors = $palette->colors;
 	$count = count( $colors );
 
@@ -773,7 +773,7 @@ function sm_get_variables_css( $palette, int $offset = 0, bool $isDark = false, 
  *
  * @return string
  */
-function sm_get_color_variables( $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ): string {
+function style_manager_get_color_variables( $palette, int $newColorIndex, int $oldColorIndex, bool $isShifted ): string {
 	$colors = $palette->colors;
 	$id = $palette->id;
 	$count = count( $colors );
@@ -804,7 +804,7 @@ function sm_get_color_variables( $palette, int $newColorIndex, int $oldColorInde
  *
  * @return array
  */
-function sm_get_fallback_palettes(): array {
+function style_manager_get_fallback_palettes(): array {
 
 	$order = [
 		'primary',
@@ -903,7 +903,7 @@ function sm_get_fallback_palettes(): array {
 	return $palettes;
 }
 
-function sm_get_fallback_color_value( $id ) {
+function style_manager_get_fallback_color_value( $id ) {
 
 	$color = \Pixelgrade\StyleManager\get_option( $id . '_final' );
 
@@ -944,7 +944,7 @@ if ( ! function_exists( 'sm_filter_user_palettes' ) ) {
 	}
 }
 
-function sm_advanced_palette_output_cb( string $value, string $selector, string $property ): string {
+function style_manager_advanced_palette_output_cb( string $value, string $selector, string $property ): string {
 	$palettes = json_decode( $value );
 
 	if ( empty( $palettes ) ) {
@@ -963,6 +963,88 @@ function sm_advanced_palette_output_cb( string $value, string $selector, string 
 	);
 }
 
-function sm_site_color_variation_cb( string $value, string $selector, string $property ): string {
+function style_manager_site_color_variation_cb( string $value, string $selector, string $property ): string {
 	return '';
 }
+
+/*
+ * Back-compat aliases for the renamed style_manager_* functions.
+ * Kept so existing themes (Anima) and Nova Blocks that call the legacy
+ * sm_* names keep working. The canonical, prefixed API is style_manager_*.
+ */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_color_select_darker_config().
+function sm_get_color_select_darker_config( ...$args ) { return style_manager_get_color_select_darker_config( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_color_select_dark_config().
+function sm_get_color_select_dark_config( ...$args ) { return style_manager_get_color_select_dark_config( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_color_select_dark_cb().
+function sm_color_select_dark_cb( ...$args ) { return style_manager_color_select_dark_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_color_select_darker_cb().
+function sm_color_select_darker_cb( ...$args ) { return style_manager_color_select_darker_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_color_switch_darker_config().
+function sm_get_color_switch_darker_config( ...$args ) { return style_manager_get_color_switch_darker_config( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_color_switch_dark_config().
+function sm_get_color_switch_dark_config( ...$args ) { return style_manager_get_color_switch_dark_config( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_color_switch_dark_cb().
+function sm_color_switch_dark_cb( ...$args ) { return style_manager_color_switch_dark_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_color_switch_darker_cb().
+function sm_color_switch_darker_cb( ...$args ) { return style_manager_color_switch_darker_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palette_output_from_color_config().
+function sm_get_palette_output_from_color_config( ...$args ) { return style_manager_get_palette_output_from_color_config( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_saved_palettes().
+function sm_get_saved_palettes( ...$args ) { return style_manager_get_saved_palettes( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_runtime_palettes().
+function sm_get_runtime_palettes( ...$args ) { return style_manager_get_runtime_palettes( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palette_runtime_payload().
+function sm_get_palette_runtime_payload( ...$args ) { return style_manager_get_palette_runtime_payload( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_merge_palettes_by_id().
+function sm_merge_palettes_by_id( ...$args ) { return style_manager_merge_palettes_by_id( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palettes_for_runtime_context().
+function sm_get_palettes_for_runtime_context( ...$args ) { return style_manager_get_palettes_for_runtime_context( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palettes_for_current_request().
+function sm_get_palettes_for_current_request( ...$args ) { return style_manager_get_palettes_for_current_request( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palette_output_for_runtime_context().
+function sm_get_palette_output_for_runtime_context( ...$args ) { return style_manager_get_palette_output_for_runtime_context( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palette_output_for_current_request().
+function sm_get_palette_output_for_current_request( ...$args ) { return style_manager_get_palette_output_for_current_request( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palette_runtime_preview_payload().
+function sm_get_palette_runtime_preview_payload( ...$args ) { return style_manager_get_palette_runtime_preview_payload( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_build_contextual_palette_from_color().
+function sm_build_contextual_palette_from_color( ...$args ) { return style_manager_build_contextual_palette_from_color( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_build_contextual_palette_variation().
+function sm_build_contextual_palette_variation( ...$args ) { return style_manager_build_contextual_palette_variation( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_pick_contextual_text_color().
+function sm_pick_contextual_text_color( ...$args ) { return style_manager_pick_contextual_text_color( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_accessible_contextual_accent().
+function sm_get_accessible_contextual_accent( ...$args ) { return style_manager_get_accessible_contextual_accent( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_mix_hex_colors().
+function sm_mix_hex_colors( ...$args ) { return style_manager_mix_hex_colors( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_hex_color_contrast_ratio().
+function sm_hex_color_contrast_ratio( ...$args ) { return style_manager_hex_color_contrast_ratio( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_hex_color_relative_luminance().
+function sm_hex_color_relative_luminance( ...$args ) { return style_manager_hex_color_relative_luminance( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_hex_to_rgb_channels().
+function sm_hex_to_rgb_channels( ...$args ) { return style_manager_hex_to_rgb_channels( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_palettes_output().
+function sm_palettes_output( ...$args ) { return style_manager_palettes_output( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_palette_css().
+function sm_get_palette_css( ...$args ) { return style_manager_get_palette_css( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_variation_css_variables().
+function sm_get_variation_css_variables( ...$args ) { return style_manager_get_variation_css_variables( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_legacy_palette_css().
+function sm_get_legacy_palette_css( ...$args ) { return style_manager_get_legacy_palette_css( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_apply_palette_variables().
+function sm_get_apply_palette_variables( ...$args ) { return style_manager_get_apply_palette_variables( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_initial_color_variables().
+function sm_get_initial_color_variables( ...$args ) { return style_manager_get_initial_color_variables( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_variables_css().
+function sm_get_variables_css( ...$args ) { return style_manager_get_variables_css( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_color_variables().
+function sm_get_color_variables( ...$args ) { return style_manager_get_color_variables( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_fallback_palettes().
+function sm_get_fallback_palettes( ...$args ) { return style_manager_get_fallback_palettes( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_get_fallback_color_value().
+function sm_get_fallback_color_value( ...$args ) { return style_manager_get_fallback_color_value( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_advanced_palette_output_cb().
+function sm_advanced_palette_output_cb( ...$args ) { return style_manager_advanced_palette_output_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_site_color_variation_cb().
+function sm_site_color_variation_cb( ...$args ) { return style_manager_site_color_variation_cb( ...$args ); }

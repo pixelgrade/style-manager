@@ -97,6 +97,7 @@ class PixelgradeCloud implements CloudInterface {
 		 */
 		$request_data = apply_filters( 'style_manager/pixelgrade_cloud_request_data', $request_data );
 		// This is for backwards compatibility.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy Customify-era hook kept for back-compat with existing integrations.
 		$request_data = apply_filters( 'customify_pixelgrade_cloud_request_data', $request_data, $this );
 
 		$response_data = $this->request_design_assets( $request_data );
@@ -182,6 +183,7 @@ class PixelgradeCloud implements CloudInterface {
 				$method,
 				[
 					'timeout' => 5,
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- established filter name for the SSL CA bundle path.
 					'verify' => apply_filters( 'https_ssl_verify', ABSPATH . WPINC . '/certificates/ca-bundle.crt', $url ),
 					'data_format' => 'body',
 				]
@@ -217,6 +219,7 @@ class PixelgradeCloud implements CloudInterface {
 		}
 
 		// Maybe get the WUpdates theme info if it's a theme delivered from WUpdates.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- third-party WUpdates hook consumed to gather product IDs; not owned by this plugin.
 		$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
 		if ( ! empty( $wupdates_ids[ $slug ] ) ) {
 			$theme_data['wupdates'] = $wupdates_ids[ $slug ];
@@ -276,6 +279,7 @@ class PixelgradeCloud implements CloudInterface {
 		 */
 		$data = apply_filters( 'style_manager/pixelgrade_cloud_request_data', $data );
 		// This is for backwards compatibility.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy Customify-era hook kept for back-compat with existing integrations.
 		$data = apply_filters( 'customify_pixelgrade_cloud_request_data', $data, $this );
 
 		$request_args = [

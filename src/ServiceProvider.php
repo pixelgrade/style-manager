@@ -52,6 +52,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			] );
 
 			// This is for backwards compatibility.
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy Customify-era hook kept for back-compat with existing integrations.
 			$endpoints = apply_filters( 'customify_style_manager_external_api_endpoints', $endpoints );
 
 			return $endpoints;
