@@ -824,9 +824,9 @@ class Fonts extends AbstractHookProvider {
 				} elseif ( ! empty( $font_details['variants'] ) ) {
 					$font_family .= ':' . join( ',', FontsHelper::convertFontVariantsToFvds( $font_details['variants'] ) );
 				}
-				$args['custom_families'][] = "'" . $font_family . "'";
+				$args['custom_families'][] = "'" . esc_js( $font_family ) . "'";
 				if ( ! empty( $font_details['src'] ) ) {
-					$args['custom_srcs'][] = "'" . $font_details['src'] . "'";
+					$args['custom_srcs'][] = "'" . esc_js( $font_details['src'] ) . "'";
 				}
 				continue;
 			}
@@ -1478,17 +1478,17 @@ const styleManagerFontLoader = function() {
 	};
 		<?php if ( ! empty( $args['google_families'] ) ) { ?>
 	webfontargs.google = {
-		families: [<?php echo join( ',', $args['google_families'] ); ?>]
+		families: [<?php echo join( ',', $args['google_families'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- font family names are esc_js-escaped at construction. ?>]
 	};
 		<?php }
 
 		if ( ! empty( $args['custom_families'] ) ) { ?>
 	webfontargs.custom = {
-		families: [<?php echo join( ',', $args['custom_families'] ); ?>]
+		families: [<?php echo join( ',', $args['custom_families'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- font family names are esc_js-escaped at construction. ?>]
 	};
 
 			<?php if ( ! empty( $args['custom_srcs'] ) ) { ?>
-	webfontargs.custom.urls = [<?php echo join( ',', $args['custom_srcs'] ); ?>];
+	webfontargs.custom.urls = [<?php echo join( ',', $args['custom_srcs'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- font src URLs are esc_js-escaped at construction. ?>];
 			<?php }
 		} ?>
 

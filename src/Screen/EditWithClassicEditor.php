@@ -245,7 +245,7 @@ const styleManagerIframeFontLoader = function(context) {
 	};
 		<?php if ( ! empty( $args['google_families'] ) ) { ?>
 	webfontargs.google = {
-		families: [<?php echo join( ',', $args['google_families'] ); ?>]
+		families: [<?php echo join( ',', $args['google_families'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- font family names are esc_js-escaped at construction. ?>]
 	};
 		<?php }
 		$custom_families = [];
@@ -258,8 +258,8 @@ const styleManagerIframeFontLoader = function(context) {
 
 		if ( ! empty( $custom_families ) && ! empty( $custom_urls ) ) { ?>
 	webfontargs.custom = {
-		families: [<?php echo join( ',', $custom_families ); ?>],
-		urls: [<?php echo join( ',', $custom_urls ) ?>]
+		families: [<?php echo join( ',', $custom_families ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- font family names are esc_js-escaped at construction. ?>],
+		urls: [<?php echo join( ',', $custom_urls ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- font src URLs are esc_js-escaped at construction. ?>]
 	};
 		<?php } ?>
 	WebFont.load(webfontargs);

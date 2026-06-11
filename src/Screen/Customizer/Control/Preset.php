@@ -602,6 +602,7 @@ class Preset extends BaseControl {
 						// ok now we have our preview fonts, let's ask them from google
 						// note that we request only these chars "AaBbCc" so it should be a small request
 						$preview_fonts_url = '//fonts.googleapis.com/css?family=' . implode( '|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo( 'name' ), 0, 2 );
+						// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- legacy "awesome" preset: a per-choice Google Fonts preview link rendered inline inside the Customizer control.
 						echo '<link href="' . esc_url( $preview_fonts_url ) . '" rel="stylesheet" type="text/css">'; ?>
 					</div>
 
