@@ -117,6 +117,9 @@ src/_scss
 # resources/ — shipping it tripped ~36 Plugin Check findings (foreign text
 # domains, empty translatable strings, undefined constants).
 resources/sm_theme_root.php
+# Editor workspace file and dev-only patch notes — not part of the plugin.
+style-manager.code-workspace
+patches
 
 #
 # Composer related
