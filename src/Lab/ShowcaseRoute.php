@@ -127,6 +127,7 @@ final class ShowcaseRoute extends AbstractHookProvider {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS inside a <style> tag; wp_strip_all_tags prevents tag breakout and HTML-escaping would corrupt valid CSS.
 		printf(
 			'<style id="style-manager-lab-contextual-palette">%s</style>',
 			wp_strip_all_tags( $css )

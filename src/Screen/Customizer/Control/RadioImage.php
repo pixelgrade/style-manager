@@ -99,9 +99,9 @@ class RadioImage extends BaseControl {
 									type="radio"
 									value="<?php echo esc_attr( $value ); ?>"
 									<?php selected( $this->value(), $value ); ?>
-									<?php echo $data; ?>
+									<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 								/>
-								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; ?>>
+								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style color escaped at construction above. ?>>
 									<?php echo esc_html( $label ); ?>
 								</label>
 							</fieldset>

@@ -39,7 +39,7 @@ class SMToggle extends BaseControl {
 			<input
 				id="<?php echo esc_attr( $input_id ); ?>"
 				class="sm-toggle__checkbox"
-				<?php echo $describedby_attr; ?>
+				<?php echo $describedby_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- aria-describedby attribute with an esc_attr-escaped id, built above. ?>
 				type="checkbox"
 				value="<?php echo esc_attr( $this->value() ); ?>"
 				<?php $this->link(); ?>

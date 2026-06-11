@@ -103,7 +103,7 @@ class GeneralAdmin extends AbstractHookProvider {
 		<div class="style-manager-notice__container updated notice fade is-dismissible">
 			<h3><?php
 				/* translators: %s: The parent theme name. */
-				echo sprintf( __( 'You have activated a child theme for "%s". Good for you!', '__plugin_txtd' ), $parent_theme->get('Name') );
+				echo esc_html( sprintf( __( 'You have activated a child theme for "%s". Good for you!', '__plugin_txtd' ), $parent_theme->get('Name') ) );
 			?></h3>
 			<p>
 				<?php echo wp_kses_post( __( 'If you have already <strong>set up things in the Customizer,</strong> you may want to <strong>keep those customizations</strong> so you don\'t start over.', '__plugin_txtd' ) ); ?>
@@ -146,7 +146,7 @@ class GeneralAdmin extends AbstractHookProvider {
 
 						// Do an AJAX call to migrate the theme_mods.
 						$.ajax({
-							url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
+							url: "<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>",
 							type: 'post',
 							data: {
 								action: 'style_manager_migrate_customizations_from_parent_to_child_theme',
@@ -178,6 +178,7 @@ class GeneralAdmin extends AbstractHookProvider {
 			})(jQuery)
 		</script>
 		<?php
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- buffered admin notice markup; embedded strings use esc_html_e / wp_kses_post / wp_nonce_field above.
 		echo ob_get_clean();
 	}
 

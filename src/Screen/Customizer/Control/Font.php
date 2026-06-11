@@ -195,7 +195,7 @@ class Font extends BaseControl {
 			<ul class="font-options__options-list">
 				<li class="font-options__option customize-control">
 					<select id="select_font_font_family_<?php echo esc_attr( $this->CSSID ); ?>"
-					        class="style-manager_font_family"<?php echo $select_data; ?> data-value_entry="font_family">
+					        class="style-manager_font_family"<?php echo $select_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $select_data is a data-attribute string with an esc_attr-escaped value, built above. ?> data-value_entry="font_family">
 
 						<?php
 						do_action( 'style_manager/font_family_select_before_options', $current_font_family, $current_value, $this->id );
@@ -276,7 +276,7 @@ class Font extends BaseControl {
 		}
 		?>
 		<li class="style-manager_weights_wrapper customize-control font-options__option"
-		    style="display: <?php echo $display; ?>;">
+		    style="display: <?php echo esc_attr( $display ); ?>;">
 			<label><?php esc_html_e( 'Font Variant', '__plugin_txtd' ); ?></label>
 			<select class="style-manager_font_weight"
 			        data-value_entry="font_variant" <?php echo ( 'none' === $display ) ? 'data-disabled="true"' : '' ?>>
@@ -290,13 +290,8 @@ class Font extends BaseControl {
 					echo '<option value="">Auto</option>';
 
 					foreach ( $current_font_details['variants'] as $variant ) {
-						$attrs = '';
-						// We must make sure that they are converted to strings to avoid dubious conversions like 300italic == 300.
-						if ( (string) $variant === (string) $selected ) {
-							$attrs = ' selected="selected"';
-						}
-
-						echo '<option value="' . esc_attr( $variant ) . '" ' . $attrs . '> ' . $variant . '</option>';
+						// Cast to strings to avoid dubious conversions like 300italic == 300.
+						echo '<option value="' . esc_attr( $variant ) . '"' . selected( (string) $variant, (string) $selected, false ) . '> ' . esc_html( $variant ) . '</option>';
 					}
 				} ?>
 			</select>
@@ -319,7 +314,7 @@ class Font extends BaseControl {
 		// the user interacts with the control.
 		?>
 		<li class="style-manager_<?php echo esc_attr( $valueEntry ); ?>_wrapper customize-control customize-control-range font-options__option">
-			<label><?php echo $label ?></label>
+			<label><?php echo $label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $label is passed pre-escaped via esc_html__() by the caller. ?></label>
 			<input type="range"
 		        data-value_entry="<?php echo esc_attr( $valueEntry ) ?>"
 				<?php $this->range_field_attributes( $this->fields[ $field ] ) ?>
@@ -339,7 +334,7 @@ class Font extends BaseControl {
 		$attributes = FontsHelper::standardizeRangeFieldAttributes( $attributes );
 
 		foreach ( $attributes as $attr => $value ) {
-			echo $attr . '="' . esc_attr( $value ) . '" ';
+			echo esc_attr( $attr ) . '="' . esc_attr( $value ) . '" ';
 		}
 	}
 
@@ -351,12 +346,12 @@ class Font extends BaseControl {
 
 		$valid_values = FontsHelper::getValidSubfieldValues( $valueEntry, false );
 		$value        = isset( $currentFontValue->$valueEntry ) && ( empty( $valid_values ) || in_array( $currentFontValue->$valueEntry, $valid_values ) ) ? $currentFontValue->$valueEntry : reset( $valid_values ); ?>
-		<li class="style-manager_<?php echo $valueEntry ?>_wrapper customize-control font-options__option">
-			<label><?php echo $label ?></label>
+		<li class="style-manager_<?php echo esc_attr( $valueEntry ) ?>_wrapper customize-control font-options__option">
+			<label><?php echo $label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $label is passed pre-escaped via esc_html__() by the caller. ?></label>
 			<select data-value_entry="<?php echo esc_attr( $valueEntry ) ?>">
 				<?php
 				foreach ( FontsHelper::getValidSubfieldValues( $valueEntry, true ) as $option_value => $option_label ) { ?>
-					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo $option_label; ?></option>
+					<option <?php $this->display_option_value( $option_value, $value ); ?>><?php echo esc_html( $option_label ); ?></option>
 				<?php } ?>
 			</select>
 		</li>
@@ -371,6 +366,7 @@ class Font extends BaseControl {
 			$return .= ' selected="selected"';
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- assembled <option> attributes; the dynamic value is esc_attr-escaped above.
 		echo $return;
 	}
 
@@ -382,6 +378,7 @@ class Font extends BaseControl {
 	 *                                         False to not mark any opt as selected.
 	 */
 	protected function output_font_family_option( $font_family, $active_font_family = false ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- returns an <option> markup string assembled from esc_attr/esc_html-escaped values.
 		echo self::get_font_family_option_markup( $font_family, $active_font_family );
 	}
 

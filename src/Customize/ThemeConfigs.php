@@ -316,6 +316,7 @@ class ThemeConfigs extends AbstractHookProvider {
 		if ( ! empty( $this->external_theme_config['config'] ) ) {
 			// Also output the JSON in a special hidden div for easy copying and pasting.
 			// Also remove any multiple tabs.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON config inside an HTML comment for developer copy/paste; HTML-escaping would corrupt it.
 			echo "\n" . '<!--' . "\n" . 'Just copy&paste this:' . "\n" . "\n" . trim( str_replace( '\t\t', '', (string) json_encode( $this->external_theme_config['config'] ) ) ) . "\n" . "\n" . '-->' . "\n";
 		}
 	}

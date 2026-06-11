@@ -36,7 +36,7 @@ class AceEditor extends BaseControl {
 			<textarea <?php $this->link(); ?>  id="<?php echo sanitize_html_class( $this->id ) ?>_textarea"
 			                                   class="style-manager_ace_editor_text"><?php echo esc_textarea( $this->value() ); ?></textarea>
 			<div class="style-manager_ace_editor" id="<?php echo sanitize_html_class( $this->id ); ?>"
-			     data-editor_type="<?php echo $this->editor_type; ?>"></div>
+			     data-editor_type="<?php echo esc_attr( $this->editor_type ); ?>"></div>
 			<?php if ( ! empty( $this->description ) ) : ?>
 				<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 			<?php endif; ?>

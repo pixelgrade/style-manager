@@ -46,7 +46,7 @@ class SMSwitch extends BaseControl {
 					<?php $this->link(); ?>
 					<?php checked( $this->value(), $value, true ); ?>
 				>
-				<label for="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"><?php echo $label ?></label>
+				<label for="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"><?php echo esc_html( $label ); ?></label>
 			<?php } ?>
 		</div>
 

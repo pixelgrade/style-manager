@@ -370,16 +370,16 @@ class Preset extends BaseControl {
 							$fonts_logic['sm_font_body'] ?? [], $preview_body_size
 						);
 
-						$preview_title = esc_html( $choice_config['preview']['title'] );
-						$preview_desc  = esc_html( $choice_config['preview']['description'] );
+						$preview_title = $choice_config['preview']['title'];
+						$preview_desc  = $choice_config['preview']['description'];
 
-						$heading_font_family    = esc_attr( $heading_style['font_family'] );
-						$heading_font_weight    = esc_attr( (string) $heading_style['font_weight'] );
-						$heading_letter_spacing = esc_attr( $heading_style['letter_spacing'] );
-						$heading_text_transform = esc_attr( $heading_style['text_transform'] );
+						$heading_font_family    = $heading_style['font_family'];
+						$heading_font_weight    = (string) $heading_style['font_weight'];
+						$heading_letter_spacing = $heading_style['letter_spacing'];
+						$heading_text_transform = $heading_style['text_transform'];
 
-						$body_font_family = esc_attr( $body_style['font_family'] );
-						$body_font_weight = esc_attr( (string) $body_style['font_weight'] );
+						$body_font_family = $body_style['font_family'];
+						$body_font_weight = (string) $body_style['font_weight'];
 						?>
 
 						<span
@@ -394,11 +394,11 @@ class Preset extends BaseControl {
 								<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 							/>
 							<span class="font-palette-preview__watermark"
-								style="font-family: '<?php echo $heading_font_family; ?>', sans-serif;">Aa</span>
+								style="font-family: '<?php echo esc_attr( $heading_font_family ); ?>', sans-serif;">Aa</span>
 							<span class="font-palette-preview__title"
-								style="font-family: '<?php echo $heading_font_family; ?>', sans-serif; font-weight: <?php echo $heading_font_weight; ?>; letter-spacing: <?php echo $heading_letter_spacing; ?>; text-transform: <?php echo $heading_text_transform; ?>;"><?php echo $preview_title; ?></span>
+								style="font-family: '<?php echo esc_attr( $heading_font_family ); ?>', sans-serif; font-weight: <?php echo esc_attr( $heading_font_weight ); ?>; letter-spacing: <?php echo esc_attr( $heading_letter_spacing ); ?>; text-transform: <?php echo esc_attr( $heading_text_transform ); ?>;"><?php echo esc_html( $preview_title ); ?></span>
 							<span class="font-palette-preview__desc"
-								style="font-family: '<?php echo $body_font_family; ?>', serif; font-weight: <?php echo $body_font_weight; ?>;"><?php echo $preview_desc; ?></span>
+								style="font-family: '<?php echo esc_attr( $body_font_family ); ?>', serif; font-weight: <?php echo esc_attr( $body_font_weight ); ?>;"><?php echo esc_html( $preview_desc ); ?></span>
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
 								<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
 							</label>

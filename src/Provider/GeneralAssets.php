@@ -110,12 +110,14 @@ class GeneralAssets extends AbstractHookProvider {
 	window.styleManager = window.styleManager || {};
 	window.styleManager.colorsConfig = <?php echo wp_json_encode( $palettes ); ?>;
 	window.styleManager.siteColorVariation = <?php echo absint( $this->options->get( 'sm_site_color_variation', 1 ) ) ?>;
-	window.styleManager.colorsCustomPropertiesUrl = "<?php echo $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ); ?>";
+	window.styleManager.colorsCustomPropertiesUrl = "<?php echo esc_url( $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ) ); ?>";
 	<?php if ( ( ! empty( $screen ) && $screen->is_block_editor() ) || is_customizer()) { ?>
  	window.styleManager.frontendOutput = <?php echo wp_json_encode( $this->frontend_output->get_dynamic_style(), JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE ); ?>;
 	 <?php } ?>
 </script>
 
-		<?php echo ob_get_clean();
+		<?php
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- buffered admin <script> block; embedded values use wp_json_encode / absint / esc_url above.
+		echo ob_get_clean();
 	}
 }
