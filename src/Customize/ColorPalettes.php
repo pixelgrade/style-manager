@@ -890,7 +890,15 @@ class ColorPalettes extends AbstractHookProvider {
 			return $output;
 		}
 
-		$output .= ' data-dark-mode-advanced=' . \Pixelgrade\StyleManager\get_option( 'sm_dark_mode_advanced', 'off' );
+		// Constrain to the known choices before printing into the <html> tag.
+		// The setting has no enforced sanitize_callback, so an unexpected stored
+		// value must not be able to break out of the attribute.
+		$dark_mode_advanced = \Pixelgrade\StyleManager\get_option( 'sm_dark_mode_advanced', 'off' );
+		if ( ! in_array( $dark_mode_advanced, [ 'off', 'on', 'auto' ], true ) ) {
+			$dark_mode_advanced = 'off';
+		}
+
+		$output .= ' data-dark-mode-advanced="' . esc_attr( $dark_mode_advanced ) . '"';
 
 		return $output;
 	}
