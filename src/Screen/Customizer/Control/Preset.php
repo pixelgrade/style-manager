@@ -633,7 +633,7 @@ class Preset extends BaseControl {
 		}
 
 		// Make sure that the hex color string is free from whitespace and #
-		$color = trim( $color, ' \t\n\r #' );
+		$color = trim( $color, " \t\n\r\0\x0B#" );
 
 		// Extract the rbg values.
 		$c_r = hexdec( substr( $color, 0, 2 ) );
@@ -660,7 +660,7 @@ class Preset extends BaseControl {
 	protected function lightOrDark( $color, $dark = '#000000', $light = '#FFFFFF' ): string {
 
 		// Make sure that the hex color string is free from whitespace and #
-		$color = trim( $color, ' \t\n\r #' );
+		$color = trim( $color, " \t\n\r\0\x0B#" );
 
 		$c_r = hexdec( substr( $color, 0, 2 ) );
 		$c_g = hexdec( substr( $color, 2, 2 ) );
