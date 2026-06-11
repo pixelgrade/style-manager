@@ -138,6 +138,10 @@
 		"zip": [
 			"@pre-build",
 			"npm run gulp zip"
+		],
+		"zip:wporg": [
+			"@pre-build",
+			"npm run gulp zip:wporg"
 		]
 	}
 }

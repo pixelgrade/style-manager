@@ -7,49 +7,66 @@ const gulpconfig = require('./gulpconfig.json');
 
 var slug = gulpconfig.slug;
 
-// -----------------------------------------------------------------------------
-// Create the plugin installer archive and delete the build folder
-// -----------------------------------------------------------------------------
-function makeZip( done ) {
-	var versionString = '';
-  // get plugin version from the main plugin file
-  var contents = fs.readFileSync("./" + slug + ".php", "utf8");
+// Extract the plugin version (e.g. "2-2-13") from the main plugin file header.
+function getVersionString( done ) {
+	var contents = fs.readFileSync( './' + slug + '.php', 'utf8' );
+	var lines = contents.split( /[\r\n]/ );
 
-	// split it by lines
-	var lines = contents.split(/[\r\n]/);
-
-	function checkIfVersionLine(value, index, ar) {
-		var myRegEx = /^[\s\*]*[Vv]ersion:/;
-		if (myRegEx.test(value)) {
-			return true;
-		}
-		return false;
+	function checkIfVersionLine( value ) {
+		return /^[\s\*]*[Vv]ersion:/.test( value );
 	}
 
-	// apply the filter
-	var versionLine = lines.filter(checkIfVersionLine);
+	var versionLine = lines.filter( checkIfVersionLine );
 
 	try {
-		versionString = versionLine[0].replace(/^[\s\*]*[Vv]ersion:/, '').trim();
-		versionString = '-' + versionString.replace(/\./g, '-');
+		var versionString = versionLine[0].replace( /^[\s\*]*[Vv]ersion:/, '' ).trim();
+		return '-' + versionString.replace( /\./g, '-' );
 	} catch ( error ) {
 		done( new Error( 'Unable to extract plugin version from main plugin file.' ) );
+		return null;
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Create the plugin installer archive and delete the build folder.
+//
+// `infix` distinguishes build targets in the artifact name (e.g. '-wporg').
+// Cleanup is scoped to the same infix so a commercial build never deletes a
+// WordPress.org artifact, and vice versa.
+// -----------------------------------------------------------------------------
+function makeZip( infix, done ) {
+	var versionString = getVersionString( done );
+	if ( versionString === null ) {
 		return;
 	}
 
 	var rootDir = path.resolve( __dirname, '..' );
 	var parentDir = path.resolve( rootDir, '..' );
 	var buildDir = path.join( parentDir, 'build' );
-	var zipFileName = slug + versionString + '.zip';
+	var zipPrefix = slug + infix;
+	var zipFileName = zipPrefix + versionString + '.zip';
+
+	// Match this target's previous artifacts, but never the other target's.
+	// The commercial prefix ("style-manager-") would otherwise also match
+	// "style-manager-wporg-", so the commercial cleanup explicitly excludes it.
+	function belongsToThisTarget( fileName ) {
+		if ( !fileName.startsWith( zipPrefix ) || !fileName.endsWith( '.zip' ) ) {
+			return false;
+		}
+		if ( infix === '' && fileName.startsWith( slug + '-wporg' ) ) {
+			return false;
+		}
+		return true;
+	}
 
 	try {
 		if ( !fs.existsSync( buildDir ) ) {
 			throw new Error( 'Build directory not found at ' + buildDir + '. Run build:folder first.' );
 		}
 
-		// Remove previous zip archives for this plugin before generating a new one.
+		// Remove previous archives for this target before generating a new one.
 		fs.readdirSync( parentDir )
-			.filter( ( fileName ) => fileName.startsWith( slug ) && fileName.endsWith( '.zip' ) )
+			.filter( belongsToThisTarget )
 			.forEach( ( fileName ) => fs.rmSync( path.join( parentDir, fileName ), { force: true } ) );
 
 		var zipResult = spawnSync(
@@ -68,5 +85,15 @@ function makeZip( done ) {
 		done( error );
 	}
 }
-makeZip.description = 'Create the plugin installer archive and delete the build folder';
-gulp.task( 'build:zip', makeZip );
+
+function makeZipCommercial( done ) {
+	makeZip( '', done );
+}
+makeZipCommercial.description = 'Create the plugin installer archive and delete the build folder';
+gulp.task( 'build:zip', makeZipCommercial );
+
+function makeZipWporg( done ) {
+	makeZip( '-wporg', done );
+}
+makeZipWporg.description = 'Create the WordPress.org plugin archive and delete the build folder';
+gulp.task( 'build:zip:wporg', makeZipWporg );
