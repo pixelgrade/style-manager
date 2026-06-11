@@ -175,7 +175,7 @@ final class ShowcaseRenderer {
 								class="sm-lab-runtime-strip__grade"
 								data-sm-lab-grade-swatch="<?php echo esc_attr( (string) $grade ); ?>"
 								style="<?php echo esc_attr( $this->get_reference_grade_background_style( $params, $grade ) ); ?>"
-								aria-label="<?php echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
+								aria-label="<?php /* translators: %d: color grade number */ echo esc_attr( sprintf( __( 'Grade %d', '__plugin_txtd' ), $grade ) ); ?>"
 								data-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
 								data-parent-active="<?php echo esc_attr( $grade === $parent_variation ? 'true' : 'false' ); ?>"
 								data-signal-active="<?php echo esc_attr( $grade === $signal_variation ? 'true' : 'false' ); ?>"
@@ -372,7 +372,7 @@ final class ShowcaseRenderer {
 					data-sm-lab-cascade-signal-control
 					data-sm-lab-cascade-signal-summary
 					data-sm-lab-cascade-signal-step="1"
-					aria-label="<?php echo esc_attr( sprintf( __( 'Change %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
+					aria-label="<?php /* translators: 1: node label, 2: current signal level */ echo esc_attr( sprintf( __( 'Change %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
 				>
 					<span class="sm-lab-signal-bars__icon" data-sm-lab-cascade-signal-icon aria-hidden="true">
 						<?php for ( $bar = 1; $bar <= 3; $bar++ ) : ?>
@@ -390,14 +390,14 @@ final class ShowcaseRenderer {
 						class="sm-lab-signal-cascade__signal-step"
 						data-sm-lab-cascade-signal-control
 						data-sm-lab-cascade-signal-step="-1"
-						aria-label="<?php echo esc_attr( sprintf( __( 'Decrease %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
+						aria-label="<?php /* translators: 1: node label, 2: current signal level */ echo esc_attr( sprintf( __( 'Decrease %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
 					>−</button>
 					<button
 						type="button"
 						class="sm-lab-signal-cascade__signal-step"
 						data-sm-lab-cascade-signal-control
 						data-sm-lab-cascade-signal-step="1"
-						aria-label="<?php echo esc_attr( sprintf( __( 'Increase %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
+						aria-label="<?php /* translators: 1: node label, 2: current signal level */ echo esc_attr( sprintf( __( 'Increase %1$s Color Signal. Current: %2$s', '__plugin_txtd' ), $node['label'], $node['signal_label'] ) ); ?>"
 					>+</button>
 				</span>
 			</div>
@@ -941,8 +941,8 @@ final class ShowcaseRenderer {
 		<section class="sm-lab-zone sm-lab-nova-blocks">
 			<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Nova Blocks', '__plugin_txtd' ); ?></p>
 			<?php
-			echo do_blocks( '<!-- wp:novablocks/headline {"content":"Nova Blocks Headline"} /-->' );
-			echo do_blocks( '<!-- wp:novablocks/supernova {"postsToShow":3} /-->' );
+			echo do_blocks( '<!-- wp:novablocks/headline {"content":"Nova Blocks Headline"} /-->' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- do_blocks() renders trusted hard-coded Nova Blocks markup for the Lab demo.
+			echo do_blocks( '<!-- wp:novablocks/supernova {"postsToShow":3} /-->' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- do_blocks() renders trusted hard-coded Nova Blocks markup for the Lab demo.
 			?>
 		</section>
 		<?php
@@ -1012,7 +1012,7 @@ MARKUP;
 		?>
 		<section class="sm-lab-zone sm-lab-tosca-inspired">
 			<p class="sm-lab-zone__eyebrow"><?php esc_html_e( 'Tosca-inspired — Text Attributes', '__plugin_txtd' ); ?></p>
-			<?php echo do_blocks( $markup ); ?>
+			<?php echo do_blocks( $markup ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- do_blocks() renders trusted Lab fixture markup built above. ?>
 		</section>
 		<?php
 	}

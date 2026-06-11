@@ -106,6 +106,7 @@ final class Config {
 	}
 
 	private function translate( string $text ): string {
+		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- Lab-only helper; the literal strings are passed at the call sites for extraction tooling to pick up.
 		return function_exists( '__' ) ? __( $text, '__plugin_txtd' ) : $text;
 	}
 }

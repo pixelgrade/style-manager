@@ -222,7 +222,9 @@ class EditWithBlocks extends AbstractHookProvider {
 			return;
 		}
 
-		wp_unregister_font_collection( 'google-fonts' );
+		if ( function_exists( 'wp_unregister_font_collection' ) ) {
+			wp_unregister_font_collection( 'google-fonts' );
+		}
 	}
 
 	/**

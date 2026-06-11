@@ -37,6 +37,7 @@ class FileBody implements ResponseBody {
 	public function __construct( string $filename ) {
 		$result = validate_file( $filename );
 		if ( 0 !== $result ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- internal exception for a developer-supplied path; the message is not rendered to browsers.
 			throw InvalidFileName::withValidationCode( $filename, $result );
 		}
 
@@ -101,21 +102,21 @@ class FileBody implements ResponseBody {
 	 * @param string $filename Absolute path to a file.
 	 */
 	protected function readfile_chunked( string $filename ) {
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen, WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- chunked streaming of a validated local file; WP_Filesystem would buffer the whole file into memory.
 		$handle = fopen( $filename, 'rb' );
 		if ( false === $handle ) {
 			return;
 		}
 
 		while ( ! feof( $handle ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread, WordPress.WP.AlternativeFunctions.file_system_operations_fread -- chunked streaming of a validated local file; WP_Filesystem would buffer the whole file into memory.
 			$buffer = fread( $handle, MB_IN_BYTES );
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $buffer;
 			flush();
 		}
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose, WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- chunked streaming of a validated local file; WP_Filesystem would buffer the whole file into memory.
 		fclose( $handle );
 	}
 

@@ -270,8 +270,8 @@ class DesignAssets extends AbstractHookProvider {
 			'txtd'          => $theme->get( 'TextDomain' ),
 			'loose_match'   => true,
 			'config'        => $config,
-			'created'       => date('Y-m-d H:i:s'),
-			'last_modified' => date('Y-m-d H:i:s'),
+			'created'       => gmdate('Y-m-d H:i:s'),
+			'last_modified' => gmdate('Y-m-d H:i:s'),
 			'hashid'        => 'theme_root',
 		];
 

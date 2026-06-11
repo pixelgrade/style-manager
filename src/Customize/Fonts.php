@@ -644,6 +644,7 @@ class Fonts extends AbstractHookProvider {
 	 *                                         False to not mark any opt as selected.
 	 */
 	public function output_font_family_option( $font_family, $active_font_family = false ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- returns an <option> markup string assembled from esc_attr/esc_html-escaped values.
 		echo $this->get_font_family_option_markup( $font_family, $active_font_family );
 	}
 
@@ -731,7 +732,7 @@ class Fonts extends AbstractHookProvider {
 
 			foreach ( $grouped_google_fonts as $group_name => $group_fonts ) {
 				/* translators: %s: The font category name */
-				echo '<optgroup label="' . sprintf( esc_attr__( 'Google fonts %s', '__plugin_txtd' ), $group_name ) . '">';
+				echo '<optgroup label="' . sprintf( esc_attr__( 'Google fonts %s', '__plugin_txtd' ), esc_attr( $group_name ) ) . '">';
 				foreach ( $group_fonts as $font_details ) {
 					$this->output_font_family_option( $font_details['family'] );
 				}
@@ -845,7 +846,7 @@ class Fonts extends AbstractHookProvider {
 				$font_family .= ':' . FontsHelper::maybeImplodeList( $font_details['variants'] );
 			}
 
-			$args['google_families'][] = "'" . $font_family . "'";
+			$args['google_families'][] = "'" . esc_js( $font_family ) . "'";
 		}
 
 		$args = [
@@ -1007,7 +1008,7 @@ class Fonts extends AbstractHookProvider {
 			// If we are in a Customizer context we will output CSS rules grouped, so we can target them individually.
 			if ( is_customize_preview() ) { ?>
 				<style id="style-manager_font_output_for_<?php echo sanitize_html_class( $key ); ?>">
-					<?php echo $font_output; ?>
+					<?php echo $font_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag; HTML-escaping would corrupt valid CSS. ?>
 				</style>
 				<?php
 			}
@@ -1015,7 +1016,7 @@ class Fonts extends AbstractHookProvider {
 
 		// In the front-end we need to print CSS rules in bulk. ?>
 		<style id="style-manager_fonts_output">
-			<?php echo $output; ?>
+			<?php echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag; HTML-escaping would corrupt valid CSS. ?>
 		</style>
 		<?php
 	}

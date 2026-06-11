@@ -455,7 +455,7 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_separator_2_0'            => [ 'type' => 'html', 'html' => '' ],
 				'sm_color_grades_number'      => [
 					'type'         => 'range',
-					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 12)' ),
+					'desc'         => __( 'Adjust the number of color grades available within a palette (Default: 12)', '__plugin_txtd' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_color_grades_number',
@@ -469,7 +469,7 @@ class ColorPalettes extends AbstractHookProvider {
 				],
 				'sm_potential_color_contrast' => [
 					'type'         => 'range',
-					'desc'         => __( 'Increase or decrease the contrast between colors within the generated palette.' ),
+					'desc'         => __( 'Increase or decrease the contrast between colors within the generated palette.', '__plugin_txtd' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_potential_color_contrast',
@@ -483,7 +483,7 @@ class ColorPalettes extends AbstractHookProvider {
 				],
 				'sm_color_grade_balancer'     => [
 					'type'         => 'range',
-					'desc'         => __( 'Move the slider towards the left side to promote lighter color grades.' ),
+					'desc'         => __( 'Move the slider towards the left side to promote lighter color grades.', '__plugin_txtd' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_color_grade_balancer',
@@ -519,7 +519,7 @@ class ColorPalettes extends AbstractHookProvider {
 				'sm_separator_2_1'            => [ 'type' => 'html', 'html' => '' ],
 				'sm_elements_color_contrast'  => [
 					'type'         => 'radio',
-					'desc'         => __( 'Increase or decrease the contrast between the background colors and the colors of elements on top.' ),
+					'desc'         => __( 'Increase or decrease the contrast between the background colors and the colors of elements on top.', '__plugin_txtd' ),
 					'live'         => true,
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_elements_color_contrast',
@@ -839,7 +839,7 @@ class ColorPalettes extends AbstractHookProvider {
 			'dropzoneTitle'                      => esc_html__( 'Drag and drop your image', '__plugin_txtd' ),
 			'dropzoneSubtitle'                   => sprintf(
 				wp_kses(
-				/* translators 1: open span, 2: close span */
+				/* translators: 1: open span, 2: close span */
 					__( 'or %1$s select a file %2$s from your computer', '__plugin_txtd' ),
 					wp_kses_allowed_html()
 				),
