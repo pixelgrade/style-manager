@@ -181,7 +181,10 @@ class FrontendOutput extends AbstractHookProvider {
 				<style id="custom_background_output_for_<?php echo \sanitize_html_class( $option_id ); ?>">
 					<?php
 					if ( ! empty( $custom_background_output )) {
-						echo $custom_background_output;
+						// CSS assembled from per-value-sanitized parts (esc_url / sanitize_text_field
+						// in process_custom_background_field_output); strip tags so nothing can break
+						// out of the <style> block, matching output_dynamic_style above.
+						echo wp_strip_all_tags( $custom_background_output );
 					} ?>
 				</style>
 			<?php }

@@ -39,7 +39,7 @@ class Select2 extends BaseControl {
 			<select <?php $this->link(); ?> class="style-manager_select2">
 				<?php
 				foreach ( $this->choices as $value => $label ) {
-					echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . $label . '</option>';
+					echo '<option value="' . esc_attr( $value ) . '" ' . selected( $this->value(), $value, false ) . '>' . esc_html( $label ) . '</option>';
 				}
 				?>
 			</select>

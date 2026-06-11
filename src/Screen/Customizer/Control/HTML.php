@@ -34,7 +34,7 @@ class HTML extends BaseControl {
 	 */
 	public function render_content() {
 		if ( ! empty( $this->html ) ) {
-			echo( $this->html );
+			echo wp_kses_post( $this->html );
 		}
 	}
 }

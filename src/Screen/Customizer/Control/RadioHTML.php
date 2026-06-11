@@ -47,7 +47,7 @@ class RadioHTML extends BaseControl {
 							<?php $this->link(); ?>
 							<?php echo selected( $this->value(), $value, false ); ?>
 						/>
-						<div><?php echo $html; ?></div>
+						<div><?php echo wp_kses_post( $html ); ?></div>
 					</label>
 				</div>
 			<?php } ?>

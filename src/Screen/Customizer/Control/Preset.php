@@ -73,7 +73,7 @@ class Preset extends BaseControl {
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php }
 					if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+						<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 					<?php } ?>
 
 					<select <?php $this->link(); ?> class="js-style-manager-preset select">
@@ -84,8 +84,9 @@ class Preset extends BaseControl {
 							}
 							$label   = $choice_config['label'];
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-							$data    = ' data-options=\'' . json_encode( $options ) . '\'';
-							echo '<option value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . ' >' . $label . '</option>';
+							$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\'';
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- choice value + label escaped inline; $data is esc_attr-escaped JSON built above.
+							echo '<option value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . ' >' . esc_html( $label ) . '</option>';
 						} ?>
 					</select>
 				</label>
@@ -98,7 +99,7 @@ class Preset extends BaseControl {
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php }
 					if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+						<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 					<?php } ?>
 
 					<div class="js-style-manager-preset radio customize-control-radio">
@@ -109,18 +110,19 @@ class Preset extends BaseControl {
 							}
 							$color = '';
 							if ( isset( $choice_config['color'] ) ) {
-								$color .= ' style="background-color: ' . $choice_config['color'] . '"';
+								$color .= ' style="background-color: ' . esc_attr( $choice_config['color'] ) . '"';
 							}
 
 							$label   = $choice_config['label'];
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
+							$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\''; ?>
 
 							<span class="customize-inside-control-row">
 								<input <?php $this->link();
-								echo 'name="' . $this->setting->id . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color . ' />'; ?>
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- setting id + choice value escaped inline; $data/$color escaped at construction above.
+								echo 'name="' . esc_attr( $this->setting->id ) . '" id="' . esc_attr( $choice_value ) . '" type="radio" value="' . esc_attr( $choice_value ) . '" ' . selected( $this->value(), $choice_value, false ) . $data . $color . ' />'; ?>
 								<label for="<?php echo esc_attr( $choice_value ); ?>">
-									<?php echo $label; ?>
+									<?php echo esc_html( $label ); ?>
 								</label>
 							</span>
 						<?php } ?>
@@ -135,7 +137,7 @@ class Preset extends BaseControl {
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php }
 					if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+						<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 					<?php } ?>
 
 					<div class="js-style-manager-preset radio_buttons">
@@ -146,12 +148,12 @@ class Preset extends BaseControl {
 							}
 							$color = '';
 							if ( isset( $choice_config['color'] ) ) {
-								$color .= ' style="border-left-color: ' . $choice_config['color'] . '; color: ' . $choice_config['color'] . ';"';
+								$color .= ' style="border-left-color: ' . esc_attr( $choice_config['color'] ) . '; color: ' . esc_attr( $choice_config['color'] ) . ';"';
 							}
 
 							$label   = $choice_config['label'];
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
+							$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\''; ?>
 
 							<fieldset class="style-manager_radio_button">
 								<input <?php $this->link(); ?>
@@ -159,9 +161,9 @@ class Preset extends BaseControl {
 									type="radio"
 									value="<?php echo esc_attr( $choice_value ); ?>"
 									<?php selected( $this->value(), $choice_value ); ?>
-									<?php echo $data; ?>
+									<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 								/>
-								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; ?>><?php echo $label; ?></label>
+								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style color escaped at construction above. ?>><?php echo esc_html( $label ); ?></label>
 							</fieldset>
 						<?php } ?>
 					</div>
@@ -175,7 +177,7 @@ class Preset extends BaseControl {
 			<?php }
 
 				if ( ! empty( $this->description ) ) { ?>
-					<span class="description customize-control-description"><?php echo $this->description; ?></span>
+					<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 				<?php } ?>
 
 				<div class="js-style-manager-preset js-color-palette customize-control-color-palette">
@@ -227,7 +229,7 @@ class Preset extends BaseControl {
 
 						$label   = $choice_config['label'];
 						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-						$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
+						$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\''; ?>
 
 						<span
 							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-color-palette' : '' ); ?>"
@@ -239,15 +241,15 @@ class Preset extends BaseControl {
 								type="radio"
 								value="<?php echo esc_attr( $choice_value ); ?>"
 								<?php selected( $this->value(), $choice_value ) ?>
-								<?php echo $data; ?>
+								<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 							/>
                             <label for="<?php echo esc_attr( $choice_value ) . '-color-palette'; ?>">
                                 <span class="label__inner"
                                       style="color: <?php echo esc_attr( $this->lightOrDark( $sm_light ) ); ?>; background: <?php echo esc_attr( $sm_light ); ?>;">
                                     <i class="preview__letter"
-                                       style="background: <?php echo $sm_color; ?>"><?php echo $choice_config['preview']['sample_letter']; ?></i>
+                                       style="background: <?php echo esc_attr( $sm_color ); ?>"><?php echo esc_html( $choice_config['preview']['sample_letter'] ); ?></i>
                                     <i class="preview__letter--checked"
-                                       style="background-color: <?php echo $sm_color; ?>; background-image: url('<?php echo plugin()->get_url( 'images/check.svg' ); ?>')"></i>
+                                       style="background-color: <?php echo esc_attr( $sm_color ); ?>; background-image: url('<?php echo esc_url( plugin()->get_url( 'images/check.svg' ) ); ?>')"></i>
                                     <?php echo esc_html( $label ); ?>
                                 </span>
                             </label>
@@ -269,7 +271,7 @@ class Preset extends BaseControl {
 			<?php }
 
 				if ( ! empty( $this->description ) ) { ?>
-					<span class="description customize-control-description"><?php echo $this->description; ?></span>
+					<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 				<?php }
 
 				// Preprocess all choices once.
@@ -340,7 +342,7 @@ class Preset extends BaseControl {
 							$choice_config['options'] = [];
 						}
 						$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-						$data    = ' data-options=\'' . json_encode( $options ) . '\'';
+						$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\'';
 
 						if ( empty( $choice_config['fonts_logic'] ) ) {
 							$choice_config['fonts_logic'] = [];
@@ -353,7 +355,7 @@ class Preset extends BaseControl {
 						}
 
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
-						$data  .= ' data-fonts_logic=\'' . json_encode( $fonts ) . '\'';
+						$data  .= ' data-fonts_logic=\'' . esc_attr( json_encode( $fonts ) ) . '\'';
 
 						if ( '' !== $connected_fields_preset ) {
 							$data .= ' data-connected_fields_preset=\'' . esc_attr( $connected_fields_preset ) . '\'';
@@ -389,7 +391,7 @@ class Preset extends BaseControl {
 								type="radio"
 								value="<?php echo esc_attr( $choice_value ); ?>"
 								<?php selected( $this->value(), $choice_value ); ?>
-								<?php echo $data; ?>
+								<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 							/>
 							<span class="font-palette-preview__watermark"
 								style="font-family: '<?php echo $heading_font_family; ?>', sans-serif;">Aa</span>
@@ -536,7 +538,7 @@ class Preset extends BaseControl {
 
 								if ( isset( $choice_config['preview']['background-card'] ) ) {
 									$preset_style = ' style="';
-									$preset_style .= 'background-color: ' . $choice_config['preview']['background-card'] . ';';
+									$preset_style .= 'background-color: ' . esc_attr( $choice_config['preview']['background-card'] ) . ';';
 								}
 
 								if ( isset( $choice_config['preview']['background-label'] ) ) {
@@ -549,21 +551,21 @@ class Preset extends BaseControl {
 										$this_preset_color = '#ffffff';
 									}
 									$preset_name_style = ' style="';
-									$preset_name_style .= 'color: ' . $this_preset_color . ';background-color: ' . $choice_config['preview']['background-label'] . '; border-color: ' . $choice_config['preview']['background-label'];
+									$preset_name_style .= 'color: ' . esc_attr( $this_preset_color ) . ';background-color: ' . esc_attr( $choice_config['preview']['background-label'] ) . '; border-color: ' . esc_attr( $choice_config['preview']['background-label'] );
 								}
 
 								if ( isset( $choice_config['preview']['color-text'] ) ) {
 									$preset_text_color = ' style="';
-									$preset_text_color .= 'color: ' . $choice_config['preview']['color-text'] . ';"';
+									$preset_text_color .= 'color: ' . esc_attr( $choice_config['preview']['color-text'] ) . ';"';
 								}
 
 								if ( isset( $choice_config['preview']['font-main'] ) ) {
-									$first_font     = ' style="font-family: ' . $choice_config['preview']['font-main'] . '"';
+									$first_font     = ' style="font-family: ' . esc_attr( $choice_config['preview']['font-main'] ) . '"';
 									$google_links[] = str_replace( ' ', '+', $choice_config['preview']['font-main'] );
 								}
 
 								if ( isset( $choice_config['preview']['font-alt'] ) ) {
-									$second_font    = ' style="font-family: ' . $choice_config['preview']['font-alt'] . '"';
+									$second_font    = ' style="font-family: ' . esc_attr( $choice_config['preview']['font-alt'] ) . '"';
 									$google_links[] = str_replace( ' ', '+', $choice_config['preview']['font-alt'] );
 								}
 							}
@@ -574,24 +576,24 @@ class Preset extends BaseControl {
 
 							$label   = $choice_config['label'];
 							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-							$data    = ' data-options=\'' . json_encode( $options ) . '\''; ?>
-							<div class="awesome_preset" <?php echo $preset_text_color; ?>>
+							$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\''; ?>
+							<div class="awesome_preset" <?php echo $preset_text_color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style assembled from esc_attr-escaped values above. ?>>
 								<input
 									<?php $this->link(); ?>
 									name="<?php echo esc_attr( $this->setting->id ); ?>"
 									type="radio"
 									value="<?php echo esc_attr( $choice_value ); ?>"
 									<?php selected( $this->value(), $choice_value ); ?>
-									<?php echo $data; ?>
+									<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 								></input>
 								<div class="preset-wrap">
-									<div class="preset-color" <?php echo $preset_style; ?>>
+									<div class="preset-color" <?php echo $preset_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style assembled from esc_attr-escaped values above. ?>>
 										<span
-											class="first-font" <?php echo $first_font; ?>><?php echo substr( get_bloginfo( 'name' ), 0, 2 ); ?></span>
-										<span class="secondary-font" <?php echo $second_font; ?>>AaBbCc</span>
+											class="first-font" <?php echo $first_font; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style assembled from esc_attr-escaped values above. ?>><?php echo esc_html( substr( get_bloginfo( 'name' ), 0, 2 ) ); ?></span>
+										<span class="secondary-font" <?php echo $second_font; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style assembled from esc_attr-escaped values above. ?>>AaBbCc</span>
 									</div>
-									<div class="preset-name" <?php echo $preset_name_style; ?>>
-										<?php echo $label; ?>
+									<div class="preset-name" <?php echo $preset_name_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style assembled from esc_attr-escaped values above. ?>>
+										<?php echo esc_html( $label ); ?>
 									</div>
 								</div>
 							</div>
@@ -599,12 +601,13 @@ class Preset extends BaseControl {
 
 						// ok now we have our preview fonts, let's ask them from google
 						// note that we request only these chars "AaBbCc" so it should be a small request
-						echo '<link href="//fonts.googleapis.com/css?family=' . implode( '|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo( 'name' ), 0, 2 ) . '" rel=\'stylesheet\' type=\'text/css\'>'; ?>
+						$preview_fonts_url = '//fonts.googleapis.com/css?family=' . implode( '|', $google_links ) . '&text=AaBbCc' . substr( get_bloginfo( 'name' ), 0, 2 );
+						echo '<link href="' . esc_url( $preview_fonts_url ) . '" rel="stylesheet" type="text/css">'; ?>
 					</div>
 
 					<?php
 					if ( ! empty( $this->description ) ) { ?>
-						<span class="description customize-control-description"><?php echo $this->description; ?></span>
+						<span class="description customize-control-description"><?php echo wp_kses_post( $this->description ); ?></span>
 					<?php } ?>
 				</label>
 				<?php break;
