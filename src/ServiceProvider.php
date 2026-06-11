@@ -272,6 +272,31 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\Customizer\Preview();
 		};
 
+		$container['provider.headless_customizer'] = function( $container ) {
+			return new Provider\HeadlessCustomizer(
+				$container['options'],
+				$container['screen.customizer']
+			);
+		};
+		$container['provider.site_editor_endpoints'] = function( $container ) {
+			return new Provider\SiteEditorEndpoints(
+				$container['provider.headless_customizer'],
+				$container['screen.edit_with_blocks'],
+				$container['customize.fonts'],
+				$container['hooks.frontend_output']
+			);
+		};
+		$container['screen.site_editor'] = function( $container ) {
+			return new Screen\SiteEditor(
+				$container['options'],
+				$container['plugin.settings'],
+				$container['customize.fonts'],
+				$container['provider.headless_customizer'],
+				$container['screen.customizer'],
+				$container['logger']
+			);
+		};
+
 		$container['screen.edit_with_blocks'] = function( $container ) {
 			return new Screen\EditWithBlocks(
 				$container['options'],

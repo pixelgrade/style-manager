@@ -13,6 +13,7 @@ const files = [
   'lab',
   'lab-showcase',
   'settings',
+  'site-editor',
 ];
 
 function camelize( str ) {
@@ -98,6 +99,10 @@ module.exports = {
     '@wordpress/components': [ 'wp', 'components' ],
     '@wordpress/element': [ 'wp', 'element' ],
     '@wordpress/i18n': [ 'wp', 'i18n' ],
+    '@wordpress/plugins': [ 'wp', 'plugins' ],
+    '@wordpress/editor': [ 'wp', 'editor' ],
+    '@wordpress/data': [ 'wp', 'data' ],
+    '@wordpress/api-fetch': [ 'wp', 'apiFetch' ],
   },
   optimization: {
     minimize: true,

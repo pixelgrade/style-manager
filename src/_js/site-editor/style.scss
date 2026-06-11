@@ -1,0 +1,275 @@
+/**
+ * Style Manager — Site Editor sidebar.
+ *
+ * The control markup and the SM customizer stylesheet are reused verbatim;
+ * this file only provides:
+ * 1. the Customizer-pane base styles the Site Editor doesn't ship
+ *    (customize-controls.css is a Customizer-only asset), and
+ * 2. the sidebar shell (header, accordion sections, sizing).
+ */
+
+// The sidebar keeps the standard Page/Block panel width — the SM controls
+// are fluid and adapt to the complementary area like any other plugin panel.
+
+.sm-site-editor-sidebar {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 16px;
+		border-bottom: 1px solid #e0e0e0;
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: #fff;
+	}
+
+	&__dirty-count {
+		color: #757575;
+		font-size: 12px;
+	}
+
+	&__body {
+		flex: 1 1 auto;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Customizer pane base styles (subset of wp-admin customize-controls.css the
+// SM controls rely on).
+// ---------------------------------------------------------------------------
+
+.sm-site-editor {
+	font-size: 13px;
+
+	ul,
+	li {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.customize-control {
+		width: 100%;
+		float: none;
+		clear: both;
+		margin-bottom: 12px;
+		position: relative;
+	}
+
+	.customize-control-title {
+		display: block;
+		font-size: 14px;
+		line-height: 1.75;
+		font-weight: 600;
+		margin-bottom: 4px;
+	}
+
+	.customize-control-description {
+		display: block;
+		font-style: italic;
+		line-height: 1.4;
+		margin-top: 0;
+		margin-bottom: 5px;
+		color: #50575e;
+	}
+
+	.description {
+		color: #50575e;
+		font-style: italic;
+	}
+
+	select,
+	input[type="text"],
+	input[type="number"],
+	textarea {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	input[type="range"] {
+		width: 100%;
+	}
+
+	.customize-inside-control-row {
+		line-height: 1.6;
+	}
+
+	.screen-reader-text {
+		border: 0;
+		clip-path: inset(50%);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+		word-wrap: normal !important;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Panel + section accordion shell.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Preview tabs (Live Site / Typography / Colors).
+// ---------------------------------------------------------------------------
+
+.interface-interface-skeleton__content {
+	position: relative;
+}
+
+// Floating placement (mounted on document.body, free of the editor's
+// clipping containers): the tab bar sits in the top bar, right of the
+// centered document bar; the overlays cover the canvas region below.
+.sm-preview-tabs-root--floating {
+	.sm-preview {
+		position: static;
+		pointer-events: none;
+	}
+
+	.sm-preview__header {
+		position: fixed;
+		top: 12px;
+		left: calc(50% + 220px);
+		z-index: 99998;
+		padding: 0;
+		background: transparent;
+		pointer-events: auto;
+	}
+
+	.sm-preview__tabs {
+		background: #fff;
+	}
+
+	.sm-preview__content {
+		position: fixed;
+		top: 60px;
+		left: 0;
+		right: 280px;
+		bottom: 0;
+		z-index: 9999;
+		display: block;
+		pointer-events: none;
+
+		> * {
+			pointer-events: auto;
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Drill-down navigation, following the Nova Blocks inspector pattern:
+// grouped headings + rounded rows that open full-panel section pages.
+// ---------------------------------------------------------------------------
+
+.sm-se-menu {
+	padding: 8px 16px 24px;
+}
+
+.sm-site-editor.is-section-open .sm-se-menu {
+	display: none;
+}
+
+.sm-se-panel-title {
+	padding: 20px 0 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1e1e1e;
+}
+
+.sm-se-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 14px 16px;
+	margin: 0 0 8px;
+	border: none;
+	border-radius: 4px;
+	background: #f0f0f0;
+	font-size: 13px;
+	font-weight: 500;
+	color: #1e1e1e;
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.1s ease;
+
+	&:hover {
+		background: #e8e8e8;
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&__chevron:after {
+		content: "\f345"; // dashicons-arrow-right-alt2
+		font-family: dashicons;
+		font-size: 14px;
+		color: #757575;
+	}
+}
+
+.sm-se-page {
+	display: none;
+
+	&.open {
+		display: block;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		padding: 8px 16px;
+		border-bottom: 1px solid #e0e0e0;
+		position: sticky;
+		top: 0;
+		z-index: 5;
+		background: #fff;
+	}
+
+	&__back {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		border: none;
+		border-radius: 2px;
+		background: none;
+		cursor: pointer;
+
+		&:after {
+			content: "\f341"; // dashicons-arrow-left-alt2
+			font-family: dashicons;
+			font-size: 16px;
+			color: #1e1e1e;
+		}
+
+		&:hover:after {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	&__title {
+		font-size: 13px;
+		font-weight: 600;
+		color: #1e1e1e;
+	}
+
+	&__description {
+		padding: 12px 16px 0;
+		font-style: italic;
+		color: #50575e;
+	}
+}
+
+// Needs to win over the `.sm-site-editor ul` reset.
+.sm-site-editor .sm-se-page__content {
+	padding: 16px;
+}

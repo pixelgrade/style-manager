@@ -964,7 +964,9 @@ function style_manager_advanced_palette_output_cb( string $value, string $select
 	);
 }
 
-function style_manager_site_color_variation_cb( string $value, string $selector, string $property ): string {
+// No strict type on $value: the saved option can be an int (e.g. saved through
+// a changeset with a numeric JS value) and this callback ignores it anyway.
+function style_manager_site_color_variation_cb( $value, string $selector, string $property ): string {
 	return '';
 }
 

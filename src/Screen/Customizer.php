@@ -850,13 +850,12 @@ class Customizer extends AbstractHookProvider {
 		 */
 		global $wp_customize;
 
-		$options_name = $this->options->get_options_key();
 		// Without an options name we can't do much.
-		if ( empty( $options_name ) ) {
+		if ( empty( $this->options->get_options_key() ) ) {
 			return;
 		}
 
-		$customizer_settings = $wp_customize->settings(); ?>
+		$connected_fields_data = $this->get_connected_fields_data( $wp_customize ); ?>
 
 		<script type="text/javascript">
 			if ('undefined' === typeof _wpCustomizeSettings.settings) {
@@ -866,65 +865,110 @@ class Customizer extends AbstractHookProvider {
 			<?php
 			echo "(function ( sAdditional ){\n";
 
-			$options = $this->options->get_details_all();
-			foreach ( $options as $option_id => $option_config ) {
-				// If we have been explicitly given a setting ID we will use that.
-				if ( ! empty( $option_config['setting_id'] ) ) {
-					$setting_id = $option_config['setting_id'];
-				} else {
-					$setting_id = $options_name . '[' . $option_id . ']';
-				}
-				// @todo Right now we only handle the connected_fields key - make this more dynamic by adding the keys that are not returned by WP_Customize_Setting->json()
-				if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
-					// Pass through all the connected fields and make sure the id is in the final format.
-					$connected_fields = [];
-					foreach ( $option_config['connected_fields'] as $key => $connected_field_config ) {
-						$connected_field_data = [];
-
-						if ( is_string( $connected_field_config ) ) {
-							$connected_field_id = $connected_field_config;
-						} elseif ( is_array( $connected_field_config ) ) {
-							// We have a full blown connected field config.
-							if ( is_string( $key ) ) {
-								$connected_field_id = $key;
-							} else {
-								continue;
-							}
-
-							// We will pass to JS all the configured connected field details.
-							$connected_field_data = $connected_field_config;
-						}
-
-						// Continue if we don't have a connected field ID to work with.
-						if ( empty( $connected_field_id ) ) {
-							continue;
-						}
-
-						// If the connected setting is not one of our's, we will use it's ID as it is.
-						if ( ! array_key_exists( $connected_field_id, $options ) ) {
-							$connected_field_data['setting_id'] = $connected_field_id;
-						} // If the connected setting specifies a setting ID, we will not prefix it and use it as it is.
-						elseif ( ! empty( $options[ $connected_field_id ] ) && ! empty( $options[ $connected_field_id ]['setting_id'] ) ) {
-							$connected_field_data['setting_id'] = $options[ $connected_field_id ]['setting_id'];
-						} else {
-							$connected_field_data['setting_id'] = $options_name . '[' . $connected_field_id . ']';
-						}
-
-						$connected_fields[] = $connected_field_data;
-					}
-
-					printf(
-						"sAdditional[%s].%s = %s;\n",
-						wp_json_encode( $setting_id ),
-						'connected_fields',
-						wp_json_encode( $connected_fields, JSON_FORCE_OBJECT )
-					);
-				}
+			foreach ( $connected_fields_data as $setting_id => $connected_fields ) {
+				printf(
+					"sAdditional[%s].%s = %s;\n",
+					wp_json_encode( $setting_id ),
+					'connected_fields',
+					wp_json_encode( $connected_fields, JSON_FORCE_OBJECT )
+				);
 			}
 			echo "})( _wpCustomizeSettings.settings );\n";
 			?>
 		</script>
 		<?php
+	}
+
+	/**
+	 * Collect the connected fields data for every registered setting that has any.
+	 *
+	 * This is the data customize_pane_settings_additional_data() prints in the
+	 * Customizer pane; it is also consumed headlessly (e.g. by the Site Editor
+	 * integration).
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param \WP_Customize_Manager $wp_customize
+	 *
+	 * @return array setting_id => list of connected field configs (each with a final `setting_id`).
+	 */
+	public function get_connected_fields_data( \WP_Customize_Manager $wp_customize ): array {
+		$options_name = $this->options->get_options_key();
+		// Without an options name we can't do much.
+		if ( empty( $options_name ) ) {
+			return [];
+		}
+
+		$customizer_settings   = $wp_customize->settings();
+		$connected_fields_data = [];
+
+		$options = $this->options->get_details_all();
+		foreach ( $options as $option_id => $option_config ) {
+			// If we have been explicitly given a setting ID we will use that.
+			if ( ! empty( $option_config['setting_id'] ) ) {
+				$setting_id = $option_config['setting_id'];
+			} else {
+				$setting_id = $options_name . '[' . $option_id . ']';
+			}
+			// @todo Right now we only handle the connected_fields key - make this more dynamic by adding the keys that are not returned by WP_Customize_Setting->json()
+			if ( ! empty( $customizer_settings[ $setting_id ] ) && ! empty( $option_config['connected_fields'] ) ) {
+				// Pass through all the connected fields and make sure the id is in the final format.
+				$connected_fields = [];
+				foreach ( $option_config['connected_fields'] as $key => $connected_field_config ) {
+					$connected_field_data = [];
+
+					if ( is_string( $connected_field_config ) ) {
+						$connected_field_id = $connected_field_config;
+					} elseif ( is_array( $connected_field_config ) ) {
+						// We have a full blown connected field config.
+						if ( is_string( $key ) ) {
+							$connected_field_id = $key;
+						} else {
+							continue;
+						}
+
+						// We will pass to JS all the configured connected field details.
+						$connected_field_data = $connected_field_config;
+					}
+
+					// Continue if we don't have a connected field ID to work with.
+					if ( empty( $connected_field_id ) ) {
+						continue;
+					}
+
+					// If the connected setting is not one of our's, we will use it's ID as it is.
+					if ( ! array_key_exists( $connected_field_id, $options ) ) {
+						$connected_field_data['setting_id'] = $connected_field_id;
+					} // If the connected setting specifies a setting ID, we will not prefix it and use it as it is.
+					elseif ( ! empty( $options[ $connected_field_id ] ) && ! empty( $options[ $connected_field_id ]['setting_id'] ) ) {
+						$connected_field_data['setting_id'] = $options[ $connected_field_id ]['setting_id'];
+					} else {
+						$connected_field_data['setting_id'] = $options_name . '[' . $connected_field_id . ']';
+					}
+
+					$connected_fields[] = $connected_field_data;
+				}
+
+				$connected_fields_data[ $setting_id ] = $connected_fields;
+			}
+		}
+
+		return $connected_fields_data;
+	}
+
+	/**
+	 * Retrieve the data this screen localizes to the `styleManager` JS global.
+	 *
+	 * Populated while the customize_register chain runs (the settings configs
+	 * are gathered during section registration). Consumed headlessly by the
+	 * Site Editor integration.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return array
+	 */
+	public function get_localized_data(): array {
+		return $this->localized;
 	}
 
 	/**
