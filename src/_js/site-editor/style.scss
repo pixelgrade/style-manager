@@ -102,14 +102,30 @@
 		font-size: 13px;
 	}
 
-	// Segmented pill labels (Font Sizing, Appearance, ...): fit the 280px
-	// panel — pills share the row width and may wrap instead of clipping.
-	// Segmented pill labels (Font Sizing, Appearance, ...) — the layout stays
-	// the Customizer's own: the pill group progressively reveals options
-	// around the current selection (e.g. Striking hides until High is
-	// selected). That windowing is intended behavior, not clipping.
-	.sm-radio-group label {
-		font-size: 13px;
+	// Segmented pill groups (Font Sizing, Appearance, ...) restyled to core's
+	// ToggleGroupControl chrome (border, radius, sizing, typography) while
+	// keeping SM's behavior intact: the sliding/windowed options around the
+	// current selection and the blue active coloration. Layout properties
+	// (display/width) are deliberately untouched — they drive the windowing.
+	&#customize-controls[id] .sm-radio-group {
+		border: 1px solid #ccc;
+		border-radius: 2px;
+		background: #fff;
+
+		label {
+			font-size: 13px;
+			font-weight: 500;
+			color: #1e1e1e;
+			min-height: 34px;
+			border-radius: 1px;
+			border-color: #ccc;
+		}
+
+		// Keep the coloration: the active fill stays SM blue; just square the
+		// corners to the core inner radius.
+		input:checked + label {
+			border-radius: 1px;
+		}
 	}
 
 	// The Customizer's spacer controls (sm_separator_*, spacing_bottom rows)
