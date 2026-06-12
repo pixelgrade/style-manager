@@ -311,6 +311,24 @@ class SiteEditor extends AbstractHookProvider {
 			],
 			'homeUrl'            => esc_url_raw( home_url( '/' ) ),
 			/**
+			 * Granular sections folded into their parent section as tabs
+			 * (high-level -> low-level, the Nova Blocks inspector pattern).
+			 * The Customizer relocated these to a Theme Options panel as a
+			 * workaround. Filter: parent section id => ordered tabs
+			 * [ [ id, label ] ] where the parent lists itself first.
+			 */
+			'sectionTabs'        => apply_filters( 'style_manager/site_editor_section_tabs', [
+				'sm_color_palettes_section' => [
+					[ 'id' => 'sm_color_palettes_section', 'label' => esc_html__( 'Palette', '__plugin_txtd' ) ],
+					[ 'id' => 'sm_color_usage_section', 'label' => esc_html__( 'Usage', '__plugin_txtd' ) ],
+					[ 'id' => 'sm_fine_tune_color_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
+				],
+				'sm_font_palettes_section'  => [
+					[ 'id' => 'sm_font_palettes_section', 'label' => esc_html__( 'Palettes', '__plugin_txtd' ) ],
+					[ 'id' => 'sm_fine_tune_font_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
+				],
+			] ),
+			/**
 			 * Toggle-driven control visibility (the Customizer gets this from
 			 * theme-shipped JS, e.g. Anima's motion controls script).
 			 * Filter: setting_id => [ dependent setting_ids shown when truthy ].

@@ -420,6 +420,54 @@
 	}
 }
 
+// High-level -> low-level tabs inside a section page (the Nova Blocks /
+// core inspector pattern; replaces the Customizer's Theme Options detour).
+.sm-se-tabs {
+	display: flex;
+	border-bottom: 1px solid #e0e0e0;
+	background: #fff;
+
+	&__tab {
+		flex: 1 1 auto;
+		padding: 12px 8px;
+		margin: 0;
+		border: none;
+		background: none;
+		font-size: 13px;
+		font-weight: 500;
+		color: #1e1e1e;
+		text-align: center;
+		cursor: pointer;
+		position: relative;
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		&.is-active {
+			font-weight: 600;
+		}
+
+		&.is-active:after {
+			content: "";
+			position: absolute;
+			left: 16px;
+			right: 16px;
+			bottom: -1px;
+			height: 2px;
+			background: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+}
+
+.sm-se-tab-panel {
+	display: none;
+
+	&.is-active {
+		display: block;
+	}
+}
+
 // Needs to win over the `.sm-site-editor ul` reset.
 // The gutter lives on the individual controls; Style Manager's self-padded
 // white surfaces (groups, shortcut rows, blinds) bleed to the panel edges,

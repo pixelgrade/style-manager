@@ -73,10 +73,52 @@ let engine = null;
 const getControlContainerId = controlId => `customize-control-${ controlId.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
 
 /**
+ * Build a tab panel (description + controls list) for a section's data.
+ */
+const buildSectionPanel = section => {
+  const panel = document.createElement( 'div' );
+  panel.className = 'sm-se-tab-panel';
+  panel.setAttribute( 'data-tab-section', section.id );
+
+  if ( section.description ) {
+    const descriptionEl = document.createElement( 'div' );
+    descriptionEl.className = 'sm-se-page__description customize-control-description';
+    descriptionEl.innerHTML = section.description;
+    panel.appendChild( descriptionEl );
+  }
+
+  const contentEl = document.createElement( 'ul' );
+  // Note: deliberately NOT using the `accordion-section-content` class here —
+  // wp-admin's generic accordion styles (common.css) would hide it outside
+  // the Customizer.
+  contentEl.className = 'sm-se-page__content customize-pane-child';
+  contentEl.id = `sub-accordion-section-${ section.id }`;
+  contentEl.innerHTML = section.controls.map( control => control.html ).join( '' );
+  panel.appendChild( contentEl );
+
+  // Apply the server-evaluated active states (active_callback results) —
+  // re-evaluated on changes by the active-states refresher.
+  section.controls.forEach( control => {
+    if ( false === control.active ) {
+      const li = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( control.id ) ) }` );
+      if ( li ) {
+        li.classList.add( 'sm-se-control-inactive' );
+      }
+    }
+  } );
+
+  return panel;
+};
+
+/**
  * Build one section: a menu row (Nova Blocks-style drill-down trigger) plus a
  * full-panel page with a back header holding the section's controls.
+ *
+ * Granular child sections (payload.sectionTabs) render as tabs inside the
+ * parent page — the high-level -> low-level pattern Nova Blocks uses —
+ * instead of standalone "Theme Options" entries.
  */
-const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
+const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, sectionsById ) => {
   // The drill-down trigger row in the menu.
   const rowEl = document.createElement( 'button' );
   rowEl.type = 'button';
@@ -98,34 +140,53 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
   `;
   pageEl.appendChild( headerEl );
 
-  if ( section.description ) {
-    const descriptionEl = document.createElement( 'div' );
-    descriptionEl.className = 'sm-se-page__description customize-control-description';
-    descriptionEl.innerHTML = section.description;
-    pageEl.appendChild( descriptionEl );
+  const tabsConfig = ( payload.sectionTabs || {} )[ section.id ];
+  const tabEntries = ( tabsConfig || [ { id: section.id, label: '' } ] )
+    .map( tab => ( { ...tab, data: tab.id === section.id ? section : sectionsById[ tab.id ] } ) )
+    .filter( tab => tab.data );
+
+  let activateTab = () => {};
+
+  if ( tabEntries.length > 1 ) {
+    const tabBar = document.createElement( 'div' );
+    tabBar.className = 'sm-se-tabs';
+    pageEl.appendChild( tabBar );
+
+    tabEntries.forEach( tab => {
+      const button = document.createElement( 'button' );
+      button.type = 'button';
+      button.className = 'sm-se-tabs__tab';
+      button.setAttribute( 'data-tab-section', tab.id );
+      button.textContent = tab.label;
+      button.addEventListener( 'click', () => activateTab( tab.id ) );
+      tabBar.appendChild( button );
+    } );
   }
 
-  const contentEl = document.createElement( 'ul' );
-  // Note: deliberately NOT using the `accordion-section-content` class here —
-  // wp-admin's generic accordion styles (common.css) would hide it outside
-  // the Customizer.
-  contentEl.className = 'sm-se-page__content customize-pane-child';
-  contentEl.id = `sub-accordion-section-${ section.id }`;
-  contentEl.innerHTML = section.controls.map( control => control.html ).join( '' );
-  pageEl.appendChild( contentEl );
-
-  // Apply the server-evaluated active states (active_callback results) —
-  // re-evaluated on changes by the active-states refresher.
-  section.controls.forEach( control => {
-    if ( false === control.active ) {
-      const li = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( control.id ) ) }` );
-      if ( li ) {
-        li.classList.add( 'sm-se-control-inactive' );
-      }
-    }
+  const panels = tabEntries.map( tab => {
+    const panel = buildSectionPanel( tab.data );
+    pageEl.appendChild( panel );
+    return { id: tab.id, panel };
   } );
 
+  activateTab = id => {
+    panels.forEach( ( { id: panelId, panel } ) => {
+      panel.classList.toggle( 'is-active', panelId === id );
+    } );
+    pageEl.querySelectorAll( '.sm-se-tabs__tab' ).forEach( button => {
+      button.classList.toggle( 'is-active', button.getAttribute( 'data-tab-section' ) === id );
+    } );
+  };
+  activateTab( section.id );
+
   pagesEl.appendChild( pageEl );
+
+  const scrollTop = () => {
+    const body = document.querySelector( '.sm-site-editor-sidebar__body' );
+    if ( body ) {
+      body.scrollTop = 0;
+    }
+  };
 
   // Register a section object so the engine's section-based features work
   // (shortcuts focus, expanded bindings, voice tuner placement, etc.).
@@ -133,10 +194,8 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
     container: $( pageEl ),
     expanded: false,
     onFocus: () => {
-      const body = document.querySelector( '.sm-site-editor-sidebar__body' );
-      if ( body ) {
-        body.scrollTop = 0;
-      }
+      activateTab( section.id );
+      scrollTop();
     },
   } );
 
@@ -145,13 +204,14 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
 
     // One section page at a time — same model as the Customizer's slide-in
     // sections and the Site Editor's Global Styles drill-down.
-    if ( isExpanded ) {
-      api.section.each( other => {
-        if ( other !== sectionObject && other.expanded.get() ) {
-          other.expanded.set( false );
-        }
-      } );
-    }
+    api.section.each( other => {
+      if ( other === sectionObject || ! other.expanded.get() ) {
+        return;
+      }
+      if ( isExpanded ? other.parentSection !== sectionObject : other.parentSection === sectionObject ) {
+        other.expanded.set( false );
+      }
+    } );
 
     updateView();
   } );
@@ -161,10 +221,34 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
   } );
 
   headerEl.querySelector( '.sm-se-page__back' ).addEventListener( 'click', () => {
+    // Shortcuts within the page push the Customizer's "return to origin"
+    // stack; in the tabs model the origin is this same page, so popping it
+    // would re-open what we are closing. Back always means the menu here.
+    globalService.setBackArray( [] );
     sectionObject.expanded.set( false );
   } );
 
   api.section.add( section.id, sectionObject );
+
+  // Child sections register their own objects: focusing them (shortcuts,
+  // deep links) opens the parent page on their tab.
+  tabEntries.forEach( ( { id, data } ) => {
+    if ( id === section.id ) {
+      return;
+    }
+
+    const childObject = createContainerObject( id, {
+      container: $( pageEl.querySelector( `[data-tab-section="${ id }"].sm-se-tab-panel` ) ),
+      expanded: false,
+      onFocus: () => {
+        sectionObject.expanded.set( true );
+        activateTab( id );
+        scrollTop();
+      },
+    } );
+    childObject.parentSection = sectionObject;
+    api.section.add( id, childObject );
+  } );
 };
 
 const buildRoot = api => {
@@ -188,11 +272,12 @@ const buildRoot = api => {
   pagesEl.className = 'sm-se-pages';
   themeControls.appendChild( pagesEl );
 
-  // Show either the menu or the open section page.
+  // Show either the menu or the open section page (children live inside
+  // their parent's page and don't count on their own).
   const updateView = () => {
     let anyOpen = false;
     api.section.each( sectionObject => {
-      if ( sectionObject.expanded.get() ) {
+      if ( ! sectionObject.parentSection && sectionObject.expanded.get() ) {
         anyOpen = true;
       }
     } );
@@ -225,16 +310,32 @@ const buildRoot = api => {
 
   groups.sort( ( a, b ) => a.priority - b.priority );
 
+  // Sections consumed as tabs inside a parent don't get their own menu row.
+  const sectionsById = {};
+  orderedSections.forEach( section => {
+    sectionsById[ section.id ] = section;
+  } );
+  const childIds = new Set();
+  Object.entries( payload.sectionTabs || {} ).forEach( ( [ parentId, tabs ] ) => {
+    tabs.forEach( tab => {
+      if ( tab.id !== parentId ) {
+        childIds.add( tab.id );
+      }
+    } );
+  } );
+
   groups.forEach( group => {
-    if ( group.title && group.sections.length ) {
+    const ownSections = group.sections.filter( section => ! childIds.has( section.id ) );
+
+    if ( group.title && ownSections.length ) {
       const heading = document.createElement( 'div' );
       heading.className = 'sm-se-panel-title';
       heading.textContent = group.title;
       menuEl.appendChild( heading );
     }
 
-    group.sections.forEach( section => {
-      buildSectionElement( api, section, menuEl, pagesEl, updateView );
+    ownSections.forEach( section => {
+      buildSectionElement( api, section, menuEl, pagesEl, updateView, sectionsById );
     } );
   } );
 
