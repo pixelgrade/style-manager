@@ -63,6 +63,9 @@ class Plugin extends BasePlugin implements Composable {
 			$this->register_hooks( $container->get( 'lab.showcase_route' ) );
 		}
 
+		// REST routes must be available outside is_admin() (REST requests are not admin).
+		$this->register_hooks( $container->get( 'provider.site_editor_endpoints' ) );
+
 		if ( is_admin() ) {
 			$this
 				->register_hooks( $container->get( 'hooks.upgrade' ) )
@@ -70,7 +73,8 @@ class Plugin extends BasePlugin implements Composable {
 				->register_hooks( $container->get( 'hooks.admin_assets' ) )
 				->register_hooks( $container->get( 'screen.general_admin' ) )
 				->register_hooks( $container->get( 'screen.settings' ) )
-				->register_hooks( $container->get( 'screen.edit_with_blocks' ) );
+				->register_hooks( $container->get( 'screen.edit_with_blocks' ) )
+				->register_hooks( $container->get( 'screen.site_editor' ) );
 
 			if ( Lab\Access::is_enabled() ) {
 				$this->register_hooks( $container->get( 'lab.admin_page' ) );

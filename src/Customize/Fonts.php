@@ -686,6 +686,23 @@ class Fonts extends AbstractHookProvider {
 		return apply_filters( 'style_manager/filter_font_option_markup', $html, $font_family, $active_font_family, $font_type );
 	}
 
+	/**
+	 * Retrieve the Google Fonts <option> markup used by the font controls JS.
+	 *
+	 * Public accessor for headless consumers (e.g. the Site Editor integration)
+	 * that need the same data customize_pane_settings_google_fonts_options()
+	 * prints in the Customizer pane.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return string Empty string when Google Fonts are unavailable/disabled.
+	 */
+	public function get_google_fonts_select_options(): string {
+		$options = $this->getGoogleFontsSelectOptions();
+
+		return is_string( $options ) ? $options : '';
+	}
+
 	public function customize_pane_settings_google_fonts_options() {
 		if ( empty( $this->google_fonts ) ) {
 			return;

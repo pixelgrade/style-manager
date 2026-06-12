@@ -1,0 +1,783 @@
+/**
+ * Style Manager — Site Editor sidebar.
+ *
+ * The control markup and the SM customizer stylesheet are reused verbatim;
+ * this file only provides:
+ * 1. the Customizer-pane base styles the Site Editor doesn't ship
+ *    (customize-controls.css is a Customizer-only asset), and
+ * 2. the sidebar shell (header, accordion sections, sizing).
+ */
+
+// The sidebar keeps the standard Page/Block panel width — the SM controls
+// are fluid and adapt to the complementary area like any other plugin panel.
+
+.sm-site-editor-sidebar {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	&__body {
+		flex: 1 1 auto;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Typography alignment with core editor controls: the Customizer stylesheet
+// inflates label/body sizes (15-16px); core sidebars use 13px body, 12px help
+// text, and 11px/500 uppercase component labels.
+// ---------------------------------------------------------------------------
+
+.sm-site-editor {
+	font-size: 13px;
+
+	.components-base-control__label,
+	.components-toggle-group-control + *,
+	label.components-toggle-control__label {
+		font-size: inherit;
+	}
+
+	.sm-native-control .components-base-control__label {
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 1.4;
+	}
+
+	.sm-native-control .components-base-control__help {
+		font-size: 12px;
+		font-style: normal;
+	}
+
+	// The customizer styles leak margins onto the native-control mount
+	// (e.g. a 16px left margin inside range controls) — keep it clean.
+	&#customize-controls[id] .sm-native-control {
+		margin: 0;
+		width: 100%;
+	}
+
+	// Sliders: the track + number input own the full row (resets live in the
+	// section's 3-dot menu, the core Query Loop pattern).
+	.sm-native-range {
+		display: block;
+		width: 100%;
+
+		> .components-base-control {
+			width: 100%;
+		}
+
+		// A narrower number input gives the rail more room.
+		input[type="number"] {
+			min-width: 0;
+		}
+
+		.components-input-control,
+		.components-number-control {
+			width: 56px;
+			flex-shrink: 0;
+		}
+	}
+
+	.customize-control-title,
+	.sm-control__label,
+	.sm-blinds__title,
+	.sm-panel-toggle__label {
+		font-size: 13px;
+		font-weight: 600;
+		text-transform: none;
+	}
+
+	.customize-control-description,
+	.description {
+		font-size: 12px;
+	}
+
+	.sm-group,
+	.sm-control {
+		font-size: 13px;
+	}
+
+	// Palette builder source-color rows (Brand Primary / Interpolated / ...).
+	// The customizer stylesheet sizes these via #customize-controls[id], so
+	// match that specificity.
+	&#customize-controls[id] .c-palette-builder__source-item-label {
+		font-size: 13px;
+	}
+
+	// Segmented pill groups (Font Sizing, Appearance, ...) restyled to core's
+	// ToggleGroupControl chrome (border, radius, sizing, typography) while
+	// keeping SM's behavior intact: the sliding/windowed options around the
+	// current selection and the blue active coloration. Layout properties
+	// (display/width) are deliberately untouched — they drive the windowing.
+	&#customize-controls[id] .sm-radio-group {
+		border: 1px solid #ccc;
+		border-radius: 2px;
+		background: #fff;
+
+		label {
+			font-size: 13px;
+			font-weight: 500;
+			color: #1e1e1e;
+			min-height: 34px;
+			border-radius: 1px;
+			// Like core: no dividers between options...
+			border: 0;
+		}
+
+		// ...only the active one is delineated — SM blue fill kept, light
+		// text for contrast, and a subtle inner ring as its border.
+		input:checked + label {
+			color: #fff;
+			border-radius: 1px;
+			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+		}
+	}
+
+	// Standard help-text spacing under the pill groups.
+	&#customize-controls[id] .sm-radio-group + .description,
+	&#customize-controls[id] .sm-radio-group + .customize-control-description,
+	&#customize-controls[id] .sm-radio-group ~ .description {
+		margin-top: 8px;
+	}
+
+	// The Customizer's spacer controls (sm_separator_*, spacing_bottom rows)
+	// render as empty bands here — the page rhythm comes from control
+	// margins instead.
+	li.customize-control[id*="separator"],
+	li.customize-control[id*="spacing_bottom"] {
+		display: none;
+	}
+
+	// Consistent vertical rhythm between controls; titles get breathing room
+	// from the block above. The customizer hairline borders on control rows
+	// would render as doubled lines with gaps on the white page — spacing
+	// alone separates controls, like core sidebars (specificity matched to
+	// the #customize-controls[id] rules that set them).
+	&#customize-controls[id] .sm-se-page__content > li {
+		margin-top: 0;
+		margin-bottom: 20px;
+		// The customizer styles pull some control rows out of the gutter with
+		// negative lateral margins (and add extra trailing padding) — the
+		// content then glues to the panel edge. Normalize to a 16px gutter.
+		margin-left: 0;
+		margin-right: 0;
+		border-top: 0;
+		border-bottom: 0;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.sm-se-page__content > li:last-child {
+		margin-bottom: 0;
+	}
+
+	// The section-navigation shortcuts (Customize colors usage, Fine-tune
+	// generated palette, Fine-tune the type system) duplicated what the
+	// section tabs now surface permanently — hide them and let the tabs be
+	// the one way to move between levels. The voice tuner toggle shares the
+	// sm-panel-toggle class but is a real accordion, not a shortcut.
+	.sm-group:has(> .sm-panel-toggle:only-child:not(.sm-voice-tuner-toggle__button)) {
+		display: none;
+	}
+
+	// Font palette cards: the name/specimen keep their preview fonts; the
+	// description drops to core's help-text scale.
+	.font-palette-preview__desc {
+		font-size: 13px;
+	}
+}
+
+// Controls whose PHP active_callback currently evaluates to false
+// (server-evaluated at render + refreshed on changes).
+.sm-site-editor .sm-se-control-inactive,
+.sm-site-editor .sm-se-control-dependent-hidden {
+	display: none !important;
+}
+
+// The Live Site preview overlay (frontend in an iframe, changeset-previewed).
+.sm-live-site-overlay {
+	position: absolute;
+	inset: 0;
+	background: #fff;
+
+	&__iframe {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Customizer pane base styles (subset of wp-admin customize-controls.css the
+// SM controls rely on).
+// ---------------------------------------------------------------------------
+
+.sm-site-editor {
+	font-size: 13px;
+
+	ul,
+	li {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.customize-control {
+		width: 100%;
+		float: none;
+		clear: both;
+		margin-bottom: 12px;
+		position: relative;
+	}
+
+	.customize-control-title {
+		display: block;
+		font-size: 14px;
+		line-height: 1.75;
+		font-weight: 600;
+		margin-bottom: 4px;
+	}
+
+	.customize-control-description {
+		display: block;
+		font-style: italic;
+		line-height: 1.4;
+		margin-top: 0;
+		margin-bottom: 5px;
+		color: #50575e;
+	}
+
+	.description {
+		color: #50575e;
+		font-style: italic;
+	}
+
+	select,
+	input[type="text"],
+	input[type="number"],
+	textarea {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	input[type="range"] {
+		width: 100%;
+	}
+
+	.customize-inside-control-row {
+		line-height: 1.6;
+	}
+
+	.screen-reader-text {
+		border: 0;
+		clip-path: inset(50%);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+		word-wrap: normal !important;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Panel + section accordion shell.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Preview tabs (Live Site / Typography / Colors).
+// ---------------------------------------------------------------------------
+
+.interface-interface-skeleton__content {
+	position: relative;
+}
+
+// Floating placement (mounted on document.body, free of the editor's
+// clipping containers): the tab bar sits in the top bar, right of the
+// centered document bar; the overlays cover the canvas region below.
+.sm-preview-tabs-root--floating {
+	.sm-preview {
+		position: static;
+		pointer-events: none;
+	}
+
+	.sm-preview__header {
+		position: fixed;
+		top: 12px;
+		left: calc(50% + 220px);
+		z-index: 99998;
+		padding: 0;
+		background: transparent;
+		pointer-events: auto;
+	}
+
+	.sm-preview__tabs {
+		background: #fff;
+	}
+
+	// Native ToggleGroupControl in the top bar: keep segment labels on one line.
+	.components-toggle-group-control-option-base,
+	.components-toggle-group-control button,
+	.components-toggle-group-control [role="radio"] {
+		white-space: nowrap;
+	}
+
+	.sm-preview__content {
+		position: fixed;
+		top: 60px;
+		left: 0;
+		right: 280px;
+		bottom: 0;
+		z-index: 9999;
+		display: block;
+		pointer-events: none;
+
+		> * {
+			pointer-events: auto;
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Drill-down navigation, following the Nova Blocks inspector pattern:
+// grouped headings + rounded rows that open full-panel section pages.
+// ---------------------------------------------------------------------------
+
+.sm-se-menu {
+	padding: 8px 16px 24px;
+}
+
+.sm-site-editor.is-section-open .sm-se-menu {
+	display: none;
+}
+
+.sm-se-panel-title {
+	padding: 20px 0 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1e1e1e;
+}
+
+.sm-se-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 10px 16px;
+	margin: 0 0 8px;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+	font-size: 13px;
+	font-weight: 500;
+	color: #1e1e1e;
+	text-align: left;
+	cursor: pointer;
+	transition: border-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
+
+	&:hover {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		color: var(--wp-admin-theme-color, #3858e9);
+		box-shadow: 0 0 0 0.5px var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&__label {
+		flex: 1 1 auto;
+	}
+
+	&__chevron:after {
+		content: "\f345"; // dashicons-arrow-right-alt2
+		font-family: dashicons;
+		font-size: 14px;
+		color: #757575;
+	}
+
+	// Brand icons ported from the Customizer panel — only the rows below
+	// define one; the icon span collapses otherwise.
+	&__icon {
+		display: none;
+		width: 28px;
+		height: 28px;
+		min-width: 28px;
+		border-radius: 50%;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
+		transition: transform 0.3s ease, background 0.3s ease;
+	}
+
+	&[data-section="sm_color_palettes_section"] .sm-se-row__icon {
+		display: block;
+		background: conic-gradient(from 180deg at 50% 50%, #020031 0deg, #090035 4.68deg, #2B045E 29.09deg, #3E0578 37.08deg, #7708BE 64.88deg, #C80EEC 108.66deg, #E839DE 147.4deg, #F35AAA 159.09deg, #F8668A 168.49deg, #FFA290 179.83deg, #FE8E68 180.64deg, #FF8134 191.01deg, #FFB97D 199.96deg, #F7BD4F 206.51deg, #F3C07A 219.02deg, #EBD4C3 226.4deg, #DEDFE3 246.49deg, #D8E7F8 269.42deg, #94D7FC 277.72deg, rgba(0, 156, 233, 0.87) 306.55deg, #0058AA 322.31deg, #02205D 343.18deg, #020031 360deg);
+	}
+	&[data-section="sm_color_palettes_section"]:hover .sm-se-row__icon {
+		transform: rotate(30deg);
+	}
+
+	&[data-section="sm_font_palettes_section"] .sm-se-row__icon {
+		display: block;
+		background-color: var(--sm-color-palette-accent-color-10, #1d2c5c);
+		background-image: url("../../images/section-fonts.svg");
+		background-size: 18px 18px;
+	}
+
+	&[data-section="sm_spacing_section"] .sm-se-row__icon {
+		display: block;
+		background: linear-gradient(
+			180deg,
+			var(--sm-color-palette-accent-color-4, #7da7d9) 35%,
+			transparent 35%,
+			transparent 65%,
+			var(--sm-color-palette-accent-color-6, #3e6fb0) 65%
+		);
+	}
+	&[data-section="sm_spacing_section"]:hover .sm-se-row__icon {
+		background: linear-gradient(
+			180deg,
+			var(--sm-color-palette-accent-color-4, #7da7d9) 45%,
+			transparent 45%,
+			transparent 55%,
+			var(--sm-color-palette-accent-color-6, #3e6fb0) 55%
+		);
+	}
+
+	&[data-section="sm_tweak_board_section"] .sm-se-row__icon {
+		display: block;
+		background-color: var(--sm-color-palette-accent-color-6, #3e6fb0);
+		background-image: url("../../images/section-tweak-board.svg");
+		background-size: 18px 18px;
+	}
+
+	&[data-section="sm_motion_section"] .sm-se-row__icon {
+		display: block;
+		background-color: var(--sm-color-palette-accent-color-10, #1d2c5c);
+		background-image: repeating-linear-gradient(
+			115deg,
+			transparent 0 7px,
+			#fff 7px 13px,
+			transparent 13px 20px
+		);
+		background-size: 16px 12px;
+		background-position: 50% 50%;
+	}
+	&[data-section="sm_motion_section"]:hover .sm-se-row__icon {
+		transform: translateX(2px);
+	}
+}
+
+.sm-se-page {
+	display: none;
+	// Uniform white like core sidebars — the panel's gray otherwise shows
+	// through as bands in the gaps between the white control surfaces.
+	background: #fff;
+	min-height: 100%;
+
+	&.open {
+		display: block;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		padding: 8px 16px;
+		border-bottom: 1px solid #e0e0e0;
+		position: sticky;
+		top: 0;
+		z-index: 5;
+		background: #fff;
+	}
+
+	&__back {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		border: none;
+		border-radius: 2px;
+		background: none;
+		cursor: pointer;
+
+		&:after {
+			content: "\f341"; // dashicons-arrow-left-alt2
+			font-family: dashicons;
+			font-size: 16px;
+			color: #1e1e1e;
+		}
+
+		&:hover:after {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	&__title {
+		font-size: 13px;
+		font-weight: 600;
+		color: #1e1e1e;
+	}
+
+	&__description {
+		padding: 12px 16px 0;
+		font-style: italic;
+		color: #50575e;
+	}
+}
+
+// High-level -> low-level tabs inside a section page (the Nova Blocks /
+// core inspector pattern; replaces the Customizer's Theme Options detour).
+.sm-se-tabs {
+	display: flex;
+	border-bottom: 1px solid #e0e0e0;
+	background: #fff;
+
+	&__tab {
+		flex: 1 1 auto;
+		padding: 12px 8px;
+		margin: 0;
+		border: none;
+		background: none;
+		font-size: 13px;
+		font-weight: 500;
+		color: #1e1e1e;
+		text-align: center;
+		cursor: pointer;
+		position: relative;
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		&.is-active {
+			font-weight: 600;
+		}
+
+		&.is-active:after {
+			content: "";
+			position: absolute;
+			left: 16px;
+			right: 16px;
+			bottom: -1px;
+			height: 2px;
+			background: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+}
+
+.sm-se-tab-panel {
+	display: none;
+	position: relative;
+
+	&.is-active {
+		display: block;
+	}
+}
+
+// The section's 3-dot reset menu (core Query Loop pattern), top-right.
+.sm-se-panel-tools {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 5;
+
+	.components-button {
+		height: 28px;
+		min-width: 28px;
+		padding: 2px;
+		color: #757575;
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+}
+
+// Keep the intro description clear of the 3-dot menu.
+.sm-se-tab-panel .sm-se-page__description {
+	padding-right: 44px;
+}
+
+.sm-reset-menu__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	width: 100%;
+	min-width: 180px;
+}
+
+.sm-reset-menu__action {
+	color: var(--wp-admin-theme-color, #3858e9);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.sm-reset-menu__check {
+	color: #757575;
+	font-size: 16px;
+}
+
+// Intro cards merged into their toggle (Auto-style, Post Type Colors, the
+// Motion enables) disappear — the toggle carries the title + help now.
+.sm-site-editor .sm-se-control-merged {
+	display: none !important;
+}
+
+// Injected group headers (e.g. Collections in the Tweak Board) + remaining
+// html intro rows (Site Frame, Palette Configuration) read as group headers.
+// Group headers must outrank the 11px-uppercase control labels beneath them.
+.sm-site-editor li.sm-se-group-title,
+.sm-site-editor .sm-se-page__content li.customize-control-html .customize-control-title {
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: none;
+	letter-spacing: 0;
+	color: #1e1e1e;
+}
+
+.sm-site-editor li.sm-se-group-title {
+	margin-bottom: 12px;
+}
+
+// "Find by voice": replaces the floating voice tuner accordion in the editor.
+.sm-site-editor li.sm-voice-tuner-toggle-control,
+.sm-site-editor .sm-voice-tuner-accordion__content {
+	display: none !important;
+}
+
+.sm-voice-panel {
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 10px 12px;
+		border: none;
+		background: none;
+		font-size: 13px;
+		font-weight: 600;
+		color: #1e1e1e;
+		cursor: pointer;
+
+		.dashicons {
+			color: #757575;
+			font-size: 16px;
+		}
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	&__body {
+		padding: 4px 12px 12px;
+	}
+
+	// Label above the segmented control — side-by-side overflows the 280px
+	// panel with option labels like "Energetic".
+	&__row {
+		margin-bottom: 12px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		> div {
+			width: 100%;
+		}
+	}
+
+	&__label {
+		display: block;
+		margin-bottom: 4px;
+		font-size: 11px;
+		font-weight: 500;
+		text-transform: uppercase;
+		color: #1e1e1e;
+	}
+
+	&__hint {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		padding: 8px 12px;
+		border-top: 1px solid #e0e0e0;
+		font-size: 12px;
+		color: #50575e;
+	}
+}
+
+// The color row context menu (Interpolate / Add / Rename / Remove Color)
+// restyled to match the core dropdown menus used elsewhere in the editor.
+.sm-site-editor .c-contextual-menu__list {
+	min-width: 200px;
+	padding: 8px;
+	border: none;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sm-site-editor .c-contextual-menu__list-item {
+	padding: 8px;
+	min-height: 40px;
+	display: flex;
+	align-items: center;
+	border-radius: 2px;
+	font-size: 13px;
+	font-weight: 400;
+	color: #1e1e1e;
+	cursor: pointer;
+
+	&:hover {
+		background: #f0f0f0;
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	// Destructive action stays red, core-style (e.g. Remove Color).
+	&.c-contextual-menu__list-item--danger,
+	&.c-contextual-menu__list-item--remove,
+	&[class*="remove"],
+	&[class*="delete"] {
+		color: #cc1818;
+
+		&:hover {
+			background: #f0f0f0;
+			color: #cc1818;
+		}
+	}
+}
+
+// Needs to win over the `.sm-site-editor ul` reset.
+// The gutter lives on the individual controls; Style Manager's self-padded
+// white surfaces (groups, shortcut rows, blinds) bleed to the panel edges,
+// like native editor panels.
+.sm-site-editor .sm-se-page__content {
+	padding: 16px 0;
+
+	> li {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.sm-group,
+	.sm-panel-toggle,
+	.sm-blinds {
+		margin-left: -16px;
+		margin-right: -16px;
+	}
+
+	// Surfaces nested inside an already-bleeding group stay put.
+	.sm-group .sm-group,
+	.sm-group .sm-panel-toggle,
+	.sm-group .sm-blinds {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}

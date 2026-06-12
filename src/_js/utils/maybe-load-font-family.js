@@ -26,6 +26,12 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     return;
   }
 
+  // Without the Web Font Loader on the page we cannot load anything —
+  // bail instead of throwing (it loads async in some contexts).
+  if ( typeof WebFont === 'undefined' ) {
+    return;
+  }
+
   window.fontsCache = window.fontsCache ?? [];
 
   if ( typeof font.font_family === 'undefined' ) {
