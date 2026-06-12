@@ -293,8 +293,10 @@
 }
 
 // Floating placement (mounted on document.body, free of the editor's
-// clipping containers): the tab bar sits in the top bar, right of the
-// centered document bar; the overlays cover the canvas region below.
+// clipping containers): the tab bar floats just below the top bar, centered
+// over the canvas region; the overlays cover the canvas region below.
+// (It used to sit IN the top bar at `left: calc(50% + 220px)`, which
+// collided with the document bar / right icon cluster below ~1660px.)
 .sm-preview-tabs-root--floating {
 	.sm-preview {
 		position: static;
@@ -303,11 +305,15 @@
 
 	.sm-preview__header {
 		position: fixed;
-		top: 12px;
-		left: calc(50% + 220px);
+		top: 72px;
+		// Center over the canvas: the settings sidebar (280px) eats the right side.
+		left: calc((100vw - 280px) / 2);
+		transform: translateX(-50%);
 		z-index: 99998;
-		padding: 0;
-		background: transparent;
+		padding: 2px;
+		background: #fff;
+		border-radius: 4px;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
 		pointer-events: auto;
 	}
 
