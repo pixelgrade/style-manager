@@ -150,6 +150,13 @@
 		background: #fff;
 	}
 
+	// Native ToggleGroupControl in the top bar: keep segment labels on one line.
+	.components-toggle-group-control-option-base,
+	.components-toggle-group-control button,
+	.components-toggle-group-control [role="radio"] {
+		white-space: nowrap;
+	}
+
 	.sm-preview__content {
 		position: fixed;
 		top: 60px;

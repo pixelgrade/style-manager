@@ -491,20 +491,40 @@ const SiteEditorPreviewTabs = () => {
     { id: 'colors', label: l10n.previewTabColorSystemLabel },
   ];
 
+  // The editor's own segmented control, so the switcher reads as part of
+  // the chrome rather than Customizer UI.
+  const ToggleGroupControl = wp.components.__experimentalToggleGroupControl || wp.components.ToggleGroupControl;
+  const ToggleGroupControlOption = wp.components.__experimentalToggleGroupControlOption || wp.components.ToggleGroupControlOption;
+
   return (
     <div className="sm-preview sm-preview--visible">
       <div className="sm-preview__header">
-        <div className="sm-preview__tabs">
-          { tabs.map( tab => (
-            <div
-              key={ tab.id }
-              className={ `sm-preview__tab ${ active === tab.id ? 'sm-preview__tab--active' : '' }` }
-              onClick={ () => setActive( tab.id ) }
-            >
-              { tab.label }
-            </div>
-          ) ) }
-        </div>
+        { ToggleGroupControl ? (
+          <ToggleGroupControl
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize={ false }
+            hideLabelFromVision
+            label={ __( 'Style Manager preview', '__plugin_txtd' ) }
+            value={ active }
+            onChange={ value => setActive( value || 'editor' ) }
+          >
+            { tabs.map( tab => (
+              <ToggleGroupControlOption key={ tab.id } value={ tab.id } label={ tab.label } />
+            ) ) }
+          </ToggleGroupControl>
+        ) : (
+          <div className="sm-preview__tabs">
+            { tabs.map( tab => (
+              <div
+                key={ tab.id }
+                className={ `sm-preview__tab ${ active === tab.id ? 'sm-preview__tab--active' : '' }` }
+                onClick={ () => setActive( tab.id ) }
+              >
+                { tab.label }
+              </div>
+            ) ) }
+          </div>
+        ) }
       </div>
       <div className="sm-preview__content">
         <LiveSiteOverlay show={ active === 'site' } />
