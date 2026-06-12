@@ -70,11 +70,27 @@
 		&__reset {
 			flex: 0 0 auto;
 			// Align with the slider/input row (the label sits above it).
-			margin-top: 21px;
-			color: #757575;
+			margin-top: 24px;
+			padding: 4px;
+			height: 28px;
+			width: 28px;
+			min-width: 28px;
+			color: #949494;
+
+			.dashicon,
+			.dashicons,
+			svg {
+				font-size: 16px;
+				width: 16px;
+				height: 16px;
+			}
+
+			&:hover:not(:disabled) {
+				color: var(--wp-admin-theme-color, #3858e9);
+			}
 
 			&:disabled {
-				opacity: 0.4;
+				opacity: 0.35;
 			}
 		}
 	}
@@ -129,11 +145,15 @@
 	// alone separates controls, like core sidebars (specificity matched to
 	// the #customize-controls[id] rules that set them).
 	&#customize-controls[id] .sm-se-page__content > li {
+		margin-top: 0;
 		margin-bottom: 20px;
+		// The customizer styles pull some control rows out of the gutter with
+		// negative lateral margins (and add extra trailing padding) — the
+		// content then glues to the panel edge. Normalize to a 16px gutter.
+		margin-left: 0;
+		margin-right: 0;
 		border-top: 0;
 		border-bottom: 0;
-		// Normalize the gutter — the customizer styles add extra trailing
-		// padding that shortchanges full-width controls like the sliders.
 		padding-left: 16px;
 		padding-right: 16px;
 	}
