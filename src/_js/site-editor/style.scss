@@ -345,6 +345,29 @@
 }
 
 // Needs to win over the `.sm-site-editor ul` reset.
+// The gutter lives on the individual controls; Style Manager's self-padded
+// white surfaces (groups, shortcut rows, blinds) bleed to the panel edges,
+// like native editor panels.
 .sm-site-editor .sm-se-page__content {
-	padding: 16px;
+	padding: 16px 0;
+
+	> li {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.sm-group,
+	.sm-panel-toggle,
+	.sm-blinds {
+		margin-left: -16px;
+		margin-right: -16px;
+	}
+
+	// Surfaces nested inside an already-bleeding group stay put.
+	.sm-group .sm-group,
+	.sm-group .sm-panel-toggle,
+	.sm-group .sm-blinds {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
