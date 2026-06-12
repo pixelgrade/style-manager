@@ -51,27 +51,46 @@ const BoundControl = ( { settingId, children } ) => {
 };
 
 const NativeRange = ( { settingId } ) => {
-  const { RangeControl } = wp.components;
+  const { RangeControl, Button } = wp.components;
+  const { __ } = wp.i18n;
   const config = getConfig( settingId );
   const attrs = config.input_attrs || {};
+  const hasDefault = config.default !== undefined && config.default !== '';
+  const defaultValue = hasDefault ? Number( config.default ) : undefined;
 
   return (
     <BoundControl settingId={ settingId }>
-      { ( value, onChange ) => (
-        <RangeControl
-          __nextHasNoMarginBottom
-          label={ config.label }
-          help={ stripHtml( config.desc ) || undefined }
-          value={ value === '' || value === undefined ? undefined : Number( value ) }
-          onChange={ onChange }
-          min={ attrs.min !== undefined ? Number( attrs.min ) : 0 }
-          max={ attrs.max !== undefined ? Number( attrs.max ) : 100 }
-          step={ attrs.step !== undefined ? Number( attrs.step ) : 1 }
-          allowReset
-          resetFallbackValue={ config.default !== undefined ? Number( config.default ) : undefined }
-          withInputField
-        />
-      ) }
+      { ( value, onChange ) => {
+        const current = value === '' || value === undefined ? undefined : Number( value );
+        const isAtDefault = hasDefault && current === defaultValue;
+
+        return (
+          <div className="sm-native-range">
+            <RangeControl
+              __nextHasNoMarginBottom
+              label={ config.label }
+              help={ stripHtml( config.desc ) || undefined }
+              value={ current }
+              onChange={ onChange }
+              min={ attrs.min !== undefined ? Number( attrs.min ) : 0 }
+              max={ attrs.max !== undefined ? Number( attrs.max ) : 100 }
+              step={ attrs.step !== undefined ? Number( attrs.step ) : 1 }
+              withInputField
+            />
+            { hasDefault && (
+              <Button
+                className="sm-native-range__reset"
+                icon="undo"
+                size="small"
+                label={ __( 'Reset to default', '__plugin_txtd' ) }
+                showTooltip
+                disabled={ isAtDefault }
+                onClick={ () => onChange( defaultValue ) }
+              />
+            ) }
+          </div>
+        );
+      } }
     </BoundControl>
   );
 };

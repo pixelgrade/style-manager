@@ -47,6 +47,38 @@
 		font-style: normal;
 	}
 
+	// The customizer styles leak margins onto the native-control mount
+	// (e.g. a 16px left margin inside range controls) — keep it clean.
+	&#customize-controls[id] .sm-native-control {
+		margin: 0;
+		width: 100%;
+	}
+
+	// Sliders: full row width with a subtle icon reset aligned to the
+	// slider row (the stock allowReset text button was too loud).
+	.sm-native-range {
+		display: flex;
+		align-items: flex-start;
+		gap: 4px;
+		width: 100%;
+
+		> .components-base-control {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		&__reset {
+			flex: 0 0 auto;
+			// Align with the slider/input row (the label sits above it).
+			margin-top: 21px;
+			color: #757575;
+
+			&:disabled {
+				opacity: 0.4;
+			}
+		}
+	}
+
 	.customize-control-title,
 	.sm-control__label,
 	.sm-blinds__title,
@@ -100,6 +132,10 @@
 		margin-bottom: 20px;
 		border-top: 0;
 		border-bottom: 0;
+		// Normalize the gutter — the customizer styles add extra trailing
+		// padding that shortchanges full-width controls like the sliders.
+		padding-left: 16px;
+		padding-right: 16px;
 	}
 
 	.sm-se-page__content > li:last-child {
