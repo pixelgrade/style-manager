@@ -261,23 +261,28 @@
 .sm-se-row {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	gap: 12px;
 	width: 100%;
-	padding: 14px 16px;
+	padding: 10px 16px;
 	margin: 0 0 8px;
-	border: none;
+	border: 1px solid #e0e0e0;
 	border-radius: 4px;
-	background: #f0f0f0;
+	background: #fff;
 	font-size: 13px;
 	font-weight: 500;
 	color: #1e1e1e;
 	text-align: left;
 	cursor: pointer;
-	transition: background 0.1s ease;
+	transition: border-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
 
 	&:hover {
-		background: #e8e8e8;
+		border-color: var(--wp-admin-theme-color, #3858e9);
 		color: var(--wp-admin-theme-color, #3858e9);
+		box-shadow: 0 0 0 0.5px var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&__label {
+		flex: 1 1 auto;
 	}
 
 	&__chevron:after {
@@ -285,6 +290,77 @@
 		font-family: dashicons;
 		font-size: 14px;
 		color: #757575;
+	}
+
+	// Brand icons ported from the Customizer panel — only the rows below
+	// define one; the icon span collapses otherwise.
+	&__icon {
+		display: none;
+		width: 28px;
+		height: 28px;
+		min-width: 28px;
+		border-radius: 50%;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
+		transition: transform 0.3s ease, background 0.3s ease;
+	}
+
+	&[data-section="sm_color_palettes_section"] .sm-se-row__icon {
+		display: block;
+		background: conic-gradient(from 180deg at 50% 50%, #020031 0deg, #090035 4.68deg, #2B045E 29.09deg, #3E0578 37.08deg, #7708BE 64.88deg, #C80EEC 108.66deg, #E839DE 147.4deg, #F35AAA 159.09deg, #F8668A 168.49deg, #FFA290 179.83deg, #FE8E68 180.64deg, #FF8134 191.01deg, #FFB97D 199.96deg, #F7BD4F 206.51deg, #F3C07A 219.02deg, #EBD4C3 226.4deg, #DEDFE3 246.49deg, #D8E7F8 269.42deg, #94D7FC 277.72deg, rgba(0, 156, 233, 0.87) 306.55deg, #0058AA 322.31deg, #02205D 343.18deg, #020031 360deg);
+	}
+	&[data-section="sm_color_palettes_section"]:hover .sm-se-row__icon {
+		transform: rotate(30deg);
+	}
+
+	&[data-section="sm_font_palettes_section"] .sm-se-row__icon {
+		display: block;
+		background-color: var(--sm-color-palette-accent-color-10, #1d2c5c);
+		background-image: url("../../images/section-fonts.svg");
+		background-size: 18px 18px;
+	}
+
+	&[data-section="sm_spacing_section"] .sm-se-row__icon {
+		display: block;
+		background: linear-gradient(
+			180deg,
+			var(--sm-color-palette-accent-color-4, #7da7d9) 35%,
+			transparent 35%,
+			transparent 65%,
+			var(--sm-color-palette-accent-color-6, #3e6fb0) 65%
+		);
+	}
+	&[data-section="sm_spacing_section"]:hover .sm-se-row__icon {
+		background: linear-gradient(
+			180deg,
+			var(--sm-color-palette-accent-color-4, #7da7d9) 45%,
+			transparent 45%,
+			transparent 55%,
+			var(--sm-color-palette-accent-color-6, #3e6fb0) 55%
+		);
+	}
+
+	&[data-section="sm_tweak_board_section"] .sm-se-row__icon {
+		display: block;
+		background-color: var(--sm-color-palette-accent-color-6, #3e6fb0);
+		background-image: url("../../images/section-tweak-board.svg");
+		background-size: 18px 18px;
+	}
+
+	&[data-section="sm_motion_section"] .sm-se-row__icon {
+		display: block;
+		background-color: var(--sm-color-palette-accent-color-10, #1d2c5c);
+		background-image: repeating-linear-gradient(
+			115deg,
+			transparent 0 7px,
+			#fff 7px 13px,
+			transparent 13px 20px
+		);
+		background-size: 16px 12px;
+		background-position: 50% 50%;
+	}
+	&[data-section="sm_motion_section"]:hover .sm-se-row__icon {
+		transform: translateX(2px);
 	}
 }
 

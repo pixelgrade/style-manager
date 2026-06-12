@@ -81,7 +81,8 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
   const rowEl = document.createElement( 'button' );
   rowEl.type = 'button';
   rowEl.className = 'sm-se-row';
-  rowEl.innerHTML = `<span class="sm-se-row__label">${ section.title }</span><span class="sm-se-row__chevron" aria-hidden="true"></span>`;
+  rowEl.dataset.section = section.id;
+  rowEl.innerHTML = `<span class="sm-se-row__icon" aria-hidden="true"></span><span class="sm-se-row__label">${ section.title }</span><span class="sm-se-row__chevron" aria-hidden="true"></span>`;
   menuEl.appendChild( rowEl );
 
   // The section page.
