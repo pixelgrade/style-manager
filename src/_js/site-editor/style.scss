@@ -54,27 +54,42 @@
 		width: 100%;
 	}
 
-	// Sliders: full row width with a subtle icon reset aligned to the
-	// slider row (the stock allowReset text button was too loud).
+	// Sliders: the track + number input own the full row; the reset is a
+	// secondary affordance tucked top-right on the label line.
 	.sm-native-range {
-		display: flex;
-		align-items: flex-start;
-		gap: 4px;
+		position: relative;
+		display: block;
 		width: 100%;
 
 		> .components-base-control {
-			flex: 1 1 auto;
+			width: 100%;
+		}
+
+		// Keep long labels clear of the reset icon.
+		.components-base-control__label {
+			max-width: calc(100% - 32px);
+		}
+
+		// A narrower number input gives the rail more room.
+		input[type="number"] {
 			min-width: 0;
 		}
 
+		.components-input-control,
+		.components-number-control {
+			width: 56px;
+			flex-shrink: 0;
+		}
+
 		&__reset {
-			flex: 0 0 auto;
-			// Align with the slider/input row (the label sits above it).
-			margin-top: 24px;
+			position: absolute;
+			top: -6px;
+			right: 0;
+			margin: 0;
 			padding: 4px;
-			height: 28px;
-			width: 28px;
-			min-width: 28px;
+			height: 24px;
+			width: 24px;
+			min-width: 24px;
 			color: #949494;
 
 			.dashicon,
