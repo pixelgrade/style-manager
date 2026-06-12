@@ -173,6 +173,17 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, section
   `;
   pageEl.appendChild( headerEl );
 
+  // Sections that own a preview overlay (the color system board, the type
+  // specimen) get a Preview affordance right in the page header.
+  if ( SECTION_PREVIEW_MODES[ section.id ] ) {
+    const previewButton = document.createElement( 'button' );
+    previewButton.type = 'button';
+    previewButton.className = 'sm-se-page__preview';
+    previewButton.textContent = wp.i18n.__( 'Preview', '__plugin_txtd' );
+    previewButton.addEventListener( 'click', () => setPreviewMode( SECTION_PREVIEW_MODES[ section.id ] ) );
+    headerEl.appendChild( previewButton );
+  }
+
   const tabsConfig = ( payload.sectionTabs || {} )[ section.id ];
   const tabEntries = ( tabsConfig || [ { id: section.id, label: '' } ] )
     .map( tab => ( { ...tab, data: tab.id === section.id ? section : sectionsById[ tab.id ] } ) )
@@ -619,66 +630,91 @@ const LiveSiteOverlay = ( { show } ) => {
   );
 };
 
-const SiteEditorPreviewTabs = () => {
-  const { useState } = wp.element;
+/**
+ * Preview mode store: null (editor) | 'site' | 'colors' | 'typography'.
+ *
+ * The triggers live in different React trees (the core View menu, the
+ * body-mounted overlay host) and in vanilla-DOM section pages, so the mode
+ * lives in a tiny external store everyone can reach.
+ */
+let previewMode = null;
+const previewModeListeners = new Set();
+
+export const setPreviewMode = mode => {
+  previewMode = mode || null;
+  previewModeListeners.forEach( listener => listener( previewMode ) );
+};
+
+const usePreviewMode = () => {
+  const { useState, useEffect } = wp.element;
+  const [ mode, setMode ] = useState( previewMode );
+
+  useEffect( () => {
+    previewModeListeners.add( setMode );
+    return () => previewModeListeners.delete( setMode );
+  }, [] );
+
+  return mode;
+};
+
+/**
+ * Sections that own a preview overlay: their pages get a "Preview" affordance
+ * in the page header (see buildSectionElement).
+ */
+const SECTION_PREVIEW_MODES = {
+  sm_color_palettes_section: 'colors',
+  sm_font_palettes_section: 'typography',
+};
+
+/**
+ * The overlay host, mounted on document.body (the editor header and canvas
+ * containers clip fixed descendants). Renders only the active overlay plus a
+ * "Back to editor" close affordance; nothing renders while in editor mode.
+ */
+const SiteEditorPreviewOverlays = () => {
+  const { useEffect } = wp.element;
   const { __ } = wp.i18n;
-  const [ active, setActive ] = useState( 'editor' );
+  const mode = usePreviewMode();
 
-  const l10n = window.styleManager.l10n.colorPalettes;
-  const tabs = [
-    { id: 'editor', label: __( 'Editor', '__plugin_txtd' ) },
-    { id: 'site', label: l10n.previewTabLiveSiteLabel },
-    { id: 'typography', label: l10n.previewTabTypographyLabel },
-    { id: 'colors', label: l10n.previewTabColorSystemLabel },
-  ];
+  useEffect( () => {
+    if ( ! mode ) {
+      return undefined;
+    }
 
-  // The editor's own segmented control, so the switcher reads as part of
-  // the chrome rather than Customizer UI.
-  const ToggleGroupControl = wp.components.__experimentalToggleGroupControl || wp.components.ToggleGroupControl;
-  const ToggleGroupControlOption = wp.components.__experimentalToggleGroupControlOption || wp.components.ToggleGroupControlOption;
+    const onKeyDown = event => {
+      if ( 'Escape' === event.key ) {
+        setPreviewMode( null );
+      }
+    };
+    document.addEventListener( 'keydown', onKeyDown );
+    return () => document.removeEventListener( 'keydown', onKeyDown );
+  }, [ mode ] );
+
+  if ( ! mode ) {
+    return null;
+  }
 
   return (
     <div className="sm-preview sm-preview--visible">
-      <div className="sm-preview__header">
-        { ToggleGroupControl ? (
-          <ToggleGroupControl
-            __nextHasNoMarginBottom
-            __next40pxDefaultSize={ false }
-            hideLabelFromVision
-            label={ __( 'Style Manager preview', '__plugin_txtd' ) }
-            value={ active }
-            onChange={ value => setActive( value || 'editor' ) }
-          >
-            { tabs.map( tab => (
-              <ToggleGroupControlOption key={ tab.id } value={ tab.id } label={ tab.label } />
-            ) ) }
-          </ToggleGroupControl>
-        ) : (
-          <div className="sm-preview__tabs">
-            { tabs.map( tab => (
-              <div
-                key={ tab.id }
-                className={ `sm-preview__tab ${ active === tab.id ? 'sm-preview__tab--active' : '' }` }
-                onClick={ () => setActive( tab.id ) }
-              >
-                { tab.label }
-              </div>
-            ) ) }
-          </div>
-        ) }
-      </div>
+      <button
+        type="button"
+        className="sm-preview__close"
+        onClick={ () => setPreviewMode( null ) }
+      >
+        <span aria-hidden="true">✕</span> { __( 'Back to editor', '__plugin_txtd' ) }
+      </button>
       <div className="sm-preview__content">
         { /* Mount only the active overlay: the hidden ones would render their
              full trees on editor boot and re-render on every palette change. */ }
-        <LiveSiteOverlay show={ active === 'site' } />
-        { active === 'colors' && <ColorsOverlay show /> }
-        { active === 'typography' && <TypographyOverlay show /> }
+        { 'site' === mode && <LiveSiteOverlay show /> }
+        { 'colors' === mode && <ColorsOverlay show /> }
+        { 'typography' === mode && <TypographyOverlay show /> }
       </div>
     </div>
   );
 };
 
-const mountPreviewTabs = () => {
+const mountPreviewOverlays = () => {
   let rootEl = document.body.querySelector( ':scope > .sm-preview-tabs-root' );
   if ( ! rootEl ) {
     rootEl = document.createElement( 'div' );
@@ -686,12 +722,13 @@ const mountPreviewTabs = () => {
     document.body.appendChild( rootEl );
   }
 
-  ReactDOM.render( <SiteEditorPreviewTabs />, rootEl );
+  ReactDOM.render( <SiteEditorPreviewOverlays />, rootEl );
 
   return rootEl;
 };
 
-const unmountPreviewTabs = rootEl => {
+const unmountPreviewOverlays = rootEl => {
+  setPreviewMode( null );
   if ( rootEl ) {
     ReactDOM.unmountComponentAtNode( rootEl );
     rootEl.remove();
@@ -968,7 +1005,7 @@ const initializeControlDependencies = eng => {
 
 const registerSidebar = () => {
   const { registerPlugin } = wp.plugins;
-  const { PluginSidebar, PluginSidebarMoreMenuItem } = wp.editor;
+  const { PluginSidebar, PluginSidebarMoreMenuItem, PluginPreviewMenuItem } = wp.editor;
   const { useEffect, useRef, createElement, Fragment } = wp.element;
   const { __ } = wp.i18n;
 
@@ -981,10 +1018,10 @@ const registerSidebar = () => {
       containerRef.current.appendChild( eng.root );
       bootEngine( eng );
 
-      const previewTabsRoot = mountPreviewTabs();
+      const previewOverlaysRoot = mountPreviewOverlays();
 
       return () => {
-        unmountPreviewTabs( previewTabsRoot );
+        unmountPreviewOverlays( previewOverlaysRoot );
         if ( eng.root.parentNode ) {
           eng.root.parentNode.removeChild( eng.root );
         }
@@ -1005,6 +1042,16 @@ const registerSidebar = () => {
         <PluginSidebarMoreMenuItem target="pixelgrade-style-manager" icon="admin-customizer">
           { __( 'Style Manager', '__plugin_txtd' ) }
         </PluginSidebarMoreMenuItem>
+        { /* "Live site" is a view mode, so it lives in the core View menu
+             next to the device previews. The section-scoped previews
+             (Colors / Typography) open from their own section pages. */ }
+        { PluginPreviewMenuItem && (
+          <PluginPreviewMenuItem
+            onClick={ () => setPreviewMode( 'site' ) }
+          >
+            { window.styleManager?.l10n?.colorPalettes?.previewTabLiveSiteLabel || __( 'Live site', '__plugin_txtd' ) }
+          </PluginPreviewMenuItem>
+        ) }
         <PluginSidebar
           name="pixelgrade-style-manager"
           title={ __( 'Style Manager', '__plugin_txtd' ) }
