@@ -118,14 +118,24 @@
 			color: #1e1e1e;
 			min-height: 34px;
 			border-radius: 1px;
-			border-color: #ccc;
+			// Like core: no dividers between options...
+			border: 0;
 		}
 
-		// Keep the coloration: the active fill stays SM blue; just square the
-		// corners to the core inner radius.
+		// ...only the active one is delineated — SM blue fill kept, light
+		// text for contrast, and a subtle inner ring as its border.
 		input:checked + label {
+			color: #fff;
 			border-radius: 1px;
+			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
 		}
+	}
+
+	// Standard help-text spacing under the pill groups.
+	&#customize-controls[id] .sm-radio-group + .description,
+	&#customize-controls[id] .sm-radio-group + .customize-control-description,
+	&#customize-controls[id] .sm-radio-group ~ .description {
+		margin-top: 8px;
 	}
 
 	// The Customizer's spacer controls (sm_separator_*, spacing_bottom rows)
