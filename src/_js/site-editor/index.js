@@ -173,17 +173,17 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, section
   `;
   pageEl.appendChild( headerEl );
 
-  // Sections that own a preview overlay (the color system board, the type
-  // specimen) get a Preview affordance right in the page header. The button
-  // toggles: while its overlay is open it reads "Close Preview".
+  // Sections that own a preview (a system board, or the Live Site flow for
+  // Motion) get a Preview affordance right in the page header. The button
+  // toggles: while its preview is open it reads "Close Preview".
   if ( SECTION_PREVIEW_MODES[ section.id ] ) {
-    const sectionMode = SECTION_PREVIEW_MODES[ section.id ];
+    const previewEntry = SECTION_PREVIEW_MODES[ section.id ];
     const previewButton = document.createElement( 'button' );
     previewButton.type = 'button';
     previewButton.className = 'sm-se-page__preview';
 
     const renderPreviewButton = currentMode => {
-      const isOpen = currentMode === sectionMode;
+      const isOpen = currentMode === previewEntry.mode;
       previewButton.textContent = isOpen
         ? wp.i18n.__( 'Close Preview', '__plugin_txtd' )
         : wp.i18n.__( 'Preview', '__plugin_txtd' );
@@ -193,7 +193,11 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, section
     previewModeListeners.add( renderPreviewButton );
 
     previewButton.addEventListener( 'click', () => {
-      setPreviewMode( getPreviewMode() === sectionMode ? null : sectionMode );
+      if ( getPreviewMode() === previewEntry.mode ) {
+        setPreviewMode( null );
+      } else {
+        setPreviewMode( previewEntry.mode, previewEntry.context || null );
+      }
     } );
     headerEl.appendChild( previewButton );
   }
@@ -533,7 +537,7 @@ const bootEngine = eng => {
  */
 const PREVIEW_CHANNEL = 'preview-0';
 
-const LiveSiteOverlay = ( { show } ) => {
+const LiveSiteOverlay = ( { show, hint } ) => {
   const { useState, useEffect, useRef } = wp.element;
   const [ url, setUrl ] = useState( null );
   const iframeRef = useRef( null );
@@ -656,8 +660,24 @@ const LiveSiteOverlay = ( { show } ) => {
     return null;
   }
 
+  const { __ } = wp.i18n;
+  // Replay: re-sync the changeset and bump the URL counter — the iframe
+  // reloads through the same mechanics, replaying the loading transition
+  // and the intro animations with the current (unsaved) motion settings.
+  const replay = () => refresh();
+
   return (
     <div className="sm-live-site-overlay">
+      { 'motion' === hint && (
+        <div className="sm-live-site-overlay__hint">
+          <span>
+            { __( 'Navigate between pages to experience page transitions.', '__plugin_txtd' ) }
+          </span>
+          <button type="button" onClick={ replay }>
+            { __( 'Replay intro', '__plugin_txtd' ) }
+          </button>
+        </div>
+      ) }
       { url && (
         <iframe
           ref={ iframeRef }
@@ -678,12 +698,16 @@ const LiveSiteOverlay = ( { show } ) => {
  * lives in a tiny external store everyone can reach.
  */
 let previewMode = null;
+let previewContext = null;
 const previewModeListeners = new Set();
 
 export const getPreviewMode = () => previewMode;
 
-export const setPreviewMode = mode => {
+export const getPreviewContext = () => previewContext;
+
+export const setPreviewMode = ( mode, context = null ) => {
   previewMode = mode || null;
+  previewContext = previewMode ? context : null;
   previewModeListeners.forEach( listener => listener( previewMode ) );
 };
 
@@ -700,13 +724,16 @@ const usePreviewMode = () => {
 };
 
 /**
- * Sections that own a preview overlay: their pages get a "Preview" affordance
- * in the page header (see buildSectionElement).
+ * Sections that own a preview: their pages get a "Preview" affordance in the
+ * page header (see buildSectionElement). Most open a system board; Motion is
+ * intrinsically experiential, so its preview IS the Live Site flow with a
+ * motion-specific hint (principle 6 in the section-preview principles doc).
  */
 const SECTION_PREVIEW_MODES = {
-  sm_color_palettes_section: 'colors',
-  sm_font_palettes_section: 'typography',
-  sm_spacing_section: 'spacing',
+  sm_color_palettes_section: { mode: 'colors' },
+  sm_font_palettes_section: { mode: 'typography' },
+  sm_spacing_section: { mode: 'spacing' },
+  sm_motion_section: { mode: 'site', context: 'motion' },
 };
 
 /**
@@ -749,7 +776,7 @@ const SiteEditorPreviewOverlays = () => {
       <div className="sm-preview__content">
         { /* Mount only the active overlay: the hidden ones would render their
              full trees on editor boot and re-render on every palette change. */ }
-        { 'site' === mode && <LiveSiteOverlay show /> }
+        { 'site' === mode && <LiveSiteOverlay show hint={ getPreviewContext() } /> }
         { 'colors' === mode && <ColorsOverlay show /> }
         { 'typography' === mode && <TypographyOverlay show /> }
         { 'spacing' === mode && <SpacingOverlay show /> }
