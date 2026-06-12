@@ -27,6 +27,20 @@
 	display: none !important;
 }
 
+// The Live Site preview overlay (frontend in an iframe, changeset-previewed).
+.sm-live-site-overlay {
+	position: absolute;
+	inset: 0;
+	background: #fff;
+
+	&__iframe {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Customizer pane base styles (subset of wp-admin customize-controls.css the
 // SM controls rely on).

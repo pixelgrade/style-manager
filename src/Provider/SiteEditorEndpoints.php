@@ -122,6 +122,17 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 			]
 		);
 
+		// The Live Site preview changeset (frontend preview of unsaved values).
+		register_rest_route(
+			'style_manager/v1',
+			'/site-editor/preview-changeset',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'handle_preview_changeset' ],
+				'permission_callback' => [ $this, 'check_permissions' ],
+			]
+		);
+
 		register_rest_route(
 			'style_manager/v1',
 			'/site-editor/css',
@@ -209,9 +220,40 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	public function handle_active_states( \WP_REST_Request $request ) {
 		$values = $request->get_param( 'settings' );
 
+		// get_active_states() previews the values, so the body classes below
+		// are computed against the same previewed state.
+		$active_states = $this->headless_customizer->get_active_states( is_array( $values ) ? $values : [] );
+
 		return rest_ensure_response(
-			[ 'activeStates' => $this->headless_customizer->get_active_states( is_array( $values ) ? $values : [] ) ]
+			[
+				'activeStates'      => $active_states,
+				'bodyClasses'       => $this->headless_customizer->get_preview_body_classes(),
+				'bodyClassPrefixes' => $this->headless_customizer->get_preview_body_class_prefixes(),
+			]
 		);
+	}
+
+	/**
+	 * Create/update the Live Site preview changeset with unsaved values.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function handle_preview_changeset( \WP_REST_Request $request ) {
+		$values = $request->get_param( 'settings' );
+		$uuid   = $request->get_param( 'uuid' );
+
+		$result = $this->headless_customizer->upsert_preview_changeset(
+			is_array( $values ) ? $values : [],
+			is_string( $uuid ) ? $uuid : null
+		);
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return rest_ensure_response( $result );
 	}
 
 	/**

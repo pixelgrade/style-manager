@@ -333,12 +333,85 @@ const bootEngine = eng => {
  * the canvas region. Mounted on document.body — the editor header and canvas
  * containers clip fixed descendants.
  */
+/**
+ * The frontend, previewed with the unsaved values through a draft changeset
+ * (?customize_changeset_uuid=...) — core's own preview mechanics, the same
+ * thing the Customizer preview does. This is where PHP-rendered options
+ * (auto-styled titles, site frame, motion) can actually be seen live.
+ */
+const LiveSiteOverlay = ( { show } ) => {
+  const { useState, useEffect, useRef } = wp.element;
+  const [ url, setUrl ] = useState( null );
+  const uuidRef = useRef( null );
+  const counterRef = useRef( 0 );
+
+  const refresh = () => {
+    const changed = engine ? getChangedValues( engine ) : {};
+    counterRef.current++;
+
+    if ( ! Object.keys( changed ).length ) {
+      const plain = new URL( payload.homeUrl );
+      plain.searchParams.set( 'sm-preview', String( counterRef.current ) );
+      setUrl( plain.toString() );
+      return;
+    }
+
+    wp.apiFetch( {
+      path: payload.rest.previewChangesetPath,
+      method: 'POST',
+      data: { settings: changed, uuid: uuidRef.current },
+    } ).then( response => {
+      if ( response && response.previewUrl ) {
+        uuidRef.current = response.uuid;
+        const previewUrl = new URL( response.previewUrl );
+        previewUrl.searchParams.set( 'sm-preview', String( counterRef.current ) );
+        setUrl( previewUrl.toString() );
+      }
+    } ).catch( () => {
+      setUrl( payload.homeUrl );
+    } );
+  };
+
+  useEffect( () => {
+    if ( ! show || ! engine ) {
+      return undefined;
+    }
+
+    refresh();
+
+    const handler = _.debounce( refresh, 1500 );
+    engine.api.bind( 'sm:setting-change', handler );
+
+    return () => {
+      engine.api.unbind( 'sm:setting-change', handler );
+    };
+  }, [ show ] );
+
+  if ( ! show ) {
+    return null;
+  }
+
+  return (
+    <div className="sm-live-site-overlay">
+      { url && (
+        <iframe
+          className="sm-live-site-overlay__iframe"
+          src={ url }
+          title="Live site preview"
+        />
+      ) }
+    </div>
+  );
+};
+
 const SiteEditorPreviewTabs = () => {
   const { useState } = wp.element;
-  const [ active, setActive ] = useState( 'site' );
+  const { __ } = wp.i18n;
+  const [ active, setActive ] = useState( 'editor' );
 
   const l10n = window.styleManager.l10n.colorPalettes;
   const tabs = [
+    { id: 'editor', label: __( 'Editor', '__plugin_txtd' ) },
     { id: 'site', label: l10n.previewTabLiveSiteLabel },
     { id: 'typography', label: l10n.previewTabTypographyLabel },
     { id: 'colors', label: l10n.previewTabColorSystemLabel },
@@ -360,6 +433,7 @@ const SiteEditorPreviewTabs = () => {
         </div>
       </div>
       <div className="sm-preview__content">
+        <LiveSiteOverlay show={ active === 'site' } />
         <ColorsOverlay show={ active === 'colors' } />
         <TypographyOverlay show={ active === 'typography' } />
       </div>
@@ -393,9 +467,17 @@ const unmountPreviewTabs = rootEl => {
  * `NaN` (parseFloat of false) for the same empty subfields.
  */
 const isNoValue = v => false === v || null === v || undefined === v || ( 'number' === typeof v && isNaN( v ) );
+// Checkboxes produce booleans where PHP stored '1' / '' / '0'.
+const isTruthyBool = v => true === v || '1' === v;
+const isFalsyBool = v => false === v || '' === v || '0' === v;
 
 const isEquivalentValue = ( a, b ) => _.isEqualWith( a, b, ( x, y ) => {
   if ( isNoValue( x ) && isNoValue( y ) ) {
+    return true;
+  }
+  if ( ( 'boolean' === typeof x || 'boolean' === typeof y ) && (
+    ( isTruthyBool( x ) && isTruthyBool( y ) ) || ( isFalsyBool( x ) && isFalsyBool( y ) )
+  ) ) {
     return true;
   }
   return undefined;
@@ -531,6 +613,12 @@ const initializeActiveStatesRefresher = eng => {
   let inFlight = false;
   let pendingAgain = false;
 
+  // The server returns only allowlisted option-driven classes; we strip all
+  // classes carrying those prefixes from the canvas body and apply the fresh
+  // set, so the canvas reflects both the saved and the previewed state.
+  let latestBodyClasses = null;
+  let latestPrefixes = [];
+
   const applyActiveStates = states => {
     Object.entries( states ).forEach( ( [ controlId, isActive ] ) => {
       const li = eng.root.querySelector( `#${ CSS.escape( getControlContainerId( controlId ) ) }` );
@@ -538,6 +626,25 @@ const initializeActiveStatesRefresher = eng => {
         li.classList.toggle( 'sm-se-control-inactive', ! isActive );
       }
     } );
+  };
+
+  const applyBodyClasses = () => {
+    if ( ! latestBodyClasses ) {
+      return;
+    }
+
+    const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+    const body = iframe && iframe.contentDocument ? iframe.contentDocument.body : null;
+    if ( ! body ) {
+      return;
+    }
+
+    Array.from( body.classList ).forEach( cls => {
+      if ( latestPrefixes.some( prefix => cls.startsWith( prefix ) ) && ! latestBodyClasses.includes( cls ) ) {
+        body.classList.remove( cls );
+      }
+    } );
+    latestBodyClasses.forEach( cls => body.classList.add( cls ) );
   };
 
   const refresh = () => {
@@ -555,6 +662,11 @@ const initializeActiveStatesRefresher = eng => {
       if ( response && response.activeStates ) {
         applyActiveStates( response.activeStates );
       }
+      if ( response && Array.isArray( response.bodyClasses ) ) {
+        latestBodyClasses = response.bodyClasses;
+        latestPrefixes = Array.isArray( response.bodyClassPrefixes ) ? response.bodyClassPrefixes : [];
+        applyBodyClasses();
+      }
     } ).catch( () => {
       // Visibility refresh is best-effort; never break the editing flow.
     } ).finally( () => {
@@ -567,6 +679,22 @@ const initializeActiveStatesRefresher = eng => {
   };
 
   eng.api.bind( 'sm:setting-change', _.debounce( refresh, 400 ) );
+
+  // Fetch the saved-state classes right away (the editor canvas does not run
+  // the theme's body_class filter on its own), and re-apply them whenever the
+  // canvas iframe gets torn down and recreated.
+  refresh();
+  if ( window.MutationObserver ) {
+    const observer = new MutationObserver( _.debounce( () => {
+      const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+      if ( iframe && ! iframe.hasAttribute( 'data-sm-body-classes-bound' ) ) {
+        iframe.setAttribute( 'data-sm-body-classes-bound', '1' );
+        iframe.addEventListener( 'load', applyBodyClasses );
+      }
+      applyBodyClasses();
+    }, 300 ) );
+    observer.observe( document.body, { childList: true, subtree: true } );
+  }
 };
 
 const registerSidebar = () => {

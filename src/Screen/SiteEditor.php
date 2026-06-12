@@ -304,10 +304,12 @@ class SiteEditor extends AbstractHookProvider {
 				'userPalettesCount' => count( $user_palettes ),
 			],
 			'rest'               => [
-				'settingsPath'     => '/style_manager/v1/site-editor/settings',
-				'activeStatesPath' => '/style_manager/v1/site-editor/active-states',
-				'cssPath'          => '/style_manager/v1/site-editor/css',
+				'settingsPath'          => '/style_manager/v1/site-editor/settings',
+				'activeStatesPath'      => '/style_manager/v1/site-editor/active-states',
+				'previewChangesetPath'  => '/style_manager/v1/site-editor/preview-changeset',
+				'cssPath'               => '/style_manager/v1/site-editor/css',
 			],
+			'homeUrl'            => esc_url_raw( home_url( '/' ) ),
 			'editorDynamicStyleHandle' => 'style-manager-editor-dynamic',
 		];
 	}

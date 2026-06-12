@@ -345,6 +345,111 @@ class HeadlessCustomizer {
 	}
 
 	/**
+	 * The allowlisted, option-driven body class prefixes that are safe and
+	 * meaningful to mirror onto the editor canvas body. (Classes like
+	 * `is-loading` or intro-animation states would break the canvas — they
+	 * rely on frontend scripts that never run there.)
+	 *
+	 * @return string[]
+	 */
+	public function get_preview_body_class_prefixes(): array {
+		/**
+		 * Filter the body class prefixes mirrored onto the Site Editor canvas.
+		 *
+		 * @param string[] $prefixes
+		 */
+		return apply_filters( 'style_manager/site_editor_preview_body_class_prefixes', [ 'u-collection-' ] );
+	}
+
+	/**
+	 * Body classes computed with the (already previewed) values, narrowed to
+	 * the allowlisted option-driven prefixes — themes hang visual treatments
+	 * like collection title position and hover effects off body_class.
+	 *
+	 * @return string[]
+	 */
+	public function get_preview_body_classes(): array {
+		$prefixes = $this->get_preview_body_class_prefixes();
+
+		try {
+			$classes = array_map( 'strval', get_body_class() );
+		} catch ( \Throwable $e ) {
+			return [];
+		}
+
+		$matching = array_filter( $classes, static function ( $class ) use ( $prefixes ) {
+			foreach ( $prefixes as $prefix ) {
+				if ( 0 === strpos( $class, $prefix ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		} );
+
+		return array_values( array_unique( $matching ) );
+	}
+
+	/**
+	 * Create or update the draft changeset used for the Live Site preview —
+	 * loading the frontend with ?customize_changeset_uuid=<uuid> previews the
+	 * unsaved values through core's own changeset preview mechanics.
+	 *
+	 * @param array       $values setting_id => raw JS value.
+	 * @param string|null $uuid   An existing preview changeset to update.
+	 *
+	 * @return array|\WP_Error { uuid, previewUrl }
+	 */
+	public function upsert_preview_changeset( array $values, ?string $uuid = null ) {
+		$data = [];
+		foreach ( $values as $setting_id => $value ) {
+			$data[ (string) $setting_id ] = [ 'value' => $value ];
+		}
+
+		$post = null;
+		if ( $uuid && wp_is_uuid( $uuid ) ) {
+			$existing = get_posts( [
+				'post_type'      => 'customize_changeset',
+				'post_status'    => [ 'auto-draft', 'draft' ],
+				'name'           => $uuid,
+				'posts_per_page' => 1,
+				'author'         => get_current_user_id(),
+			] );
+			$post     = $existing[0] ?? null;
+		}
+
+		if ( $post instanceof \WP_Post ) {
+			$result = wp_update_post( [
+				'ID'           => $post->ID,
+				'post_content' => wp_json_encode( $data ),
+			], true );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		} else {
+			$uuid   = wp_generate_uuid4();
+			$result = wp_insert_post( [
+				'post_type'    => 'customize_changeset',
+				'post_status'  => 'auto-draft',
+				'post_name'    => $uuid,
+				'post_title'   => $uuid,
+				'post_content' => wp_json_encode( $data ),
+				'post_author'  => get_current_user_id(),
+			], true );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+
+		return [
+			'uuid'       => $uuid,
+			'previewUrl' => add_query_arg( 'customize_changeset_uuid', $uuid, home_url( '/' ) ),
+		];
+	}
+
+	/**
 	 * Persist a map of setting_id => value through a published changeset —
 	 * the exact same sanitization and persistence semantics as hitting
 	 * "Publish" in the Customizer.
