@@ -16,7 +16,7 @@ import './style.scss';
 import { createCustomizeApi, createContainerObject } from './customize-api';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
-import { ColorsOverlay, TypographyOverlay } from '../customizer/components';
+import { ColorsOverlay, TypographyOverlay, SpacingOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
 
@@ -706,6 +706,7 @@ const usePreviewMode = () => {
 const SECTION_PREVIEW_MODES = {
   sm_color_palettes_section: 'colors',
   sm_font_palettes_section: 'typography',
+  sm_spacing_section: 'spacing',
 };
 
 /**
@@ -751,6 +752,7 @@ const SiteEditorPreviewOverlays = () => {
         { 'site' === mode && <LiveSiteOverlay show /> }
         { 'colors' === mode && <ColorsOverlay show /> }
         { 'typography' === mode && <TypographyOverlay show /> }
+        { 'spacing' === mode && <SpacingOverlay show /> }
       </div>
     </div>
   );

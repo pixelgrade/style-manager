@@ -16,6 +16,7 @@ export { default as Overlay } from './overlay';
 export { default as PaletteList } from './palette-list';
 export { default as PreviewTabs } from './preview-tabs';
 export { default as TypographyOverlay } from './typography-overlay';
+export { default as SpacingOverlay } from './spacing-overlay';
 export { SourceColors } from './source-colors';
 
 export { default as ConfigContext, ConfigProvider } from './config-context';
