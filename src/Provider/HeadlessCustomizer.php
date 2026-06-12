@@ -28,6 +28,16 @@ use Pixelgrade\StyleManager\Screen\Customizer;
 class HeadlessCustomizer {
 
 	/**
+	 * Marker title for the Site Editor's Live Site preview changesets.
+	 *
+	 * Frontend code (e.g. the page-transitions opt-in) identifies preview
+	 * requests by the changeset they carry — the changeset uuid survives
+	 * every navigation inside the preview, unlike URL markers, which core's
+	 * link rewriting strips.
+	 */
+	const PREVIEW_CHANGESET_TITLE = 'sm_site_editor_live_preview';
+
+	/**
 	 * Options.
 	 *
 	 * @var Options
@@ -421,6 +431,7 @@ class HeadlessCustomizer {
 		if ( $post instanceof \WP_Post ) {
 			$result = wp_update_post( [
 				'ID'           => $post->ID,
+				'post_title'   => self::PREVIEW_CHANGESET_TITLE,
 				'post_content' => wp_json_encode( $data ),
 			], true );
 
@@ -433,7 +444,7 @@ class HeadlessCustomizer {
 				'post_type'    => 'customize_changeset',
 				'post_status'  => 'auto-draft',
 				'post_name'    => $uuid,
-				'post_title'   => $uuid,
+				'post_title'   => self::PREVIEW_CHANGESET_TITLE,
 				'post_content' => wp_json_encode( $data ),
 				'post_author'  => get_current_user_id(),
 			], true );

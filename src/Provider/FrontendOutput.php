@@ -129,8 +129,12 @@ class FrontendOutput extends AbstractHookProvider {
 	/**
 	 * Allow page transitions inside the Site Editor's Live Site preview.
 	 *
-	 * The marker (`sm-live-preview`) is set by the Site Editor preview
-	 * overlay when building the preview URL — a presence-only flag.
+	 * The preview is identified by its changeset: the Site Editor creates
+	 * Live Site preview changesets with a marker title, and the changeset
+	 * uuid rides every request inside the preview — including the AJAX
+	 * fetches the transitions engine itself makes and any link core's
+	 * preview rewriting produces. (A `sm-live-preview` URL marker is kept
+	 * as a fallback for the initial pane-built URL.)
 	 *
 	 * @since 2.3.0
 	 *
@@ -142,6 +146,16 @@ class FrontendOutput extends AbstractHookProvider {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- presence-only marker toggling a preview behavior.
 		if ( isset( $_GET['sm-live-preview'] ) ) {
 			return true;
+		}
+
+		if ( ! empty( $GLOBALS['wp_customize'] ) && is_callable( [ $GLOBALS['wp_customize'], 'changeset_post_id' ] ) ) {
+			$changeset_post_id = $GLOBALS['wp_customize']->changeset_post_id();
+			if ( $changeset_post_id ) {
+				$changeset = get_post( $changeset_post_id );
+				if ( $changeset && HeadlessCustomizer::PREVIEW_CHANGESET_TITLE === $changeset->post_title ) {
+					return true;
+				}
+			}
 		}
 
 		return (bool) $allowed;
