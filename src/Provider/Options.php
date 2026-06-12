@@ -106,6 +106,11 @@ class Options extends AbstractHookProvider {
 		// Customize save (publish) used the same changeset save logic, so this filter is fired then also.
 		$this->add_filter( 'customize_changeset_save_data', 'filter_invalidate_details_cache', 50, 1 );
 
+		// Publishing a changeset that touches keys of the multidimensional options root must
+		// explicitly carry every other stored key of that root, or read-time filters would get
+		// persisted for settings the user did not change (issue #127).
+		$this->add_filter( 'customize_changeset_save_data', 'filter_complete_options_root_changeset_data', 40, 2 );
+
 		// Invalidate caches after Pixelgrade Care import.
 		$this->add_action( 'pixcare_sce_import_end', 'invalidate_all_caches', 1 );
 
@@ -746,6 +751,129 @@ class Options extends AbstractHookProvider {
 		$this->invalidate_details_cache();
 
 		return $value;
+	}
+
+	/**
+	 * Ensure a publishing changeset explicitly carries every stored key of the
+	 * Style Manager-managed multidimensional options root.
+	 *
+	 * Core's aggregated-multidimensional mechanics seed the shared root value
+	 * through read filters (`theme_mod_*` / `option_*`) and persist the whole
+	 * root when importing any single key of it. Any read-time filter on the
+	 * options root would therefore get silently written to the database for
+	 * every sibling setting that was not part of the changeset. By completing
+	 * the changeset with the raw stored values of the missing siblings, each
+	 * key is imported explicitly and filtered reads can never be persisted
+	 * for settings the user did not change. See issue #127.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param mixed $data    Changeset data, keyed by (possibly stylesheet-prefixed) setting ID.
+	 * @param mixed $context Filter context from save_changeset_post(); `status` is what we care about.
+	 *
+	 * @return mixed
+	 */
+	protected function filter_complete_options_root_changeset_data( $data, $context = [] ) {
+		if ( ! is_array( $data ) || empty( $data ) ) {
+			return $data;
+		}
+
+		$status = is_array( $context ) && isset( $context['status'] ) ? (string) $context['status'] : '';
+		if ( ! in_array( $status, [ 'publish', 'future' ], true ) ) {
+			return $data;
+		}
+
+		$options_key = $this->get_options_key();
+		if ( '' === $options_key ) {
+			return $data;
+		}
+
+		$pattern = '/^(?:(?P<stylesheet>.+?)::)?' . preg_quote( $options_key, '/' ) . '\[(?P<sub_key>[^\]]+)\]$/';
+
+		// stylesheet ('' for option-storage roots) => [ sub_key => true ].
+		$present_sub_keys = [];
+		$root_types       = [];
+		foreach ( $data as $raw_setting_id => $params ) {
+			if ( ! is_array( $params ) || ! array_key_exists( 'value', $params ) ) {
+				continue;
+			}
+
+			if ( ! preg_match( $pattern, (string) $raw_setting_id, $matches ) ) {
+				continue;
+			}
+
+			$stylesheet = isset( $matches['stylesheet'] ) ? (string) $matches['stylesheet'] : '';
+
+			$present_sub_keys[ $stylesheet ][ $matches['sub_key'] ] = true;
+			if ( ! isset( $root_types[ $stylesheet ] ) && ! empty( $params['type'] ) ) {
+				$root_types[ $stylesheet ] = (string) $params['type'];
+			}
+		}
+
+		if ( empty( $present_sub_keys ) ) {
+			return $data;
+		}
+
+		foreach ( $present_sub_keys as $stylesheet => $sub_keys ) {
+			$stored_root = $this->get_stored_options_root( $options_key, (string) $stylesheet );
+			if ( empty( $stored_root ) ) {
+				continue;
+			}
+
+			$type = $root_types[ $stylesheet ] ?? ( '' === $stylesheet ? 'option' : 'theme_mod' );
+
+			foreach ( $stored_root as $sub_key => $stored_value ) {
+				if ( ! is_string( $sub_key ) || isset( $sub_keys[ $sub_key ] ) ) {
+					continue;
+				}
+
+				$raw_setting_id = ( '' === $stylesheet ? '' : $stylesheet . '::' ) . $options_key . '[' . $sub_key . ']';
+				if ( isset( $data[ $raw_setting_id ] ) ) {
+					continue;
+				}
+
+				$data[ $raw_setting_id ] = [
+					'value'   => $stored_value,
+					'type'    => $type,
+					'user_id' => \get_current_user_id(),
+				];
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * The raw stored options-root array, read straight from the database row,
+	 * bypassing `option_*` / `theme_mod_*` read filters and object caches.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $options_key The multidimensional root key (e.g. `mies-lt_options`).
+	 * @param string $stylesheet  The theme stylesheet for theme_mod storage, or '' for option storage.
+	 *
+	 * @return array sub_key => stored value
+	 */
+	protected function get_stored_options_root( string $options_key, string $stylesheet ): array {
+		global $wpdb;
+
+		$option_name = '' === $stylesheet ? $options_key : 'theme_mods_' . $stylesheet;
+
+		$row = $wpdb->get_var(
+			$wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $option_name )
+		);
+
+		if ( null === $row ) {
+			return [];
+		}
+
+		$value = \maybe_unserialize( $row );
+
+		if ( '' !== $stylesheet ) {
+			$value = is_array( $value ) && isset( $value[ $options_key ] ) ? $value[ $options_key ] : [];
+		}
+
+		return is_array( $value ) ? $value : [];
 	}
 
 	/**
