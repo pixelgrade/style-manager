@@ -329,6 +329,7 @@ const bootEngine = eng => {
   // Native Save (core-data entity) + server-evaluated control visibility.
   setupEntityIntegration( eng );
   initializeActiveStatesRefresher( eng );
+  initializeControlDependencies( eng );
 };
 
 /**
@@ -801,6 +802,31 @@ const initializeActiveStatesRefresher = eng => {
     }, 300 ) );
     observer.observe( document.body, { childList: true, subtree: true } );
   }
+};
+
+/**
+ * Toggle-driven control visibility (e.g. Page Transition Style only shows
+ * while Enable Page Transitions is on) — the Customizer gets this behavior
+ * from theme-shipped JS; here it is declarative via the payload map.
+ */
+const initializeControlDependencies = eng => {
+  const isTruthy = v => true === v || 1 === v || '1' === v || 'true' === v;
+
+  Object.entries( payload.controlDependencies || {} ).forEach( ( [ enableId, dependents ] ) => {
+    eng.api( enableId, setting => {
+      const apply = value => {
+        const hidden = ! isTruthy( value );
+        dependents.forEach( depId => {
+          const li = eng.root.querySelector( `#${ CSS.escape( getControlContainerId( `${ depId }_control` ) ) }` );
+          if ( li ) {
+            li.classList.toggle( 'sm-se-control-dependent-hidden', hidden );
+          }
+        } );
+      };
+      apply( setting() );
+      setting.bind( apply );
+    } );
+  } );
 };
 
 const registerSidebar = () => {

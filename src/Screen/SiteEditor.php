@@ -310,6 +310,22 @@ class SiteEditor extends AbstractHookProvider {
 				'cssPath'               => '/style_manager/v1/site-editor/css',
 			],
 			'homeUrl'            => esc_url_raw( home_url( '/' ) ),
+			/**
+			 * Toggle-driven control visibility (the Customizer gets this from
+			 * theme-shipped JS, e.g. Anima's motion controls script).
+			 * Filter: setting_id => [ dependent setting_ids shown when truthy ].
+			 */
+			'controlDependencies' => apply_filters( 'style_manager/site_editor_control_dependencies', [
+				'sm_page_transitions_enable' => [
+					'sm_page_transition_style',
+					'sm_logo_loading_style',
+					'sm_transition_symbol',
+				],
+				'sm_intro_animations_enable' => [
+					'sm_intro_animations_style',
+					'sm_intro_animations_speed',
+				],
+			] ),
 			'editorDynamicStyleHandle' => 'style-manager-editor-dynamic',
 		];
 	}

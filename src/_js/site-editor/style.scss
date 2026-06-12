@@ -87,7 +87,8 @@
 
 // Controls whose PHP active_callback currently evaluates to false
 // (server-evaluated at render + refreshed on changes).
-.sm-site-editor .sm-se-control-inactive {
+.sm-site-editor .sm-se-control-inactive,
+.sm-site-editor .sm-se-control-dependent-hidden {
 	display: none !important;
 }
 
