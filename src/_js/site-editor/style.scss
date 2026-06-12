@@ -398,6 +398,10 @@
 
 .sm-se-page {
 	display: none;
+	// Uniform white like core sidebars — the panel's gray otherwise shows
+	// through as bands in the gaps between the white control surfaces.
+	background: #fff;
+	min-height: 100%;
 
 	&.open {
 		display: block;
