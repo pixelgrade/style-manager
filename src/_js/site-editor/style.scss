@@ -92,9 +92,14 @@
 	}
 
 	// Consistent vertical rhythm between controls; titles get breathing room
-	// from the block above.
-	.sm-se-page__content > li {
+	// from the block above. The customizer hairline borders on control rows
+	// would render as doubled lines with gaps on the white page — spacing
+	// alone separates controls, like core sidebars (specificity matched to
+	// the #customize-controls[id] rules that set them).
+	&#customize-controls[id] .sm-se-page__content > li {
 		margin-bottom: 20px;
+		border-top: 0;
+		border-bottom: 0;
 	}
 
 	.sm-se-page__content > li:last-child {
