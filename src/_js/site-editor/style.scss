@@ -73,9 +73,41 @@
 		font-size: 13px;
 	}
 
-	// Segmented pill labels (Font Sizing, Appearance, ...).
+	// Segmented pill labels (Font Sizing, Appearance, ...): fit the 280px
+	// panel — pills share the row width and may wrap instead of clipping.
+	// Segmented pill labels (Font Sizing, Appearance, ...) — the layout stays
+	// the Customizer's own: the pill group progressively reveals options
+	// around the current selection (e.g. Striking hides until High is
+	// selected). That windowing is intended behavior, not clipping.
 	.sm-radio-group label {
 		font-size: 13px;
+	}
+
+	// The Customizer's spacer controls (sm_separator_*, spacing_bottom rows)
+	// render as empty bands here — the page rhythm comes from control
+	// margins instead.
+	li.customize-control[id*="separator"],
+	li.customize-control[id*="spacing_bottom"] {
+		display: none;
+	}
+
+	// Consistent vertical rhythm between controls; titles get breathing room
+	// from the block above.
+	.sm-se-page__content > li {
+		margin-bottom: 20px;
+	}
+
+	.sm-se-page__content > li:last-child {
+		margin-bottom: 0;
+	}
+
+	// The section-navigation shortcuts (Customize colors usage, Fine-tune
+	// generated palette, Fine-tune the type system) duplicated what the
+	// section tabs now surface permanently — hide them and let the tabs be
+	// the one way to move between levels. The voice tuner toggle shares the
+	// sm-panel-toggle class but is a real accordion, not a shortcut.
+	.sm-group:has(> .sm-panel-toggle:only-child:not(.sm-voice-tuner-toggle__button)) {
+		display: none;
 	}
 
 	// Font palette cards: the name/specimen keep their preview fonts; the
