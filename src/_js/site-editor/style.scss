@@ -344,6 +344,27 @@
 	}
 }
 
+// The always-visible Live Site entry point at the end of the root menu.
+.sm-se-row--live-preview {
+	.sm-se-row__icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #1e1e1e;
+		color: #fff;
+	}
+
+	&.is-open {
+		.sm-se-row__icon {
+			background: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		.sm-se-row__label {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+}
+
 // The per-section Preview affordance on the page header line.
 .sm-se-page__header .sm-se-page__preview {
 	margin-left: auto;
@@ -362,6 +383,12 @@
 	&:focus-visible {
 		border-color: var(--wp-admin-theme-color, #3858e9);
 		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&.is-open {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		background: var(--wp-admin-theme-color, #3858e9);
+		color: #fff;
 	}
 }
 

@@ -174,13 +174,27 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, section
   pageEl.appendChild( headerEl );
 
   // Sections that own a preview overlay (the color system board, the type
-  // specimen) get a Preview affordance right in the page header.
+  // specimen) get a Preview affordance right in the page header. The button
+  // toggles: while its overlay is open it reads "Close Preview".
   if ( SECTION_PREVIEW_MODES[ section.id ] ) {
+    const sectionMode = SECTION_PREVIEW_MODES[ section.id ];
     const previewButton = document.createElement( 'button' );
     previewButton.type = 'button';
     previewButton.className = 'sm-se-page__preview';
-    previewButton.textContent = wp.i18n.__( 'Preview', '__plugin_txtd' );
-    previewButton.addEventListener( 'click', () => setPreviewMode( SECTION_PREVIEW_MODES[ section.id ] ) );
+
+    const renderPreviewButton = currentMode => {
+      const isOpen = currentMode === sectionMode;
+      previewButton.textContent = isOpen
+        ? wp.i18n.__( 'Close Preview', '__plugin_txtd' )
+        : wp.i18n.__( 'Preview', '__plugin_txtd' );
+      previewButton.classList.toggle( 'is-open', isOpen );
+    };
+    renderPreviewButton( getPreviewMode() );
+    previewModeListeners.add( renderPreviewButton );
+
+    previewButton.addEventListener( 'click', () => {
+      setPreviewMode( getPreviewMode() === sectionMode ? null : sectionMode );
+    } );
     headerEl.appendChild( previewButton );
   }
 
@@ -382,6 +396,38 @@ const buildRoot = api => {
       buildSectionElement( api, section, menuEl, pagesEl, updateView, sectionsById );
     } );
   } );
+
+  // A always-visible entry point for the Live Site preview at the end of the
+  // root menu — the View-menu item alone proved too hidden. Toggles while open.
+  const liveSiteLabel = window.styleManager?.l10n?.colorPalettes?.previewTabLiveSiteLabel
+    || wp.i18n.__( 'Live site', '__plugin_txtd' );
+  const liveRow = document.createElement( 'button' );
+  liveRow.type = 'button';
+  liveRow.className = 'sm-se-row sm-se-row--live-preview';
+  liveRow.innerHTML = `
+    <span class="sm-se-row__icon" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C5.6 5 2 12 2 12s3.6 7 10 7 10-7 10-7-3.6-7-10-7Zm0 11.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z" fill="currentColor"/></svg>
+    </span>
+    <span class="sm-se-row__label"></span>
+    <span class="sm-se-row__chevron" aria-hidden="true"></span>
+  `;
+  const liveRowLabel = liveRow.querySelector( '.sm-se-row__label' );
+
+  const renderLiveRow = currentMode => {
+    const isOpen = 'site' === currentMode;
+    liveRowLabel.textContent = isOpen
+      ? wp.i18n.__( 'Close live site preview', '__plugin_txtd' )
+      /* translators: %s: the "Live site" label */
+      : wp.i18n.sprintf( wp.i18n.__( 'Preview %s', '__plugin_txtd' ), liveSiteLabel.toLowerCase() );
+    liveRow.classList.toggle( 'is-open', isOpen );
+  };
+  renderLiveRow( getPreviewMode() );
+  previewModeListeners.add( renderLiveRow );
+
+  liveRow.addEventListener( 'click', () => {
+    setPreviewMode( 'site' === getPreviewMode() ? null : 'site' );
+  } );
+  menuEl.appendChild( liveRow );
 
   return root;
 };
@@ -639,6 +685,8 @@ const LiveSiteOverlay = ( { show } ) => {
  */
 let previewMode = null;
 const previewModeListeners = new Set();
+
+export const getPreviewMode = () => previewMode;
 
 export const setPreviewMode = mode => {
   previewMode = mode || null;
