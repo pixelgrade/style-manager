@@ -140,12 +140,19 @@ export const PanelResetMenu = ( { items, groupLabel } ) => {
     wp.customize( entry.settingId, setting => setting.set( entry.defaultValue ) );
   };
 
+  // Core's moreVertical icon (the Query Loop ToolsPanel uses this).
+  const moreVerticalIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+      <path d="M13 19h-2v-2h2v2zm0-6h-2v-2h2v2zm0-6h-2V5h2v2z" />
+    </svg>
+  );
+
   return (
     <DropdownMenu
-      icon="ellipsis"
+      icon={ moreVerticalIcon }
       label={ __( 'Section options', '__plugin_txtd' ) }
       className="sm-se-panel-tools__toggle"
-      popoverProps={ { placement: 'left-start' } }
+      popoverProps={ { placement: 'left-start', offset: 12 } }
     >
       { ( { onClose } ) => (
         <>
