@@ -65,6 +65,24 @@
 	.sm-control {
 		font-size: 13px;
 	}
+
+	// Palette builder source-color rows (Brand Primary / Interpolated / ...).
+	// The customizer stylesheet sizes these via #customize-controls[id], so
+	// match that specificity.
+	&#customize-controls[id] .c-palette-builder__source-item-label {
+		font-size: 13px;
+	}
+
+	// Segmented pill labels (Font Sizing, Appearance, ...).
+	.sm-radio-group label {
+		font-size: 13px;
+	}
+
+	// Font palette cards: the name/specimen keep their preview fonts; the
+	// description drops to core's help-text scale.
+	.font-palette-preview__desc {
+		font-size: 13px;
+	}
 }
 
 // Controls whose PHP active_callback currently evaluates to false
