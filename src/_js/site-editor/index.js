@@ -15,7 +15,7 @@ import './style.scss';
 
 import { createCustomizeApi, createContainerObject } from './customize-api';
 import { initializePreview } from './preview';
-import { mountNativeControls } from './native-controls';
+import { mountNativeControls, getResettableSettings, PanelResetMenu } from './native-controls';
 import { ColorsOverlay, TypographyOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
@@ -106,6 +106,16 @@ const buildSectionPanel = section => {
       }
     }
   } );
+
+  // The section reset menu (core's Query Loop pattern): a 3-dot menu with
+  // per-field reset and Reset all.
+  const resettable = getResettableSettings( section );
+  if ( resettable.length ) {
+    const tools = document.createElement( 'div' );
+    tools.className = 'sm-se-panel-tools';
+    panel.insertBefore( tools, panel.firstChild );
+    ReactDOM.render( <PanelResetMenu items={ resettable } groupLabel={ section.title } />, tools );
+  }
 
   return panel;
 };

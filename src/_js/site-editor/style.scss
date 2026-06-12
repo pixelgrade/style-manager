@@ -54,20 +54,14 @@
 		width: 100%;
 	}
 
-	// Sliders: the track + number input own the full row; the reset is a
-	// secondary affordance tucked top-right on the label line.
+	// Sliders: the track + number input own the full row (resets live in the
+	// section's 3-dot menu, the core Query Loop pattern).
 	.sm-native-range {
-		position: relative;
 		display: block;
 		width: 100%;
 
 		> .components-base-control {
 			width: 100%;
-		}
-
-		// Keep long labels clear of the reset icon.
-		.components-base-control__label {
-			max-width: calc(100% - 32px);
 		}
 
 		// A narrower number input gives the rail more room.
@@ -79,34 +73,6 @@
 		.components-number-control {
 			width: 56px;
 			flex-shrink: 0;
-		}
-
-		&__reset {
-			position: absolute;
-			top: -6px;
-			right: 0;
-			margin: 0;
-			padding: 4px;
-			height: 24px;
-			width: 24px;
-			min-width: 24px;
-			color: #949494;
-
-			.dashicon,
-			.dashicons,
-			svg {
-				font-size: 16px;
-				width: 16px;
-				height: 16px;
-			}
-
-			&:hover:not(:disabled) {
-				color: var(--wp-admin-theme-color, #3858e9);
-			}
-
-			&:disabled {
-				opacity: 0.35;
-			}
 		}
 	}
 
@@ -574,10 +540,56 @@
 
 .sm-se-tab-panel {
 	display: none;
+	position: relative;
 
 	&.is-active {
 		display: block;
 	}
+}
+
+// The section's 3-dot reset menu (core Query Loop pattern), top-right.
+.sm-se-panel-tools {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 5;
+
+	.components-button {
+		height: 28px;
+		min-width: 28px;
+		padding: 2px;
+		color: #757575;
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+}
+
+// Keep the intro description clear of the 3-dot menu.
+.sm-se-tab-panel .sm-se-page__description {
+	padding-right: 44px;
+}
+
+.sm-reset-menu__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	width: 100%;
+	min-width: 180px;
+}
+
+.sm-reset-menu__action {
+	color: var(--wp-admin-theme-color, #3858e9);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.sm-reset-menu__check {
+	color: #757575;
+	font-size: 16px;
 }
 
 // Needs to win over the `.sm-site-editor ul` reset.

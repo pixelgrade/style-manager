@@ -51,47 +51,137 @@ const BoundControl = ( { settingId, children } ) => {
 };
 
 const NativeRange = ( { settingId } ) => {
-  const { RangeControl, Button } = wp.components;
-  const { __ } = wp.i18n;
+  const { RangeControl } = wp.components;
   const config = getConfig( settingId );
   const attrs = config.input_attrs || {};
-  const hasDefault = config.default !== undefined && config.default !== '';
-  const defaultValue = hasDefault ? Number( config.default ) : undefined;
 
   return (
     <BoundControl settingId={ settingId }>
-      { ( value, onChange ) => {
-        const current = value === '' || value === undefined ? undefined : Number( value );
-        const isAtDefault = hasDefault && current === defaultValue;
-
-        return (
-          <div className="sm-native-range">
-            <RangeControl
-              __nextHasNoMarginBottom
-              label={ config.label }
-              help={ stripHtml( config.desc ) || undefined }
-              value={ current }
-              onChange={ onChange }
-              min={ attrs.min !== undefined ? Number( attrs.min ) : 0 }
-              max={ attrs.max !== undefined ? Number( attrs.max ) : 100 }
-              step={ attrs.step !== undefined ? Number( attrs.step ) : 1 }
-              withInputField
-            />
-            { hasDefault && (
-              <Button
-                className="sm-native-range__reset"
-                icon="undo"
-                size="small"
-                label={ __( 'Reset to default', '__plugin_txtd' ) }
-                showTooltip
-                disabled={ isAtDefault }
-                onClick={ () => onChange( defaultValue ) }
-              />
-            ) }
-          </div>
-        );
-      } }
+      { ( value, onChange ) => (
+        <div className="sm-native-range">
+          <RangeControl
+            __nextHasNoMarginBottom
+            label={ config.label }
+            help={ stripHtml( config.desc ) || undefined }
+            value={ value === '' || value === undefined ? undefined : Number( value ) }
+            onChange={ onChange }
+            min={ attrs.min !== undefined ? Number( attrs.min ) : 0 }
+            max={ attrs.max !== undefined ? Number( attrs.max ) : 100 }
+            step={ attrs.step !== undefined ? Number( attrs.step ) : 1 }
+            withInputField
+          />
+        </div>
+      ) }
     </BoundControl>
+  );
+};
+
+/**
+ * --- Section reset menu (core's Query Loop / ToolsPanel pattern) ---
+ * A 3-dot menu per section panel: each resettable field shows RESET when
+ * modified (click to reset) or a check at default, plus Reset all.
+ */
+const looseEquals = ( a, b ) => {
+  const noValue = v => false === v || null === v || undefined === v || '' === v || ( 'number' === typeof v && isNaN( v ) );
+  if ( noValue( a ) && noValue( b ) ) {
+    return true;
+  }
+  if ( a === b ) {
+    return true;
+  }
+  if ( ( 'boolean' === typeof a || 'boolean' === typeof b ) && !! a === !! ( '0' === b ? false : b ) && !! b === !! ( '0' === a ? false : a ) ) {
+    return true;
+  }
+  if ( '' !== a && '' !== b && isFinite( Number( a ) ) && isFinite( Number( b ) ) && Number( a ) === Number( b ) ) {
+    return true;
+  }
+  return String( a ) === String( b );
+};
+
+const RESETTABLE_TYPES = [ 'range', 'sm_toggle', 'sm_switch', 'radio', 'sm_radio', 'select', 'select_color', 'radio_html' ];
+
+export const getResettableSettings = section => {
+  return section.controls
+    .map( control => controlToSettingId( control.id ) )
+    .map( settingId => ( { settingId, config: getConfig( settingId ) } ) )
+    .filter( ( { config } ) => config
+      && RESETTABLE_TYPES.includes( config.type )
+      && config.default !== undefined
+      && config.label )
+    .map( ( { settingId, config } ) => ( {
+      settingId,
+      label: stripHtml( String( config.label ) ),
+      defaultValue: config.default,
+    } ) );
+};
+
+export const PanelResetMenu = ( { items, groupLabel } ) => {
+  const { DropdownMenu, MenuGroup, MenuItem } = wp.components;
+  const { useState, useEffect } = wp.element;
+  const { __ } = wp.i18n;
+  const [ , setTick ] = useState( 0 );
+
+  useEffect( () => {
+    const listener = () => setTick( tick => tick + 1 );
+    wp.customize.bind( 'sm:setting-change', listener );
+    return () => wp.customize.unbind( 'sm:setting-change', listener );
+  }, [] );
+
+  const entries = items.map( item => {
+    const setting = wp.customize( item.settingId );
+    return {
+      ...item,
+      modified: setting ? ! looseEquals( setting(), item.defaultValue ) : false,
+    };
+  } );
+  const anyModified = entries.some( entry => entry.modified );
+
+  const reset = entry => {
+    wp.customize( entry.settingId, setting => setting.set( entry.defaultValue ) );
+  };
+
+  return (
+    <DropdownMenu
+      icon="ellipsis"
+      label={ __( 'Section options', '__plugin_txtd' ) }
+      className="sm-se-panel-tools__toggle"
+      popoverProps={ { placement: 'left-start' } }
+    >
+      { ( { onClose } ) => (
+        <>
+          <MenuGroup label={ groupLabel }>
+            { entries.map( entry => (
+              <MenuItem
+                key={ entry.settingId }
+                onClick={ () => {
+                  if ( entry.modified ) {
+                    reset( entry );
+                  }
+                } }
+              >
+                <span className="sm-reset-menu__row">
+                  <span>{ entry.label }</span>
+                  { entry.modified
+                    ? <span className="sm-reset-menu__action">{ __( 'Reset', '__plugin_txtd' ) }</span>
+                    : <span className="dashicons dashicons-yes sm-reset-menu__check" /> }
+                </span>
+              </MenuItem>
+            ) ) }
+          </MenuGroup>
+          <MenuGroup>
+            <MenuItem
+              disabled={ ! anyModified }
+              onClick={ () => {
+                entries.forEach( entry => entry.modified && reset( entry ) );
+                onClose();
+              } }
+            >
+              { __( 'Reset all', '__plugin_txtd' ) }
+            </MenuItem>
+          </MenuGroup>
+        </>
+      ) }
+    </DropdownMenu>
   );
 };
 
