@@ -21,6 +21,52 @@
 	}
 }
 
+// ---------------------------------------------------------------------------
+// Typography alignment with core editor controls: the Customizer stylesheet
+// inflates label/body sizes (15-16px); core sidebars use 13px body, 12px help
+// text, and 11px/500 uppercase component labels.
+// ---------------------------------------------------------------------------
+
+.sm-site-editor {
+	font-size: 13px;
+
+	.components-base-control__label,
+	.components-toggle-group-control + *,
+	label.components-toggle-control__label {
+		font-size: inherit;
+	}
+
+	.sm-native-control .components-base-control__label {
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 1.4;
+	}
+
+	.sm-native-control .components-base-control__help {
+		font-size: 12px;
+		font-style: normal;
+	}
+
+	.customize-control-title,
+	.sm-control__label,
+	.sm-blinds__title,
+	.sm-panel-toggle__label {
+		font-size: 13px;
+		font-weight: 600;
+		text-transform: none;
+	}
+
+	.customize-control-description,
+	.description {
+		font-size: 12px;
+	}
+
+	.sm-group,
+	.sm-control {
+		font-size: 13px;
+	}
+}
+
 // Controls whose PHP active_callback currently evaluates to false
 // (server-evaluated at render + refreshed on changes).
 .sm-site-editor .sm-se-control-inactive {
