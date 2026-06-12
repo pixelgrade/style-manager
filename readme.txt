@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.3.0
+Stable tag: 2.2.13
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -78,7 +78,7 @@ or analytics scripts.
 
 == Changelog ==
 
-= 2.3.0 =
+= 2.3.0-beta1 =
 * New: the full Style Manager experience runs natively inside the Site Editor — colors, typography, spacing, tweaks, and motion, with live preview into the editor canvas and saving through the editor's own Save flow.
 * New: section previews — the color system board, the type specimen, a new spacing & rhythm board, and a guided live-site flow for motion with per-behavior replays.
 * New: a Live Site preview that shows unsaved changes on the real frontend without leaving the editor (also available from the editor's View menu).
