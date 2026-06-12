@@ -61,6 +61,7 @@ const NativeRange = ( { settingId } ) => {
         <div className="sm-native-range">
           <RangeControl
             __nextHasNoMarginBottom
+            __next40pxDefaultSize
             label={ config.label }
             help={ stripHtml( config.desc ) || undefined }
             value={ value === '' || value === undefined ? undefined : Number( value ) }
@@ -232,6 +233,7 @@ const NativeRadio = ( { settingId, overrides } ) => {
       { ( value, onChange ) => useGroup ? (
         <ToggleGroupControl
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
           isBlock
           label={ config.label }
           help={ stripHtml( config.desc ) || undefined }
@@ -269,6 +271,7 @@ const NativeSelect = ( { settingId, li } ) => {
       { ( value, onChange ) => (
         <SelectControl
           __nextHasNoMarginBottom
+          __next40pxDefaultSize
           label={ config.label }
           help={ stripHtml( config.desc ) || undefined }
           value={ String( value ) }
@@ -327,6 +330,7 @@ export const VoiceTunerPanel = () => {
               <span className="sm-voice-panel__label">{ stripHtml( String( entry.config.label || '' ) ) }</span>
               <ToggleGroupControl
                 __nextHasNoMarginBottom
+                __next40pxDefaultSize
                 hideLabelFromVision
                 label={ stripHtml( String( entry.config.label || '' ) ) }
                 value={ entry.value }
