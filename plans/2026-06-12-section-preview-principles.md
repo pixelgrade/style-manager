@@ -63,7 +63,7 @@ in-document, with the pane's already-loaded webfonts.
 | Color System | palettes × grades × roles | System board (shipped) |
 | Typography | type roles, resolved fonts/sizes | Specimen board (shipped) |
 | **Spacing** | container width %, content inset, spacing ratio → derived rhythm steps | **System board**: page-anatomy blueprint (container/inset with measures) + vertical rhythm ladder (base step 32 × ratio and its multiples, px badges) + a density demo that breathes with the level |
-| **Motion** | transition style/symbol, intro style/speed — *behaviors over time, triggered by navigation/load* | **Guided live-site flow** (proposal): motion cannot be honestly previewed on a static board; its Preview should open the Live Site preview, where in-preview navigation already replays page transitions, with a hint pointing at what to do. A replay stage inside a board would simulate the theme's frontend JS rather than run it — principle 6 says don't. |
+| **Motion** | transition style/symbol, intro style/speed — *behaviors over time, triggered by navigation/load* | **Guided live-site flow** (shipped): motion cannot be honestly previewed on a static board; its Preview opens the Live Site preview, where in-preview navigation already replays page transitions, with a guidance pill and a 'Replay intro' affordance. A replay stage inside a board would simulate the theme's frontend JS rather than run it — principle 6 says don't. |
 
 The Spacing board renders resolved values from the same relationships the
 theme CSS uses (`--theme-spacing-ratio: var(--sm-spacing-level)`,
