@@ -339,38 +339,62 @@ const bootEngine = eng => {
  * thing the Customizer preview does. This is where PHP-rendered options
  * (auto-styled titles, site frame, motion) can actually be seen live.
  */
+const PREVIEW_CHANNEL = 'preview-0';
+
 const LiveSiteOverlay = ( { show } ) => {
   const { useState, useEffect, useRef } = wp.element;
   const [ url, setUrl ] = useState( null );
+  const iframeRef = useRef( null );
   const uuidRef = useRef( null );
   const counterRef = useRef( 0 );
+  const scrollRef = useRef( 0 );
+  const currentPageRef = useRef( payload.homeUrl );
 
+  // Send a message to the in-iframe customize-preview (core Messenger format).
+  const send = ( id, data ) => {
+    const frame = iframeRef.current;
+    if ( frame && frame.contentWindow ) {
+      frame.contentWindow.postMessage(
+        JSON.stringify( { id, data, channel: PREVIEW_CHANNEL } ),
+        window.location.origin
+      );
+    }
+  };
+
+  const buildUrl = base => {
+    const u = new URL( base, payload.homeUrl );
+    if ( uuidRef.current ) {
+      u.searchParams.set( 'customize_changeset_uuid', uuidRef.current );
+    }
+    // Boots the frontend as a real customize-preview: SM's own preview
+    // bundle loads inside and applies live (postMessage) settings instantly.
+    u.searchParams.set( 'customize_messenger_channel', PREVIEW_CHANNEL );
+    counterRef.current++;
+    u.searchParams.set( 'sm-preview', String( counterRef.current ) );
+    return u.toString();
+  };
+
+  // Sync the changeset, then (re)load the preview — used on open and for
+  // refresh-transport settings, the same flow the Customizer uses.
   const refresh = () => {
     const changed = engine ? getChangedValues( engine ) : {};
-    counterRef.current++;
 
-    if ( ! Object.keys( changed ).length ) {
-      const plain = new URL( payload.homeUrl );
-      plain.searchParams.set( 'sm-preview', String( counterRef.current ) );
-      setUrl( plain.toString() );
-      return;
-    }
-
+    // Always go through the changeset (even when empty): the frontend only
+    // boots as a customize-preview when a changeset uuid is present.
     wp.apiFetch( {
       path: payload.rest.previewChangesetPath,
       method: 'POST',
       data: { settings: changed, uuid: uuidRef.current },
     } ).then( response => {
-      if ( response && response.previewUrl ) {
+      if ( response && response.uuid ) {
         uuidRef.current = response.uuid;
-        const previewUrl = new URL( response.previewUrl );
-        previewUrl.searchParams.set( 'sm-preview', String( counterRef.current ) );
-        setUrl( previewUrl.toString() );
       }
+      setUrl( buildUrl( currentPageRef.current ) );
     } ).catch( () => {
-      setUrl( payload.homeUrl );
+      setUrl( buildUrl( currentPageRef.current ) );
     } );
   };
+  const debouncedRefresh = useRef( _.debounce( refresh, 1000 ) ).current;
 
   useEffect( () => {
     if ( ! show || ! engine ) {
@@ -379,11 +403,60 @@ const LiveSiteOverlay = ( { show } ) => {
 
     refresh();
 
-    const handler = _.debounce( refresh, 1500 );
-    engine.api.bind( 'sm:setting-change', handler );
+    // Live vs refresh transport, exactly like the Customizer: postMessage
+    // settings stream into the preview instantly; refresh settings update
+    // the changeset and reload the iframe (scroll preserved).
+    const onSettingChange = ( id, value ) => {
+      const config = payload.customizeSettings.settings[ id ];
+      if ( config && 'postMessage' === config.transport ) {
+        send( 'setting', [ id, value ] );
+      } else {
+        debouncedRefresh();
+      }
+    };
+    engine.api.bind( 'sm:setting-change', onSettingChange );
+
+    const onMessage = event => {
+      if ( event.origin !== window.location.origin || 'string' !== typeof event.data ) {
+        return;
+      }
+      let message;
+      try {
+        message = JSON.parse( event.data );
+      } catch ( e ) {
+        return;
+      }
+      if ( ! message || message.channel !== PREVIEW_CHANNEL ) {
+        return;
+      }
+
+      if ( 'ready' === message.id ) {
+        send( 'active' );
+        // Push the current unsaved live values on top of the changeset state.
+        const changed = engine ? getChangedValues( engine ) : {};
+        Object.entries( changed ).forEach( ( [ id, value ] ) => {
+          const config = payload.customizeSettings.settings[ id ];
+          if ( config && 'postMessage' === config.transport ) {
+            send( 'setting', [ id, value ] );
+          }
+        } );
+        if ( scrollRef.current ) {
+          send( 'scroll', scrollRef.current );
+        }
+      } else if ( 'scroll' === message.id ) {
+        scrollRef.current = message.data;
+      } else if ( 'url' === message.id && 'string' === typeof message.data ) {
+        // The preview intercepts navigation and delegates it to us.
+        currentPageRef.current = message.data;
+        scrollRef.current = 0;
+        setUrl( buildUrl( message.data ) );
+      }
+    };
+    window.addEventListener( 'message', onMessage );
 
     return () => {
-      engine.api.unbind( 'sm:setting-change', handler );
+      engine.api.unbind( 'sm:setting-change', onSettingChange );
+      window.removeEventListener( 'message', onMessage );
     };
   }, [ show ] );
 
@@ -395,6 +468,7 @@ const LiveSiteOverlay = ( { show } ) => {
     <div className="sm-live-site-overlay">
       { url && (
         <iframe
+          ref={ iframeRef }
           className="sm-live-site-overlay__iframe"
           src={ url }
           title="Live site preview"
