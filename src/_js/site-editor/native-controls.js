@@ -272,6 +272,83 @@ const NativeSelect = ( { settingId, li } ) => {
   );
 };
 
+/**
+ * "Find by voice" — the voice tuner as a compact core-style filter panel
+ * attached to the font palette list (replaces the floating accordion in the
+ * Site Editor; the engine — scheduler, fit plan, badges — stays untouched
+ * and reacts to the same four settings).
+ */
+const VOICE_DIMENSIONS = [ 'sm_voice_formality', 'sm_voice_energy', 'sm_voice_warmth', 'sm_voice_tradition' ];
+
+export const VoiceTunerPanel = () => {
+  const { Button } = wp.components;
+  const ToggleGroupControl = wp.components.__experimentalToggleGroupControl || wp.components.ToggleGroupControl;
+  const ToggleGroupControlOption = wp.components.__experimentalToggleGroupControlOption || wp.components.ToggleGroupControlOption;
+  const { useState, useEffect } = wp.element;
+  const { __ } = wp.i18n;
+  const [ open, setOpen ] = useState( false );
+  const [ , setTick ] = useState( 0 );
+
+  useEffect( () => {
+    const listener = () => setTick( tick => tick + 1 );
+    wp.customize.bind( 'sm:setting-change', listener );
+    return () => wp.customize.unbind( 'sm:setting-change', listener );
+  }, [] );
+
+  const entries = VOICE_DIMENSIONS
+    .map( id => ( { id, config: getConfig( id ) } ) )
+    .filter( entry => entry.config && wp.customize( entry.id ) )
+    .map( entry => ( { ...entry, value: String( wp.customize( entry.id )() || 'balanced' ) } ) );
+
+  if ( ! entries.length || ! ToggleGroupControl ) {
+    return null;
+  }
+
+  const tuned = entries.some( entry => 'balanced' !== entry.value );
+
+  return (
+    <div className="sm-voice-panel">
+      <button type="button" className="sm-voice-panel__header" onClick={ () => setOpen( ! open ) } aria-expanded={ open }>
+        <span>{ __( 'Tune by voice', '__plugin_txtd' ) }</span>
+        <span className={ `dashicons dashicons-arrow-${ open ? 'up' : 'down' }-alt2` } aria-hidden="true" />
+      </button>
+      { open && (
+        <div className="sm-voice-panel__body">
+          { entries.map( entry => (
+            <div className="sm-voice-panel__row" key={ entry.id }>
+              <span className="sm-voice-panel__label">{ stripHtml( String( entry.config.label || '' ) ) }</span>
+              <ToggleGroupControl
+                __nextHasNoMarginBottom
+                hideLabelFromVision
+                label={ stripHtml( String( entry.config.label || '' ) ) }
+                value={ entry.value }
+                isBlock
+                onChange={ value => wp.customize( entry.id, setting => setting.set( value ) ) }
+              >
+                { Object.entries( entry.config.choices || {} ).map( ( [ value, label ] ) => (
+                  <ToggleGroupControlOption key={ value } value={ value } label={ stripHtml( String( label ) ) } />
+                ) ) }
+              </ToggleGroupControl>
+            </div>
+          ) ) }
+        </div>
+      ) }
+      { tuned && (
+        <div className="sm-voice-panel__hint">
+          { __( 'Palettes are sorted by voice fit.', '__plugin_txtd' ) }
+          <Button
+            variant="link"
+            size="small"
+            onClick={ () => entries.forEach( entry => wp.customize( entry.id, setting => setting.set( 'balanced' ) ) ) }
+          >
+            { __( 'Reset', '__plugin_txtd' ) }
+          </Button>
+        </div>
+      ) }
+    </div>
+  );
+};
+
 const COMPONENTS = {
   range: NativeRange,
   sm_toggle: NativeToggle,

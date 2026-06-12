@@ -15,7 +15,7 @@ import './style.scss';
 
 import { createCustomizeApi, createContainerObject } from './customize-api';
 import { initializePreview } from './preview';
-import { mountNativeControls, getResettableSettings, PanelResetMenu } from './native-controls';
+import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
 import { ColorsOverlay, TypographyOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
@@ -106,6 +106,18 @@ const buildSectionPanel = section => {
       }
     }
   } );
+
+  // The voice tuner as a "find by voice" filter panel attached to the font
+  // palette list (the floating accordion rows are hidden in this context).
+  if ( 'sm_font_palettes_section' === section.id ) {
+    const paletteLi = contentEl.querySelector( '#customize-control-sm_font_palette_control' );
+    if ( paletteLi ) {
+      const host = document.createElement( 'li' );
+      host.className = 'customize-control sm-voice-panel-li';
+      contentEl.insertBefore( host, paletteLi );
+      ReactDOM.render( <VoiceTunerPanel />, host );
+    }
+  }
 
   // The section reset menu (core's Query Loop pattern): a 3-dot menu with
   // per-field reset and Reset all.
