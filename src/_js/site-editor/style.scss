@@ -656,25 +656,26 @@
 		padding: 4px 12px 12px;
 	}
 
+	// Label above the segmented control — side-by-side overflows the 280px
+	// panel with option labels like "Energetic".
 	&__row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-		margin-bottom: 8px;
+		margin-bottom: 12px;
 
 		&:last-child {
 			margin-bottom: 0;
 		}
 
 		> div {
-			flex: 0 0 60%;
+			width: 100%;
 		}
 	}
 
 	&__label {
-		font-size: 12px;
+		display: block;
+		margin-bottom: 4px;
+		font-size: 11px;
 		font-weight: 500;
+		text-transform: uppercase;
 		color: #1e1e1e;
 	}
 
