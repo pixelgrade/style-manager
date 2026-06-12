@@ -210,6 +210,10 @@ class SiteEditor extends AbstractHookProvider {
 				'pixelgrade_style_manager-chroma',
 				'pixelgrade_style_manager-select2',
 				'pixelgrade_style_manager-regression',
+				// The engine and the font palette preview scripts load webfonts
+				// through the WebFont global; outside the Customizer nothing
+				// else puts it on the page.
+				'pixelgrade_style_manager-web-font-loader',
 				'react',
 				'react-dom',
 				'wp-element',

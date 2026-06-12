@@ -9,6 +9,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import _ from 'lodash';
 
 import './style.scss';
 
@@ -366,6 +367,38 @@ const unmountPreviewTabs = rootEl => {
   }
 };
 
+/**
+ * Deep equality where the "no value" spellings count as the same thing:
+ * PHP-saved font configs store `false`, the JS engine recomputes `null` or
+ * `NaN` (parseFloat of false) for the same empty subfields.
+ */
+const isNoValue = v => false === v || null === v || undefined === v || ( 'number' === typeof v && isNaN( v ) );
+
+const isEquivalentValue = ( a, b ) => _.isEqualWith( a, b, ( x, y ) => {
+  if ( isNoValue( x ) && isNoValue( y ) ) {
+    return true;
+  }
+  return undefined;
+} );
+
+/**
+ * The values that actually differ from what was loaded (or last saved).
+ * A->B->A round-trips and boot-time churn must never publish anything.
+ */
+const getChangedValues = eng => {
+  const baseline = payload.customizeSettings.settings;
+  const changed = {};
+
+  Object.entries( eng.api.dirtyValues() ).forEach( ( [ id, value ] ) => {
+    if ( baseline[ id ] && isEquivalentValue( baseline[ id ].value, value ) ) {
+      return;
+    }
+    changed[ id ] = value;
+  } );
+
+  return changed;
+};
+
 const registerSidebar = () => {
   const { registerPlugin } = wp.plugins;
   const { PluginSidebar, PluginSidebarMoreMenuItem } = wp.editor;
@@ -387,7 +420,7 @@ const registerSidebar = () => {
       const previewTabsRoot = mountPreviewTabs();
 
       const onChange = () => {
-        setDirtyCount( Object.keys( eng.api.dirtyValues() ).length );
+        setDirtyCount( Object.keys( getChangedValues( eng ) ).length );
       };
       eng.api.bind( 'sm:setting-change', onChange );
       onChange();
@@ -403,9 +436,18 @@ const registerSidebar = () => {
 
     const onSave = () => {
       const eng = ensureEngine();
-      const dirtyValues = eng.api.dirtyValues();
 
-      if ( ! Object.keys( dirtyValues ).length || isSaving ) {
+      if ( isSaving ) {
+        return;
+      }
+
+      const dirtyValues = getChangedValues( eng );
+      const baseline = payload.customizeSettings.settings;
+
+      if ( ! Object.keys( dirtyValues ).length ) {
+        // Everything matches the saved state — just clear the flags.
+        eng.api.markClean();
+        setDirtyCount( 0 );
         return;
       }
 
@@ -418,6 +460,13 @@ const registerSidebar = () => {
       } ).then( response => {
         eng.api.markClean();
         setDirtyCount( 0 );
+
+        // The new saved state is the comparison point from now on.
+        Object.keys( dirtyValues ).forEach( id => {
+          if ( baseline[ id ] ) {
+            baseline[ id ].value = dirtyValues[ id ];
+          }
+        } );
         eng.api.trigger( 'saved', response );
 
         if ( eng.preview && response && response.css ) {
