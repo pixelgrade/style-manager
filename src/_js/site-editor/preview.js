@@ -183,6 +183,35 @@ export const initializePreview = ( api, payload ) => {
   const fallbackPalettes = payload?.preview?.fallbackPalettes || [];
   const userPalettesCount = payload?.preview?.userPalettesCount || 0;
 
+  // Frontend selectors (`.page-title`) match nothing in editor markup. The
+  // payload carries the gutenbergified equivalents — merge them in here, for
+  // the canvas only. styleManager.config itself must stay frontend-true: the
+  // Live Site iframe reads it (window.top) for the rules it injects into the
+  // frontend document. See issues #132/#133.
+  const selectorOverrides = payload?.editorCssSelectors || {};
+  const editorConfigCache = {};
+  const getCanvasSettingConfig = settingID => {
+    const base = settings[ settingID ];
+    const overrides = selectorOverrides[ settingID ];
+
+    if ( ! base || ! overrides || ! Array.isArray( base.css ) ) {
+      return base;
+    }
+
+    if ( ! editorConfigCache[ settingID ] ) {
+      editorConfigCache[ settingID ] = {
+        ...base,
+        css: base.css.map( ( propertyConfig, idx ) =>
+          'undefined' !== typeof overrides[ idx ]
+            ? { ...propertyConfig, selector: overrides[ idx ] }
+            : propertyConfig
+        ),
+      };
+    }
+
+    return editorConfigCache[ settingID ];
+  };
+
   installCssCallbacks( api, fallbackPalettes, userPalettesCount );
 
   const properKeys = Object.keys( settings ).filter( settingID => {
@@ -219,7 +248,7 @@ export const initializePreview = ( api, payload ) => {
       return;
     }
 
-    const settingConfig = settings[ settingID ];
+    const settingConfig = getCanvasSettingConfig( settingID );
 
     styleTag.innerHTML = getSettingCSS( settingID, value, settingConfig );
 

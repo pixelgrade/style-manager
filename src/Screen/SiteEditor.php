@@ -256,16 +256,13 @@ class SiteEditor extends AbstractHookProvider {
 			VERSION
 		);
 
-		// The same `styleManager` global the Customizer pane receives.
+		// The same `styleManager` global the Customizer pane receives. It MUST
+		// keep its frontend-truth selectors: the Live Site preview iframe's JS
+		// reads `window.top.styleManager.config` (this page) to compute the CSS
+		// it injects into the FRONTEND document. The editor-canvas pipeline gets
+		// its canvas-ready selectors through the payload's `editorCssSelectors`
+		// override map instead. See issues #132/#133.
 		$localized = apply_filters( 'style_manager/localized_js_settings', $this->customizer_screen->get_localized_data() );
-
-		// The live preview injects per-setting CSS straight into the editor
-		// canvas, where frontend selectors (`.page-title`, `.entry-title`, …)
-		// match nothing. Transform every selector the same way the saved-state
-		// editor CSS is transformed, so live changes are actually visible.
-		// The Customizer pane and the Live Site preview iframe localize their
-		// own (frontend-selector) config in their own documents. See issue #132.
-		$localized = $this->gutenbergify_localized_css_selectors( $localized );
 
 		wp_enqueue_script( 'pixelgrade_style_manager-site-editor' );
 		wp_add_inline_script(
@@ -275,7 +272,7 @@ class SiteEditor extends AbstractHookProvider {
 		);
 		wp_add_inline_script(
 			'pixelgrade_style_manager-site-editor',
-			ScriptsEnqueue::getlocalizeToWindowScript( '_styleManagerSiteEditor', $this->get_site_editor_payload() ),
+			ScriptsEnqueue::getlocalizeToWindowScript( '_styleManagerSiteEditor', $this->get_site_editor_payload( $localized ) ),
 			'before'
 		);
 
@@ -298,10 +295,11 @@ class SiteEditor extends AbstractHookProvider {
 	}
 
 	/**
-	 * Transform every CSS selector in the localized settings config into its
-	 * block-editor equivalent — the same transformation the server applies when
-	 * generating the editor dynamic CSS (EditWithBlocks). The engine's live
-	 * preview then emits canvas-ready rules without any JS-side changes.
+	 * Build the canvas-ready selector overrides for every setting whose `css`
+	 * config carries selectors — the same transformation the server applies
+	 * when generating the saved-state editor CSS (EditWithBlocks).
+	 *
+	 * Shape: setting_id => [ css index => transformed selector ].
 	 *
 	 * @since 2.3.0
 	 *
@@ -309,50 +307,39 @@ class SiteEditor extends AbstractHookProvider {
 	 *
 	 * @return array
 	 */
-	protected function gutenbergify_localized_css_selectors( array $localized ): array {
+	protected function get_editor_css_selector_overrides( array $localized ): array {
+		$overrides = [];
+
 		if ( empty( $localized['config']['settings'] ) || ! is_array( $localized['config']['settings'] ) ) {
-			return $localized;
+			return $overrides;
 		}
 
 		foreach ( $localized['config']['settings'] as $setting_id => $config ) {
-			if ( ! is_array( $config ) ) {
+			if ( ! is_array( $config ) || empty( $config['css'] ) || ! is_array( $config['css'] ) ) {
 				continue;
 			}
 
-			// Regular options: a `css` list of property configs, each with its own selector.
-			if ( ! empty( $config['css'] ) && is_array( $config['css'] ) ) {
-				foreach ( $config['css'] as $idx => $css_property ) {
-					if ( empty( $css_property['selector'] ) || ! is_string( $css_property['selector'] ) ) {
-						continue;
-					}
-
-					$localized['config']['settings'][ $setting_id ]['css'][ $idx ]['selector'] =
-						$this->edit_with_blocks->gutenbergify_css_selectors( $css_property['selector'], (array) $css_property );
+			foreach ( $config['css'] as $idx => $css_property ) {
+				if ( empty( $css_property['selector'] ) || ! is_string( $css_property['selector'] ) ) {
+					continue;
 				}
-			}
 
-			// Font options: a single `selector`, either a plain string or the
-			// standardized selector => details map.
-			if ( isset( $config['type'] ) && 'font' === $config['type'] && ! empty( $config['selector'] ) ) {
-				if ( is_string( $config['selector'] ) ) {
-					$localized['config']['settings'][ $setting_id ]['selector'] =
-						$this->edit_with_blocks->gutenbergify_css_selectors( $config['selector'], [] );
-				} elseif ( is_array( $config['selector'] ) ) {
-					$localized['config']['settings'][ $setting_id ]['selector'] =
-						$this->edit_with_blocks->gutenbergify_font_css_selectors( $config['selector'] );
-				}
+				$overrides[ $setting_id ][ $idx ] =
+					$this->edit_with_blocks->gutenbergify_css_selectors( $css_property['selector'], (array) $css_property );
 			}
 		}
 
-		return $localized;
+		return $overrides;
 	}
 
 	/**
 	 * Build the Site Editor integration payload.
 	 *
+	 * @param array $localized The `styleManager` localized data (for the editor CSS selector overrides).
+	 *
 	 * @return array
 	 */
-	protected function get_site_editor_payload(): array {
+	protected function get_site_editor_payload( array $localized = [] ): array {
 		// Same data the Customizer preview JS callbacks receive (see Screen\Customizer\Preview).
 		$fallback_palettes = function_exists( 'sm_get_fallback_palettes' ) ? sm_get_fallback_palettes() : [];
 		$palettes          = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
@@ -429,6 +416,14 @@ class SiteEditor extends AbstractHookProvider {
 				],
 			] ),
 			'editorDynamicStyleHandle' => 'style-manager-editor-dynamic',
+			/*
+			 * Canvas-ready selector overrides for the live preview: frontend
+			 * selectors (`.page-title`) match nothing in editor markup, so the
+			 * canvas pipeline swaps them for the same gutenbergified selectors
+			 * the saved-state editor CSS uses. Kept OUT of styleManager.config —
+			 * the Live Site iframe reads that for frontend rules. See #132/#133.
+			 */
+			'editorCssSelectors' => $this->get_editor_css_selector_overrides( $localized ),
 		];
 	}
 
