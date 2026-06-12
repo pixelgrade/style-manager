@@ -11,7 +11,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager;
 
-\defined( 'ABSPATH' ) || exit;
+\defined( 'ABSPATH' ) || \in_array( \PHP_SAPI, [ 'cli', 'phpdbg' ], true ) || exit;
 
 /**
  * Retrieve the main plugin instance.

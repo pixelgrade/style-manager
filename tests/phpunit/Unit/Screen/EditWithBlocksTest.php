@@ -79,7 +79,7 @@ class EditWithBlocksTest extends TestCase {
 
 		Functions\expect( 'wp_register_style' )
 			->once()
-			->with( 'style-manager-editor-dynamic', false );
+			->with( 'style-manager-editor-dynamic', false, [], \Pixelgrade\StyleManager\VERSION );
 		Functions\expect( 'wp_enqueue_style' )
 			->once()
 			->with( 'style-manager-editor-dynamic' );

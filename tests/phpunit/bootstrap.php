@@ -14,6 +14,10 @@ define( 'WP_PLUGIN_DIR', __DIR__ . '/Fixture/wp-content/plugins' );
 if ( 'Unit' === PHPUnitUtil::get_current_suite() ) {
 	// For the Unit suite we shouldn't need WordPress loaded.
 	// This keeps them fast.
+	// The plugin main file is not loaded either, so mirror the constants the
+	// code under test reads.
+	define( 'Pixelgrade\StyleManager\VERSION', '0.0.0-tests' );
+
 	return;
 }
 
