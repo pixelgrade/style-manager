@@ -15,6 +15,7 @@ import './style.scss';
 
 import { createCustomizeApi, createContainerObject } from './customize-api';
 import { initializePreview } from './preview';
+import { mountNativeControls } from './native-controls';
 import { ColorsOverlay, TypographyOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
@@ -319,6 +320,10 @@ const bootEngine = eng => {
 
   maybeLoadWebfontloaderScript();
 
+  // Re-skin range/toggle/radio/select controls with native editor components
+  // (see native-controls.js; the engine wiring stays on the hidden originals).
+  mountNativeControls( eng, payload );
+
   eng.preview = initializePreview( api, payload );
 
   // Native Save (core-data entity) + server-evaluated control visibility.
@@ -572,6 +577,13 @@ const isEquivalentValue = ( a, b ) => _.isEqualWith( a, b, ( x, y ) => {
   if ( ( 'boolean' === typeof x || 'boolean' === typeof y ) && (
     ( isTruthyBool( x ) && isTruthyBool( y ) ) || ( isFalsyBool( x ) && isFalsyBool( y ) )
   ) ) {
+    return true;
+  }
+  // Native range/number inputs emit numbers where PHP stored numeric strings.
+  if ( ( 'number' === typeof x || 'number' === typeof y )
+    && '' !== x && '' !== y && null !== x && null !== y
+    && isFinite( Number( x ) ) && isFinite( Number( y ) )
+    && Number( x ) === Number( y ) ) {
     return true;
   }
   return undefined;
