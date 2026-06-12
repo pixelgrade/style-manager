@@ -34,6 +34,7 @@
         "chroma-js": "^2.1.2",
         "classnames": "^2.3.1",
         "command-exists": "^1.2.9",
+        "cross-env": "^10.1.0",
         "css-loader": "^6.5.1",
         "del": "^6.0.0",
         "fancy-log": "^2.0.0",

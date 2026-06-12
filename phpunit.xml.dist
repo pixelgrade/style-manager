@@ -1,24 +1,16 @@
 <?xml version="1.0"?>
-<phpunit
-	backupGlobals="false"
-	bootstrap="tests/phpunit/bootstrap.php"
-	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true">
-
-	<testsuites>
-		<testsuite name="Unit">
-			<directory>./tests/phpunit/Unit</directory>
-		</testsuite>
-		<testsuite name="Integration">
-			<directory>./tests/phpunit/Integration</directory>
-		</testsuite>
-	</testsuites>
-
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">src</directory>
-		</whitelist>
-	</filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="tests/phpunit/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="Unit">
+      <directory>./tests/phpunit/Unit</directory>
+    </testsuite>
+    <testsuite name="Integration">
+      <directory>./tests/phpunit/Integration</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
 </phpunit>

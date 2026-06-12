@@ -33,3 +33,4 @@ AGENTS.local.md
 /vendor/
 /php-scoper/vendor/
 /dist/js/stats.json
+.phpunit.cache/
