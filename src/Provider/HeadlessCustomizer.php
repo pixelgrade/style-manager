@@ -293,6 +293,58 @@ class HeadlessCustomizer {
 	}
 
 	/**
+	 * Plain map of setting_id => current JS value for every registered setting
+	 * (the `settings` shape of the Site Editor settings entity record).
+	 *
+	 * @return array
+	 */
+	public function get_settings_values(): array {
+		$values = [];
+		foreach ( $this->get_settings_data() as $setting_id => $data ) {
+			$values[ $setting_id ] = $data['value'];
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Re-evaluate the active state of every Style Manager control with a set
+	 * of not-yet-saved values previewed on top of the saved state — the same
+	 * server-side evaluation the Customizer performs on preview refresh.
+	 *
+	 * @param array $values setting_id => raw JS value (the client's unsaved deviations).
+	 *
+	 * @return array control_id => bool
+	 */
+	public function get_active_states( array $values ): array {
+		$manager = $this->get_manager();
+
+		foreach ( $values as $setting_id => $value ) {
+			$setting = $manager->get_setting( (string) $setting_id );
+			if ( ! $setting || ! $setting->check_capabilities() ) {
+				continue;
+			}
+
+			$manager->set_post_value( (string) $setting_id, $value );
+			// Filters option/theme_mod reads so active callbacks see the previewed value.
+			$setting->preview();
+		}
+
+		$section_ids      = $this->get_sm_section_ids();
+		$section_controls = $this->get_section_controls();
+
+		$active_states = [];
+		foreach ( $section_ids as $section_id ) {
+			foreach ( $section_controls[ $section_id ] ?? [] as $control ) {
+				/** @var \WP_Customize_Control $control */
+				$active_states[ $control->id ] = (bool) $control->active();
+			}
+		}
+
+		return $active_states;
+	}
+
+	/**
 	 * Persist a map of setting_id => value through a published changeset —
 	 * the exact same sanitization and persistence semantics as hitting
 	 * "Publish" in the Customizer.

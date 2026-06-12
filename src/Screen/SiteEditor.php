@@ -304,8 +304,9 @@ class SiteEditor extends AbstractHookProvider {
 				'userPalettesCount' => count( $user_palettes ),
 			],
 			'rest'               => [
-				'savePath' => '/style_manager/v1/site-editor/save',
-				'cssPath'  => '/style_manager/v1/site-editor/css',
+				'settingsPath'     => '/style_manager/v1/site-editor/settings',
+				'activeStatesPath' => '/style_manager/v1/site-editor/active-states',
+				'cssPath'          => '/style_manager/v1/site-editor/css',
 			],
 			'editorDynamicStyleHandle' => 'style-manager-editor-dynamic',
 		];

@@ -67,6 +67,11 @@ const ensureSmCustomizerAlias = () => {
 let engine = null;
 
 /**
+ * The container <li> id WP renders for a control id (brackets become dashes).
+ */
+const getControlContainerId = controlId => `customize-control-${ controlId.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
+
+/**
  * Build one section: a menu row (Nova Blocks-style drill-down trigger) plus a
  * full-panel page with a back header holding the section's controls.
  */
@@ -106,6 +111,17 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView ) => {
   contentEl.id = `sub-accordion-section-${ section.id }`;
   contentEl.innerHTML = section.controls.map( control => control.html ).join( '' );
   pageEl.appendChild( contentEl );
+
+  // Apply the server-evaluated active states (active_callback results) —
+  // re-evaluated on changes by the active-states refresher.
+  section.controls.forEach( control => {
+    if ( false === control.active ) {
+      const li = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( control.id ) ) }` );
+      if ( li ) {
+        li.classList.add( 'sm-se-control-inactive' );
+      }
+    }
+  } );
 
   pagesEl.appendChild( pageEl );
 
@@ -304,6 +320,10 @@ const bootEngine = eng => {
   maybeLoadWebfontloaderScript();
 
   eng.preview = initializePreview( api, payload );
+
+  // Native Save (core-data entity) + server-evaluated control visibility.
+  setupEntityIntegration( eng );
+  initializeActiveStatesRefresher( eng );
 };
 
 /**
@@ -399,17 +419,164 @@ const getChangedValues = eng => {
   return changed;
 };
 
+/**
+ * --- Native Save integration ---
+ *
+ * Style Manager settings are registered as a core-data entity so the Site
+ * Editor's own Save button and multi-entity save panel handle them, exactly
+ * like templates and pages. Saving PUTs to our endpoint, which still
+ * publishes a real Customizer changeset underneath.
+ */
+const ENTITY_KIND = 'pixelgrade/style-manager';
+const ENTITY_NAME = 'settings';
+const ENTITY_RECORD_ID = 'style-manager';
+
+const onEntitySaved = eng => {
+  const record = wp.data.select( 'core' ).getEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID );
+
+  if ( ! record || ! record.settings ) {
+    return;
+  }
+
+  // The server's post-save values are the new comparison baseline.
+  const baseline = payload.customizeSettings.settings;
+  Object.entries( record.settings ).forEach( ( [ id, value ] ) => {
+    if ( baseline[ id ] ) {
+      baseline[ id ].value = value;
+    }
+  } );
+
+  eng.api.markClean();
+  eng.api.trigger( 'saved', record );
+
+  if ( eng.preview && record.css ) {
+    eng.preview.applySavedCSS( record.css );
+  }
+};
+
+const setupEntityIntegration = eng => {
+  const { dispatch, select, subscribe } = wp.data;
+  const { __ } = wp.i18n;
+
+  dispatch( 'core' ).addEntities( [
+    {
+      label: __( 'Style Manager', '__plugin_txtd' ),
+      kind: ENTITY_KIND,
+      name: ENTITY_NAME,
+      baseURL: payload.rest.settingsPath,
+      key: 'id',
+      // The save panel resolves the record row label through this.
+      getTitle: record => ( record && record.title ) || __( 'Design system settings', '__plugin_txtd' ),
+    },
+  ] );
+
+  // Seed the persisted record from the localized baseline — no GET round-trip.
+  const baselineSettings = {};
+  Object.entries( payload.customizeSettings.settings ).forEach( ( [ id, data ] ) => {
+    baselineSettings[ id ] = data.value;
+  } );
+  dispatch( 'core' ).receiveEntityRecords( ENTITY_KIND, ENTITY_NAME, [
+    {
+      id: ENTITY_RECORD_ID,
+      title: __( 'Design system settings', '__plugin_txtd' ),
+      settings: baselineSettings,
+    },
+  ] );
+
+  // Mirror engine changes into entity edits: this is what enables the native
+  // Save button and lists Style Manager in the save panel.
+  const pushEdits = _.debounce( () => {
+    const changed = getChangedValues( eng );
+
+    if ( Object.keys( changed ).length ) {
+      dispatch( 'core' ).editEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID, { settings: changed } );
+      return;
+    }
+
+    // Everything reverted: point the edit back at the persisted value so
+    // core-data drops it and the Save button goes back to sleep.
+    const record = select( 'core' ).getEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID );
+    if ( record ) {
+      dispatch( 'core' ).editEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID, { settings: record.settings } );
+    }
+  }, 250 );
+
+  eng.api.bind( 'sm:setting-change', pushEdits );
+
+  // React to the native Save finishing our record.
+  let wasSaving = false;
+  subscribe( () => {
+    const saving = select( 'core' ).isSavingEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID );
+
+    if ( wasSaving && ! saving ) {
+      const error = select( 'core' ).getLastEntitySaveError( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID );
+      if ( ! error ) {
+        onEntitySaved( eng );
+      }
+    }
+
+    wasSaving = saving;
+  } );
+};
+
+/**
+ * --- Active states refresher ---
+ *
+ * Control visibility driven by PHP active_callbacks (e.g. Site Frame's
+ * Palette hidden while Style is None) is re-evaluated server-side with the
+ * client's unsaved values previewed — the Customizer does the equivalent on
+ * every preview refresh.
+ */
+const initializeActiveStatesRefresher = eng => {
+  let inFlight = false;
+  let pendingAgain = false;
+
+  const applyActiveStates = states => {
+    Object.entries( states ).forEach( ( [ controlId, isActive ] ) => {
+      const li = eng.root.querySelector( `#${ CSS.escape( getControlContainerId( controlId ) ) }` );
+      if ( li ) {
+        li.classList.toggle( 'sm-se-control-inactive', ! isActive );
+      }
+    } );
+  };
+
+  const refresh = () => {
+    if ( inFlight ) {
+      pendingAgain = true;
+      return;
+    }
+    inFlight = true;
+
+    wp.apiFetch( {
+      path: payload.rest.activeStatesPath,
+      method: 'POST',
+      data: { settings: getChangedValues( eng ) },
+    } ).then( response => {
+      if ( response && response.activeStates ) {
+        applyActiveStates( response.activeStates );
+      }
+    } ).catch( () => {
+      // Visibility refresh is best-effort; never break the editing flow.
+    } ).finally( () => {
+      inFlight = false;
+      if ( pendingAgain ) {
+        pendingAgain = false;
+        refresh();
+      }
+    } );
+  };
+
+  eng.api.bind( 'sm:setting-change', _.debounce( refresh, 400 ) );
+};
+
 const registerSidebar = () => {
   const { registerPlugin } = wp.plugins;
   const { PluginSidebar, PluginSidebarMoreMenuItem } = wp.editor;
-  const { useState, useEffect, useRef, createElement, Fragment } = wp.element;
-  const { Button } = wp.components;
+  const { useEffect, useRef, createElement, Fragment } = wp.element;
   const { __ } = wp.i18n;
 
   const StyleManagerSidebarContent = () => {
     const containerRef = useRef( null );
-    const [ dirtyCount, setDirtyCount ] = useState( 0 );
-    const [ isSaving, setIsSaving ] = useState( false );
 
     useEffect( () => {
       const eng = ensureEngine();
@@ -419,14 +586,7 @@ const registerSidebar = () => {
 
       const previewTabsRoot = mountPreviewTabs();
 
-      const onChange = () => {
-        setDirtyCount( Object.keys( getChangedValues( eng ) ).length );
-      };
-      eng.api.bind( 'sm:setting-change', onChange );
-      onChange();
-
       return () => {
-        eng.api.unbind( 'sm:setting-change', onChange );
         unmountPreviewTabs( previewTabsRoot );
         if ( eng.root.parentNode ) {
           eng.root.parentNode.removeChild( eng.root );
@@ -434,81 +594,8 @@ const registerSidebar = () => {
       };
     }, [] );
 
-    const onSave = () => {
-      const eng = ensureEngine();
-
-      if ( isSaving ) {
-        return;
-      }
-
-      const dirtyValues = getChangedValues( eng );
-      const baseline = payload.customizeSettings.settings;
-
-      if ( ! Object.keys( dirtyValues ).length ) {
-        // Everything matches the saved state — just clear the flags.
-        eng.api.markClean();
-        setDirtyCount( 0 );
-        return;
-      }
-
-      setIsSaving( true );
-
-      wp.apiFetch( {
-        path: payload.rest.savePath,
-        method: 'POST',
-        data: { settings: dirtyValues },
-      } ).then( response => {
-        eng.api.markClean();
-        setDirtyCount( 0 );
-
-        // The new saved state is the comparison point from now on.
-        Object.keys( dirtyValues ).forEach( id => {
-          if ( baseline[ id ] ) {
-            baseline[ id ].value = dirtyValues[ id ];
-          }
-        } );
-        eng.api.trigger( 'saved', response );
-
-        if ( eng.preview && response && response.css ) {
-          eng.preview.applySavedCSS( response.css );
-        }
-
-        wp.data.dispatch( 'core/notices' ).createNotice(
-          'success',
-          __( 'Style Manager settings published.', '__plugin_txtd' ),
-          { type: 'snackbar' }
-        );
-      } ).catch( error => {
-        console.error( 'Style Manager: save failed.', error );
-        wp.data.dispatch( 'core/notices' ).createNotice(
-          'error',
-          ( error && error.message ) ? error.message : __( 'Style Manager could not save your settings.', '__plugin_txtd' ),
-          { type: 'snackbar' }
-        );
-      } ).finally( () => {
-        setIsSaving( false );
-      } );
-    };
-
     return (
       <div className="sm-site-editor-sidebar">
-        <div className="sm-site-editor-sidebar__header">
-          <Button
-            variant="primary"
-            disabled={ ! dirtyCount || isSaving }
-            isBusy={ isSaving }
-            onClick={ onSave }
-          >
-            { isSaving
-              ? __( 'Publishing…', '__plugin_txtd' )
-              : __( 'Publish', '__plugin_txtd' ) }
-          </Button>
-          { dirtyCount > 0 && ! isSaving && (
-            <span className="sm-site-editor-sidebar__dirty-count">
-              { dirtyCount } { __( 'changed', '__plugin_txtd' ) }
-            </span>
-          ) }
-        </div>
         <div ref={ containerRef } className="sm-site-editor-sidebar__body" />
       </div>
     );

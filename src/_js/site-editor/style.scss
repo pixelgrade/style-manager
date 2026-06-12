@@ -16,26 +16,15 @@
 	flex-direction: column;
 	height: 100%;
 
-	&__header {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 12px 16px;
-		border-bottom: 1px solid #e0e0e0;
-		position: sticky;
-		top: 0;
-		z-index: 10;
-		background: #fff;
-	}
-
-	&__dirty-count {
-		color: #757575;
-		font-size: 12px;
-	}
-
 	&__body {
 		flex: 1 1 auto;
 	}
+}
+
+// Controls whose PHP active_callback currently evaluates to false
+// (server-evaluated at render + refreshed on changes).
+.sm-site-editor .sm-se-control-inactive {
+	display: none !important;
 }
 
 // ---------------------------------------------------------------------------

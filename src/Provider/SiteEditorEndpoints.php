@@ -83,21 +83,42 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 * @since 2.3.0
 	 */
 	protected function register_routes() {
+		// The Site Editor settings entity record (consumed through the
+		// core-data entities API: GET to resolve, PUT to save edits).
 		register_rest_route(
 			'style_manager/v1',
-			'/site-editor/save',
+			'/site-editor/settings/(?P<id>[\w-]+)',
 			[
-				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'handle_save' ],
-				'permission_callback' => [ $this, 'check_permissions' ],
-				'args'                => [
-					'settings' => [
-						'required'          => true,
-						'validate_callback' => static function ( $value ) {
-							return is_array( $value ) && ! empty( $value );
-						},
+				[
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'handle_get_settings_record' ],
+					'permission_callback' => [ $this, 'check_permissions' ],
+				],
+				[
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'handle_save_settings_record' ],
+					'permission_callback' => [ $this, 'check_permissions' ],
+					'args'                => [
+						'settings' => [
+							'required'          => true,
+							'validate_callback' => static function ( $value ) {
+								return is_array( $value ) && ! empty( $value );
+							},
+						],
 					],
 				],
+			]
+		);
+
+		// Re-evaluate control active states with unsaved values previewed —
+		// the Customizer does the equivalent on every preview refresh.
+		register_rest_route(
+			'style_manager/v1',
+			'/site-editor/active-states',
+			[
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'handle_active_states' ],
+				'permission_callback' => [ $this, 'check_permissions' ],
 			]
 		);
 
@@ -122,13 +143,25 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	}
 
 	/**
-	 * Save a map of setting_id => value through a published changeset.
+	 * Resolve the Site Editor settings entity record.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function handle_get_settings_record( \WP_REST_Request $request ) {
+		return rest_ensure_response( $this->get_settings_record( (string) $request->get_param( 'id' ) ) );
+	}
+
+	/**
+	 * Save the entity record's edited `settings` through a published changeset
+	 * and return the updated record.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return \WP_REST_Response|\WP_Error
 	 */
-	public function handle_save( \WP_REST_Request $request ) {
+	public function handle_save_settings_record( \WP_REST_Request $request ) {
 		$values = $request->get_param( 'settings' );
 
 		$result = $this->headless_customizer->save( (array) $values );
@@ -137,15 +170,48 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 			return $result;
 		}
 
+		$record          = $this->get_settings_record( (string) $request->get_param( 'id' ) );
+		$record['saved'] = $result['saved'];
+
 		// A CSS regeneration hiccup must never make a successful save look
 		// like a failure — the editor falls back to its live-preview CSS.
 		try {
-			$result['css'] = $this->get_css_payload();
+			$record['css'] = $this->get_css_payload();
 		} catch ( \Throwable $e ) {
-			$result['css'] = null;
+			$record['css'] = null;
 		}
 
-		return rest_ensure_response( $result );
+		return rest_ensure_response( $record );
+	}
+
+	/**
+	 * Build the entity record.
+	 *
+	 * @param string $id
+	 *
+	 * @return array
+	 */
+	protected function get_settings_record( string $id ): array {
+		return [
+			'id'       => $id,
+			'title'    => esc_html__( 'Design system settings', '__plugin_txtd' ),
+			'settings' => $this->headless_customizer->get_settings_values(),
+		];
+	}
+
+	/**
+	 * Re-evaluate control active states with the client's unsaved values.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function handle_active_states( \WP_REST_Request $request ) {
+		$values = $request->get_param( 'settings' );
+
+		return rest_ensure_response(
+			[ 'activeStates' => $this->headless_customizer->get_active_states( is_array( $values ) ? $values : [] ) ]
+		);
 	}
 
 	/**
