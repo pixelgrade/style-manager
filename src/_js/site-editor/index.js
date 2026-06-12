@@ -668,9 +668,11 @@ const SiteEditorPreviewTabs = () => {
         ) }
       </div>
       <div className="sm-preview__content">
+        { /* Mount only the active overlay: the hidden ones would render their
+             full trees on editor boot and re-render on every palette change. */ }
         <LiveSiteOverlay show={ active === 'site' } />
-        <ColorsOverlay show={ active === 'colors' } />
-        <TypographyOverlay show={ active === 'typography' } />
+        { active === 'colors' && <ColorsOverlay show /> }
+        { active === 'typography' && <TypographyOverlay show /> }
       </div>
     </div>
   );

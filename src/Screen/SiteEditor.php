@@ -295,9 +295,11 @@ class SiteEditor extends AbstractHookProvider {
 		return [
 			'structure'          => $this->headless_customizer->get_structure(),
 			// Mirrors the parts of _wpCustomizeSettings the SM engine reads.
+			// Note: `google_fonts_opts` is deliberately NOT shipped — the ~96 KB
+			// of <option> markup is synthesized client-side from the
+			// styleManager.fonts catalog (see site-editor/customize-api.js).
 			'customizeSettings'  => [
-				'settings'          => $this->headless_customizer->get_settings_data(),
-				'google_fonts_opts' => $this->sm_fonts->get_google_fonts_select_options(),
+				'settings' => $this->headless_customizer->get_settings_data(),
 			],
 			'preview'            => [
 				'fallbackPalettes'  => $fallback_palettes,
