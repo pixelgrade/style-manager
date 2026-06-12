@@ -565,6 +565,9 @@ const LiveSiteOverlay = ( { show, hint } ) => {
     // Boots the frontend as a real customize-preview: SM's own preview
     // bundle loads inside and applies live (postMessage) settings instantly.
     u.searchParams.set( 'customize_messenger_channel', PREVIEW_CHANNEL );
+    // Marks this as OUR preview: Anima re-enables page transitions for it
+    // (they are gated off in regular Customizer previews).
+    u.searchParams.set( 'sm-live-preview', '1' );
     counterRef.current++;
     u.searchParams.set( 'sm-preview', String( counterRef.current ) );
     return u.toString();
@@ -645,6 +648,15 @@ const LiveSiteOverlay = ( { show, hint } ) => {
         // The preview intercepts navigation and delegates it to us.
         currentPageRef.current = message.data;
         scrollRef.current = 0;
+
+        // With page transitions enabled, Barba owns in-iframe navigation —
+        // rebuilding the src here would hard-reload mid-animation. Record
+        // the page (for later refreshes) and let the transition play out.
+        const transitionsSetting = window.wp.customize( 'sm_page_transitions_enable' );
+        if ( transitionsSetting && isTruthyBool( transitionsSetting() ) ) {
+          return;
+        }
+
         setUrl( buildUrl( message.data ) );
       }
     };
@@ -661,22 +673,66 @@ const LiveSiteOverlay = ( { show, hint } ) => {
   }
 
   const { __ } = wp.i18n;
-  // Replay: re-sync the changeset and bump the URL counter — the iframe
-  // reloads through the same mechanics, replaying the loading transition
-  // and the intro animations with the current (unsaved) motion settings.
-  const replay = () => refresh();
+
+  // Each motion behavior gets the replay that matches its real trigger:
+  // intro animations play on page load (reload through the changeset
+  // mechanics), page transitions play on navigation (click a real internal
+  // link inside the preview so the theme's own transition path runs).
+  const replayIntro = () => refresh();
+
+  const playTransition = () => {
+    const doc = iframeRef.current?.contentDocument;
+    if ( doc ) {
+      const currentPath = doc.location.pathname.replace( /\/$/, '' );
+
+      // Prefer real navigation links (what a visitor would click); fall back
+      // to any internal page link. Never action links (nonces, cart ops) and
+      // never the page we are already on — compare by pathname, since the
+      // preview rewrites every href with changeset query args.
+      const candidates = [
+        ...doc.querySelectorAll( 'nav a[href], [class*="navigation"] a[href], [class*="menu"] a[href]' ),
+        ...doc.querySelectorAll( 'a[href]' ),
+      ];
+
+      const link = candidates.find( a => {
+        let parsed;
+        try {
+          parsed = new URL( a.href, doc.location.href );
+        } catch ( e ) {
+          return false;
+        }
+
+        if ( parsed.origin !== doc.location.origin ) {
+          return false;
+        }
+        if ( /\/wp-(admin|login)/.test( parsed.pathname ) ) {
+          return false;
+        }
+        if ( /(_wpnonce|remove_item|add-to-cart|logout|download)/.test( parsed.search ) ) {
+          return false;
+        }
+
+        return parsed.pathname.replace( /\/$/, '' ) !== currentPath;
+      } );
+
+      if ( link ) {
+        link.click();
+        return;
+      }
+    }
+
+    // No internal link found on this page — fall back to reloading home.
+    currentPageRef.current = payload.homeUrl;
+    refresh();
+  };
 
   return (
     <div className="sm-live-site-overlay">
       { 'motion' === hint && (
-        <div className="sm-live-site-overlay__hint">
-          <span>
-            { __( 'Navigate between pages to experience page transitions.', '__plugin_txtd' ) }
-          </span>
-          <button type="button" onClick={ replay }>
-            { __( 'Replay intro', '__plugin_txtd' ) }
-          </button>
-        </div>
+        <MotionHint
+          onReplayIntro={ replayIntro }
+          onPlayTransition={ playTransition }
+        />
       ) }
       { url && (
         <iframe
@@ -685,6 +741,56 @@ const LiveSiteOverlay = ( { show, hint } ) => {
           src={ url }
           title="Live site preview"
         />
+      ) }
+    </div>
+  );
+};
+
+/**
+ * The motion guidance pill: each replay affordance appears only while its
+ * feature toggle is on, and the copy adapts when everything is off.
+ */
+const MotionHint = ( { onReplayIntro, onPlayTransition } ) => {
+  const { useState, useEffect } = wp.element;
+  const { __ } = wp.i18n;
+
+  const useSettingValue = settingID => {
+    const api = window.wp.customize;
+    const setting = api ? api( settingID ) : null;
+    const [ value, setValue ] = useState( setting ? setting() : null );
+
+    useEffect( () => {
+      if ( ! setting ) {
+        return undefined;
+      }
+      setting.bind( setValue );
+      return () => setting.unbind( setValue );
+    }, [] );
+
+    return value;
+  };
+
+  const transitionsOn = isTruthyBool( useSettingValue( 'sm_page_transitions_enable' ) );
+  const introOn = isTruthyBool( useSettingValue( 'sm_intro_animations_enable' ) );
+
+  return (
+    <div className="sm-live-site-overlay__hint">
+      <span>
+        { ! transitionsOn && ! introOn
+          ? __( 'Turn on Page Transitions or Intro Animations and watch them here.', '__plugin_txtd' )
+          : transitionsOn
+            ? __( 'Navigate between pages to experience page transitions.', '__plugin_txtd' )
+            : __( 'Intro animations play as the page loads.', '__plugin_txtd' ) }
+      </span>
+      { transitionsOn && (
+        <button type="button" onClick={ onPlayTransition }>
+          { __( 'Play transition', '__plugin_txtd' ) }
+        </button>
+      ) }
+      { introOn && (
+        <button type="button" onClick={ onReplayIntro }>
+          { __( 'Replay intro', '__plugin_txtd' ) }
+        </button>
       ) }
     </div>
   );

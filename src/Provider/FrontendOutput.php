@@ -118,6 +118,33 @@ class FrontendOutput extends AbstractHookProvider {
 	public function register_hooks() {
 		// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
 		$this->add_action( 'init', 'setup', 15 );
+
+		// Anima gates page transitions inside customize previews (Barba's AJAX
+		// navigation conflicts with the Customizer's reload-based tracking).
+		// The Site Editor's Live Site preview delegates navigation to the
+		// transitions engine instead, so it opts back in via its URL marker.
+		$this->add_filter( 'anima/page_transitions_in_customize_preview', 'allow_page_transitions_in_site_editor_preview' );
+	}
+
+	/**
+	 * Allow page transitions inside the Site Editor's Live Site preview.
+	 *
+	 * The marker (`sm-live-preview`) is set by the Site Editor preview
+	 * overlay when building the preview URL — a presence-only flag.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param bool $allowed Whether transitions are allowed in this customize preview.
+	 *
+	 * @return bool
+	 */
+	protected function allow_page_transitions_in_site_editor_preview( $allowed ): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- presence-only marker toggling a preview behavior.
+		if ( isset( $_GET['sm-live-preview'] ) ) {
+			return true;
+		}
+
+		return (bool) $allowed;
 	}
 
 	/**
