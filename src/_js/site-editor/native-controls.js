@@ -192,17 +192,19 @@ export const PanelResetMenu = ( { items, groupLabel } ) => {
   );
 };
 
-const NativeToggle = ( { settingId } ) => {
+const NativeToggle = ( { settingId, overrides } ) => {
   const { ToggleControl } = wp.components;
   const config = getConfig( settingId );
+  const label = overrides?.label || config.label;
+  const help = overrides?.help !== undefined ? overrides.help : ( stripHtml( config.desc ) || undefined );
 
   return (
     <BoundControl settingId={ settingId }>
       { ( value, onChange ) => (
         <ToggleControl
           __nextHasNoMarginBottom
-          label={ config.label }
-          help={ stripHtml( config.desc ) || undefined }
+          label={ label }
+          help={ help }
           checked={ !! value && '0' !== value }
           onChange={ onChange }
         />
@@ -211,11 +213,17 @@ const NativeToggle = ( { settingId } ) => {
   );
 };
 
-const NativeRadio = ( { settingId } ) => {
+const NativeRadio = ( { settingId, overrides } ) => {
   const { RadioControl } = wp.components;
   const ToggleGroupControl = wp.components.__experimentalToggleGroupControl || wp.components.ToggleGroupControl;
   const ToggleGroupControlOption = wp.components.__experimentalToggleGroupControlOption || wp.components.ToggleGroupControlOption;
-  const config = getConfig( settingId );
+  const config = { ...getConfig( settingId ) };
+  if ( overrides?.label ) {
+    config.label = overrides.label;
+  }
+  if ( overrides?.help !== undefined ) {
+    config.desc = overrides.help;
+  }
   const choices = Object.entries( config.choices || {} ).map( ( [ v, label ] ) => ( { value: v, label: stripHtml( String( label ) ) } ) );
   const useGroup = ToggleGroupControl && choices.length <= 4;
 
@@ -357,13 +365,35 @@ const COMPONENTS = {
 };
 
 /**
+ * Site Editor copy polish (presentation only — source strings stay in the
+ * theme/plugin config and are batched separately).
+ */
+const getCopyOverride = settingId => {
+  const { __ } = wp.i18n;
+  const overrides = {
+    sm_collection_title_position: {
+      label: __( 'Collection title position', '__plugin_txtd' ),
+      help: __( '“Sideways” rotates collection titles along the left edge for an editorial look.', '__plugin_txtd' ),
+    },
+    sm_collection_hover_effect: {
+      label: __( 'Collection hover effect', '__plugin_txtd' ),
+      help: __( 'The effect shown when hovering a collection card’s media.', '__plugin_txtd' ),
+    },
+  };
+
+  return overrides[ settingId ] || null;
+};
+
+/**
  * The setting id for a control id ({setting}_control suffix).
  */
 const controlToSettingId = controlId => controlId.replace( /_control$/, '' );
 
+const controlLiId = controlId => `customize-control-${ controlId.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
+
 export const mountNativeControls = ( eng, payload ) => {
   payload.structure.sections.forEach( section => {
-    section.controls.forEach( control => {
+    section.controls.forEach( ( control, index ) => {
       const Component = COMPONENTS[ control.type ];
       if ( ! Component ) {
         return;
@@ -374,10 +404,26 @@ export const mountNativeControls = ( eng, payload ) => {
         return;
       }
 
-      const liId = `customize-control-${ control.id.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
-      const li = eng.root.querySelector( `#${ CSS.escape( liId ) }` );
+      const li = eng.root.querySelector( `#${ CSS.escape( controlLiId( control.id ) ) }` );
       if ( ! li || li.querySelector( '.sm-native-control' ) ) {
         return;
+      }
+
+      let overrides = getCopyOverride( settingId );
+
+      // Collapse the "intro card + Enable X toggle" pattern into one
+      // core-style row: a preceding html intro with a title hands its title
+      // and description to the toggle and disappears.
+      if ( 'sm_toggle' === control.type && index > 0 && 'html' === section.controls[ index - 1 ].type ) {
+        const introLi = eng.root.querySelector( `#${ CSS.escape( controlLiId( section.controls[ index - 1 ].id ) ) }` );
+        const introTitle = introLi?.querySelector( '.customize-control-title' )?.textContent.trim();
+        if ( introTitle ) {
+          overrides = {
+            label: introTitle,
+            help: introLi.querySelector( '.customize-control-description' )?.textContent.trim() || undefined,
+          };
+          introLi.classList.add( 'sm-se-control-merged' );
+        }
       }
 
       Array.from( li.children ).forEach( child => {
@@ -388,7 +434,7 @@ export const mountNativeControls = ( eng, payload ) => {
       target.className = 'sm-native-control';
       li.insertBefore( target, li.firstChild );
 
-      ReactDOM.render( <Component settingId={ settingId } li={ li } />, target );
+      ReactDOM.render( <Component settingId={ settingId } li={ li } overrides={ overrides } />, target );
     } );
   } );
 };

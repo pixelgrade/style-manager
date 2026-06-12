@@ -618,6 +618,28 @@
 	font-size: 16px;
 }
 
+// Intro cards merged into their toggle (Auto-style, Post Type Colors, the
+// Motion enables) disappear — the toggle carries the title + help now.
+.sm-site-editor .sm-se-control-merged {
+	display: none !important;
+}
+
+// Injected group headers (e.g. Collections in the Tweak Board) + remaining
+// html intro rows (Site Frame, Palette Configuration) read as group headers.
+// Group headers must outrank the 11px-uppercase control labels beneath them.
+.sm-site-editor li.sm-se-group-title,
+.sm-site-editor .sm-se-page__content li.customize-control-html .customize-control-title {
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: none;
+	letter-spacing: 0;
+	color: #1e1e1e;
+}
+
+.sm-site-editor li.sm-se-group-title {
+	margin-bottom: 12px;
+}
+
 // "Find by voice": replaces the floating voice tuner accordion in the editor.
 .sm-site-editor li.sm-voice-tuner-toggle-control,
 .sm-site-editor .sm-voice-tuner-accordion__content {

@@ -329,6 +329,20 @@ class SiteEditor extends AbstractHookProvider {
 				],
 			] ),
 			/**
+			 * Group headers injected before specific controls in a section —
+			 * gives sibling controls a shared identity (e.g. the Collections
+			 * pair in the Tweak Board). Filter: section id => [ [ before
+			 * (setting id), label ] ].
+			 */
+			'sectionGroupHeaders' => apply_filters( 'style_manager/site_editor_section_group_headers', [
+				'sm_tweak_board_section' => [
+					[
+						'before' => 'sm_collection_title_position',
+						'label'  => esc_html__( 'Collections', '__plugin_txtd' ),
+					],
+				],
+			] ),
+			/**
 			 * Toggle-driven control visibility (the Customizer gets this from
 			 * theme-shipped JS, e.g. Anima's motion controls script).
 			 * Filter: setting_id => [ dependent setting_ids shown when truthy ].

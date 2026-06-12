@@ -107,6 +107,17 @@ const buildSectionPanel = section => {
     }
   } );
 
+  // Inject group headers before specific controls (payload-configured).
+  ( ( payload.sectionGroupHeaders || {} )[ section.id ] || [] ).forEach( header => {
+    const li = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( `${ header.before }_control` ) ) }` );
+    if ( li ) {
+      const heading = document.createElement( 'li' );
+      heading.className = 'customize-control sm-se-group-title';
+      heading.textContent = header.label;
+      contentEl.insertBefore( heading, li );
+    }
+  } );
+
   // The voice tuner as a "find by voice" filter panel attached to the font
   // palette list (the floating accordion rows are hidden in this context).
   if ( 'sm_font_palettes_section' === section.id ) {
