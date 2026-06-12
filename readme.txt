@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, customizer, fonts, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.2.13
+Stable tag: 2.3.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -77,6 +77,16 @@ or analytics scripts.
   Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.3.0 =
+* New: the full Style Manager experience runs natively inside the Site Editor — colors, typography, spacing, tweaks, and motion, with live preview into the editor canvas and saving through the editor's own Save flow.
+* New: section previews — the color system board, the type specimen, a new spacing & rhythm board, and a guided live-site flow for motion with per-behavior replays.
+* New: a Live Site preview that shows unsaved changes on the real frontend without leaving the editor (also available from the editor's View menu).
+* Fix: publishing settings can no longer overwrite sibling options of the theme's options root with filtered values (protects sites running read filters such as translation plugins).
+* Fix: element colorize options (Coloration Level) now live-preview inside the editor canvas and the Live Site preview.
+* Fix: page transitions play inside the Live Site preview (with the latest Anima).
+* Performance: ~100 KB trimmed from the editor payload; preview boards render on demand.
+* Maintenance: PHPUnit 10, WordPress 6.9 stubs, refreshed build toolchain; the PHP test suite runs again.
 
 = 2.2.13 =
 * Security: constrain and escape the dark-mode appearance attribute printed on the site's `<html>` tag.
