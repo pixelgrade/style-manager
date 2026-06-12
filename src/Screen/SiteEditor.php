@@ -68,6 +68,13 @@ class SiteEditor extends AbstractHookProvider {
 	protected Customizer $customizer_screen;
 
 	/**
+	 * Edit with blocks screen (for the editor CSS selector transforms).
+	 *
+	 * @var EditWithBlocks
+	 */
+	protected EditWithBlocks $edit_with_blocks;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -80,6 +87,7 @@ class SiteEditor extends AbstractHookProvider {
 	 * @param Fonts              $sm_fonts            Style Manager Fonts.
 	 * @param HeadlessCustomizer $headless_customizer Headless Customizer.
 	 * @param Customizer         $customizer_screen   Customizer screen.
+	 * @param EditWithBlocks     $edit_with_blocks    Edit with blocks screen.
 	 * @param LoggerInterface    $logger              Logger.
 	 */
 	public function __construct(
@@ -88,6 +96,7 @@ class SiteEditor extends AbstractHookProvider {
 		Fonts $sm_fonts,
 		HeadlessCustomizer $headless_customizer,
 		Customizer $customizer_screen,
+		EditWithBlocks $edit_with_blocks,
 		LoggerInterface $logger
 	) {
 		$this->options             = $options;
@@ -95,6 +104,7 @@ class SiteEditor extends AbstractHookProvider {
 		$this->sm_fonts            = $sm_fonts;
 		$this->headless_customizer = $headless_customizer;
 		$this->customizer_screen   = $customizer_screen;
+		$this->edit_with_blocks    = $edit_with_blocks;
 		$this->logger              = $logger;
 	}
 
@@ -249,6 +259,14 @@ class SiteEditor extends AbstractHookProvider {
 		// The same `styleManager` global the Customizer pane receives.
 		$localized = apply_filters( 'style_manager/localized_js_settings', $this->customizer_screen->get_localized_data() );
 
+		// The live preview injects per-setting CSS straight into the editor
+		// canvas, where frontend selectors (`.page-title`, `.entry-title`, …)
+		// match nothing. Transform every selector the same way the saved-state
+		// editor CSS is transformed, so live changes are actually visible.
+		// The Customizer pane and the Live Site preview iframe localize their
+		// own (frontend-selector) config in their own documents. See issue #132.
+		$localized = $this->gutenbergify_localized_css_selectors( $localized );
+
 		wp_enqueue_script( 'pixelgrade_style_manager-site-editor' );
 		wp_add_inline_script(
 			'pixelgrade_style_manager-site-editor',
@@ -277,6 +295,56 @@ class SiteEditor extends AbstractHookProvider {
 	 */
 	public function output_fonts_dynamic_style() {
 		$this->sm_fonts->outputFontsDynamicStyle();
+	}
+
+	/**
+	 * Transform every CSS selector in the localized settings config into its
+	 * block-editor equivalent — the same transformation the server applies when
+	 * generating the editor dynamic CSS (EditWithBlocks). The engine's live
+	 * preview then emits canvas-ready rules without any JS-side changes.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $localized The `styleManager` localized data.
+	 *
+	 * @return array
+	 */
+	protected function gutenbergify_localized_css_selectors( array $localized ): array {
+		if ( empty( $localized['config']['settings'] ) || ! is_array( $localized['config']['settings'] ) ) {
+			return $localized;
+		}
+
+		foreach ( $localized['config']['settings'] as $setting_id => $config ) {
+			if ( ! is_array( $config ) ) {
+				continue;
+			}
+
+			// Regular options: a `css` list of property configs, each with its own selector.
+			if ( ! empty( $config['css'] ) && is_array( $config['css'] ) ) {
+				foreach ( $config['css'] as $idx => $css_property ) {
+					if ( empty( $css_property['selector'] ) || ! is_string( $css_property['selector'] ) ) {
+						continue;
+					}
+
+					$localized['config']['settings'][ $setting_id ]['css'][ $idx ]['selector'] =
+						$this->edit_with_blocks->gutenbergify_css_selectors( $css_property['selector'], (array) $css_property );
+				}
+			}
+
+			// Font options: a single `selector`, either a plain string or the
+			// standardized selector => details map.
+			if ( isset( $config['type'] ) && 'font' === $config['type'] && ! empty( $config['selector'] ) ) {
+				if ( is_string( $config['selector'] ) ) {
+					$localized['config']['settings'][ $setting_id ]['selector'] =
+						$this->edit_with_blocks->gutenbergify_css_selectors( $config['selector'], [] );
+				} elseif ( is_array( $config['selector'] ) ) {
+					$localized['config']['settings'][ $setting_id ]['selector'] =
+						$this->edit_with_blocks->gutenbergify_font_css_selectors( $config['selector'] );
+				}
+			}
+		}
+
+		return $localized;
 	}
 
 	/**
