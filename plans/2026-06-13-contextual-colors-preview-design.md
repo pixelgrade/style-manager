@@ -27,7 +27,7 @@ cannot read real per-post colours.
   from its cover image and expanded into a full, accessible palette — for the
   accents that belong to it."
 
-## The board (`mode: 'content-colors'`)
+## The board (`mode: 'contextual-colors'`)
 
 A body-mounted overlay following the existing board pattern. Top → bottom:
 
@@ -62,7 +62,7 @@ deliberately out of scope here — a separate decision.
 
 ## Files
 
-- JS: `src/_js/customizer/components/content-colors-overlay/{index.js,style.scss}`,
+- JS: `src/_js/customizer/components/contextual-colors-overlay/{index.js,style.scss}`,
   barrel, `src/_js/site-editor/index.js` (mode branch).
 - PHP (plugin): `src/Screen/SiteEditor.php` (preview marker on the Post-type group).
 - PHP (theme, Anima): `inc/integrations/style-manager/tweak-board.php` (rename +

@@ -426,7 +426,7 @@ class SiteEditor extends AbstractHookProvider {
 					// feature's master toggle is on.
 					[
 						'before'  => 'sm_contextual_entry_colors_intro',
-						'preview' => [ 'mode' => 'content-colors' ],
+						'preview' => [ 'mode' => 'contextual-colors' ],
 					],
 				],
 				// Motion: its two behaviours each get a titled, divider-separated

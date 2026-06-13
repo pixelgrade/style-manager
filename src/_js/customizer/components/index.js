@@ -6,7 +6,7 @@ export { default as ColorsOverlay } from './colors-overlay';
 export { default as ColorsPreview } from './colors-preview';
 export { default as ColorsStyleTag } from './colors-style-tag';
 export { default as ColorsUsageShortcut } from './colors-usage-shortcut';
-export { default as ContentColorsOverlay } from './content-colors-overlay';
+export { default as ContextualColorsOverlay } from './contextual-colors-overlay';
 export { default as ContextualMenu } from './contextual-menu';
 export { default as ColorizeElementsButton } from './colorize-elements-button';
 export { default as Control } from './control';
