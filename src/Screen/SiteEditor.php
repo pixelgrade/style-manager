@@ -421,10 +421,12 @@ class SiteEditor extends AbstractHookProvider {
 						'before'  => 'sm_decorative_titles_style_intro',
 						'preview' => [ 'mode' => 'fancy-titles' ],
 					],
-					// Post-type Colors: its intro is the title; mark the group
-					// start so it gets its divider too (no label, no preview).
+					// Content Colors: its intro is the title; the Preview opens
+					// the (premium) per-item colour board, shown only while the
+					// feature's master toggle is on.
 					[
-						'before' => 'sm_contextual_entry_colors_intro',
+						'before'  => 'sm_contextual_entry_colors_intro',
+						'preview' => [ 'mode' => 'content-colors' ],
 					],
 				],
 				// Motion: its two behaviours each get a titled, divider-separated

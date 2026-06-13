@@ -1,0 +1,276 @@
+/*------------------------------------*\
+  #CONTENT COLORS PREVIEW
+\*------------------------------------*/
+
+.sm-content-colors-preview {
+	max-width: 920px;
+	margin: 0 auto;
+	padding: 48px 32px 64px;
+	color: #1e1e1e;
+
+	&__header {
+		max-width: 640px;
+		margin-bottom: 44px;
+
+		h1 {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin: 0 0 12px;
+			font-size: 32px;
+			line-height: 1.2;
+		}
+
+		p {
+			margin: 0;
+			font-size: 14px;
+			line-height: 1.6;
+			opacity: .75;
+		}
+	}
+
+	&__premium {
+		display: inline-flex;
+		align-items: center;
+		padding: 3px 10px;
+		border-radius: 20px;
+		background: #1e1e1e;
+		color: #f5d58a;
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: .08em;
+		text-transform: uppercase;
+	}
+
+	&__section {
+		margin-bottom: 44px;
+
+		h2 {
+			margin: 0 0 16px;
+			font-size: 13px;
+			font-weight: 600;
+			letter-spacing: .05em;
+			text-transform: uppercase;
+			opacity: .6;
+		}
+	}
+
+	&__caption {
+		margin: 16px 0 0;
+		font-size: 13px;
+		line-height: 1.5;
+		opacity: .7;
+	}
+
+	// --- The engine: cover -> colour -> 12 grades --------------------------
+	&__engine {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+
+	&__cover {
+		flex: 0 0 auto;
+		width: 72px;
+		height: 54px;
+		border-radius: 6px;
+		background-size: cover;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+	}
+
+	&__arrow {
+		flex: 0 0 auto;
+		font-size: 18px;
+		opacity: .35;
+	}
+
+	&__chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 12px;
+		border: 1px solid rgba(0, 0, 0, .12);
+		border-radius: 20px;
+		background: #fff;
+		font-size: 13px;
+		font-variant-numeric: tabular-nums;
+		font-weight: 600;
+	}
+
+	&__dot {
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12);
+	}
+
+	&__grades {
+		display: inline-flex;
+		flex: 1 1 240px;
+		min-width: 240px;
+		border-radius: 6px;
+		overflow: hidden;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+	}
+
+	&__grade {
+		flex: 1 1 0;
+		height: 40px;
+	}
+
+	// --- The gallery: an entry per type, each its own colour ---------------
+	&__gallery {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+
+		@media (max-width: 720px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		border-radius: 8px;
+		overflow: hidden;
+		background: #fff;
+		border: 1px solid rgba(0, 0, 0, .1);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+	}
+
+	&__card-cover {
+		position: relative;
+		height: 96px;
+		background-size: cover;
+		// The contextual accent — the hover border the real card shows.
+		box-shadow: inset 0 0 0 3px var(--entry, #3858e9);
+	}
+
+	&__card-body {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 14px 14px 16px;
+	}
+
+	&__card-type {
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		color: var(--entry, #3858e9);
+	}
+
+	&__card-line {
+		display: block;
+		height: 8px;
+		width: 100%;
+		border-radius: 2px;
+		background: rgba(0, 0, 0, .12);
+
+		&--short {
+			width: 60%;
+		}
+	}
+
+	&__card-meta {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		margin-top: 2px;
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+		opacity: .7;
+	}
+
+	// --- Where it lands ----------------------------------------------------
+	&__lands {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+
+		@media (max-width: 720px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__land {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	&__land-demo {
+		display: flex;
+		height: 76px;
+		padding: 12px;
+		border-radius: 6px;
+		background: #f6f6f7;
+		border: 1px solid rgba(0, 0, 0, .08);
+	}
+
+	// Titles: a coloured heading line above neutral body lines.
+	&__land-demo--titles {
+		flex-direction: column;
+		justify-content: center;
+		gap: 7px;
+	}
+
+	&__demo-title {
+		display: block;
+		width: 66%;
+		height: 9px;
+		border-radius: 2px;
+		background: var(--entry, #3858e9);
+	}
+
+	&__demo-line {
+		display: block;
+		width: 100%;
+		height: 6px;
+		border-radius: 2px;
+		background: rgba(0, 0, 0, .14);
+
+		&--short {
+			width: 78%;
+		}
+	}
+
+	// Buttons: a filled and an outline pill in the entry colour.
+	&__land-demo--buttons {
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	&__demo-btn {
+		display: block;
+		width: 52px;
+		height: 22px;
+		border-radius: 12px;
+
+		&--filled {
+			background: var(--entry, #3858e9);
+		}
+
+		&--outline {
+			background: transparent;
+			box-shadow: inset 0 0 0 1.5px var(--entry, #3858e9);
+		}
+	}
+
+	// Page transitions: the colour sweeping in from the edge.
+	&__land-demo--transition {
+		padding: 0;
+		overflow: hidden;
+		background: linear-gradient(110deg, #f6f6f7 0%, #f6f6f7 36%, var(--entry, #3858e9) 42%, var(--entry, #3858e9) 100%);
+	}
+
+	&__land-label {
+		font-size: 12px;
+		font-weight: 500;
+		opacity: .75;
+	}
+}
