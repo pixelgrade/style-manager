@@ -125,6 +125,12 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Provider\Capabilities();
 		};
 
+		$container['hooks.cli_commands'] = function( $container ) {
+			return new Provider\CliCommands(
+				$container['options']
+			);
+		};
+
 		$container['hooks.general_assets'] = function( $container ) {
 			return new Provider\GeneralAssets(
 				$container['options'],
