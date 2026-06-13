@@ -16,7 +16,7 @@ import './style.scss';
 import { createCustomizeApi, createContainerObject } from './customize-api';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
-import { ColorsOverlay, TypographyOverlay, SpacingOverlay } from '../customizer/components';
+import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
 
@@ -73,6 +73,53 @@ let engine = null;
 const getControlContainerId = controlId => `customize-control-${ controlId.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
 
 /**
+ * Mark up a section's group structure, per the payload group markers. Each
+ * marker starts a group; the groups are separated by a divider (not boxed) and
+ * each keeps a section title. A `label` marker injects a title row (for groups
+ * with no html intro of their own, e.g. Collections); otherwise the marker's
+ * html intro IS the section title — it is flagged `sm-se-group-head` so the
+ * native-control merge leaves it standing as a header instead of folding it
+ * into a following toggle (native-controls.js). A `preview` marker rides the
+ * section title's line, docked right.
+ *
+ * Runs while building the panel, before the merge; both resolve controls by id.
+ */
+const markGroupSections = ( contentEl, markers ) => {
+  markers.forEach( ( marker, index ) => {
+    const anchorLi = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( `${ marker.before }_control` ) ) }` );
+    if ( ! anchorLi ) {
+      return;
+    }
+
+    let groupStartEl;
+
+    if ( marker.label ) {
+      const heading = document.createElement( 'li' );
+      heading.className = 'customize-control sm-se-group-title';
+      heading.textContent = marker.label;
+      contentEl.insertBefore( heading, anchorLi );
+      groupStartEl = heading;
+    } else {
+      // The anchor is an html intro that titles the section — keep it from
+      // being folded into a following toggle so it stays a section header.
+      anchorLi.classList.add( 'sm-se-group-head' );
+      groupStartEl = anchorLi;
+
+      if ( marker.preview && marker.preview.mode ) {
+        const titleEl = anchorLi.querySelector( '.customize-control-title' ) || anchorLi;
+        titleEl.classList.add( 'sm-se-intro-title--has-preview' );
+        titleEl.appendChild( createPreviewToggleButton( marker.preview, 'sm-se-group__preview' ) );
+      }
+    }
+
+    groupStartEl.classList.add( 'sm-se-group-start' );
+    if ( 0 === index ) {
+      groupStartEl.classList.add( 'sm-se-group-start--first' );
+    }
+  } );
+};
+
+/**
  * Build a tab panel (description + controls list) for a section's data.
  */
 const buildSectionPanel = section => {
@@ -107,16 +154,8 @@ const buildSectionPanel = section => {
     }
   } );
 
-  // Inject group headers before specific controls (payload-configured).
-  ( ( payload.sectionGroupHeaders || {} )[ section.id ] || [] ).forEach( header => {
-    const li = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( `${ header.before }_control` ) ) }` );
-    if ( li ) {
-      const heading = document.createElement( 'li' );
-      heading.className = 'customize-control sm-se-group-title';
-      heading.textContent = header.label;
-      contentEl.insertBefore( heading, li );
-    }
-  } );
+  // Mark the controls into titled, divider-separated group sections.
+  markGroupSections( contentEl, ( payload.sectionGroupHeaders || {} )[ section.id ] || [] );
 
   // The voice tuner as a "find by voice" filter panel attached to the font
   // palette list (the floating accordion rows are hidden in this context).
@@ -177,29 +216,9 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, section
   // Motion) get a Preview affordance right in the page header. The button
   // toggles: while its preview is open it reads "Close Preview".
   if ( SECTION_PREVIEW_MODES[ section.id ] ) {
-    const previewEntry = SECTION_PREVIEW_MODES[ section.id ];
-    const previewButton = document.createElement( 'button' );
-    previewButton.type = 'button';
-    previewButton.className = 'sm-se-page__preview';
-
-    const renderPreviewButton = currentMode => {
-      const isOpen = currentMode === previewEntry.mode;
-      previewButton.textContent = isOpen
-        ? wp.i18n.__( 'Close Preview', '__plugin_txtd' )
-        : wp.i18n.__( 'Preview', '__plugin_txtd' );
-      previewButton.classList.toggle( 'is-open', isOpen );
-    };
-    renderPreviewButton( getPreviewMode() );
-    previewModeListeners.add( renderPreviewButton );
-
-    previewButton.addEventListener( 'click', () => {
-      if ( getPreviewMode() === previewEntry.mode ) {
-        setPreviewMode( null );
-      } else {
-        setPreviewMode( previewEntry.mode, previewEntry.context || null );
-      }
-    } );
-    headerEl.appendChild( previewButton );
+    headerEl.appendChild(
+      createPreviewToggleButton( SECTION_PREVIEW_MODES[ section.id ], 'sm-se-page__preview' )
+    );
   }
 
   const tabsConfig = ( payload.sectionTabs || {} )[ section.id ];
@@ -817,6 +836,41 @@ export const setPreviewMode = ( mode, context = null ) => {
   previewModeListeners.forEach( listener => listener( previewMode ) );
 };
 
+/**
+ * A Preview toggle button bound to the shared preview store: it reads
+ * "Preview" / "Close Preview" and tracks the open state for one mode.
+ * Used by both the section page header and the per-group headers, so a
+ * section can expose several previews (the Tweak Board's Site Frame and
+ * Fancy Titles groups) rather than the one-per-section header button.
+ *
+ * `previewEntry` is `{ mode, context? }`.
+ */
+const createPreviewToggleButton = ( previewEntry, className ) => {
+  const button = document.createElement( 'button' );
+  button.type = 'button';
+  button.className = className;
+
+  const renderState = currentMode => {
+    const isOpen = currentMode === previewEntry.mode;
+    button.textContent = isOpen
+      ? wp.i18n.__( 'Close Preview', '__plugin_txtd' )
+      : wp.i18n.__( 'Preview', '__plugin_txtd' );
+    button.classList.toggle( 'is-open', isOpen );
+  };
+  renderState( getPreviewMode() );
+  previewModeListeners.add( renderState );
+
+  button.addEventListener( 'click', () => {
+    if ( getPreviewMode() === previewEntry.mode ) {
+      setPreviewMode( null );
+    } else {
+      setPreviewMode( previewEntry.mode, previewEntry.context || null );
+    }
+  } );
+
+  return button;
+};
+
 const usePreviewMode = () => {
   const { useState, useEffect } = wp.element;
   const [ mode, setMode ] = useState( previewMode );
@@ -886,6 +940,8 @@ const SiteEditorPreviewOverlays = () => {
         { 'colors' === mode && <ColorsOverlay show /> }
         { 'typography' === mode && <TypographyOverlay show /> }
         { 'spacing' === mode && <SpacingOverlay show /> }
+        { 'site-frame' === mode && <SiteFrameOverlay show /> }
+        { 'fancy-titles' === mode && <FancyTitlesOverlay show /> }
       </div>
     </div>
   );

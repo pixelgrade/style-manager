@@ -388,14 +388,36 @@ class SiteEditor extends AbstractHookProvider {
 			/**
 			 * Group headers injected before specific controls in a section —
 			 * gives sibling controls a shared identity (e.g. the Collections
-			 * pair in the Tweak Board). Filter: section id => [ [ before
-			 * (setting id), label ] ].
+			 * pair in the Tweak Board). A header may carry an optional
+			 * `preview => [ 'mode' => ... ]` to expose a per-group Preview
+			 * affordance (the section-level Preview is one-per-section; this
+			 * lets the Tweak Board preview Site Frame and Fancy Titles
+			 * independently). Anchors for theme-appended controls are no-ops
+			 * when the theme is absent. Filter: section id => [ [ before
+			 * (setting id), label, preview? ] ].
 			 */
 			'sectionGroupHeaders' => apply_filters( 'style_manager/site_editor_section_group_headers', [
 				'sm_tweak_board_section' => [
+					// Each entry marks a group start (drawn with a divider).
+					// Collections has no intro of its own — inject a label.
 					[
 						'before' => 'sm_collection_title_position',
 						'label'  => esc_html__( 'Collections', '__plugin_txtd' ),
+					],
+					// Site Frame and Fancy Titles already render an html intro
+					// title; attach the Preview affordance to it (no label).
+					[
+						'before'  => 'sm_site_frame_intro',
+						'preview' => [ 'mode' => 'site-frame' ],
+					],
+					[
+						'before'  => 'sm_decorative_titles_style_intro',
+						'preview' => [ 'mode' => 'fancy-titles' ],
+					],
+					// Post-type Colors: its intro is the title; mark the group
+					// start so it gets its divider too (no label, no preview).
+					[
+						'before' => 'sm_contextual_entry_colors_intro',
 					],
 				],
 			] ),

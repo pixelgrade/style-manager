@@ -417,11 +417,13 @@ export const mountNativeControls = ( eng, payload ) => {
 
       // Collapse the "intro card + Enable X toggle" pattern into one
       // core-style row: a preceding html intro with a title hands its title
-      // and description to the toggle and disappears.
+      // and description to the toggle and disappears. Skipped when the intro
+      // is a group header (sm-se-group-head): there it must stay standing as
+      // the section title (see markGroupSections in the Site Editor).
       if ( 'sm_toggle' === control.type && index > 0 && 'html' === section.controls[ index - 1 ].type ) {
         const introLi = eng.root.querySelector( `#${ CSS.escape( controlLiId( section.controls[ index - 1 ].id ) ) }` );
         const introTitle = introLi?.querySelector( '.customize-control-title' )?.textContent.trim();
-        if ( introTitle ) {
+        if ( introTitle && ! introLi.classList.contains( 'sm-se-group-head' ) ) {
           overrides = {
             label: introTitle,
             help: introLi.querySelector( '.customize-control-description' )?.textContent.trim() || undefined,

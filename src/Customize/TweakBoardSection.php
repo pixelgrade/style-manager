@@ -104,7 +104,9 @@ class TweakBoardSection extends AbstractHookProvider {
 						'setting_id'   => 'sm_collection_hover_effect',
 						'label'        => esc_html__( 'Collections hover effect', '__plugin_txtd' ),
 						'desc'         => esc_html__( "Choose the effect triggered when an user moves the cursor above a post collection card's media.", '__plugin_txtd' ),
-						'default'      => 'dropcap',
+						// 'none' is the safe default; 'dropcap' was a stale value
+						// not present in the choices below.
+						'default'      => 'none',
 						'choices'      => [
 							'none' => esc_html__( 'None', '__plugin_txtd' ),
 							'hive' => esc_html__( 'Hive', '__plugin_txtd' ),

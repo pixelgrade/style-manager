@@ -1,0 +1,231 @@
+/*------------------------------------*\
+  #SITE FRAME PREVIEW
+\*------------------------------------*/
+
+.sm-site-frame-preview {
+	max-width: 920px;
+	margin: 0 auto;
+	padding: 48px 32px 64px;
+	color: #1e1e1e;
+
+	&__header {
+		max-width: 640px;
+		margin-bottom: 40px;
+
+		h1 {
+			margin: 0 0 12px;
+			font-size: 32px;
+			line-height: 1.2;
+		}
+
+		p {
+			margin: 0;
+			font-size: 14px;
+			line-height: 1.6;
+			opacity: .75;
+		}
+	}
+
+	// The neutral stage the schematic sits on.
+	&__stage {
+		padding: 40px;
+		border-radius: 8px;
+		background:
+			repeating-linear-gradient(
+				-45deg,
+				#f6f6f7 0 10px,
+				#f0f0f1 10px 11px
+			);
+		border: 1px solid rgba(0, 0, 0, .08);
+	}
+
+	// The schematic frame. Resolves the same custom properties the frontend
+	// `_site-frame.scss` does, from the .sm-palette/.sm-variation cascade.
+	&__frame {
+		--site-frame-surface: var(--sm-current-bg-color, #1e1e1e);
+		--site-frame-ink: var(--sm-current-fg1-color, #fff);
+
+		position: relative;
+		aspect-ratio: 16 / 10;
+		margin: 0 auto;
+		max-width: 720px;
+		overflow: hidden;
+		border-radius: 4px;
+		background: #fff;
+		box-shadow: 0 8px 30px rgba(0, 0, 0, .14);
+
+		// Dark mode flips surface/ink for contrast (mirrors html.is-dark).
+		&.is-dark {
+			--site-frame-surface: var(--sm-current-fg1-color, #fff);
+			--site-frame-ink: var(--sm-current-bg-color, #1e1e1e);
+
+			background: #15151a;
+
+			&.has-site-frame-accent {
+				--site-frame-surface: var(--sm-current-accent-color, #3858e9);
+				--site-frame-ink: var(--sm-current-bg-color, #1e1e1e);
+			}
+		}
+	}
+
+	$top: 14px;
+	$left: 40px;
+	$rail: 52px;
+
+	&__bar {
+		position: absolute;
+		z-index: 2;
+		background: var(--site-frame-surface);
+
+		&--top {
+			top: 0;
+			left: 0;
+			right: 0;
+			height: $top;
+		}
+
+		&--left {
+			top: 0;
+			bottom: 0;
+			left: 0;
+			width: $left;
+		}
+	}
+
+	&__rail {
+		position: absolute;
+		z-index: 2;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: $rail;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 18px;
+		padding: 22px 0;
+		background: var(--site-frame-surface);
+		color: var(--site-frame-ink);
+	}
+
+	&__monogram {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 26px;
+		height: 26px;
+		border: 1px solid currentColor;
+		border-radius: 50%;
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	&__menu {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+
+		li {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background: currentColor;
+			opacity: .55;
+		}
+	}
+
+	&__page {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		padding: ($top + 26px) ($rail + 26px) 26px ($left + 26px);
+	}
+
+	&__line {
+		display: block;
+		width: 100%;
+		height: 9px;
+		border-radius: 3px;
+		background: rgba(0, 0, 0, .12);
+
+		&--title {
+			width: 45%;
+			height: 18px;
+			margin-bottom: 8px;
+			background: rgba(0, 0, 0, .22);
+		}
+	}
+
+	// Disabled (Style = None): hide the chrome, show the bare page + a hint.
+	&__frame.is-disabled {
+		.sm-site-frame-preview__bar,
+		.sm-site-frame-preview__rail {
+			display: none;
+		}
+
+		.sm-site-frame-preview__page {
+			padding: 26px;
+		}
+	}
+
+	&__off {
+		position: absolute;
+		z-index: 3;
+		left: 50%;
+		bottom: 22px;
+		transform: translateX(-50%);
+		max-width: 80%;
+		padding: 8px 14px;
+		border-radius: 20px;
+		background: rgba(30, 30, 30, .85);
+		color: #fff;
+		font-size: 12px;
+		line-height: 1.4;
+		text-align: center;
+	}
+
+	&__footer {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 20px;
+	}
+
+	&__mode {
+		padding: 5px 12px;
+		border: 1px solid #ddd;
+		border-radius: 16px;
+		background: #fff;
+		color: #1e1e1e;
+		font-size: 12px;
+		font-weight: 500;
+		cursor: pointer;
+
+		&:hover,
+		&:focus-visible {
+			border-color: var(--wp-admin-theme-color, #3858e9);
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		&.is-dark {
+			border-color: #1e1e1e;
+			background: #1e1e1e;
+			color: #fff;
+		}
+	}
+
+	&__resolved {
+		font-size: 13px;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		opacity: .8;
+	}
+}

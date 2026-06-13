@@ -753,6 +753,55 @@
 	margin-bottom: 12px;
 }
 
+// Groups are separated by a divider (not boxed); each keeps its section title.
+// Specificity matched to the #customize-controls[id] reset above, which zeroes
+// every row's top margin/border — these must outrank it.
+.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-start {
+	margin-top: 24px;
+	padding-top: 20px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-start--first {
+	margin-top: 0;
+	padding-top: 0;
+	border-top: 0;
+}
+
+// The Preview button rides the section title's line, docked right.
+.sm-site-editor .sm-se-page__content .customize-control-title.sm-se-intro-title--has-preview {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.sm-site-editor .sm-se-page__content .sm-se-group__preview {
+	flex: 0 0 auto;
+	padding: 3px 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	background: #fff;
+	color: #1e1e1e;
+	font-size: 10px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: .02em;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&.is-open {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		background: var(--wp-admin-theme-color, #3858e9);
+		color: #fff;
+	}
+}
+
 // "Find by voice": replaces the floating voice tuner accordion in the editor.
 .sm-site-editor li.sm-voice-tuner-toggle-control,
 .sm-site-editor .sm-voice-tuner-accordion__content {

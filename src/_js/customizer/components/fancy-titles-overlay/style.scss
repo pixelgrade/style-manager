@@ -1,0 +1,79 @@
+/*------------------------------------*\
+  #FANCY TITLES PREVIEW
+\*------------------------------------*/
+
+.sm-fancy-titles-preview {
+	max-width: 760px;
+	margin: 0 auto;
+	padding: 48px 32px 64px;
+	color: #1e1e1e;
+
+	&__header {
+		max-width: 640px;
+		margin-bottom: 40px;
+
+		h1 {
+			margin: 0 0 12px;
+			font-size: 32px;
+			line-height: 1.2;
+		}
+
+		p {
+			margin: 0;
+			font-size: 14px;
+			line-height: 1.6;
+			opacity: .75;
+		}
+	}
+
+	&__specimens {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__row {
+		padding: 28px 0;
+
+		& + & {
+			border-top: 1px solid rgba(0, 0, 0, .08);
+		}
+	}
+
+	// The specimen heading, rendered in the live display/heading font. The
+	// <b>/<i> emphasis is the substance; b/i carry the bold/italic.
+	&__title {
+		margin: 0 0 10px;
+		font-family: var(--sm-font-primary, Georgia, "Times New Roman", serif);
+		font-size: 30px;
+		line-height: 1.25;
+		text-align: center;
+
+		b {
+			font-weight: 700;
+		}
+
+		i {
+			font-style: italic;
+		}
+	}
+
+	&__caption {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.5;
+		text-align: center;
+		opacity: .6;
+	}
+
+	&__note {
+		margin-top: 24px;
+		padding: 12px 16px;
+		border-radius: 6px;
+		background: rgba(56, 88, 233, .08);
+		border: 1px solid rgba(56, 88, 233, .2);
+		color: #1e1e1e;
+		font-size: 13px;
+		line-height: 1.5;
+		text-align: center;
+	}
+}
