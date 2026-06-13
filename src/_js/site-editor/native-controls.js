@@ -276,6 +276,41 @@ const NativeRadio = ( { settingId, overrides } ) => {
   );
 };
 
+// A preset chooser. Render it as a core RadioControl — full vertical styling,
+// properly spaced — instead of the cramped legacy radio markup. The behaviour
+// (applying a preset's values, and re-deriving the selection as the connected
+// controls change) lives in fields/preset/index.js, which binds to the same
+// setting; this only swaps the skin, so both stay in sync.
+const NativePreset = ( { settingId, overrides } ) => {
+  const { RadioControl } = wp.components;
+  const config = { ...getConfig( settingId ) };
+  if ( overrides?.label ) {
+    config.label = overrides.label;
+  }
+  if ( overrides?.help !== undefined ) {
+    config.desc = overrides.help;
+  }
+  // Preset choices are { value: { label, options } }; the control needs the label.
+  const choices = Object.entries( config.choices || {} ).map( ( [ value, choice ] ) => ( {
+    value,
+    label: stripHtml( String( choice?.label ?? value ) ),
+  } ) );
+
+  return (
+    <BoundControl settingId={ settingId }>
+      { ( value, onChange ) => (
+        <RadioControl
+          label={ config.label }
+          help={ stripHtml( config.desc ) || undefined }
+          selected={ String( value ) }
+          options={ choices }
+          onChange={ onChange }
+        />
+      ) }
+    </BoundControl>
+  );
+};
+
 const NativeSelect = ( { settingId, li } ) => {
   const { SelectControl } = wp.components;
   const config = getConfig( settingId );
@@ -384,6 +419,7 @@ const COMPONENTS = {
   range: NativeRange,
   sm_toggle: NativeToggle,
   radio: NativeRadio,
+  preset: NativePreset,
   select: NativeSelect,
 };
 
