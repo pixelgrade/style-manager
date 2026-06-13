@@ -133,11 +133,14 @@ const markGroupSections = ( contentEl, markers ) => {
     actions.className = 'sm-se-section-head__actions';
     titleEl.appendChild( actions );
 
-    // A section gated by a master toggle has that toggle as the intro's next
-    // sibling — its switch relocates here and its Preview shows only while on.
-    const hasMasterToggle = ! marker.label
-      && anchorLi.nextElementSibling
-      && anchorLi.nextElementSibling.classList.contains( 'customize-control-sm_toggle' );
+    // A section gated by a master toggle (a following sm_toggle, or a mapped
+    // setting like Site Frame's style via marker.toggle) has its switch
+    // relocated to this row; its Preview shows only while the feature is on.
+    const hasMasterToggle = ! marker.label && (
+      !! marker.toggle
+      || ( anchorLi.nextElementSibling
+        && anchorLi.nextElementSibling.classList.contains( 'customize-control-sm_toggle' ) )
+    );
 
     if ( marker.preview && marker.preview.mode ) {
       const previewBtn = createPreviewToggleButton( marker.preview, 'sm-se-group__preview' );

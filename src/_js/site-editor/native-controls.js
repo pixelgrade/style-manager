@@ -214,6 +214,25 @@ const NativeToggle = ( { settingId, overrides } ) => {
   );
 };
 
+// A master on/off switch backed by a setting whose "on"/"off" are arbitrary
+// values rather than a boolean — e.g. Site Frame's style (editorial / none).
+const NativeMasterToggle = ( { settingId, label, onValue, offValue } ) => {
+  const { ToggleControl } = wp.components;
+
+  return (
+    <BoundControl settingId={ settingId }>
+      { ( value, onChange ) => (
+        <ToggleControl
+          __nextHasNoMarginBottom
+          label={ label }
+          checked={ String( value ) === String( onValue ) }
+          onChange={ checked => onChange( checked ? onValue : offValue ) }
+        />
+      ) }
+    </BoundControl>
+  );
+};
+
 const NativeRadio = ( { settingId, overrides } ) => {
   const { RadioControl } = wp.components;
   const ToggleGroupControl = wp.components.__experimentalToggleGroupControl || wp.components.ToggleGroupControl;
@@ -395,32 +414,90 @@ const controlToSettingId = controlId => controlId.replace( /_control$/, '' );
 
 const controlLiId = controlId => `customize-control-${ controlId.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
 
+/**
+ * Render a master on/off switch up into a section's title-row actions and hide
+ * the control's own row. The React root just moves (the binding survives), and
+ * a conditional Preview button is shown/hidden with the on/off state.
+ */
+const renderMasterSwitchInHeader = ( introLi, li, switchElement, settingId, isOn ) => {
+  const headerActions = introLi?.querySelector( '.sm-se-section-head__actions' );
+  if ( ! headerActions ) {
+    return false;
+  }
+
+  const target = document.createElement( 'div' );
+  target.className = 'sm-native-control sm-se-section-head__switch';
+  headerActions.appendChild( target );
+  ReactDOM.render( switchElement, target );
+
+  li.style.display = 'none';
+
+  const conditionalPreview = headerActions.querySelector( '.sm-se-group__preview--conditional' );
+  if ( conditionalPreview ) {
+    const setting = wp.customize( settingId );
+    const sync = value => {
+      conditionalPreview.style.display = isOn( value ) ? '' : 'none';
+    };
+    setting.bind( sync );
+    sync( setting() );
+  }
+
+  return true;
+};
+
 export const mountNativeControls = ( eng, payload ) => {
+  // Master toggles backed by a non-boolean setting (e.g. Site Frame's style):
+  // setting id -> { on, off, introControlId }.
+  const masterToggleMap = {};
+  Object.values( payload.sectionGroupHeaders || {} ).forEach( markers => {
+    ( markers || [] ).forEach( marker => {
+      if ( marker.toggle && marker.toggle.setting ) {
+        masterToggleMap[ marker.toggle.setting ] = {
+          on: marker.toggle.on,
+          off: marker.toggle.off,
+          introControlId: `${ marker.before }_control`,
+        };
+      }
+    } );
+  } );
+
   payload.structure.sections.forEach( section => {
     section.controls.forEach( ( control, index ) => {
-      const Component = COMPONENTS[ control.type ];
-      if ( ! Component ) {
-        return;
-      }
-
       const settingId = controlToSettingId( control.id );
-      if ( ! wp.customize( settingId ) || ! getConfig( settingId ) ) {
+      const li = eng.root.querySelector( `#${ CSS.escape( controlLiId( control.id ) ) }` );
+      if ( ! li || li.querySelector( '.sm-native-control' ) || ! wp.customize( settingId ) ) {
         return;
       }
 
-      const li = eng.root.querySelector( `#${ CSS.escape( controlLiId( control.id ) ) }` );
-      if ( ! li || li.querySelector( '.sm-native-control' ) ) {
+      // Master switch backed by a mapped (non-boolean) setting — e.g. Site
+      // Frame's style. Handled before the component lookup so it applies even
+      // to control types native-controls otherwise leaves alone (sm_radio):
+      // render a mapped on/off switch into the title row and drop this row.
+      const mapped = masterToggleMap[ settingId ];
+      if ( mapped ) {
+        const introLi = eng.root.querySelector( `#${ CSS.escape( controlLiId( mapped.introControlId ) ) }` );
+        const introTitle = introLi?.querySelector( '.sm-se-section-head__title' )?.textContent.trim() || '';
+        renderMasterSwitchInHeader(
+          introLi,
+          li,
+          <NativeMasterToggle settingId={ settingId } label={ introTitle } onValue={ mapped.on } offValue={ mapped.off } />,
+          settingId,
+          value => String( value ) === String( mapped.on )
+        );
+        return;
+      }
+
+      const Component = COMPONENTS[ control.type ];
+      if ( ! Component || ! getConfig( settingId ) ) {
         return;
       }
 
       let overrides = getCopyOverride( settingId );
-      let headerActions = null;
-      let headerTitle = '';
 
       // A toggle that follows an html intro is the "intro card + Enable X"
       // pattern. Two treatments:
       //   • intro is a group header (sm-se-group-head) → this is the section's
-      //     master switch: render it (no visible label) up on the title row and
+      //     master switch: render it (label hidden) up on the title row and
       //     drop this row (see markGroupSections).
       //   • otherwise → collapse the two into one core-style row: the intro
       //     hands its title + description to the toggle and disappears.
@@ -433,8 +510,14 @@ export const mountNativeControls = ( eng, payload ) => {
         const introTitle = introTitleEl?.textContent.trim();
 
         if ( introLi && introLi.classList.contains( 'sm-se-group-head' ) ) {
-          headerActions = introLi.querySelector( '.sm-se-section-head__actions' );
-          headerTitle = introTitle || '';
+          renderMasterSwitchInHeader(
+            introLi,
+            li,
+            <Component settingId={ settingId } li={ li } overrides={ { label: introTitle || '', help: undefined } } />,
+            settingId,
+            value => !! value && '0' !== value
+          );
+          return;
         } else if ( introTitle ) {
           overrides = {
             label: introTitle,
@@ -442,35 +525,6 @@ export const mountNativeControls = ( eng, payload ) => {
           };
           introLi.classList.add( 'sm-se-control-merged' );
         }
-      }
-
-      // Master switch: render into the section title row, hide its own row.
-      // The label is kept (accessible name) but visually hidden by CSS — the
-      // section title shows what it controls.
-      if ( headerActions ) {
-        const target = document.createElement( 'div' );
-        target.className = 'sm-native-control sm-se-section-head__switch';
-        headerActions.appendChild( target );
-
-        ReactDOM.render(
-          <Component settingId={ settingId } li={ li } overrides={ { label: headerTitle, help: undefined } } />,
-          target
-        );
-
-        li.style.display = 'none';
-
-        // The Preview button (if any) shows only while the feature is on.
-        const conditionalPreview = headerActions.querySelector( '.sm-se-group__preview--conditional' );
-        if ( conditionalPreview ) {
-          const setting = wp.customize( settingId );
-          const sync = value => {
-            conditionalPreview.style.display = ( !! value && '0' !== value ) ? '' : 'none';
-          };
-          setting.bind( sync );
-          sync( setting() );
-        }
-
-        return;
       }
 
       Array.from( li.children ).forEach( child => {

@@ -406,9 +406,16 @@ class SiteEditor extends AbstractHookProvider {
 					],
 					// Site Frame and Fancy Titles already render an html intro
 					// title; attach the Preview affordance to it (no label).
+					// Site Frame's None/Editorial style IS its on/off — drive it
+					// from a master switch on the title row (on = editorial).
 					[
 						'before'  => 'sm_site_frame_intro',
 						'preview' => [ 'mode' => 'site-frame' ],
+						'toggle'  => [
+							'setting' => 'sm_site_frame_style',
+							'on'      => 'editorial',
+							'off'     => 'none',
+						],
 					],
 					[
 						'before'  => 'sm_decorative_titles_style_intro',
