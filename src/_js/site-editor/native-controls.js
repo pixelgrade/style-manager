@@ -495,10 +495,13 @@ export const mountNativeControls = ( eng, payload ) => {
       let overrides = getCopyOverride( settingId );
 
       // A toggle that follows an html intro is the "intro card + Enable X"
-      // pattern. Two treatments:
+      // pattern. Three treatments:
       //   • intro is a group header (sm-se-group-head) → this is the section's
       //     master switch: render it (label hidden) up on the title row and
       //     drop this row (see markGroupSections).
+      //   • intro heads several sibling toggles (e.g. "Color promotion" → Pure
+      //     white + Pure black) → it's a plain sub-header, not a single toggle's
+      //     label: leave the intro visible and keep each toggle's own label.
       //   • otherwise → collapse the two into one core-style row: the intro
       //     hands its title + description to the toggle and disappears.
       if ( 'sm_toggle' === control.type && index > 0 && 'html' === section.controls[ index - 1 ].type ) {
@@ -508,6 +511,9 @@ export const mountNativeControls = ( eng, payload ) => {
         const introTitleEl = introLi?.querySelector( '.sm-se-section-head__title' )
           || introLi?.querySelector( '.customize-control-title' );
         const introTitle = introTitleEl?.textContent.trim();
+        // When the intro is immediately followed by more than one toggle, it
+        // heads a group rather than labelling a single Enable toggle.
+        const introHeadsGroup = 'sm_toggle' === section.controls[ index + 1 ]?.type;
 
         if ( introLi && introLi.classList.contains( 'sm-se-group-head' ) ) {
           renderMasterSwitchInHeader(
@@ -518,7 +524,7 @@ export const mountNativeControls = ( eng, payload ) => {
             value => !! value && '0' !== value
           );
           return;
-        } else if ( introTitle ) {
+        } else if ( introTitle && ! introHeadsGroup ) {
           overrides = {
             label: introTitle,
             help: introLi.querySelector( '.customize-control-description' )?.textContent.trim() || undefined,
