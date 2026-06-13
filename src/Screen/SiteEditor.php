@@ -441,6 +441,23 @@ class SiteEditor extends AbstractHookProvider {
 						'before' => 'sm_intro_animations_intro',
 					],
 				],
+				// Color fine-tune: presets lead (their own label), then the
+				// granular controls grouped by what they shape. Color promotion's
+				// html intro heads two toggles, so it stays a plain header (no
+				// master switch) — see markGroupSections / native-controls.
+				'sm_fine_tune_color_palette_section' => [
+					[
+						'before' => 'sm_color_grades_number',
+						'label'  => esc_html__( 'Structure', '__plugin_txtd' ),
+					],
+					[
+						'before' => 'sm_potential_color_contrast',
+						'label'  => esc_html__( 'Contrast & balance', '__plugin_txtd' ),
+					],
+					[
+						'before' => 'sm_color_promotion_brand',
+					],
+				],
 			] ),
 			/**
 			 * Toggle-driven control visibility (the Customizer gets this from

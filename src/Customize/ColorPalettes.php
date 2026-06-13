@@ -229,21 +229,28 @@ class ColorPalettes extends AbstractHookProvider {
 
 	protected function add_fine_tune_palette_section( array $config ): array {
 
+		// Order the Fine-tune section by what each control shapes: presets lead
+		// (they write every control below at once), then Structure, then
+		// Contrast & balance, then Color promotion. The Site Editor draws the
+		// group titles/dividers from these anchors (see SiteEditor.php).
 		$fine_tune_palette_fields = [
 			'sm_color_fine_tune_intro',
+			// Presets: the starting point — changing any control switches to Custom.
+			'sm_color_fine_tune_presets',
+			// Structure: the ramp's resolution and where it starts.
 			'sm_separator_2_0',
 			'sm_color_grades_number',
+			'sm_site_color_variation',
+			// Contrast & balance: the ramp's spread and its light/dark bias.
+			'sm_separator_2_1',
 			'sm_potential_color_contrast',
 			'sm_color_grade_balancer',
-			'sm_site_color_variation',
-			'sm_separator_2_1',
 			'sm_elements_color_contrast',
+			// Color promotion: force pure white / black as ramp anchors.
 			'sm_separator_2_2',
 			'sm_color_promotion_brand',
 			'sm_color_promotion_white',
 			'sm_color_promotion_black',
-			'sm_separator_2_3',
-			'sm_color_fine_tune_presets',
 		];
 
 		$fine_tune_palette_section = [

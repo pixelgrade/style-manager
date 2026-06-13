@@ -515,7 +515,7 @@ export const mountNativeControls = ( eng, payload ) => {
         // heads a group rather than labelling a single Enable toggle.
         const introHeadsGroup = 'sm_toggle' === section.controls[ index + 1 ]?.type;
 
-        if ( introLi && introLi.classList.contains( 'sm-se-group-head' ) ) {
+        if ( introLi && introLi.classList.contains( 'sm-se-group-head' ) && ! introHeadsGroup ) {
           renderMasterSwitchInHeader(
             introLi,
             li,

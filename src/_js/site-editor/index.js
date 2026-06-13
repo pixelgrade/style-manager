@@ -97,7 +97,12 @@ const markGroupSections = ( contentEl, markers ) => {
     if ( marker.label ) {
       const heading = document.createElement( 'li' );
       heading.className = 'customize-control sm-se-group-title';
-      heading.textContent = marker.label;
+      // Labels arrive esc_html'd from PHP (e.g. "Contrast &amp; balance"); decode
+      // entities via a textarea (text-only, so no HTML is parsed) before setting
+      // them as text, otherwise the raw entity would show.
+      const decoder = document.createElement( 'textarea' );
+      decoder.innerHTML = marker.label;
+      heading.textContent = decoder.value;
       contentEl.insertBefore( heading, anchorLi );
       groupStartEl = heading;
       titleEl = heading;
@@ -133,13 +138,22 @@ const markGroupSections = ( contentEl, markers ) => {
     actions.className = 'sm-se-section-head__actions';
     titleEl.appendChild( actions );
 
-    // A section gated by a master toggle (a following sm_toggle, or a mapped
-    // setting like Site Frame's style via marker.toggle) has its switch
+    // A header that leads two or more sibling toggles (e.g. "Color promotion"
+    // → Pure white + Pure black) titles a group; it is NOT a single feature's
+    // master switch, so it stays a plain header and each toggle keeps its label.
+    const nextLi = anchorLi.nextElementSibling;
+    const secondLi = nextLi && nextLi.nextElementSibling;
+    const headsToggleGroup = !! nextLi
+      && nextLi.classList.contains( 'customize-control-sm_toggle' )
+      && !! secondLi
+      && secondLi.classList.contains( 'customize-control-sm_toggle' );
+
+    // A section gated by a master toggle (a single following sm_toggle, or a
+    // mapped setting like Site Frame's style via marker.toggle) has its switch
     // relocated to this row; its Preview shows only while the feature is on.
-    const hasMasterToggle = ! marker.label && (
+    const hasMasterToggle = ! marker.label && ! headsToggleGroup && (
       !! marker.toggle
-      || ( anchorLi.nextElementSibling
-        && anchorLi.nextElementSibling.classList.contains( 'customize-control-sm_toggle' ) )
+      || ( !! nextLi && nextLi.classList.contains( 'customize-control-sm_toggle' ) )
     );
 
     if ( marker.preview && marker.preview.mode ) {
