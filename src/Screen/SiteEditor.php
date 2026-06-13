@@ -420,6 +420,18 @@ class SiteEditor extends AbstractHookProvider {
 						'before' => 'sm_contextual_entry_colors_intro',
 					],
 				],
+				// Motion: its two behaviours each get a titled, divider-separated
+				// section. The intros already title them; keeping them standing
+				// (group-head) makes the toggles read "Enabled" under the title.
+				// The section's Live Site Preview stays in the page header.
+				'sm_motion_section' => [
+					[
+						'before' => 'sm_page_transitions_intro',
+					],
+					[
+						'before' => 'sm_intro_animations_intro',
+					],
+				],
 			] ),
 			/**
 			 * Toggle-driven control visibility (the Customizer gets this from
