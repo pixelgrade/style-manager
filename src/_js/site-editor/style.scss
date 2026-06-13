@@ -776,12 +776,47 @@
 	border-top: 1px solid #e0e0e0;
 }
 
-// The Preview button rides the section title's line, docked right.
-.sm-site-editor .sm-se-page__content .customize-control-title.sm-se-intro-title--has-preview {
+// The section title row: a flexing title + a right-aligned actions area holding
+// the Preview button and (relocated by native-controls) the master on/off
+// switch. The actions top-align so they sit on the title's first line when a
+// long title wraps.
+.sm-site-editor .sm-se-page__content .sm-se-section-head__row {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
 	gap: 8px;
+}
+
+.sm-site-editor .sm-se-page__content .sm-se-section-head__title {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.sm-site-editor .sm-se-page__content .sm-se-section-head__actions {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+// The master switch rides the title row as just a switch — its label is kept
+// for assistive tech (the section title names the feature) but visually hidden.
+.sm-site-editor .sm-se-section-head__switch .components-base-control,
+.sm-site-editor .sm-se-section-head__switch .components-base-control__field {
+	margin: 0;
+}
+
+.sm-site-editor .sm-se-section-head__switch .components-toggle-control__label,
+.sm-site-editor .sm-se-section-head__switch label {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
 }
 
 .sm-site-editor .sm-se-page__content .sm-se-group__preview {

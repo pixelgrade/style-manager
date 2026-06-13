@@ -414,22 +414,63 @@ export const mountNativeControls = ( eng, payload ) => {
       }
 
       let overrides = getCopyOverride( settingId );
+      let headerActions = null;
+      let headerTitle = '';
 
-      // Collapse the "intro card + Enable X toggle" pattern into one
-      // core-style row: a preceding html intro with a title hands its title
-      // and description to the toggle and disappears. Skipped when the intro
-      // is a group header (sm-se-group-head): there it must stay standing as
-      // the section title (see markGroupSections in the Site Editor).
+      // A toggle that follows an html intro is the "intro card + Enable X"
+      // pattern. Two treatments:
+      //   • intro is a group header (sm-se-group-head) → this is the section's
+      //     master switch: render it (no visible label) up on the title row and
+      //     drop this row (see markGroupSections).
+      //   • otherwise → collapse the two into one core-style row: the intro
+      //     hands its title + description to the toggle and disappears.
       if ( 'sm_toggle' === control.type && index > 0 && 'html' === section.controls[ index - 1 ].type ) {
         const introLi = eng.root.querySelector( `#${ CSS.escape( controlLiId( section.controls[ index - 1 ].id ) ) }` );
-        const introTitle = introLi?.querySelector( '.customize-control-title' )?.textContent.trim();
-        if ( introTitle && ! introLi.classList.contains( 'sm-se-group-head' ) ) {
+        // The title may have been wrapped in a head-row span (which excludes the
+        // actions like the Preview button) — read that so the label is clean.
+        const introTitleEl = introLi?.querySelector( '.sm-se-section-head__title' )
+          || introLi?.querySelector( '.customize-control-title' );
+        const introTitle = introTitleEl?.textContent.trim();
+
+        if ( introLi && introLi.classList.contains( 'sm-se-group-head' ) ) {
+          headerActions = introLi.querySelector( '.sm-se-section-head__actions' );
+          headerTitle = introTitle || '';
+        } else if ( introTitle ) {
           overrides = {
             label: introTitle,
             help: introLi.querySelector( '.customize-control-description' )?.textContent.trim() || undefined,
           };
           introLi.classList.add( 'sm-se-control-merged' );
         }
+      }
+
+      // Master switch: render into the section title row, hide its own row.
+      // The label is kept (accessible name) but visually hidden by CSS — the
+      // section title shows what it controls.
+      if ( headerActions ) {
+        const target = document.createElement( 'div' );
+        target.className = 'sm-native-control sm-se-section-head__switch';
+        headerActions.appendChild( target );
+
+        ReactDOM.render(
+          <Component settingId={ settingId } li={ li } overrides={ { label: headerTitle, help: undefined } } />,
+          target
+        );
+
+        li.style.display = 'none';
+
+        // The Preview button (if any) shows only while the feature is on.
+        const conditionalPreview = headerActions.querySelector( '.sm-se-group__preview--conditional' );
+        if ( conditionalPreview ) {
+          const setting = wp.customize( settingId );
+          const sync = value => {
+            conditionalPreview.style.display = ( !! value && '0' !== value ) ? '' : 'none';
+          };
+          setting.bind( sync );
+          sync( setting() );
+        }
+
+        return;
       }
 
       Array.from( li.children ).forEach( child => {

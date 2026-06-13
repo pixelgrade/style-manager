@@ -92,6 +92,7 @@ const markGroupSections = ( contentEl, markers ) => {
     }
 
     let groupStartEl;
+    let titleEl;
 
     if ( marker.label ) {
       const heading = document.createElement( 'li' );
@@ -99,20 +100,54 @@ const markGroupSections = ( contentEl, markers ) => {
       heading.textContent = marker.label;
       contentEl.insertBefore( heading, anchorLi );
       groupStartEl = heading;
+      titleEl = heading;
     } else {
       // The anchor is an html intro that titles the section — keep it from
       // being folded into a following toggle so it stays a section header.
       anchorLi.classList.add( 'sm-se-group-head' );
       groupStartEl = anchorLi;
-
-      if ( marker.preview && marker.preview.mode ) {
-        const titleEl = anchorLi.querySelector( '.customize-control-title' ) || anchorLi;
-        titleEl.classList.add( 'sm-se-intro-title--has-preview' );
-        titleEl.appendChild( createPreviewToggleButton( marker.preview, 'sm-se-group__preview' ) );
-      }
+      titleEl = anchorLi.querySelector( '.customize-control-title' ) || anchorLi;
     }
 
     groupStartEl.classList.add( 'sm-se-group-start' );
+
+    if ( ! titleEl ) {
+      return;
+    }
+
+    // Lay the title row out as a flexing title + a right-aligned actions area
+    // (the Preview button and, relocated by native-controls, a master on/off
+    // switch). The title text is wrapped so it can flex and wrap cleanly beside
+    // the actions, and so readers of the title (the switch's accessible name)
+    // don't pick up the actions' text.
+    titleEl.classList.add( 'sm-se-section-head__row' );
+
+    const titleSpan = document.createElement( 'span' );
+    titleSpan.className = 'sm-se-section-head__title';
+    while ( titleEl.firstChild ) {
+      titleSpan.appendChild( titleEl.firstChild );
+    }
+    titleEl.appendChild( titleSpan );
+
+    const actions = document.createElement( 'span' );
+    actions.className = 'sm-se-section-head__actions';
+    titleEl.appendChild( actions );
+
+    // A section gated by a master toggle has that toggle as the intro's next
+    // sibling — its switch relocates here and its Preview shows only while on.
+    const hasMasterToggle = ! marker.label
+      && anchorLi.nextElementSibling
+      && anchorLi.nextElementSibling.classList.contains( 'customize-control-sm_toggle' );
+
+    if ( marker.preview && marker.preview.mode ) {
+      const previewBtn = createPreviewToggleButton( marker.preview, 'sm-se-group__preview' );
+      if ( hasMasterToggle ) {
+        // Hidden until native-controls binds it to the toggle (avoids a flash).
+        previewBtn.classList.add( 'sm-se-group__preview--conditional' );
+        previewBtn.style.display = 'none';
+      }
+      actions.appendChild( previewBtn );
+    }
   } );
 };
 
