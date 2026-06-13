@@ -399,10 +399,10 @@ class SiteEditor extends AbstractHookProvider {
 			'sectionGroupHeaders' => apply_filters( 'style_manager/site_editor_section_group_headers', [
 				'sm_tweak_board_section' => [
 					// Each entry marks a group start (drawn with a divider).
-					// Collections has no intro of its own — inject a label.
+					// Cards Collections has no intro of its own — inject a label.
 					[
 						'before' => 'sm_collection_title_position',
-						'label'  => esc_html__( 'Collections', '__plugin_txtd' ),
+						'label'  => esc_html__( 'Cards Collections', '__plugin_txtd' ),
 					],
 					// Site Frame and Fancy Titles already render an html intro
 					// title; attach the Preview affordance to it (no label).

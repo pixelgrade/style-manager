@@ -85,7 +85,7 @@ const getControlContainerId = controlId => `customize-control-${ controlId.repla
  * Runs while building the panel, before the merge; both resolve controls by id.
  */
 const markGroupSections = ( contentEl, markers ) => {
-  markers.forEach( ( marker, index ) => {
+  markers.forEach( marker => {
     const anchorLi = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( `${ marker.before }_control` ) ) }` );
     if ( ! anchorLi ) {
       return;
@@ -113,9 +113,6 @@ const markGroupSections = ( contentEl, markers ) => {
     }
 
     groupStartEl.classList.add( 'sm-se-group-start' );
-    if ( 0 === index ) {
-      groupStartEl.classList.add( 'sm-se-group-start--first' );
-    }
   } );
 };
 

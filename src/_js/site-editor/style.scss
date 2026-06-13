@@ -65,14 +65,26 @@
 		}
 
 		// A narrower number input gives the rail more room.
-		input[type="number"] {
-			min-width: 0;
-		}
-
 		.components-input-control,
 		.components-number-control {
 			width: 56px;
 			flex-shrink: 0;
+		}
+
+		// WP 7.1's NumberControl ships an intrinsic 80px input that content-sizes
+		// its container, so it overflows the 56px wrapper (and the panel edge).
+		// Pin the inner container + input to the wrapper width — width:100% breaks
+		// the circular sizing, min-width:0 lets the flex chain actually shrink.
+		.components-input-base,
+		.components-input-control__container,
+		.components-input-control__input,
+		input[type="number"] {
+			min-width: 0;
+		}
+
+		.components-input-control__container,
+		.components-input-control__input {
+			width: 100%;
 		}
 	}
 
@@ -754,18 +766,14 @@
 }
 
 // Groups are separated by a divider (not boxed); each keeps its section title.
-// Specificity matched to the #customize-controls[id] reset above, which zeroes
-// every row's top margin/border — these must outrank it.
+// A divider sits above every section, including the first (which separates it
+// from the section description). Specificity matched to the
+// #customize-controls[id] reset above, which zeroes every row's top
+// margin/border — these must outrank it.
 .sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-start {
 	margin-top: 24px;
 	padding-top: 20px;
 	border-top: 1px solid #e0e0e0;
-}
-
-.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-start--first {
-	margin-top: 0;
-	padding-top: 0;
-	border-top: 0;
 }
 
 // The Preview button rides the section title's line, docked right.
