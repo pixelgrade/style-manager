@@ -415,6 +415,32 @@ export const VoiceTunerPanel = () => {
   );
 };
 
+const NativeText = ( { settingId, overrides } ) => {
+  const { TextControl } = wp.components;
+  const config = { ...getConfig( settingId ) };
+  if ( overrides?.label ) {
+    config.label = overrides.label;
+  }
+  if ( overrides?.help !== undefined ) {
+    config.desc = overrides.help;
+  }
+
+  return (
+    <BoundControl settingId={ settingId }>
+      { ( value, onChange ) => (
+        <TextControl
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
+          label={ config.label }
+          help={ stripHtml( config.desc ) || undefined }
+          value={ value ?? '' }
+          onChange={ onChange }
+        />
+      ) }
+    </BoundControl>
+  );
+};
+
 const COMPONENTS = {
   range: NativeRange,
   sm_toggle: NativeToggle,
@@ -422,6 +448,22 @@ const COMPONENTS = {
   preset: NativePreset,
   select: NativeSelect,
 };
+
+// sm_radio is custom pills by default. These specific ones are simple
+// categorical choices, so opt them into the core segmented control; the rest
+// (Voice Tuner axes, etc.) keep their pills.
+const NATIVE_SM_RADIO = new Set( [
+  'sm_intro_animations_speed',
+  'sm_logo_loading_style',
+  'sm_page_transition_style',
+  'sm_dark_mode_advanced',
+] );
+
+// text is custom by default (most are internal JSON stores). Opt genuine,
+// user-facing text inputs into the core TextControl.
+const NATIVE_TEXT = new Set( [
+  'sm_transition_symbol',
+] );
 
 /**
  * Site Editor copy polish (presentation only — source strings stay in the
@@ -523,8 +565,24 @@ export const mountNativeControls = ( eng, payload ) => {
         return;
       }
 
-      const Component = COMPONENTS[ control.type ];
-      if ( ! Component || ! getConfig( settingId ) ) {
+      const config = getConfig( settingId );
+      let Component = COMPONENTS[ control.type ];
+
+      // Presets: only the radio-style ones are re-skinned. Preview pickers keep
+      // their custom rendering — e.g. the font-palette selector (choices_type
+      // 'font_palette') shows font previews that a plain RadioControl would drop.
+      if ( 'preset' === control.type && 'radio' !== config.choices_type ) {
+        Component = null;
+      }
+      // Opt specific custom controls into the native skin (the rest stay custom).
+      if ( 'sm_radio' === control.type && NATIVE_SM_RADIO.has( settingId ) ) {
+        Component = NativeRadio;
+      }
+      if ( 'text' === control.type && NATIVE_TEXT.has( settingId ) ) {
+        Component = NativeText;
+      }
+
+      if ( ! Component ) {
         return;
       }
 
