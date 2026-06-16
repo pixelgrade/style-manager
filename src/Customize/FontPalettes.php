@@ -115,6 +115,16 @@ class FontPalettes extends AbstractHookProvider {
 
 	protected function add_fine_tune_palette_section( array $config ): array {
 
+		// Advanced controls (the Fine-tune palette) are a Pixelgrade Plus premium
+		// capability. Ask Plus through the shared, absence-safe entitlement bridge:
+		// when Plus is absent, inactive, or unlicensed nothing answers the filter
+		// and the locked default (false) stands, so the section stays hidden. Plus
+		// owns the gate, Style Manager owns the controls — we never inspect
+		// license/account internals here. See the Plus entitlement bridge contract.
+		if ( ! apply_filters( 'pixelgrade/has_entitlement', false, 'advanced_style_manager_controls' ) ) {
+			return $config;
+		}
+
 		$fine_tune_palette_fields = [
 			'sm_fine_tune_intro',
 			'sm_font_primary_intro',
