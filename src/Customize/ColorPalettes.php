@@ -229,16 +229,6 @@ class ColorPalettes extends AbstractHookProvider {
 
 	protected function add_fine_tune_palette_section( array $config ): array {
 
-		// Advanced controls (the Fine-tune palette) are a Pixelgrade Plus premium
-		// capability. Ask Plus through the shared, absence-safe entitlement bridge:
-		// when Plus is absent, inactive, or unlicensed nothing answers the filter
-		// and the locked default (false) stands, so the section stays hidden. Plus
-		// owns the gate, Style Manager owns the controls — we never inspect
-		// license/account internals here. See the Plus entitlement bridge contract.
-		if ( ! apply_filters( 'pixelgrade/has_entitlement', false, 'advanced_style_manager_controls' ) ) {
-			return $config;
-		}
-
 		// Order the Fine-tune section by what each control shapes: presets lead
 		// (they write every control below at once), then Structure, then
 		// Contrast & balance, then Color promotion. The Site Editor draws the
