@@ -130,6 +130,61 @@ function is_sm_supported(): bool {
 	return apply_filters( 'style_manager/is_supported', current_theme_supports( 'customizer_style_manager' ) );
 }
 
+const PIXELGRADE_PLUS_ADVANCED_CONTROLS_ENTITLEMENT = 'advanced_style_manager_controls';
+
+/**
+ * Determine if the shared Pixelgrade Plus entitlement bridge can answer.
+ *
+ * Existing Style Manager controls must stay available while Plus is absent or
+ * dormant. The entitlement bridge is considered available only after a plugin
+ * hooks the shared filter.
+ *
+ * @since 2.2.14
+ *
+ * @return bool
+ */
+function pixelgrade_plus_entitlement_bridge_is_available(): bool {
+	$available = \function_exists( 'has_filter' ) && false !== \has_filter( 'pixelgrade/has_entitlement' );
+
+	if ( \function_exists( 'apply_filters' ) ) {
+		$available = (bool) \apply_filters( 'style_manager/pixelgrade_plus_entitlement_bridge_is_available', $available );
+	}
+
+	return $available;
+}
+
+/**
+ * Check a Pixelgrade Plus entitlement without hard-depending on Plus.
+ *
+ * @since 2.2.14
+ *
+ * @param string $entitlement                       Entitlement key.
+ * @param bool   $default_when_bridge_unavailable  Result when Plus cannot answer.
+ * @return bool
+ */
+function has_pixelgrade_plus_entitlement( string $entitlement, bool $default_when_bridge_unavailable = false ): bool {
+	if ( ! pixelgrade_plus_entitlement_bridge_is_available() ) {
+		return $default_when_bridge_unavailable;
+	}
+
+	if ( ! \function_exists( 'apply_filters' ) ) {
+		return false;
+	}
+
+	return (bool) \apply_filters( 'pixelgrade/has_entitlement', false, $entitlement );
+}
+
+/**
+ * Determine if advanced Style Manager controls are available.
+ *
+ * @since 2.2.14
+ *
+ * @return bool
+ */
+function advanced_style_manager_controls_are_unlocked(): bool {
+	return has_pixelgrade_plus_entitlement( PIXELGRADE_PLUS_ADVANCED_CONTROLS_ENTITLEMENT, true );
+}
+
 /**
  * Get a Style Manager option's value, if there is a value, and return it.
  * Otherwise, try to get the default parameter or the default from config.

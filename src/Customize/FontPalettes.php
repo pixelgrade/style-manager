@@ -16,6 +16,7 @@ use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Utils\ArrayHelpers;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
+use function Pixelgrade\StyleManager\advanced_style_manager_controls_are_unlocked;
 
 /**
  * Provides the font palettes logic.
@@ -114,6 +115,9 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	protected function add_fine_tune_palette_section( array $config ): array {
+		if ( ! advanced_style_manager_controls_are_unlocked() ) {
+			return $config;
+		}
 
 		$fine_tune_palette_fields = [
 			'sm_fine_tune_intro',

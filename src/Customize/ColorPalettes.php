@@ -14,6 +14,7 @@ namespace Pixelgrade\StyleManager\Customize;
 use Pixelgrade\StyleManager\Utils\ArrayHelpers;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
+use function Pixelgrade\StyleManager\advanced_style_manager_controls_are_unlocked;
 use function Pixelgrade\StyleManager\is_sm_supported;
 
 /**
@@ -228,6 +229,9 @@ class ColorPalettes extends AbstractHookProvider {
 	}
 
 	protected function add_fine_tune_palette_section( array $config ): array {
+		if ( ! advanced_style_manager_controls_are_unlocked() ) {
+			return $config;
+		}
 
 		// Order the Fine-tune section by what each control shapes: presets lead
 		// (they write every control below at once), then Structure, then
