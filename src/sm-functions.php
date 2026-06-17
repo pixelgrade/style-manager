@@ -237,6 +237,52 @@ function style_manager_get_saved_palettes(): array {
 }
 
 /**
+ * Determine if the Style Manager fields config is currently being filtered.
+ *
+ * @since 2.3.0
+ *
+ * @return bool
+ */
+function style_manager_is_filtering_fields_config(): bool {
+	if ( function_exists( 'doing_filter' ) && doing_filter( 'style_manager/filter_fields' ) ) {
+		return true;
+	}
+
+	$current_filters = $GLOBALS['wp_current_filter'] ?? [];
+	if ( ! is_array( $current_filters ) ) {
+		return false;
+	}
+
+	return in_array( 'style_manager/filter_fields', $current_filters, true );
+}
+
+/**
+ * Get bundled palette defaults without consulting option details.
+ *
+ * @since 2.3.0
+ *
+ * @return array
+ */
+function style_manager_get_bundled_fallback_palettes(): array {
+	static $palettes = null;
+
+	if ( null !== $palettes ) {
+		return $palettes;
+	}
+
+	$palettes = [];
+	$file     = __DIR__ . '/Customize/sm_advanced_palette_output.json';
+	if ( is_readable( $file ) ) {
+		$decoded = json_decode( (string) file_get_contents( $file ) );
+		if ( is_array( $decoded ) ) {
+			$palettes = $decoded;
+		}
+	}
+
+	return $palettes;
+}
+
+/**
  * Get transient runtime palettes for the current request.
  *
  * @since 2.0.0
@@ -805,6 +851,9 @@ function style_manager_get_color_variables( $palette, int $newColorIndex, int $o
  * @return array
  */
 function style_manager_get_fallback_palettes(): array {
+	if ( style_manager_is_filtering_fields_config() ) {
+		return style_manager_get_bundled_fallback_palettes();
+	}
 
 	$order = [
 		'primary',
