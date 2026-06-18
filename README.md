@@ -8,6 +8,12 @@ It helps a supported site feel designed without requiring custom CSS.
 
 **Made with care by [Pixelgrade](https://pixelgrade.com).**
 
+## Preview
+
+| Color System | Typography | Spacing |
+| --- | --- | --- |
+| ![Color System preview](https://ps.w.org/style-manager/assets/screenshot-1.png?rev=3576913) | ![Typography preview](https://ps.w.org/style-manager/assets/screenshot-2.png?rev=3576913) | ![Spacing preview](https://ps.w.org/style-manager/assets/screenshot-3.png?rev=3576913) |
+
 ## What You Can Shape
 
 - Color palettes with generated roles for supported themes and blocks.
