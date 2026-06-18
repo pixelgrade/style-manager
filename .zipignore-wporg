@@ -11,7 +11,7 @@
 # `npm run zip` (no suffix) still produces the commercial/WUpdates package.
 #
 # Before submitting the wp.org artifact, still run Plugin Check (PCP) on it.
-# See anima/.ai/docs/2026-06-11-style-manager-wporg-resubmission.md.
+# See .ai/wporg/knowledge.md and .ai/wporg/progress.md in the private overlay.
 
 # The WUpdates self-update mechanism.
 distribution/wupdates.php

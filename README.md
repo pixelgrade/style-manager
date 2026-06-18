@@ -15,7 +15,7 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 
 ## How to use it?
 
-First you need to install and activate the stable version. This will always be on [wordpress.org](https://wordpress.org/plugins/style-manager/)
+First you need to install and activate the stable version from [WordPress.org](https://wordpress.org/plugins/style-manager/).
 
 Now go to ‘Appearance -> Customize’ menu and have fun with the new fields provided by your active theme.
 
@@ -70,19 +70,21 @@ Next go to the `style-manager-local-dev` directory and remove/add/edit anything 
 
 Please note that there are **further instructions** in the mu-plugin's code.
 
-## Building The Release .zip 
+## Building Release Zips
 
-Since Style Manager is intended for distribution on WordPress.org you will need to build the plugin files, transpile them to the appropriate PHP version (8.1), and generate a cleaned-up zip.
+Style Manager has two package targets while older installs are still migrating away from WUpdates:
 
-After you have updated the version, added the changelog, blessed everything, **you NEED to clone the repo in a TEMPORARY directory** since **the build process is DESTRUCTIVE!!!**
+- `npm run zip:wporg` builds the WordPress.org package and strips the commercial updater files plus the `Update URI: false` header.
+- `npm run zip` builds the legacy WUpdates package and should only be used for the migration handoff while that channel still exists.
 
-**From the newly cloned, temporary directory,** run these commands from the command line:
+The build is non-destructive. After you update the version and changelog, run:
 
 ```shell
-nmp install
-
-npm run zip
+npm install
+npm run zip:wporg
 ```
+
+Before shipping to WordPress.org SVN, run Plugin Check against the built artifact and verify the generated zip installs cleanly.
 
 ## Running Unit Tests
 

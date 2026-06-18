@@ -4,7 +4,7 @@ Style Manager provides you with the tools to get your site's style to match your
 
 Design is at the forefront of everything that Style Manager provides. We want you to feel at ease when customizing your blog, feeling confident that the end results will match the quality of your content.
 
-This is why we are actively integrating Style Manager with free themes on WordPress.org and collaborating with theme authors to take advantage and enhance their user's customizing experience.
+Style Manager is available on WordPress.org and is actively integrated with free themes there, including Pixelgrade's LT stack, so theme authors can enhance their users' customizing experience without shipping a private plugin bundle.
 
 ## Table of Contents
 

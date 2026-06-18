@@ -51,7 +51,14 @@ How later private-overlay changes are handled:
 - If you bootstrap with `--link`, later changes inside the private repo show up through the symlink without recopies.
 - If you introduce a brand-new private path outside those managed targets, update `bin/bootstrap-private`, `.gitignore`, and the packaging exclusions before expecting it to sync.
 
-## Build Process (`npm run zip`)
+## Build Process & Release Packages
+
+### Distribution Channels
+- **Primary stable channel:** WordPress.org plugin directory, `style-manager` slug: https://wordpress.org/plugins/style-manager/
+- **WordPress.org SVN:** `https://plugins.svn.wordpress.org/style-manager/`
+- **GitHub repo:** https://github.com/pixelgrade/style-manager
+- **GitHub releases:** optional public release notes / artifact mirror; not the updater source for ordinary WordPress installs.
+- **WUpdates:** legacy migration channel only. Use it for one clean handoff release so older WUpdates installs can move back to WordPress.org updates, then retire it.
 
 ### Prerequisites
 - **Node version:** 22+ (`.nvmrc` / `.node-version` are set to `22`)
@@ -65,23 +72,29 @@ How later private-overlay changes are handled:
 ### Build is NON-DESTRUCTIVE
 The release pipeline no longer runs Rector/php-scoper during packaging and no longer deletes lock files.
 
-### Build Sequence
-1. `npm run zip` calls `composer run zip` which runs:
-   - `@pre-build`:
-     1. `npm install`
-     2. `composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader`
-     3. `npm run gulp composer:delete_prefixed_vendor_libraries`
-        - removes duplicated runtime vendor dirs (`symfony`, `psr`, `pimple`, `cedaro`, `instituteweb`)
-        - sanitizes `vendor/composer/installed.json` to production entries
-        - prunes `vendor/` to production namespaces (`composer`, `htmlburger`)
-     4. `composer dump-autoload --no-dev --optimize`
-     5. `node ./node-tasks/verify_release_autoload.js`
-   - `gulp zip`:
-     1. `build:preflight` - fail fast on missing tooling / unsupported Node, PHP, Composer versions
-     2. `build:folder` - rsync to `../build/style-manager/`, remove files per `.zipignore`
-     2. `build:fix` - fix permissions (755 dirs, 644 files) and line endings
-     3. `build:translate` - replace `__plugin_txtd`, generate .pot, normalize volatile POT headers
-     4. `build:zip` - create `style-manager-X-X-X.zip` in parent dir, delete build folder
+### Build Targets
+- `npm run zip:wporg` builds the WordPress.org package (`../style-manager-wporg-X-X-X.zip`). It strips `distribution/` via `.zipignore-wporg` and removes the `Update URI: false` header from the built copy so WordPress.org can serve updates.
+- `npm run zip` builds the legacy commercial/WUpdates package (`../style-manager-X-X-X.zip`). Use this only while the WUpdates handoff is still active.
+
+### Shared Build Sequence
+Both targets call Composer's `@pre-build` first:
+1. `npm install`
+2. `composer install --prefer-dist --no-dev --no-scripts --optimize-autoloader`
+3. `npm run gulp composer:delete_prefixed_vendor_libraries`
+   - removes duplicated runtime vendor dirs (`symfony`, `psr`, `pimple`, `cedaro`, `instituteweb`)
+   - sanitizes `vendor/composer/installed.json` to production entries
+   - prunes `vendor/` to production namespaces (`composer`, `htmlburger`)
+4. `composer dump-autoload --no-dev --optimize`
+5. `node ./node-tasks/verify_release_autoload.js`
+
+`gulp zip:wporg` then runs:
+1. `build:preflight` - fail fast on missing tooling / unsupported Node, PHP, Composer versions
+2. `build:folder:wporg` - rsync to `../build/style-manager/`, remove files per `.zipignore` and `.zipignore-wporg`, then strip `Update URI: false`
+3. `build:fix` - fix permissions (755 dirs, 644 files) and line endings
+4. `build:translate` - replace `__plugin_txtd`, generate .pot, normalize volatile POT headers
+5. `build:zip:wporg` - create `style-manager-wporg-X-X-X.zip` in the parent dir, delete build folder
+
+`gulp zip` uses the same sequence except `build:folder` and `build:zip`, preserving `distribution/` and `Update URI: false`.
 
 ### Known Build Issues
 
@@ -113,27 +126,35 @@ If local PATH points to older runtimes (e.g. PHP 7.4 / Composer 2.0), builds fai
 - Files: `src/functions.php`, `src/sm-functions.php`, `src/cloud-filter-functions.php`, `src/deprecated.php`, `vendor_prefixed/symfony/polyfill-mbstring/bootstrap.php`
 - **Must NOT include**: `vendor/symfony/polyfill-*/bootstrap.php` (these are stripped by .zipignore)
 
-## GitHub & Distribution
-- GitHub repo: https://github.com/pixelgrade/style-manager
-- **NOT on WordPress.org repository** — no SVN deployment needed
-- WUpdates ID: mg8pX
-- Release asset: versioned zip (e.g., `style-manager-2-2-9.zip`)
-- WUpdates upload: manual zip upload at https://wupdates.com/ (product ID: mg8pX)
-- Distribution is via GitHub releases + WUpdates only
+## WordPress.org Release
 
-## WUpdates Release
+1. Follow the issue-driven workflow below before changing release files.
+2. Update `style-manager.php`, `readme.txt`, and the changelog/stable tag for the release.
+3. Build with `npm run zip:wporg`.
+4. Extract or install the built artifact and run Plugin Check against the artifact, not just source.
+5. Commit the cleaned build contents to WordPress.org SVN `trunk`, then copy `trunk` to `tags/<version>` with `svn cp`.
+6. Verify the directory API and download link after SVN processing:
+   ```bash
+   curl -s 'https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request%5Bslug%5D=style-manager'
+   curl -I 'https://downloads.wordpress.org/plugin/style-manager.<VERSION>.zip'
+   ```
+7. Optionally mirror the release notes/artifact to GitHub after the WordPress.org release is live.
+
+## Legacy WUpdates Handoff
 
 - Keep raw WUpdates host, port, and key material out of git. Store them only in private local files such as `AGENTS.local.md`, `.ai/`, or `.claude/napkin.md`. This repo assumes a local `wupdates` SSH alias is already configured on the release machine.
 - Product type: `wup_plugin`
 - Product slug: `style-manager`
-- Release artifact: `../style-manager-X-X-X.zip`
-- After publishing the GitHub release, publish the same zip in WUpdates:
+- Product ID: `mg8pX`
+- Handoff artifact: the WordPress.org-clean package (`../style-manager-wporg-X-X-X.zip`), because it must remove both the self-updater and `Update URI: false`.
+- After WordPress.org is confirmed live, publish one handoff version in WUpdates:
   1. `wp-admin` -> `Plugin Versions` -> `Add New`
   2. Set parent plugin to `Style Manager`
-  3. Upload the versioned zip
+  3. Upload the WordPress.org-clean versioned zip
   4. Fill `Version Name` with the exact semantic version
   5. Paste release notes into the version post body if the WUpdates changelog should be updated
   6. Save/publish the version post, then edit the parent `Style Manager` product and switch `Current Version` to that new version post
+- Once enough legacy installs have received the handoff, remove WUpdates from source and delete the commercial-only release branch of the build pipeline.
 - SSH verification uses the live WUpdates WordPress install at `/home/wupdates/public_html`:
   - Resolve the product ID by slug:
     ```bash
