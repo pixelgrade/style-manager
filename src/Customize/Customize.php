@@ -27,12 +27,6 @@ class Customize extends AbstractHookProvider {
 	const USER_PROVIDED_FEEDBACK_OPTION_KEY = 'style_manager_user_feedback_provided';
 
 	/**
-	 * Cache for the WUpdates identification data to avoid firing the filter multiple times.
-	 * @var array
-	 */
-	protected static array $wupdates_ids = [];
-
-	/**
 	 * Cloud client.
 	 *
 	 * @var CloudInterface
@@ -395,10 +389,7 @@ class Customize extends AbstractHookProvider {
 	 * @return array
 	 */
 	protected function filter_based_on_theme_type( array $config ): array {
-		if ( ! empty( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) && in_array( self::get_theme_type(), [
-				'theme_wporg',
-				'theme_modular_wporg',
-			] ) ) {
+		if ( ! empty( $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'] ) ) {
 			$color_palettes_options = $config['panels']['style_manager_panel']['sections']['sm_color_palettes_section']['options'];
 
 			$options_to_remove = [
@@ -422,47 +413,6 @@ class Customize extends AbstractHookProvider {
 		}
 
 		return $config;
-	}
-
-	/**
-	 * Get the current theme type from the WUpdates code.
-	 *
-	 * Generally, this is a 'theme', but it could also be 'plugin', 'theme_modular', 'theme_wporg' or other markers we wish to use.
-	 *
-	 * @return string
-	 */
-	public static function get_theme_type(): string {
-		$wupdates_identification = self::get_wupdates_identification_data();
-		if ( empty( $wupdates_identification['type'] ) ) {
-			return 'theme_wporg';
-		}
-
-		return sanitize_title( $wupdates_identification['type'] );
-	}
-
-	public static function get_wupdates_identification_data( $slug = '' ) {
-		if ( empty( $slug ) ) {
-			$slug = basename( get_template_directory() );
-		}
-
-		$wupdates_ids = self::get_all_wupdates_identification_data();
-
-		// We really want an id (hash_id) and a type.
-		if ( empty( $slug ) || empty( $wupdates_ids[ $slug ] ) || ! isset( $wupdates_ids[ $slug ]['id'] ) || ! isset( $wupdates_ids[ $slug ]['type'] ) ) {
-			return false;
-		}
-
-		return $wupdates_ids[ $slug ];
-	}
-
-	public static function get_all_wupdates_identification_data(): array {
-		if ( empty( self::$wupdates_ids ) ) {
-			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- third-party WUpdates hook consumed to gather product IDs; not owned by this plugin.
-			self::$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
-		}
-
-		return self::$wupdates_ids;
 	}
 
 	/**

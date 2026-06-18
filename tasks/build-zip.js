@@ -28,13 +28,9 @@ function getVersionString( done ) {
 }
 
 // -----------------------------------------------------------------------------
-// Create the plugin installer archive and delete the build folder.
-//
-// `infix` distinguishes build targets in the artifact name (e.g. '-wporg').
-// Cleanup is scoped to the same infix so a commercial build never deletes a
-// WordPress.org artifact, and vice versa.
+// Create the WordPress.org plugin installer archive and delete the build folder.
 // -----------------------------------------------------------------------------
-function makeZip( infix, done ) {
+function makeZip( done ) {
 	var versionString = getVersionString( done );
 	if ( versionString === null ) {
 		return;
@@ -43,21 +39,8 @@ function makeZip( infix, done ) {
 	var rootDir = path.resolve( __dirname, '..' );
 	var parentDir = path.resolve( rootDir, '..' );
 	var buildDir = path.join( parentDir, 'build' );
-	var zipPrefix = slug + infix;
+	var zipPrefix = slug + '-wporg';
 	var zipFileName = zipPrefix + versionString + '.zip';
-
-	// Match this target's previous artifacts, but never the other target's.
-	// The commercial prefix ("style-manager-") would otherwise also match
-	// "style-manager-wporg-", so the commercial cleanup explicitly excludes it.
-	function belongsToThisTarget( fileName ) {
-		if ( !fileName.startsWith( zipPrefix ) || !fileName.endsWith( '.zip' ) ) {
-			return false;
-		}
-		if ( infix === '' && fileName.startsWith( slug + '-wporg' ) ) {
-			return false;
-		}
-		return true;
-	}
 
 	try {
 		if ( !fs.existsSync( buildDir ) ) {
@@ -66,7 +49,7 @@ function makeZip( infix, done ) {
 
 		// Remove previous archives for this target before generating a new one.
 		fs.readdirSync( parentDir )
-			.filter( belongsToThisTarget )
+			.filter( fileName => fileName.startsWith( zipPrefix ) && fileName.endsWith( '.zip' ) )
 			.forEach( ( fileName ) => fs.rmSync( path.join( parentDir, fileName ), { force: true } ) );
 
 		var zipResult = spawnSync(
@@ -86,14 +69,6 @@ function makeZip( infix, done ) {
 	}
 }
 
-function makeZipCommercial( done ) {
-	makeZip( '', done );
-}
-makeZipCommercial.description = 'Create the plugin installer archive and delete the build folder';
-gulp.task( 'build:zip', makeZipCommercial );
-
-function makeZipWporg( done ) {
-	makeZip( '-wporg', done );
-}
-makeZipWporg.description = 'Create the WordPress.org plugin archive and delete the build folder';
-gulp.task( 'build:zip:wporg', makeZipWporg );
+makeZip.description = 'Create the WordPress.org plugin archive and delete the build folder';
+gulp.task( 'build:zip', makeZip );
+gulp.task( 'build:zip:wporg', makeZip );

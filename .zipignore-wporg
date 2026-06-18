@@ -1,18 +1,5 @@
-# Additional files stripped from a WordPress.org-targeted build, on top of
-# .zipignore.
+# Deprecated compatibility file.
 #
-# Everything listed here is commercial-distribution-only logic. The plugin must
-# keep working without these files: style-manager.php loads them through a
-# file_exists() guard.
-#
-# Used by the `zip:wporg` build (npm run zip:wporg / composer run zip:wporg).
-# That build also strips the `Update URI: false` header so WordPress.org can
-# deliver updates (see tasks/build-folder.js → build:fix-wporg-header).
-# `npm run zip` (no suffix) still produces the commercial/WUpdates package.
-#
-# Before submitting the wp.org artifact, still run Plugin Check (PCP) on it.
-# See .ai/wporg/knowledge.md and .ai/wporg/progress.md in the private overlay.
-
-# The WUpdates self-update mechanism.
-distribution/wupdates.php
-distribution
+# WordPress.org is the only public package target. Extra target-specific
+# exclusions are no longer needed, but this file remains so older local
+# automation that references it does not fail on a missing path.

@@ -5,7 +5,6 @@
  * @wordpress-plugin
  * Plugin Name: Style Manager
  * Plugin URI:  https://github.com/pixelgrade/style-manager
- * Update URI:  false
  * Description: Auto-magical system to style your entire WordPress site.
  * Version: 2.3.0-beta1
  * Author: Pixelgrade
@@ -142,14 +141,3 @@ $style_manager_plugin = plugin()
 
 // Compose before the theme is set up; this should give plenty of opportunities to hook.
 add_action( 'setup_theme', [ $style_manager_plugin, 'compose' ], 15 );
-
-/*
- * Commercial distribution logic: the WUpdates self-update mechanism.
- *
- * This is stripped from builds intended for the WordPress.org plugin
- * directory (plugins there must not self-update), so it is loaded only when
- * the file is present.
- */
-if ( file_exists( __DIR__ . '/distribution/wupdates.php' ) ) {
-	require_once __DIR__ . '/distribution/wupdates.php';
-}

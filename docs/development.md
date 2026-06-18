@@ -48,10 +48,10 @@ Then edit the JSON assets inside the `style-manager-local-dev` directory. The mu
 
 ## Building Release Zips
 
-Style Manager has two package targets while older installs are still migrating away from WUpdates:
+Style Manager has one public package target:
 
-- `npm run zip:wporg` builds the WordPress.org package and strips the commercial updater files plus the `Update URI: false` header.
-- `npm run zip` builds the legacy WUpdates package and should only be used for the migration handoff while that channel still exists.
+- `npm run zip:wporg` builds the WordPress.org package.
+- `npm run zip` is an alias for the same WordPress.org-safe package command.
 
 The build is non-destructive. After updating the version and changelog, run:
 

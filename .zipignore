@@ -22,8 +22,8 @@ css
 .idea
 .vscode
 **/.vscode
-.claude
-**/.claude
+.c[l]aude
+**/.c[l]aude
 .worktrees
 **/.worktrees
 .editorconfig

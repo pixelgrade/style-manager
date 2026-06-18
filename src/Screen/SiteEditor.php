@@ -4,7 +4,7 @@
  *
  * Surfaces the Style Manager controls inside the WordPress Site Editor with
  * the same markup, data and JS engine as the Customizer, minus the Customizer
- * chrome. See plans/2026-06-11-site-editor-controls.md.
+ * chrome.
  *
  * @since   2.3.0
  * @license GPL-2.0-or-later

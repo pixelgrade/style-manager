@@ -7,8 +7,8 @@ import './style.scss';
 
 /**
  * The Site Frame board. Same principles as the Colors / Typography / Spacing
- * boards (see plans/2026-06-12-section-preview-principles.md): preview the
- * system on neutral ground, bind to the engine, show resolved values.
+ * boards: preview the system on neutral ground, bind to the engine, show
+ * resolved values.
  *
  * The frame is whole-page chrome (a top bar, a left bar and a docked nav
  * rail) tinted by a color grade. It is static chrome, not a behaviour, so a

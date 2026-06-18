@@ -65,47 +65,12 @@ async function removeUnneededFiles() {
 removeUnneededFiles.description = 'Remove unneeded files and folders from the build folder';
 gulp.task( 'build:remove-unneeded-files', removeUnneededFiles );
 
-// The WordPress.org build strips everything in .zipignore plus the
-// commercial-distribution-only files in .zipignore-wporg (the WUpdates
-// self-updater), which wp.org forbids.
 async function removeUnneededFilesWporg() {
-  return removeListedFiles( [ '.zipignore', '.zipignore-wporg' ] );
+  return removeListedFiles( [ '.zipignore' ] );
 }
 
-removeUnneededFilesWporg.description = 'Remove unneeded files plus commercial-only files for a WordPress.org build';
+removeUnneededFilesWporg.description = 'Remove unneeded files for a WordPress.org build';
 gulp.task( 'build:remove-unneeded-files:wporg', removeUnneededFilesWporg );
-
-// -----------------------------------------------------------------------------
-// Make the built main plugin file safe for the WordPress.org directory.
-// -----------------------------------------------------------------------------
-// Remove the `Update URI: false` header so WordPress.org can deliver updates.
-// The header stays in source to protect existing commercial/WUpdates installs
-// from slug collisions while the directory listing is being reinstated; only
-// the wp.org build drops it.
-function fixWporgPluginHeader( done ) {
-  const mainFile = '../build/' + slug + '/' + slug + '.php';
-
-  if ( !fs.existsSync( mainFile ) ) {
-    done( new Error( 'Cannot find the main plugin file at ' + mainFile + '. Run build:folder first.' ) );
-    return;
-  }
-
-  const original = fs.readFileSync( mainFile, 'utf8' );
-  // Match the whole "Update URI: false" docblock line (optional leading
-  // asterisk/whitespace) and drop it entirely, including its line break.
-  const patched = original.replace( /^[ \t]*\*?[ \t]*Update URI:[ \t]*false[ \t]*\r?\n/im, '' );
-
-  if ( patched === original ) {
-    done( new Error( 'Expected to find an "Update URI: false" header to remove for the wp.org build, but none was present.' ) );
-    return;
-  }
-
-  fs.writeFileSync( mainFile, patched );
-  done();
-}
-
-fixWporgPluginHeader.description = 'Strip the "Update URI: false" header from the built plugin for WordPress.org';
-gulp.task( 'build:fix-wporg-header', fixWporgPluginHeader );
 
 gulp.task( 'build:folder', gulp.series(
   'build:copy-folder',
@@ -114,6 +79,5 @@ gulp.task( 'build:folder', gulp.series(
 
 gulp.task( 'build:folder:wporg', gulp.series(
   'build:copy-folder',
-  'build:remove-unneeded-files:wporg',
-  'build:fix-wporg-header'
+  'build:remove-unneeded-files:wporg'
 ) );

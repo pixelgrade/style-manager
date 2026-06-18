@@ -218,13 +218,6 @@ class PixelgradeCloud implements CloudInterface {
 			$theme_data['textdomain'] = $current_theme->get('TextDomain');
 		}
 
-		// Maybe get the WUpdates theme info if it's a theme delivered from WUpdates.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- third-party WUpdates hook consumed to gather product IDs; not owned by this plugin.
-		$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
-		if ( ! empty( $wupdates_ids[ $slug ] ) ) {
-			$theme_data['wupdates'] = $wupdates_ids[ $slug ];
-		}
-
 		return apply_filters( 'style_manager/get_theme_data', $theme_data );
 	}
 

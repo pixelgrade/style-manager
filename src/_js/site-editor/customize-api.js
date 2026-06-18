@@ -7,7 +7,7 @@ import _ from 'lodash';
  * Style Manager engine uses, so the original Customizer JS modules can run
  * unchanged outside customize.php (e.g. in the Site Editor).
  *
- * Covered surface (see the usage inventory in plans/2026-06-11-site-editor-controls.md):
+ * Covered surface:
  * - api( id ) / api( id, ...callbacks ) with deferred resolution
  * - callable Value instances: setting(), setting( value ), get/set/bind/unbind, _dirty
  * - api.bind / api.trigger for 'ready' / 'saved'

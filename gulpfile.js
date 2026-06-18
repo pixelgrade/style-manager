@@ -9,6 +9,6 @@ require( './tasks/composer' );
 require( './tasks/google-fonts' );
 require( './tasks/styles' );
 
-gulp.task( 'zip', gulp.series( 'build:preflight', 'build:folder', 'build:fix', 'build:translate', 'build:zip' ) );
+gulp.task( 'zip', gulp.series( 'build:preflight', 'build:folder:wporg', 'build:fix', 'build:translate', 'build:zip:wporg' ) );
 gulp.task( 'zip:wporg', gulp.series( 'build:preflight', 'build:folder:wporg', 'build:fix', 'build:translate', 'build:zip:wporg' ) );
 gulp.task( 'dev', gulp.parallel( 'watch:styles' ) );

@@ -7,8 +7,7 @@ import './style.scss';
 
 /**
  * The Spacing system board. Same principles as the Colors / Typography
- * boards (see plans/2026-06-12-section-preview-principles.md): enumerate
- * the token space, bind to the engine, show resolved values.
+ * boards: enumerate the token space, bind to the engine, show resolved values.
  *
  * The numbers mirror the theme's own relationships:
  *   --theme-spacing-ratio: var(--sm-spacing-level)

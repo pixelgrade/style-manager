@@ -136,8 +136,7 @@
 			"@verify-release-autoload"
 		],
 		"zip": [
-			"@pre-build",
-			"npm run gulp zip"
+			"@zip:wporg"
 		],
 		"zip:wporg": [
 			"@pre-build",
