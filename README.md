@@ -1,13 +1,19 @@
-# Style Manager - Auto-magical system to style your WordPress site
+# Style Manager - Design-system engine for compatible WordPress themes and blocks
 
-With [Style Manager](https://github.com/pixelgrade/style-manager), developers can easily create **advanced theme-specific options** inside the WordPress Customizer. Using those options, a user can make presentational changes without having to know or edit the theme code.
+Style Manager generates and coordinates colors, typography, spacing, and related design decisions across compatible WordPress themes and blocks.
 
-This plugin is **primarily intended** to be used together with [Pixelgrade themes](https://wordpress.org/themes/author/pixelgrade/). So the best way to get acquainted with its capabilities is to study the way [Pixelgrade's Anima universal theme](https://github.com/pixelgrade/anima/blob/dev/inc/integrations/style-manager/style-manager.php) integrates with it.
+It turns theme and block integrations into a shared design system: themes apply the system to the site, blocks adapt to it in context, and users can preview those decisions in the editor and on the front end without writing CSS.
+
+The current reference stack is [Pixelgrade's Anima universal theme](https://github.com/pixelgrade/anima/blob/dev/inc/integrations/style-manager/style-manager.php), [Nova Blocks](https://wordpress.org/plugins/nova-blocks/), and the Pixelgrade LT themes. Together, they show how Style Manager can coordinate palettes, typography, spacing, theme tweaks, motion, and contextual block styles from one styling layer.
+
+Style Manager is not a universal page builder. It is most useful when the active theme and blocks are built to read its design decisions.
 
 **Made with care by Pixelgrade**
 
-## Completely compatible with the following WordPress themes:
+## Known compatible themes and blocks
 
+- [Anima](https://github.com/pixelgrade/anima) _by Pixelgrade_
+- [Nova Blocks](https://wordpress.org/plugins/nova-blocks/) _by Pixelgrade_
 - [Mies LT](https://pixelgrade.com/themes/portfolio/mies-lt/) _by Pixelgrade_
 - [Julia LT](https://pixelgrade.com/themes/blogging/julia-lt/) _by Pixelgrade_
 - [Rosa LT](https://pixelgrade.com/themes/restaurants/rosa-lt/) _by Pixelgrade_
@@ -15,9 +21,11 @@ This plugin is **primarily intended** to be used together with [Pixelgrade theme
 
 ## How to use it?
 
-First you need to install and activate the stable version from [WordPress.org](https://wordpress.org/plugins/style-manager/).
+First you need to install and activate the stable version from [WordPress.org](https://wordpress.org/plugins/style-manager/), then use a theme or block library that integrates with Style Manager.
 
-Now go to ‘Appearance -> Customize’ menu and have fun with the new fields provided by your active theme.
+For the Site Editor experience, open `Appearance -> Editor` and use the Style Manager controls exposed by your active theme.
+
+For themes that still expose the Customizer workflow, go to `Appearance -> Customize` and use the Style Manager section provided by the active theme.
 
 ## WordPress Developer Love
 
