@@ -13,3 +13,4 @@ Style Manager is available on WordPress.org and is actively integrated with free
 	1. [Settings](settings.md)
 1. [Integrations](integrations.md)
 1. [Troubleshooting](troubleshooting.md)
+1. [Development](development.md)
