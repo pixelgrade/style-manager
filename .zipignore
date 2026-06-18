@@ -94,6 +94,8 @@ bin
 postcss.config.js
 .phpcs.xml.dist
 phpstan.neon.dist
+.phpunit.cache
+**/.phpunit.cache
 .npmrc
 .nvmrc
 .node-version

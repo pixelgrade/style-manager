@@ -107,6 +107,7 @@ class HeadlessCustomizer {
 		$manager->register_controls();
 
 		/** This action is documented in wp-includes/class-wp-customize-manager.php */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core Customizer action required for parity with WordPress changeset publishing.
 		do_action( 'customize_register', $manager );
 
 		/*

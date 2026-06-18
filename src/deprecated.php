@@ -10,7 +10,9 @@
 
 namespace { // global code
 
-	\defined( 'ABSPATH' ) || \in_array( \PHP_SAPI, [ 'cli', 'phpdbg' ], true ) || exit;
+	if ( ! \in_array( \PHP_SAPI, [ 'cli', 'phpdbg' ], true ) ) {
+		defined( 'ABSPATH' ) || exit;
+	}
 
 	use function Pixelgrade\StyleManager\get_customizer_config;
 	use function Pixelgrade\StyleManager\get_option_details;

@@ -11,7 +11,9 @@
 
 declare ( strict_types=1 );
 
-\defined( 'ABSPATH' ) || \in_array( \PHP_SAPI, [ 'cli', 'phpdbg' ], true ) || exit;
+if ( ! \in_array( \PHP_SAPI, [ 'cli', 'phpdbg' ], true ) ) {
+	defined( 'ABSPATH' ) || exit;
+}
 
 /**
  * Adjust a hex color brightness

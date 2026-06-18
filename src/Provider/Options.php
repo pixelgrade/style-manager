@@ -872,6 +872,7 @@ class Options extends AbstractHookProvider {
 
 		$option_name = '' === $stylesheet ? $options_key : 'theme_mods_' . $stylesheet;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- This intentionally bypasses option/theme_mod read filters and object caches to recover the raw stored root.
 		$row = $wpdb->get_var(
 			$wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $option_name )
 		);
