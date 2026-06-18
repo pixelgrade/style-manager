@@ -21,10 +21,19 @@ It helps a supported site feel designed without requiring custom CSS.
 
 Style Manager is not a universal page builder. It is most useful when the active theme and blocks are built to read its design decisions.
 
-The current reference stack is:
+### Free Stack
+
+You can try Style Manager with this free Pixelgrade stack:
 
 - [Anima](https://github.com/pixelgrade/anima) _by Pixelgrade_
 - [Nova Blocks](https://wordpress.org/plugins/nova-blocks/) _by Pixelgrade_
+
+Anima provides the theme-level integration. Nova Blocks provides compatible blocks that can adapt to the same design decisions.
+
+### Premium LT Themes
+
+Style Manager also integrates with Pixelgrade's premium LT themes:
+
 - [Felt LT](https://pixelgrade.com/themes/blogging/felt-lt/)
 - [Julia LT](https://pixelgrade.com/themes/blogging/julia-lt/)
 - [Mies LT](https://pixelgrade.com/themes/portfolio/mies-lt/)
