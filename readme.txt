@@ -1,33 +1,59 @@
 === Style Manager ===
 Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
-Tags: design, customizer, fonts, colors, color palettes
+Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.2.13
+Stable tag: 2.3.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Auto-magical system to style your WordPress site.
+Generate and coordinate colors, typography, and spacing across compatible WordPress themes and blocks.
 
 == Description ==
 
-Style Manager provides you with the tools to get your site's style to match your personality while retaining overall cohesion and balance.
+Style Manager generates and coordinates colors, typography, and spacing for compatible WordPress themes and blocks.
 
-Design is at the forefront of everything that Style Manager provides. We want you to feel at ease when customizing your blog, feeling confident that the end results will match the quality of your content.
+Instead of tuning isolated colors, font sizes, and spacing values by hand, you work with connected design decisions that can flow through the editor, the active theme, compatible blocks, and the front end.
 
-This is why we are actively integrating Style Manager with free themes on WordPress.org and collaborating with theme authors to take advantage and enhance their user's customizing experience.
+Themes that support Style Manager apply the system across site templates and theme details. Compatible blocks can adapt to the same design decisions in context, so sections and blocks feel like part of one site rather than separate styling work.
 
-**Made with love by [Pixelgrade](https://pixelgrade.com)**
+In Style Manager 2.3, the main styling flow is available in the Site Editor, with visual preview boards, editor-canvas previews, and a Live Site preview for reviewing unsaved changes before publishing.
+
+= Free compatible stack =
+
+You can try Style Manager with this free Pixelgrade stack:
+
+* [Anima](https://github.com/pixelgrade/anima) provides the theme-level integration.
+* [Nova Blocks](https://wordpress.org/plugins/nova-blocks/) provides compatible blocks that can respond to the same design system.
+
+Style Manager also integrates with Pixelgrade LT themes, but premium themes are not required to try the free Anima and Nova Blocks path.
+
+= What you can shape =
+
+* Color palettes with generated roles for compatible themes and blocks.
+* Typography choices for headings, body copy, and details.
+* Spacing and rhythm controls that keep layouts consistent.
+* Theme-supported tweaks and motion settings.
+* Live editor previews before saving.
+* Context-aware styling for blocks and sections that support Style Manager.
+
+= Compatibility =
+
+Style Manager is not a universal page builder and does not make every theme or block support every control.
+
+The full experience depends on your active theme and blocks being built to read Style Manager's design decisions. If a theme or block does not support a specific Style Manager feature, the related controls may be hidden or may not affect that theme or block's output.
 
 == Installation ==
 
-Installing "Style Manager" can be done either by searching for "Style Manager" via the "Plugins > Add New" screen in your WordPress dashboard, or by using the following steps:
+Install Style Manager by searching for "Style Manager" in Plugins > Add New, or by using these steps:
 
 1. Download the plugin via WordPress.org.
-2. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Head over to Appearance -> Customize and access the Style Manager section.
+2. Upload the ZIP file through Plugins > Add New > Upload Plugin.
+3. Activate the plugin from the Plugins screen.
+4. Use a theme or block library that supports Style Manager. For a free setup, try Anima with Nova Blocks.
+5. Open Appearance > Editor for the Site Editor experience.
+6. On themes that still expose the Customizer workflow, open Appearance > Customize and look for Style Manager controls.
 
 == Issues ==
 
@@ -37,10 +63,38 @@ If GitHub is not your thing, but you are passionate about Style Manager and want
 
 == Frequently Asked Questions ==
 
-= Is there a way to reset the Customizer options to their default value? =
-Reset buttons are available for all the options or for individual sections or panels.
-This is mostly a development tool, thus it is disabled by default.
-To enable them simply go to Dashboard -> Appearance -> Style Manager and check "Enable Reset Buttons"
+= Which themes and blocks are supported? =
+
+Style Manager is built for compatible themes and blocks. Some controls appear only when the active theme or blocks support them.
+
+= What free setup can I use to try it? =
+
+Use Anima for theme-level integration and Nova Blocks for compatible blocks. Both are free.
+
+= Where do I find the Style Manager controls? =
+
+In Style Manager 2.3, compatible themes can expose the main styling flow in Appearance > Editor. Themes that still use the Customizer workflow can expose Style Manager controls in Appearance > Customize.
+
+= Do I need to write CSS? =
+
+No. Style Manager is designed around visual controls and live previews. Theme and block builders can still consume the generated styles in custom integrations.
+
+= Does Style Manager require a Pixelgrade account? =
+
+No Pixelgrade account is required for the core styling workflow. Some design assets are loaded from Pixelgrade Cloud as described in the Privacy & External Services section.
+
+= What is new in Style Manager 2.3? =
+
+Style Manager 2.3 brings the styling experience into the Site Editor, including preview boards, editor-canvas previews, and a Live Site preview flow for unsaved changes.
+
+== Screenshots ==
+
+1. Control your site's style from the Site Editor and preview changes before saving.
+2. Choose a palette and let compatible themes apply coherent color roles across the site.
+3. Shape the site's typography from a focused set of design decisions.
+4. Tune layout feel, rhythm, and supported theme refinements from one styling flow.
+5. Review unsaved design changes on the front end before publishing them.
+6. Context-aware palettes help compatible blocks adapt without manual per-block styling.
 
 == Credits ==
 
@@ -54,38 +108,29 @@ To enable them simply go to Dashboard -> Appearance -> Style Manager and check "
 
 == Privacy & External Services ==
 
-Style Manager relies on one external service to deliver its design assets.
+Style Manager uses external services to deliver some design assets.
 
 **Pixelgrade Cloud (cloud.pixelgrade.com)**
 
-To provide the color palettes, font palettes, and curated design configurations
-that power the Customizer, the plugin fetches design assets from Pixelgrade Cloud.
-This request is made from the WordPress admin (not from your site's frontend) and
-the response is cached locally.
+To provide color palettes, font palettes, and curated design configurations, the plugin can fetch design assets from Pixelgrade Cloud. This request is made from the WordPress admin, not from your site's frontend, and the response is cached locally.
 
-When fetching design assets, the plugin sends: your site URL, whether the site
-uses SSL, your WordPress version, the Style Manager version, and your active
-theme's slug, name, URI, version, and text domain. No personal data about your
-site's visitors is sent or collected, and the plugin does not load any tracking
-or analytics scripts.
+When fetching design assets, the plugin sends: your site URL, whether the site uses SSL, your WordPress version, the Style Manager version, and your active theme's slug, name, URI, version, and text domain. No personal data about your site's visitors is sent or collected, and the plugin does not load tracking or analytics scripts.
 
 * Service: Pixelgrade Cloud
-* Provider: Pixelgrade — https://pixelgrade.com
+* Provider: Pixelgrade - https://pixelgrade.com
 * Privacy Policy: https://pixelgrade.com/privacy/
-* Web fonts referenced by font palettes are served by Google Fonts
-  (https://fonts.googleapis.com / https://fonts.gstatic.com) — see Google's
-  Privacy Policy at https://policies.google.com/privacy.
+* Web fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
 
-= 2.3.0-beta1 =
-* New: the full Style Manager experience runs natively inside the Site Editor — colors, typography, spacing, tweaks, and motion, with live preview into the editor canvas and saving through the editor's own Save flow.
-* New: section previews — the color system board, the type specimen, a new spacing & rhythm board, and a guided live-site flow for motion with per-behavior replays.
-* New: a Live Site preview that shows unsaved changes on the real frontend without leaving the editor (also available from the editor's View menu).
-* Fix: publishing settings can no longer overwrite sibling options of the theme's options root with filtered values (protects sites running read filters such as translation plugins).
+= 2.3.0 =
+* New: the full Style Manager experience runs natively inside the Site Editor: colors, typography, spacing, tweaks, and motion, with live preview into the editor canvas and saving through the editor's own Save flow.
+* New: section previews: the color system board, the type specimen, a new spacing and rhythm board, and a guided live-site flow for motion with per-behavior replays.
+* New: a Live Site preview that shows unsaved changes on the real frontend without leaving the editor.
+* Fix: publishing settings can no longer overwrite sibling options of the theme's options root with filtered values.
 * Fix: element colorize options (Coloration Level) now live-preview inside the editor canvas and the Live Site preview.
-* Fix: page transitions play inside the Live Site preview (with the latest Anima).
-* Performance: ~100 KB trimmed from the editor payload; preview boards render on demand.
+* Fix: page transitions play inside the Live Site preview when the active theme supports them.
+* Performance: the editor payload is smaller and preview boards render on demand.
 * Maintenance: PHPUnit 10, WordPress 6.9 stubs, refreshed build toolchain; the PHP test suite runs again.
 
 = 2.2.13 =
