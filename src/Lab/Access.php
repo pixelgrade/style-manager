@@ -12,7 +12,7 @@ namespace Pixelgrade\StyleManager\Lab;
 
 final class Access {
 	public static function is_enabled(): bool {
-		return (bool) apply_filters( 'style_manager/enable_lab', true );
+		return (bool) apply_filters( 'style_manager/enable_lab', false );
 	}
 
 	public static function current_user_can_access(): bool {

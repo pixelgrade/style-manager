@@ -1705,6 +1705,474 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	/**
+	 * Apply the selected font palette to its connected theme font fields.
+	 *
+	 * This mirrors the Customizer palette-selection path for headless option
+	 * updates: write palette master fonts, apply the connected-fields preset,
+	 * rebuild option details, then persist the derived connected field values.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return array Updated connected field option IDs.
+	 */
+	public function apply_current_font_palette_to_connected_fields(): array {
+		if ( ! $this->is_supported() ) {
+			return [];
+		}
+
+		$current_palette = $this->get_current_palette();
+		if ( empty( $current_palette ) ) {
+			return [];
+		}
+
+		$font_palettes = $this->get_palettes();
+		if ( empty( $font_palettes[ $current_palette ]['fonts_logic'] ) || ! is_array( $font_palettes[ $current_palette ]['fonts_logic'] ) ) {
+			return [];
+		}
+
+		$fonts_logic              = $font_palettes[ $current_palette ]['fonts_logic'];
+		$connected_fields_preset = '';
+		if ( ! empty( $fonts_logic['connected_fields_preset'] ) ) {
+			$connected_fields_preset = (string) $fonts_logic['connected_fields_preset'];
+			unset( $fonts_logic['connected_fields_preset'] );
+		}
+
+		$fonts_logic = $this->preprocess_fonts_logic_config( $fonts_logic );
+		if ( empty( $fonts_logic ) ) {
+			return [];
+		}
+
+		foreach ( $fonts_logic as $master_font_id => $font_logic ) {
+			update_option( (string) $master_font_id, $font_logic );
+		}
+
+		if ( '' !== $connected_fields_preset ) {
+			update_option( 'sm_fonts_connected_fields_preset', $connected_fields_preset );
+		}
+
+		$this->options->invalidate_all_caches();
+
+		$options_details = $this->options->get_details_all( false, true );
+		if ( empty( $options_details ) ) {
+			return [];
+		}
+
+		$updated_fields = [];
+		foreach ( $fonts_logic as $master_font_id => $font_logic ) {
+			if ( empty( $options_details[ $master_font_id ]['connected_fields'] ) || ! is_array( $options_details[ $master_font_id ]['connected_fields'] ) ) {
+				continue;
+			}
+
+			foreach ( $options_details[ $master_font_id ]['connected_fields'] as $connected_field_id ) {
+				if ( empty( $connected_field_id ) || ! is_string( $connected_field_id ) ) {
+					continue;
+				}
+
+				$connected_font_data = $this->get_connected_field_font_data(
+					$connected_field_id,
+					(string) $master_font_id,
+					$font_logic,
+					$options_details
+				);
+				if ( null === $connected_font_data ) {
+					continue;
+				}
+
+				$this->persist_option_value(
+					$connected_field_id,
+					$connected_font_data,
+					$options_details[ $connected_field_id ] ?? []
+				);
+				$updated_fields[] = $connected_field_id;
+			}
+		}
+
+		if ( ! empty( $updated_fields ) ) {
+			$this->options->invalidate_all_caches();
+		}
+
+		return array_values( array_unique( $updated_fields ) );
+	}
+
+	/**
+	 * Builds the value for a connected font field from a master font logic entry.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $connected_field_id Connected target option ID.
+	 * @param string $master_font_id     Master Style Manager font option ID.
+	 * @param array  $fonts_logic        Palette font logic for the master font.
+	 * @param array  $options_details    All Style Manager option details.
+	 *
+	 * @return array|null
+	 */
+	private function get_connected_field_font_data( string $connected_field_id, string $master_font_id, array $fonts_logic, array $options_details ): ?array {
+		$connected_field_details = $options_details[ $connected_field_id ] ?? [];
+		if ( ! empty( $fonts_logic['reset'] ) ) {
+			return isset( $connected_field_details['default'] ) && is_array( $connected_field_details['default'] )
+				? $connected_field_details['default']
+				: [];
+		}
+
+		if ( empty( $fonts_logic['font_family'] ) ) {
+			return null;
+		}
+
+		$connected_value = $connected_field_details['value'] ?? $connected_field_details['default'] ?? [];
+		if ( ! is_array( $connected_value ) ) {
+			$connected_value = [];
+		}
+
+		$new_font_data = [
+			'font_family' => $fonts_logic['font_family'],
+		];
+
+		if ( isset( $connected_value['font_size'] ) ) {
+			$new_font_data['font_size'] = FontsHelper::standardizeNumericalValue( $connected_value['font_size'] );
+		}
+
+		$source_font_size_interval = $this->get_connected_fields_font_size_interval( $master_font_id, $options_details );
+		$target_font_size_interval = $this->get_master_font_size_interval( $master_font_id, $options_details );
+		if ( null !== $source_font_size_interval && null !== $target_font_size_interval ) {
+			$this->apply_font_size_interval( $new_font_data, $connected_field_details, $source_font_size_interval, $target_font_size_interval );
+		}
+
+		$this->apply_font_size_multiplier( $new_font_data, $fonts_logic['font_size_multiplier'] ?? null );
+		$this->apply_font_style_intervals( $new_font_data, $fonts_logic );
+		$this->apply_line_height( $new_font_data, $fonts_logic );
+
+		return $new_font_data;
+	}
+
+	/**
+	 * Get the source default font-size range covered by a master font's connected fields.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $master_font_id  Master Style Manager font option ID.
+	 * @param array  $options_details All Style Manager option details.
+	 *
+	 * @return array|null
+	 */
+	private function get_connected_fields_font_size_interval( string $master_font_id, array $options_details ): ?array {
+		if ( empty( $options_details[ $master_font_id ]['connected_fields'] ) || ! is_array( $options_details[ $master_font_id ]['connected_fields'] ) ) {
+			return null;
+		}
+
+		$min_font_size           = PHP_FLOAT_MAX;
+		$max_font_size           = - PHP_FLOAT_MAX;
+		$font_size_unit          = false;
+		$font_size_unit_is_set   = false;
+		$has_consistent_units    = true;
+
+		foreach ( $options_details[ $master_font_id ]['connected_fields'] as $connected_field_id ) {
+			if ( ! is_string( $connected_field_id ) || empty( $options_details[ $connected_field_id ]['default']['font_size'] ) ) {
+				continue;
+			}
+
+			$font_size = FontsHelper::standardizeNumericalValue( $options_details[ $connected_field_id ]['default']['font_size'] );
+			if ( false === $font_size['value'] || ! is_numeric( $font_size['value'] ) ) {
+				continue;
+			}
+
+			if ( $font_size_unit_is_set ) {
+				if ( ! empty( $font_size['unit'] ) && $font_size['unit'] !== $font_size_unit ) {
+					$has_consistent_units = false;
+				}
+			} elseif ( ! empty( $font_size['unit'] ) ) {
+				$font_size_unit        = $font_size['unit'];
+				$font_size_unit_is_set = true;
+			}
+
+			$min_font_size = min( $min_font_size, (float) $font_size['value'] );
+			$max_font_size = max( $max_font_size, (float) $font_size['value'] );
+		}
+
+		if ( ! $has_consistent_units || PHP_FLOAT_MAX === $min_font_size || - PHP_FLOAT_MAX === $max_font_size || $min_font_size > $max_font_size ) {
+			return null;
+		}
+
+		return [ $min_font_size, $max_font_size ];
+	}
+
+	/**
+	 * Get the target font-size interval for a master font from its elevation/pitch values.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $master_font_id  Master Style Manager font option ID.
+	 * @param array  $options_details All Style Manager option details.
+	 *
+	 * @return array|null
+	 */
+	private function get_master_font_size_interval( string $master_font_id, array $options_details ): ?array {
+		$bounds = [
+			'sm_font_primary'   => [ 16, 200 ],
+			'sm_font_secondary' => [ 12, 36 ],
+			'sm_font_body'      => [ 14, 32 ],
+		];
+		if ( ! isset( $bounds[ $master_font_id ] ) ) {
+			return null;
+		}
+
+		$elevation = (float) $this->get_option_detail_value( $master_font_id . '_elevation', $options_details, 0 );
+		$pitch     = (float) $this->get_option_detail_value( $master_font_id . '_pitch', $options_details, 0 );
+		$lower     = $bounds[ $master_font_id ][0];
+		$upper     = $bounds[ $master_font_id ][1];
+		$min       = $lower + ( $upper - $lower ) * ( $elevation / 100 ) * 0.5;
+		$max       = $min + ( $upper - $min ) * $pitch / 100;
+
+		return [ $min, $max ];
+	}
+
+	/**
+	 * Get an option detail's resolved value with default fallback.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $option_id       Option ID.
+	 * @param array  $options_details All Style Manager option details.
+	 * @param mixed  $fallback        Fallback when no value/default exists.
+	 *
+	 * @return mixed
+	 */
+	private function get_option_detail_value( string $option_id, array $options_details, $fallback = null ) {
+		if ( isset( $options_details[ $option_id ]['value'] ) ) {
+			return $options_details[ $option_id ]['value'];
+		}
+
+		if ( isset( $options_details[ $option_id ]['default'] ) ) {
+			return $options_details[ $option_id ]['default'];
+		}
+
+		return $fallback;
+	}
+
+	/**
+	 * Apply the source-to-target font-size interval mapping.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $font_data                   Connected field font data.
+	 * @param array $connected_field_details     Connected field details.
+	 * @param array $source_font_size_interval   Source interval.
+	 * @param array $target_font_size_interval   Target interval.
+	 */
+	private function apply_font_size_interval( array &$font_data, array $connected_field_details, array $source_font_size_interval, array $target_font_size_interval ): void {
+		if ( empty( $font_data['font_size'] ) || false === $font_data['font_size']['value'] || empty( $connected_field_details['default']['font_size'] ) ) {
+			return;
+		}
+
+		$default_font_size = FontsHelper::standardizeNumericalValue( $connected_field_details['default']['font_size'] );
+		if ( false === $default_font_size['value'] || ! is_numeric( $default_font_size['value'] ) ) {
+			return;
+		}
+
+		if ( $source_font_size_interval[1] === $source_font_size_interval[0] ) {
+			$font_data['font_size']['value'] = max(
+				$target_font_size_interval[0],
+				min( $target_font_size_interval[1], (float) $default_font_size['value'] )
+			);
+			return;
+		}
+
+		$font_data['font_size']['value'] = round(
+			(
+				( (float) $default_font_size['value'] - $source_font_size_interval[0] )
+				* ( $target_font_size_interval[1] - $target_font_size_interval[0] )
+				/ ( $source_font_size_interval[1] - $source_font_size_interval[0] )
+			) + $target_font_size_interval[0],
+			1
+		);
+	}
+
+	/**
+	 * Apply a font-size multiplier to connected field data.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $font_data Font data.
+	 * @param mixed $multiplier Multiplier value.
+	 */
+	private function apply_font_size_multiplier( array &$font_data, $multiplier ): void {
+		if ( ! isset( $multiplier ) || empty( $font_data['font_size']['value'] ) || ! is_numeric( $font_data['font_size']['value'] ) ) {
+			return;
+		}
+
+		$multiplier = (float) $multiplier;
+		if ( $multiplier <= 0 ) {
+			$multiplier = 1.0;
+		}
+
+		$font_data['font_size']['value'] = round( (float) $font_data['font_size']['value'] * $multiplier, FontsHelper::FLOAT_PRECISION );
+	}
+
+	/**
+	 * Apply font style intervals to connected field data.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $font_data   Font data.
+	 * @param array $fonts_logic Font logic.
+	 */
+	private function apply_font_style_intervals( array &$font_data, array $fonts_logic ): void {
+		if ( empty( $fonts_logic['font_styles_intervals'] ) || ! is_array( $fonts_logic['font_styles_intervals'] ) || empty( $font_data['font_size']['value'] ) ) {
+			return;
+		}
+
+		$intervals = array_values( $fonts_logic['font_styles_intervals'] );
+		$index     = 0;
+		while (
+			$index < count( $intervals ) - 1
+			&& isset( $intervals[ $index ]['end'] )
+			&& $intervals[ $index ]['end'] <= $font_data['font_size']['value']
+		) {
+			$index ++;
+		}
+
+		$interval = $intervals[ $index ];
+		if ( ! empty( $interval['font_variant'] ) ) {
+			$font_data['font_variant'] = $interval['font_variant'];
+		}
+		if ( ! empty( $interval['letter_spacing'] ) ) {
+			$font_data['letter_spacing'] = FontsHelper::standardizeNumericalValue( $interval['letter_spacing'] );
+		}
+		if ( ! empty( $interval['text_transform'] ) ) {
+			$font_data['text_transform'] = $interval['text_transform'];
+		}
+
+		$this->apply_font_size_multiplier( $font_data, $interval['font_size_multiplier'] ?? null );
+	}
+
+	/**
+	 * Apply logarithmic line-height prediction to connected field data.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $font_data   Font data.
+	 * @param array $fonts_logic Font logic.
+	 */
+	private function apply_line_height( array &$font_data, array $fonts_logic ): void {
+		if ( empty( $fonts_logic['font_size_to_line_height_points'] ) || ! is_array( $fonts_logic['font_size_to_line_height_points'] ) || empty( $font_data['font_size']['value'] ) ) {
+			return;
+		}
+
+		$line_height = $this->predict_logarithmic_value(
+			$fonts_logic['font_size_to_line_height_points'],
+			(float) $font_data['font_size']['value']
+		);
+		if ( null === $line_height ) {
+			return;
+		}
+
+		$font_data['line_height'] = FontsHelper::standardizeNumericalValue( $line_height );
+	}
+
+	/**
+	 * Predict a logarithmic regression value using regression-js' formula.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $points Source points.
+	 * @param float $x      X value.
+	 *
+	 * @return float|null
+	 */
+	private function predict_logarithmic_value( array $points, float $x ): ?float {
+		if ( $x <= 0 ) {
+			return null;
+		}
+
+		$valid_points = array_values( array_filter( $points, static function( $point ): bool {
+			return is_array( $point )
+				&& isset( $point[0], $point[1] )
+				&& is_numeric( $point[0] )
+				&& is_numeric( $point[1] )
+				&& (float) $point[0] > 0;
+		} ) );
+		$count        = count( $valid_points );
+		if ( 2 > $count ) {
+			return null;
+		}
+
+		$sum_log_x          = 0.0;
+		$sum_y_log_x        = 0.0;
+		$sum_y              = 0.0;
+		$sum_log_x_squared  = 0.0;
+		foreach ( $valid_points as $point ) {
+			$log_x              = log( (float) $point[0] );
+			$sum_log_x         += $log_x;
+			$sum_y_log_x       += (float) $point[1] * $log_x;
+			$sum_y             += (float) $point[1];
+			$sum_log_x_squared += pow( $log_x, 2 );
+		}
+
+		$denominator = $count * $sum_log_x_squared - $sum_log_x * $sum_log_x;
+		if ( 0.0 === $denominator ) {
+			return null;
+		}
+
+		$coefficient = round( ( $count * $sum_y_log_x - $sum_y * $sum_log_x ) / $denominator, FontsHelper::FLOAT_PRECISION );
+		$constant    = round( ( $sum_y - $coefficient * $sum_log_x ) / $count, FontsHelper::FLOAT_PRECISION );
+
+		return round( round( $constant + $coefficient * log( $x ), FontsHelper::FLOAT_PRECISION ), FontsHelper::FLOAT_PRECISION );
+	}
+
+	/**
+	 * Persist an option value using the same storage root Options::get() reads.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $option_id      Option ID.
+	 * @param mixed  $value          Value.
+	 * @param array  $option_details Option details.
+	 *
+	 * @return bool
+	 */
+	private function persist_option_value( string $option_id, $value, array $option_details ): bool {
+		$setting_id = ! empty( $option_details['setting_id'] )
+			? (string) $option_details['setting_id']
+			: $this->options->get_options_key() . '[' . $option_id . ']';
+
+		if ( false !== strpos( $setting_id, '::' ) ) {
+			$setting_id = substr( $setting_id, strpos( $setting_id, '::' ) + 2 );
+		}
+
+		$storage_type = isset( $option_details['setting_type'] ) ? (string) $option_details['setting_type'] : '';
+		if ( 'option' === $storage_type && false === strpos( $setting_id, '[' ) ) {
+			return update_option( $setting_id, $value );
+		}
+
+		if ( preg_match( '/^(?P<root>[^\[]+)\[(?P<key>[^\]]+)\]$/', $setting_id, $matches ) ) {
+			$root_key = $matches['root'];
+			$sub_key  = $matches['key'];
+
+			if ( 'option' === $storage_type || ( '' === $storage_type && 'option' === $this->options->get_values_store_mod() ) ) {
+				$root = get_option( $root_key, [] );
+				if ( ! is_array( $root ) ) {
+					$root = [];
+				}
+
+				$root[ $sub_key ] = $value;
+
+				return update_option( $root_key, $root );
+			}
+
+			$root = get_theme_mod( $root_key, [] );
+			if ( ! is_array( $root ) ) {
+				$root = [];
+			}
+
+			$root[ $sub_key ] = $value;
+			set_theme_mod( $root_key, $root );
+
+			return true;
+		}
+
+		return update_option( $setting_id, $value );
+	}
+
+	/**
 	 * Determine if the selected font palette has been customized and remember this in an option.
 	 *
 	 * @since 2.0.0

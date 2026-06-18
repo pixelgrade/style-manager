@@ -90,6 +90,17 @@ class Options extends AbstractHookProvider {
 	}
 
 	/**
+	 * Get the configured storage mode for theme-controlled values.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return string
+	 */
+	public function get_values_store_mod(): string {
+		return (string) $this->plugin_settings->get( 'values_store_mod' );
+	}
+
+	/**
 	 * Register hooks.
 	 *
 	 * @since 2.0.0
@@ -733,6 +744,8 @@ class Options extends AbstractHookProvider {
 	 * @since 2.0.0
 	 */
 	protected function invalidate_details_cache() {
+		\delete_option( self::MINIMAL_DETAILS_CACHE_KEY );
+		\delete_option( self::EXTRA_DETAILS_CACHE_KEY );
 		\update_option( self::DETAILS_CACHE_TIMESTAMP_KEY, time() - 24 * HOUR_IN_SECONDS, false );
 
 		$this->clear_locally_cached_data();

@@ -289,6 +289,7 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['provider.headless_customizer'],
 				$container['screen.edit_with_blocks'],
 				$container['customize.fonts'],
+				$container['customize.font_palettes'],
 				$container['hooks.frontend_output']
 			);
 		};

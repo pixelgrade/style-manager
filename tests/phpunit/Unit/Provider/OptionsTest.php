@@ -210,6 +210,36 @@ class OptionsTest extends TestCase {
 			'A non-empty regeneration SHOULD persist the cache.'
 		);
 	}
+
+	public function test_invalidate_all_caches_removes_cached_details_rows(): void {
+		if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+			define( 'HOUR_IN_SECONDS', 3600 );
+		}
+
+		$deleted_keys = [];
+
+		Functions\when( 'update_option' )->justReturn( true );
+		Functions\when( 'delete_option' )->alias( static function( string $key ) use ( &$deleted_keys ) {
+			$deleted_keys[] = $key;
+
+			return true;
+		} );
+
+		$options = new TestOptions( $this->createMock( PluginSettings::class ) );
+
+		$options->invalidate_all_caches();
+
+		$this->assertContains(
+			Options::MINIMAL_DETAILS_CACHE_KEY,
+			$deleted_keys,
+			'Invalidation must remove minimal details so frontend requests cannot reuse stale resolved values.'
+		);
+		$this->assertContains(
+			Options::EXTRA_DETAILS_CACHE_KEY,
+			$deleted_keys,
+			'Invalidation must remove extra details together with the minimal cache.'
+		);
+	}
 }
 
 class TestOptions extends Options {

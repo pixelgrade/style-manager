@@ -11,6 +11,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Provider;
 
+use Pixelgrade\StyleManager\Customize\FontPalettes;
 use Pixelgrade\StyleManager\Customize\Fonts;
 use Pixelgrade\StyleManager\Screen\EditWithBlocks;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
@@ -44,6 +45,13 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	protected Fonts $sm_fonts;
 
 	/**
+	 * Font palettes.
+	 *
+	 * @var FontPalettes
+	 */
+	protected FontPalettes $font_palettes;
+
+	/**
 	 * Frontend output provider.
 	 *
 	 * @var FrontendOutput
@@ -54,17 +62,20 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 * @param HeadlessCustomizer $headless_customizer Headless Customizer.
 	 * @param EditWithBlocks     $edit_with_blocks    Edit with blocks screen.
 	 * @param Fonts              $sm_fonts            Style Manager Fonts.
+	 * @param FontPalettes       $font_palettes       Font palettes.
 	 * @param FrontendOutput     $frontend_output     Frontend output.
 	 */
 	public function __construct(
 		HeadlessCustomizer $headless_customizer,
 		EditWithBlocks $edit_with_blocks,
 		Fonts $sm_fonts,
+		FontPalettes $font_palettes,
 		FrontendOutput $frontend_output
 	) {
 		$this->headless_customizer = $headless_customizer;
 		$this->edit_with_blocks    = $edit_with_blocks;
 		$this->sm_fonts            = $sm_fonts;
+		$this->font_palettes       = $font_palettes;
 		$this->frontend_output     = $frontend_output;
 	}
 
@@ -181,6 +192,8 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 			return $result;
 		}
 
+		$this->apply_post_save_side_effects( $result['saved'] );
+
 		$record          = $this->get_settings_record( (string) $request->get_param( 'id' ) );
 		$record['saved'] = $result['saved'];
 
@@ -193,6 +206,21 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 		}
 
 		return rest_ensure_response( $record );
+	}
+
+	/**
+	 * Applies server-side effects that the Customizer UI used to perform.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string[] $saved_setting_ids Setting IDs saved by the Site Editor endpoint.
+	 */
+	protected function apply_post_save_side_effects( array $saved_setting_ids ): void {
+		if ( ! in_array( FontPalettes::SM_FONT_PALETTE_OPTION_KEY, $saved_setting_ids, true ) ) {
+			return;
+		}
+
+		$this->font_palettes->apply_current_font_palette_to_connected_fields();
 	}
 
 	/**
