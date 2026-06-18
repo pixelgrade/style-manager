@@ -89,12 +89,9 @@ Style Manager 2.3 brings the styling experience into the Site Editor, including 
 
 == Screenshots ==
 
-1. Control your site's style from the Site Editor and preview changes before saving.
-2. Choose a palette and let compatible themes apply coherent color roles across the site.
-3. Shape the site's typography from a focused set of design decisions.
-4. Tune layout feel, rhythm, and supported theme refinements from one styling flow.
-5. Review unsaved design changes on the front end before publishing them.
-6. Context-aware palettes help compatible blocks adapt without manual per-block styling.
+1. Preview the Color System and see generated color roles built from your brand colors.
+2. Preview the Typography system with heading, body, button, and navigation type roles.
+3. Tune Spacing and rhythm with live visual feedback for container width, content inset, and distance between elements.
 
 == Credits ==
 
