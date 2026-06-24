@@ -634,6 +634,44 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	/**
+	 * Drop cloud font palettes whose catalog tier the site is not entitled to.
+	 *
+	 * Palettes are tagged free|pro by the cloud (pixelgrade-cloud). The free tier
+	 * is available to everyone; Pixelgrade Plus widens the allowed tiers through
+	 * the `style_manager/cloud_font_palettes_allowed_tiers` filter. Palettes
+	 * without a tier default to free, so bundled defaults are always kept.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $config Font palettes keyed by id.
+	 *
+	 * @return array
+	 */
+	protected function filter_palettes_by_allowed_tier( array $config ): array {
+		/**
+		 * Filters the font-palette catalog tiers the site may use. Defaults to the
+		 * free tier; Pixelgrade Plus adds 'pro' when the site is entitled.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param string[] $allowed_tiers Allowed tier slugs.
+		 */
+		$allowed = apply_filters( 'style_manager/cloud_font_palettes_allowed_tiers', [ 'free' ] );
+		if ( ! is_array( $allowed ) || empty( $allowed ) ) {
+			$allowed = [ 'free' ];
+		}
+
+		foreach ( $config as $palette_id => $palette_config ) {
+			$tier = ( is_array( $palette_config ) && isset( $palette_config['tier'] ) ) ? $palette_config['tier'] : 'free';
+			if ( ! in_array( $tier, $allowed, true ) ) {
+				unset( $config[ $palette_id ] );
+			}
+		}
+
+		return $config;
+	}
+
+	/**
 	 * Get the font palettes configuration.
 	 *
 	 * @since 2.0.0
@@ -647,6 +685,10 @@ class FontPalettes extends AbstractHookProvider {
 		if ( is_null( $config ) ) {
 			$config = $this->get_default_config();
 		}
+
+		// Drop palettes whose catalog tier the site is not entitled to (default: free only).
+		// Pixelgrade Plus widens the allowed tiers when entitled.
+		$config = $this->filter_palettes_by_allowed_tier( $config );
 
 		$preprocessed_config = $this->preprocess_config( $config );
 		$filtered_config     = apply_filters( 'style_manager/get_font_palettes', $config );
