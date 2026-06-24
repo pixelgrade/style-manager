@@ -10,6 +10,7 @@ const files = [
   'customizer-preview',
   'customizer-search',
   'dark-mode',
+  'editor-launcher',
   'lab',
   'lab-showcase',
   'settings',

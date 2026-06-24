@@ -1,0 +1,40 @@
+.style-manager-editor-launcher {
+	padding: 16px;
+}
+
+.style-manager-editor-launcher__card {
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.style-manager-editor-launcher__eyebrow {
+	margin: 0 0 8px;
+	color: #646970;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+.style-manager-editor-launcher__title {
+	margin: 0 0 8px;
+	color: #1d2327;
+	font-size: 16px;
+	line-height: 1.4;
+}
+
+.style-manager-editor-launcher__description {
+	margin: 0 0 16px;
+	color: #50575e;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.style-manager-editor-launcher__error {
+	margin: 12px 0 0;
+	color: #b32d2e;
+	font-size: 12px;
+	line-height: 1.5;
+}

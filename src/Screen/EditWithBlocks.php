@@ -15,8 +15,11 @@ use Pixelgrade\StyleManager\Provider\FrontendOutput;
 use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Customize\Fonts;
+use Pixelgrade\StyleManager\Utils\ScriptsEnqueue;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
+use function Pixelgrade\StyleManager\is_sm_supported;
+use const Pixelgrade\StyleManager\VERSION;
 
 /**
  * Provider class for screens when editing posts/pages with the block editor.
@@ -389,6 +392,381 @@ class EditWithBlocks extends AbstractHookProvider {
 
 	protected function enqueue_style_manager_scripts() {
 		wp_enqueue_style( 'pixelgrade_style_manager-sm-colors-custom-properties' );
+		$this->enqueue_style_manager_launcher();
+	}
+
+	/**
+	 * Enqueue the lightweight Style Manager launcher for post editor screens.
+	 *
+	 * @since 2.3.0
+	 */
+	protected function enqueue_style_manager_launcher() {
+		if ( ! $this->should_enqueue_style_manager_launcher() ) {
+			return;
+		}
+
+		$context = $this->get_current_style_manager_launcher_context();
+		$handle  = 'pixelgrade_style_manager-editor-launcher';
+
+		wp_register_script(
+			$handle,
+			$this->plugin->get_url( 'dist/js/editor-launcher.js' ),
+			[
+				'wp-components',
+				'wp-element',
+				'wp-plugins',
+				'wp-editor',
+				'wp-data',
+			],
+			VERSION,
+			true
+		);
+
+		wp_add_inline_script(
+			$handle,
+			ScriptsEnqueue::getlocalizeToWindowScript(
+				'_styleManagerEditorLauncher',
+				$this->get_style_manager_launcher_payload( $context['post_id'], $context['post_type'] )
+			),
+			'before'
+		);
+
+		wp_enqueue_script( $handle );
+
+		$rtl_suffix = is_rtl() ? '-rtl' : '';
+		wp_register_style(
+			$handle,
+			$this->plugin->get_url( 'dist/js/editor-launcher' . $rtl_suffix . '.css' ),
+			[ 'wp-components' ],
+			VERSION
+		);
+		wp_enqueue_style( $handle );
+	}
+
+	/**
+	 * Determine whether the lightweight launcher belongs on the current screen.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return bool
+	 */
+	protected function should_enqueue_style_manager_launcher(): bool {
+		if ( ! $this->is_admin_post_block_editor_screen() ) {
+			return false;
+		}
+
+		if ( ! is_sm_supported() ) {
+			return false;
+		}
+
+		return current_user_can( 'edit_theme_options' );
+	}
+
+	/**
+	 * Determine whether the current admin screen is a post editor block editor.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return bool
+	 */
+	protected function is_admin_post_block_editor_screen(): bool {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$current_screen = get_current_screen();
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		if ( $this->is_site_editor_screen( $current_screen ) ) {
+			return false;
+		}
+
+		return method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor();
+	}
+
+	/**
+	 * Determine whether a given screen is the Site Editor.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param object|null $screen Admin screen object.
+	 *
+	 * @return bool
+	 */
+	protected function is_site_editor_screen( $screen = null ): bool {
+		if ( null === $screen ) {
+			if ( ! function_exists( 'get_current_screen' ) ) {
+				return false;
+			}
+
+			$screen = get_current_screen();
+		}
+
+		return (bool) $screen && isset( $screen->id ) && in_array( $screen->id, [ 'site-editor', 'site-editor-v2' ], true );
+	}
+
+	/**
+	 * Get the post editor context needed by the launcher.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return array{post_id:int,post_type:string}
+	 */
+	protected function get_current_style_manager_launcher_context(): array {
+		$post_id   = 0;
+		$post_type = '';
+		$is_new    = $this->is_new_post_screen();
+
+		if ( function_exists( 'get_current_screen' ) ) {
+			$current_screen = get_current_screen();
+			if ( $current_screen && ! empty( $current_screen->post_type ) ) {
+				$post_type = $this->normalize_post_type( (string) $current_screen->post_type );
+			}
+		}
+
+		if ( ! $is_new && isset( $GLOBALS['post'] ) && is_object( $GLOBALS['post'] ) ) {
+			if ( ! empty( $GLOBALS['post']->ID ) ) {
+				$post_id = absint( $GLOBALS['post']->ID );
+			}
+
+			if ( '' === $post_type && ! empty( $GLOBALS['post']->post_type ) ) {
+				$post_type = $this->normalize_post_type( (string) $GLOBALS['post']->post_type );
+			}
+		}
+
+		if ( ! $is_new && 0 === $post_id && isset( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only editor context.
+			$post_id = absint( wp_unslash( $_GET['post'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by absint().
+		}
+
+		if ( '' === $post_type && 0 < $post_id && function_exists( 'get_post_type' ) ) {
+			$post_type = $this->normalize_post_type( (string) get_post_type( $post_id ) );
+		}
+
+		if ( '' === $post_type && isset( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only editor context.
+			$post_type = $this->normalize_post_type( (string) wp_unslash( $_GET['post_type'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by normalize_post_type().
+		}
+
+		return [
+			'post_id'   => $post_id,
+			'post_type' => $post_type,
+		];
+	}
+
+	/**
+	 * Determine whether the request is for a new post editor screen.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return bool
+	 */
+	protected function is_new_post_screen(): bool {
+		global $pagenow;
+
+		return isset( $pagenow ) && 'post-new.php' === $pagenow;
+	}
+
+	/**
+	 * Build the launcher payload localized to the editor bundle.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int    $post_id   Current post ID, or zero for unsaved entries.
+	 * @param string $post_type Current post type.
+	 *
+	 * @return array
+	 */
+	protected function get_style_manager_launcher_payload( int $post_id = 0, string $post_type = '' ): array {
+		return [
+			'targetUrl' => esc_url_raw( $this->resolve_style_manager_launcher_target_url( $post_id, $post_type ) ),
+			'icon'      => 'admin-customizer',
+			'copy'      => [
+				'title'       => esc_html__( 'Style Manager', '__plugin_txtd' ),
+				'menuLabel'   => esc_html__( 'Style Manager', '__plugin_txtd' ),
+				'eyebrow'     => esc_html__( 'Site-wide design', '__plugin_txtd' ),
+				'heading'     => esc_html__( 'Open Style Manager', '__plugin_txtd' ),
+				'description' => esc_html__( 'Colors, typography and spacing are global — edited in the Site Editor.', '__plugin_txtd' ),
+				'buttonLabel' => esc_html__( 'Open Style Manager', '__plugin_txtd' ),
+				'savingLabel' => esc_html__( 'Saving changes...', '__plugin_txtd' ),
+				'saveError'   => esc_html__( 'Save the current entry, then open Style Manager again.', '__plugin_txtd' ),
+			],
+		];
+	}
+
+	/**
+	 * Resolve the Site Editor URL the launcher should navigate to.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int    $post_id   Current post ID, or zero for unsaved entries.
+	 * @param string $post_type Current post type.
+	 *
+	 * @return string
+	 */
+	protected function resolve_style_manager_launcher_target_url( int $post_id = 0, string $post_type = '' ): string {
+		$post_type = $this->normalize_post_type( $post_type );
+
+		if ( 0 < $post_id && $this->is_site_editor_editable_post_type( $post_type ) ) {
+			return $this->build_site_editor_url( [
+				'postType'   => $post_type,
+				'postId'     => $post_id,
+				'canvas'     => 'edit',
+				'sm-sidebar' => '1',
+			] );
+		}
+
+		$template_slug = $this->get_rendering_template_slug( $post_type );
+		if ( '' !== $template_slug ) {
+			$template_post_id = $this->get_site_editor_template_post_id( $template_slug );
+
+			if ( '' !== $template_post_id ) {
+				return $this->build_site_editor_url( [
+					'postType'   => 'wp_template',
+					'postId'     => $template_post_id,
+					'canvas'     => 'edit',
+					'sm-sidebar' => '1',
+				] );
+			}
+		}
+
+		return $this->build_site_editor_url( [
+			'canvas'     => 'edit',
+			'sm-sidebar' => '1',
+		] );
+	}
+
+	/**
+	 * Determine whether a post type can be opened as current content in the Site Editor.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $post_type Post type.
+	 *
+	 * @return bool
+	 */
+	protected function is_site_editor_editable_post_type( string $post_type ): bool {
+		if ( '' === $post_type || ! function_exists( 'get_post_type_object' ) || ! function_exists( 'post_type_supports' ) ) {
+			return false;
+		}
+
+		// WordPress 7.0 Site Editor content routes only resolve pages and posts.
+		if ( ! in_array( $post_type, [ 'page', 'post' ], true ) ) {
+			return false;
+		}
+
+		$post_type_object = get_post_type_object( $post_type );
+		if ( ! is_object( $post_type_object ) ) {
+			return false;
+		}
+
+		return ! empty( $post_type_object->public )
+		       && ! empty( $post_type_object->show_in_rest )
+		       && post_type_supports( $post_type, 'editor' );
+	}
+
+	/**
+	 * Get the template slug that normally renders a post type.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $post_type Post type.
+	 *
+	 * @return string
+	 */
+	protected function get_rendering_template_slug( string $post_type ): string {
+		if ( '' === $post_type ) {
+			return '';
+		}
+
+		if ( 'page' === $post_type ) {
+			return 'page';
+		}
+
+		if ( 'post' === $post_type ) {
+			return 'single';
+		}
+
+		return 'single-' . $post_type;
+	}
+
+	/**
+	 * Build a Site Editor template post ID.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $template_slug Template slug.
+	 *
+	 * @return string
+	 */
+	protected function get_site_editor_template_post_id( string $template_slug ): string {
+		if ( '' === $template_slug || ! function_exists( 'get_stylesheet' ) ) {
+			return '';
+		}
+
+		$stylesheet = $this->normalize_post_type( (string) get_stylesheet() );
+		if ( '' === $stylesheet ) {
+			return '';
+		}
+
+		$template_slugs = [ $template_slug ];
+		if ( 0 === strpos( $template_slug, 'single-' ) ) {
+			$template_slugs[] = 'single';
+		}
+
+		foreach ( array_unique( $template_slugs ) as $candidate_slug ) {
+			$template_post_id = $stylesheet . '//' . $candidate_slug;
+			if ( $this->is_site_editor_template_available( $template_post_id ) ) {
+				return $template_post_id;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Determine whether the Site Editor can load a template post ID.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $template_post_id Template post ID.
+	 *
+	 * @return bool
+	 */
+	protected function is_site_editor_template_available( string $template_post_id ): bool {
+		if ( ! function_exists( 'get_block_template' ) ) {
+			return true;
+		}
+
+		return (bool) get_block_template( $template_post_id, 'wp_template' );
+	}
+
+	/**
+	 * Build a Site Editor admin URL.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $args Query arguments.
+	 *
+	 * @return string
+	 */
+	protected function build_site_editor_url( array $args ): string {
+		return admin_url( 'site-editor.php?' . http_build_query( $args, '', '&', PHP_QUERY_RFC3986 ) );
+	}
+
+	/**
+	 * Normalize a post type or template owner key.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $post_type Post type.
+	 *
+	 * @return string
+	 */
+	protected function normalize_post_type( string $post_type ): string {
+		$post_type = strtolower( trim( $post_type ) );
+
+		return preg_replace( '/[^a-z0-9_-]/', '', $post_type ) ?? '';
 	}
 
 	public function add_sm_dark_classname_to_body( $classname ) {

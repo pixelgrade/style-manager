@@ -14,6 +14,7 @@ import _ from 'lodash';
 import './style.scss';
 
 import { createCustomizeApi, createContainerObject } from './customize-api';
+import { SECTION_PREVIEW_MODES, parseSiteEditorDeepLink } from './deep-link';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
 import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay, ContextualColorsOverlay } from '../customizer/components';
@@ -938,13 +939,6 @@ const usePreviewMode = () => {
  * intrinsically experiential, so its preview IS the Live Site flow with a
  * motion-specific hint (principle 6 in the section-preview principles doc).
  */
-const SECTION_PREVIEW_MODES = {
-  sm_color_palettes_section: { mode: 'colors' },
-  sm_font_palettes_section: { mode: 'typography' },
-  sm_spacing_section: { mode: 'spacing' },
-  sm_motion_section: { mode: 'site', context: 'motion' },
-};
-
 /**
  * The overlay host, mounted on document.body (the editor header and canvas
  * containers clip fixed descendants). Renders only the active overlay plus a
@@ -1349,15 +1343,14 @@ const registerSidebar = () => {
 };
 
 /**
- * Deep links: site-editor.php?canvas=edit&sm-sidebar=1[&sm-section=<id>]
- * opens the Style Manager sidebar (and focuses a section). Used by the
- * Styles-route handoff card.
+ * Deep links: site-editor.php?canvas=edit&sm-sidebar=1[&sm-section=<id>][&sm-preview=1]
+ * opens the Style Manager sidebar, focuses a section, and optionally opens
+ * the section preview. Used by the Styles-route handoff card.
  */
 const handleDeepLink = () => {
-  const params = new URLSearchParams( window.location.search );
-  const targetSection = params.get( 'sm-section' );
+  const { shouldOpenSidebar, targetSection, previewEntry } = parseSiteEditorDeepLink( window.location.search );
 
-  if ( ! params.get( 'sm-sidebar' ) && ! targetSection ) {
+  if ( ! shouldOpenSidebar ) {
     return;
   }
 
@@ -1370,6 +1363,9 @@ const handleDeepLink = () => {
   const tryFocus = attempts => {
     if ( engine && engine.booted && engine.api.section( targetSection ) ) {
       engine.api.section( targetSection, section => section.focus() );
+      if ( previewEntry ) {
+        setPreviewMode( previewEntry.mode, previewEntry.context || null );
+      }
       return;
     }
     if ( attempts > 0 ) {
