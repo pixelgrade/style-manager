@@ -120,6 +120,9 @@ When fetching design assets, the plugin sends: your site URL, whether the site u
 
 == Changelog ==
 
+= 2.3.0-beta2 =
+* Fix: resolve a fresh-install fatal — building the color-palette config could recurse without bound when no Style Manager configuration is stored yet (the palette fallback re-entered option-details during the filter-fields build), exhausting memory on activation. Supersedes 2.3.0-beta1, which is affected.
+
 = 2.3.0 =
 * New: the full Style Manager experience runs natively inside the Site Editor: colors, typography, spacing, tweaks, and motion, with live preview into the editor canvas and saving through the editor's own Save flow.
 * New: section previews: the color system board, the type specimen, a new spacing and rhythm board, and a guided live-site flow for motion with per-behavior replays.
