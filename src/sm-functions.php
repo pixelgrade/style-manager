@@ -171,10 +171,13 @@ function style_manager_get_color_switch_dark_config( $label, $selector, $default
  *
  * @return string
  */
-function style_manager_color_switch_dark_cb( bool $value, string $selector, string $property ): string {
+function style_manager_color_switch_dark_cb( $value, string $selector, string $property ): string {
 	$color = 'fg1';
 
-	if ( $value === true ) {
+	// Tolerate loose toggle values: the saved option can arrive as '' / '1' / 0 (e.g. from an
+	// imported changeset or JS) instead of a strict bool. Under the caller's strict_types a
+	// non-bool would TypeError here and blank the whole front end during wp_head.
+	if ( filter_var( $value, FILTER_VALIDATE_BOOLEAN ) ) {
 		$color = 'accent';
 	}
 
@@ -190,10 +193,13 @@ function style_manager_color_switch_dark_cb( bool $value, string $selector, stri
  *
  * @return string
  */
-function style_manager_color_switch_darker_cb( bool $value, string $selector, string $property ): string {
+function style_manager_color_switch_darker_cb( $value, string $selector, string $property ): string {
 	$color = 'fg2';
 
-	if ( $value === true ) {
+	// Tolerate loose toggle values: the saved option can arrive as '' / '1' / 0 (e.g. from an
+	// imported changeset or JS) instead of a strict bool. Under the caller's strict_types a
+	// non-bool would TypeError here and blank the whole front end during wp_head.
+	if ( filter_var( $value, FILTER_VALIDATE_BOOLEAN ) ) {
 		$color = 'accent';
 	}
 
