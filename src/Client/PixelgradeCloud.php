@@ -218,6 +218,35 @@ class PixelgradeCloud implements CloudInterface {
 			$theme_data['textdomain'] = $current_theme->get('TextDomain');
 		}
 
+		// Include the theme's WUpdates identity (id + type) so the cloud can match
+		// design assets by `active_theme_hashid`, not just by slug. Pixelgrade themes
+		// register this through the shared `wupdates_gather_ids` filter; it used to
+		// reach the cloud via Pixelgrade Care, which the Anima LT + Plus stack no
+		// longer ships. Without it, only assets whose conditions also match by slug
+		// are served. The `style_manager/get_theme_data` filter below still wins.
+		$wupdates_ids = apply_filters( 'wupdates_gather_ids', [] );
+		if ( is_array( $wupdates_ids ) ) {
+			$theme_wupdates = [];
+			if ( ! empty( $wupdates_ids[ $slug ]['id'] ) ) {
+				$theme_wupdates = $wupdates_ids[ $slug ];
+			} else {
+				// Fall back to the first theme-type entry (themes register under their directory slug).
+				foreach ( $wupdates_ids as $entry ) {
+					if ( ! empty( $entry['id'] ) && ! empty( $entry['type'] ) && 0 === strpos( $entry['type'], 'theme' ) ) {
+						$theme_wupdates = $entry;
+						break;
+					}
+				}
+			}
+
+			if ( ! empty( $theme_wupdates['id'] ) ) {
+				$theme_data['wupdates'] = [
+					'id'   => $theme_wupdates['id'],
+					'type' => ! empty( $theme_wupdates['type'] ) ? $theme_wupdates['type'] : 'theme',
+				];
+			}
+		}
+
 		return apply_filters( 'style_manager/get_theme_data', $theme_data );
 	}
 
