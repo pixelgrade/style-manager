@@ -184,9 +184,9 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function handle_save_settings_record( \WP_REST_Request $request ) {
-		$values = $request->get_param( 'settings' );
+		$values = $this->strip_locked_premium_settings( (array) $request->get_param( 'settings' ) );
 
-		$result = $this->headless_customizer->save( (array) $values );
+		$result = $this->headless_customizer->save( $values );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -206,6 +206,38 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 		}
 
 		return rest_ensure_response( $record );
+	}
+
+	/**
+	 * The real Plus gate: when the advanced controls are locked (no Pixelgrade Plus entitlement),
+	 * strip the premium palette-structure settings from what gets persisted, keeping every other
+	 * setting. Free users can fully USE the controls as a live trial — they just can't SAVE the
+	 * premium settings, so trial changes revert to last-saved on reload.
+	 *
+	 * Server-side enforcement is intrinsic — never client-trusted. The premium id list is the single
+	 * source of truth shared with the UI gating (\Pixelgrade\StyleManager\plus_gated_setting_ids()).
+	 *
+	 * @since 2.2.15
+	 *
+	 * @param array $values Setting id => value map submitted by the editor.
+	 *
+	 * @return array The filtered values to persist.
+	 */
+	protected function strip_locked_premium_settings( array $values ): array {
+		if ( ! \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
+			return $values;
+		}
+
+		$premium_ids = \Pixelgrade\StyleManager\plus_gated_setting_ids();
+		if ( empty( $premium_ids ) ) {
+			return $values;
+		}
+
+		foreach ( $premium_ids as $premium_id ) {
+			unset( $values[ $premium_id ] );
+		}
+
+		return $values;
 	}
 
 	/**

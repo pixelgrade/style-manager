@@ -29,6 +29,57 @@ class ColorPalettes extends AbstractHookProvider {
 	const SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY = 'sm_is_custom_color_palette';
 
 	/**
+	 * The Fine-tune section field ids, in display order.
+	 *
+	 * This is the canonical, single source of truth for the Fine-tune controls. It is consumed both
+	 * to register the Fine-tune section (see add_fine_tune_palette_section()) and — via the persisted
+	 * subset returned by get_premium_setting_ids() — to gate + strip the premium palette-structure
+	 * settings on save when Pixelgrade Plus is absent (see \Pixelgrade\StyleManager\plus_gated_setting_ids()).
+	 *
+	 * Items prefixed `sm_separator_` / `sm_*_intro` are presentational, not persisted settings.
+	 *
+	 * @since 2.2.15
+	 *
+	 * @var string[]
+	 */
+	const FINE_TUNE_PALETTE_FIELDS = [
+		'sm_color_fine_tune_intro',
+		// Presets: the starting point — changing any control switches to Custom.
+		'sm_color_fine_tune_presets',
+		// Structure: the ramp's resolution and where it starts.
+		'sm_separator_2_0',
+		'sm_color_grades_number',
+		'sm_site_color_variation',
+		// Contrast & balance: the ramp's spread and its light/dark bias.
+		'sm_separator_2_1',
+		'sm_potential_color_contrast',
+		'sm_color_grade_balancer',
+		'sm_elements_color_contrast',
+		// Color promotion: force pure white / black as ramp anchors.
+		'sm_separator_2_2',
+		'sm_color_promotion_brand',
+		'sm_color_promotion_white',
+		'sm_color_promotion_black',
+	];
+
+	/**
+	 * Return the persisted (savable) subset of the Fine-tune fields.
+	 *
+	 * Excludes presentational entries (intros, separators) that are never persisted settings, so the
+	 * result is the canonical set of premium palette-structure setting ids to gate + strip on save.
+	 *
+	 * @since 2.2.15
+	 *
+	 * @return string[]
+	 */
+	public static function get_premium_setting_ids(): array {
+		return array_values( array_filter( self::FINE_TUNE_PALETTE_FIELDS, static function ( $field_id ) {
+			return 0 !== strpos( $field_id, 'sm_separator_' )
+			       && false === strpos( $field_id, '_intro' );
+		} ) );
+	}
+
+	/**
 	 * Design assets.
 	 *
 	 * @var DesignAssets
@@ -229,33 +280,17 @@ class ColorPalettes extends AbstractHookProvider {
 	}
 
 	protected function add_fine_tune_palette_section( array $config ): array {
-		if ( ! advanced_style_manager_controls_are_unlocked() ) {
-			return $config;
-		}
+		// Always register the Fine-tune section so the editor can present it inline as a live trial
+		// (controls stay fully interactive) with a gentle Plus banner rather than hiding it. The locked
+		// state + trial metadata are applied to the Site Editor payload in
+		// Screen\SiteEditor::apply_plus_gating(); saving the premium settings is gated server-side.
 
 		// Order the Fine-tune section by what each control shapes: presets lead
 		// (they write every control below at once), then Structure, then
 		// Contrast & balance, then Color promotion. The Site Editor draws the
 		// group titles/dividers from these anchors (see SiteEditor.php).
-		$fine_tune_palette_fields = [
-			'sm_color_fine_tune_intro',
-			// Presets: the starting point — changing any control switches to Custom.
-			'sm_color_fine_tune_presets',
-			// Structure: the ramp's resolution and where it starts.
-			'sm_separator_2_0',
-			'sm_color_grades_number',
-			'sm_site_color_variation',
-			// Contrast & balance: the ramp's spread and its light/dark bias.
-			'sm_separator_2_1',
-			'sm_potential_color_contrast',
-			'sm_color_grade_balancer',
-			'sm_elements_color_contrast',
-			// Color promotion: force pure white / black as ramp anchors.
-			'sm_separator_2_2',
-			'sm_color_promotion_brand',
-			'sm_color_promotion_white',
-			'sm_color_promotion_black',
-		];
+		// Single source of truth: self::FINE_TUNE_PALETTE_FIELDS.
+		$fine_tune_palette_fields = self::FINE_TUNE_PALETTE_FIELDS;
 
 		$fine_tune_palette_section = [
 			'title'      => esc_html__( 'Fine-tune color palette', '__plugin_txtd' ),

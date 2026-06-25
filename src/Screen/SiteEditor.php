@@ -350,8 +350,13 @@ class SiteEditor extends AbstractHookProvider {
 		$theme_colors_group_header = $this->merge_theme_colors_section_into_usage_section( $structure );
 		$section_group_headers     = $this->get_site_editor_section_group_headers( $theme_colors_group_header );
 
+		// Tag Plus-gated sections/controls so the sidebar can present them inline as a live trial
+		// (controls stay interactive) with a gentle upsell instead of hiding them.
+		$structure = $this->apply_plus_gating( $structure );
+
 		return [
 			'structure'          => $structure,
+			'plus'               => $this->get_plus_payload(),
 			// Mirrors the parts of _wpCustomizeSettings the SM engine reads.
 			// Note: `google_fonts_opts` is deliberately NOT shipped — the ~96 KB
 			// of <option> markup is synthesized client-side from the
@@ -421,6 +426,112 @@ class SiteEditor extends AbstractHookProvider {
 			 * the Live Site iframe reads that for frontend rules. See #132/#133.
 			 */
 			'editorCssSelectors' => $this->get_editor_css_selector_overrides( $localized ),
+		];
+	}
+
+	/**
+	 * Tag Plus-gated sections/controls in the structure with `gate` + `locked` so the Site Editor
+	 * sidebar can present them inline as a live trial (controls stay interactive) with a gentle
+	 * upsell. Fail-closed: locked unless Pixelgrade Plus grants the
+	 * `advanced_style_manager_controls` entitlement.
+	 *
+	 * @param array $structure
+	 *
+	 * @return array
+	 */
+	protected function apply_plus_gating( array $structure ): array {
+		$locked = \Pixelgrade\StyleManager\plus_advanced_controls_locked();
+
+		/**
+		 * Map of section_id / control_id => gate key (currently only 'plus'). Companions/themes can
+		 * extend the set of color/typography objects presented behind Pixelgrade Plus.
+		 *
+		 * @param array $gated
+		 */
+		$gated = apply_filters( 'style_manager/plus_gated_objects', [
+			'sm_fine_tune_color_palette_section' => 'plus', // the whole Fine-tune tab
+			'sm_colorize_elements_button'        => 'plus', // colorize elements one by one
+		] );
+
+		if ( empty( $gated ) || empty( $structure['sections'] ) || ! is_array( $structure['sections'] ) ) {
+			return $structure;
+		}
+
+		foreach ( $structure['sections'] as &$section ) {
+			if ( isset( $section['id'], $gated[ $section['id'] ] ) ) {
+				$section['gate']   = $gated[ $section['id'] ];
+				$section['locked'] = $locked;
+			}
+
+			if ( empty( $section['controls'] ) || ! is_array( $section['controls'] ) ) {
+				continue;
+			}
+
+			foreach ( $section['controls'] as &$control ) {
+				if ( empty( $control['id'] ) ) {
+					continue;
+				}
+
+				// Control ids carry a `_control` suffix (and theme settings are bracket-wrapped, e.g.
+				// `anima_options[sm_x]_control`); the gated map keys on bare setting ids. Match either
+				// the literal control id or its underlying setting id.
+				$control_id = (string) $control['id'];
+				$setting_id = $this->control_id_to_setting_id( $control_id );
+
+				$gate_key = $gated[ $control_id ] ?? ( $gated[ $setting_id ] ?? null );
+				if ( null !== $gate_key ) {
+					$control['gate']   = $gate_key;
+					$control['locked'] = $locked;
+				}
+			}
+			unset( $control );
+		}
+		unset( $section );
+
+		return $structure;
+	}
+
+	/**
+	 * Reduce a rendered Customizer control id to its underlying setting id.
+	 *
+	 * Strips the trailing `_control` and unwraps a `prefix[setting]` shape to the bare `setting`,
+	 * so gating that keys on setting ids matches controls regardless of theme prefixing.
+	 *
+	 * @param string $control_id
+	 *
+	 * @return string
+	 */
+	protected function control_id_to_setting_id( string $control_id ): string {
+		$setting_id = preg_replace( '/_control$/', '', $control_id );
+		$setting_id = is_string( $setting_id ) ? $setting_id : $control_id;
+
+		if ( preg_match( '/\[([^\]]+)\]$/', $setting_id, $matches ) ) {
+			return $matches[1];
+		}
+
+		return $setting_id;
+	}
+
+	/**
+	 * Gentle, translatable TRIAL copy + destination shown beside locked Plus controls.
+	 *
+	 * When locked, the controls stay fully interactive — free users get a live sandbox to feel what
+	 * they do. The copy invites trying them live and frames saving as part of Pixelgrade Plus, never
+	 * implying the free tool is incomplete. Presentation-only; entitlement truth is the Plus bridge.
+	 *
+	 * @return array
+	 */
+	protected function get_plus_payload(): array {
+		return [
+			'locked'      => \Pixelgrade\StyleManager\plus_advanced_controls_locked(),
+			'upsellUrl'   => \Pixelgrade\StyleManager\plus_upsell_url(),
+			'badge'       => esc_html__( 'Plus', '__plugin_txtd' ),
+			'learnMore'   => esc_html__( 'Learn more', '__plugin_txtd' ),
+			'productName' => esc_html__( 'Pixelgrade Plus', '__plugin_txtd' ),
+			'notes'       => [
+				'sm_fine_tune_color_palette_section' => esc_html__( 'Take the Fine-tune controls for a spin — grades, contrast, and color promotion update live as you go. Changes here aren\'t saved; fine-tuning your palette\'s structure is part of Pixelgrade Plus.', '__plugin_txtd' ),
+				'sm_colorize_elements_button'        => esc_html__( 'Try colorizing elements one by one — it works live. Saving is part of Pixelgrade Plus.', '__plugin_txtd' ),
+			],
 		];
 	}
 

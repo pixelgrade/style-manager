@@ -81,6 +81,107 @@ const decodeHtmlText = text => {
   return decoder.value;
 };
 
+/**
+ * The Pixelgrade Plus gating payload, if any.
+ *
+ * Free users get a fully interactive live trial of the gated controls; only saving the premium
+ * palette-structure settings is gated (server-side). The metadata here drives gentle inline trial
+ * affordances — never a wall, never disabled controls.
+ */
+const plusPayload = payload.plus || null;
+
+/**
+ * Whether the Plus advanced controls are presented as a locked live trial.
+ */
+const plusIsLocked = () => !! ( plusPayload && plusPayload.locked );
+
+/**
+ * Build a gentle, inline trial banner (WP-core Notice pattern) for a locked Plus section.
+ *
+ * Controls stay interactive; this just frames the experience: you're trying it live, saving the
+ * palette structure is part of Pixelgrade Plus. Returns null when there's nothing to show.
+ */
+const buildPlusTrialBanner = sectionId => {
+  if ( ! plusIsLocked() || ! plusPayload ) {
+    return null;
+  }
+
+  const note = ( plusPayload.notes || {} )[ sectionId ];
+  if ( ! note ) {
+    return null;
+  }
+
+  // Mirrors @wordpress/components Notice (status="info", non-dismissible) so it reads as native.
+  const banner = document.createElement( 'div' );
+  banner.className = 'sm-se-plus-trial components-notice is-info';
+  banner.setAttribute( 'role', 'status' );
+
+  const content = document.createElement( 'div' );
+  content.className = 'components-notice__content sm-se-plus-trial__content';
+
+  const heading = document.createElement( 'span' );
+  heading.className = 'sm-se-plus-trial__badge';
+  heading.textContent = plusPayload.badge || 'Plus';
+  content.appendChild( heading );
+
+  const text = document.createElement( 'p' );
+  text.className = 'sm-se-plus-trial__text';
+  // Notes arrive esc_html'd from PHP.
+  text.textContent = decodeHtmlText( note );
+  content.appendChild( text );
+
+  if ( plusPayload.upsellUrl ) {
+    const link = document.createElement( 'a' );
+    link.className = 'sm-se-plus-trial__link';
+    link.href = plusPayload.upsellUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = `${ decodeHtmlText( plusPayload.learnMore || 'Learn more' ) } →`;
+    content.appendChild( link );
+  }
+
+  banner.appendChild( content );
+
+  return banner;
+};
+
+/**
+ * Add a subtle Plus pill + gentle tooltip to a locked Plus control's container, keeping it
+ * interactive. No-op when unlocked, when there's no copy, or when the control isn't present in this
+ * context (e.g. the colorize-elements affordance, which doesn't render as a control in the Site
+ * Editor — its per-element targets render inline instead).
+ */
+const decoratePlusControl = ( contentEl, control ) => {
+  if ( ! plusIsLocked() || ! plusPayload || ! control || ! control.id ) {
+    return;
+  }
+
+  const li = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( control.id ) ) }` );
+  if ( ! li || li.querySelector( '.sm-se-plus-pill' ) ) {
+    return;
+  }
+
+  // Resolve copy by either the literal control id or its bare setting id.
+  const settingId = control.id.replace( /_control$/, '' ).replace( /^.*\[([^\]]+)\]$/, '$1' );
+  const note = ( plusPayload.notes || {} )[ control.id ] || ( plusPayload.notes || {} )[ settingId ];
+
+  const pill = document.createElement( 'span' );
+  pill.className = 'sm-se-plus-pill';
+  pill.textContent = plusPayload.badge || 'Plus';
+  if ( note ) {
+    pill.title = decodeHtmlText( note );
+  }
+
+  li.classList.add( 'sm-se-has-plus-pill' );
+
+  const title = li.querySelector( '.customize-control-title' );
+  if ( title ) {
+    title.appendChild( pill );
+  } else {
+    li.insertBefore( pill, li.firstChild );
+  }
+};
+
 const getGroupItems = groupStartEl => {
   const items = [];
   let item = groupStartEl.nextElementSibling;
@@ -281,6 +382,15 @@ const buildSectionPanel = section => {
   panel.className = 'sm-se-tab-panel';
   panel.setAttribute( 'data-tab-section', section.id );
 
+  // A locked Plus section becomes a live trial: leave every control interactive and add a gentle
+  // inline banner at the top of the panel. Saving the premium settings is gated server-side.
+  if ( section.locked && section.gate ) {
+    const banner = buildPlusTrialBanner( section.id );
+    if ( banner ) {
+      panel.appendChild( banner );
+    }
+  }
+
   if ( section.description ) {
     const descriptionEl = document.createElement( 'div' );
     descriptionEl.className = 'sm-se-page__description customize-control-description';
@@ -305,6 +415,11 @@ const buildSectionPanel = section => {
       if ( li ) {
         li.classList.add( 'sm-se-control-inactive' );
       }
+    }
+
+    // A locked Plus control keeps working — it just gets a subtle Plus pill + gentle tooltip.
+    if ( control.locked && control.gate ) {
+      decoratePlusControl( contentEl, control );
     }
   } );
 

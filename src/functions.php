@@ -188,6 +188,69 @@ function advanced_style_manager_controls_are_unlocked(): bool {
 }
 
 /**
+ * Whether the advanced (Plus) controls should be presented as LOCKED in the editor.
+ *
+ * Distinct from advanced_style_manager_controls_are_unlocked(): the editor keeps the premium
+ * controls fully INTERACTIVE — free users get a live sandbox (sliders move, the preview recomputes)
+ * — and only adds a gentle trial banner / Plus pill. The real gate is server-side: a locked save
+ * strips the premium palette-structure settings (see plus_gated_setting_ids()), so trial changes
+ * never persist and revert on reload. This asks the inverse question to the unlocked check and is
+ * deliberately fail-CLOSED — locked unless Plus explicitly grants the entitlement. (Clean start: the
+ * advanced layer belongs to Pixelgrade Plus.)
+ *
+ * @since 2.2.15
+ *
+ * @return bool
+ */
+function plus_advanced_controls_locked(): bool {
+	return ! has_pixelgrade_plus_entitlement( PIXELGRADE_PLUS_ADVANCED_CONTROLS_ENTITLEMENT, false );
+}
+
+/**
+ * The canonical set of premium (Plus) Style Manager setting ids.
+ *
+ * Single source of truth shared by the UI gating (Screen\SiteEditor::apply_plus_gating()) and the
+ * server-side save strip (Provider\SiteEditorEndpoints): the persisted Fine-tune palette-structure
+ * settings plus the colorize-elements affordance. When a non-entitled user saves, these ids are
+ * dropped so everything else persists while the premium palette structure reverts to last-saved.
+ *
+ * @since 2.2.15
+ *
+ * @return string[] Premium setting ids.
+ */
+function plus_gated_setting_ids(): array {
+	$ids = Customize\ColorPalettes::get_premium_setting_ids();
+
+	// The colorize-elements control is a navigation/affordance, not itself a persisted setting, but
+	// we keep it in the gated set as the single source of truth (harmless to the strip).
+	$ids[] = 'sm_colorize_elements_button';
+
+	/**
+	 * Filter the canonical list of premium Style Manager setting ids.
+	 *
+	 * Companions/themes can extend the set of color/typography settings gated behind Pixelgrade Plus.
+	 *
+	 * @since 2.2.15
+	 *
+	 * @param string[] $ids Premium setting ids.
+	 */
+	$ids = (array) \apply_filters( 'style_manager/plus_gated_setting_ids', $ids );
+
+	return array_values( array_unique( array_filter( array_map( 'strval', $ids ) ) ) );
+}
+
+/**
+ * The destination for the gentle "Learn more" upsell link shown beside locked controls.
+ *
+ * @since 2.2.15
+ *
+ * @return string
+ */
+function plus_upsell_url(): string {
+	return (string) \apply_filters( 'style_manager/plus_upsell_url', 'https://pixelgrade.com/plus' );
+}
+
+/**
  * Get a Style Manager option's value, if there is a value, and return it.
  * Otherwise, try to get the default parameter or the default from config.
  *
