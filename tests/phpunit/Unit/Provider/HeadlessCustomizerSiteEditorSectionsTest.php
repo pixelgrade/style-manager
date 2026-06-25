@@ -209,6 +209,8 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 						'before'      => 'hive-lt_options[sm-description_colorize_elements_intro]',
 						'label'       => 'Color targets',
 						'collapsible' => true,
+						'group'       => 'color-targets',
+						'defaultOpen' => true,
 					],
 					[
 						'before' => 'sm_dark_mode_advanced',

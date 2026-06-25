@@ -862,6 +862,23 @@
 	margin-inline: 0;
 }
 
+// The Color targets group reads as a quiet sub-section, so its header is rendered
+// as a small uppercase caption (mirroring the .sm-group__title section caption)
+// rather than the default 13px/600 panel title. The disclosure arrow and the
+// toggle's hover/focus accent are preserved.
+.sm-site-editor [data-sm-group="color-targets"] .sm-se-group-panel__label {
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: #757575;
+}
+
+.sm-site-editor [data-sm-group="color-targets"] .sm-se-group-panel__toggle:hover .sm-se-group-panel__label,
+.sm-site-editor [data-sm-group="color-targets"] .sm-se-group-panel__toggle:focus-visible .sm-se-group-panel__label {
+	color: var(--wp-admin-theme-color, #3858e9);
+}
+
 .sm-site-editor .sm-se-group-panel__arrow {
 	display: inline-flex;
 	align-items: center;
@@ -889,6 +906,20 @@
 	border: 0;
 }
 
+// Target rows carry a stacked label + status. They sit flush (the symmetric
+// field padding gives the roomy rhythm) and a subtle hairline between consecutive
+// rows reinforces the structure without reading as a control or a heavy border.
+// The .customize-control-sm_toggle qualifier outweighs the generic sm_toggle rule
+// (same base specificity) that would otherwise re-add a 12px bottom margin and
+// make the gap below a row larger than the gap above it.
+.sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li.customize-control-sm_toggle.sm-se-target-row {
+	margin-bottom: 0;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li.sm-se-target-row + li.sm-se-target-row {
+	border-top: 1px solid #f0f0f0;
+}
+
 .sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li.customize-control-html[id*="section_title_control"] {
 	margin-top: 18px;
 	margin-bottom: 6px;
@@ -914,6 +945,105 @@
 .sm-site-editor .sm-se-group-panel__content .components-base-control,
 .sm-site-editor .sm-se-group-panel__content .components-base-control__field {
 	margin-bottom: 0;
+}
+
+// Two-line target row. Gutenberg's ToggleControl wraps the switch + label in an
+// HStack, so the two-line stack lives on that HStack (turned into a grid): the
+// switch spans both rows on the left, the label sits on the first line and the
+// status drops to a quiet second line directly beneath it (see target-feedback.js,
+// which appends the status into the HStack). The locate icon is a sibling of the
+// HStack, docked right and centred against the stacked block.
+.sm-site-editor .sm-se-group-panel__content .sm-se-target-row .components-base-control__field {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-block: 8px;
+}
+
+.sm-site-editor .sm-se-target-row .components-base-control__field > .components-h-stack {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	grid-template-rows: auto auto;
+	align-items: center;
+	column-gap: 8px;
+	row-gap: 1px;
+}
+
+.sm-site-editor .sm-se-target-row .components-base-control__field > .components-h-stack > .components-form-toggle {
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	align-self: center;
+}
+
+.sm-site-editor .sm-se-target-row .components-toggle-control__label {
+	grid-column: 2;
+	grid-row: 1;
+	min-width: 0;
+	align-self: center;
+}
+
+.sm-site-editor .sm-se-target-status {
+	grid-column: 2;
+	grid-row: 2;
+	align-self: start;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: #757575;
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1.3;
+	text-align: left;
+	text-decoration: none;
+	white-space: normal;
+}
+
+.sm-site-editor .sm-se-target-meta {
+	flex: 0 0 auto;
+	align-self: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	text-decoration: none;
+}
+
+.sm-site-editor .sm-se-target-locate {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	padding: 0;
+	border: 0;
+	border-radius: 2px;
+	background: transparent;
+	box-shadow: none;
+	color: #757575;
+	cursor: pointer;
+	text-decoration: none;
+
+	svg {
+		display: block;
+		width: 16px;
+		height: 16px;
+	}
+
+	&:hover,
+	&:focus-visible {
+		color: var(--wp-admin-theme-color, #3858e9);
+		box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+		outline: none;
+	}
+
+	&[hidden] {
+		display: none;
+	}
 }
 
 // The master switch rides the title row as just a switch — its label is kept

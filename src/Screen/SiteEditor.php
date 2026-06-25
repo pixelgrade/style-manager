@@ -494,6 +494,8 @@ class SiteEditor extends AbstractHookProvider {
 			'before'      => $this->get_group_header_anchor_from_control_id( (string) $first_control['id'] ),
 			'label'       => esc_html__( 'Color targets', '__plugin_txtd' ),
 			'collapsible' => true,
+			'group'       => 'color-targets',
+			'defaultOpen' => true,
 		];
 	}
 

@@ -18,6 +18,7 @@ import { SECTION_PREVIEW_MODES, parseSiteEditorDeepLink } from './deep-link';
 import { initDocsLinks } from './docs-links';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
+import { initializeColorTargetFeedback } from './target-feedback';
 import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay, ContextualColorsOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
@@ -119,6 +120,9 @@ const setupCollapsibleGroup = ( groupStartEl, marker ) => {
   }
 
   groupStartEl.className = 'customize-control sm-se-group-panel sm-se-group-start components-panel__body';
+  if ( marker.group ) {
+    groupStartEl.dataset.smGroup = marker.group;
+  }
   title.className = 'components-panel__body-title sm-se-group-panel__title';
   title.style.setProperty( 'width', '100%', 'important' );
   title.style.setProperty( 'margin', '0', 'important' );
@@ -149,6 +153,13 @@ const setupCollapsibleGroup = ( groupStartEl, marker ) => {
     toggle.setAttribute( 'aria-expanded', isExpanded ? 'true' : 'false' );
     groupStartEl.classList.toggle( 'is-opened', isExpanded );
     content.hidden = ! isExpanded;
+    groupStartEl.dispatchEvent( new CustomEvent( 'sm:site-editor-group-toggled', {
+      bubbles: true,
+      detail: {
+        group: marker.group || '',
+        expanded: isExpanded,
+      },
+    } ) );
   };
 
   toggle.addEventListener( 'click', event => {
@@ -156,7 +167,7 @@ const setupCollapsibleGroup = ( groupStartEl, marker ) => {
     setExpanded( 'true' !== toggle.getAttribute( 'aria-expanded' ) );
   } );
 
-  setExpanded( false );
+  setExpanded( !! marker.defaultOpen );
 };
 
 /**
@@ -400,6 +411,10 @@ const buildSectionElement = ( api, section, menuEl, pagesEl, updateView, section
     pageEl.querySelectorAll( '.sm-se-tabs__tab' ).forEach( button => {
       button.classList.toggle( 'is-active', button.getAttribute( 'data-tab-section' ) === id );
     } );
+    pageEl.dispatchEvent( new CustomEvent( 'sm:site-editor-tab-activated', {
+      bubbles: true,
+      detail: { id },
+    } ) );
   };
   activateTab( section.id );
 
@@ -677,6 +692,7 @@ const bootEngine = eng => {
   mountNativeControls( eng, payload );
 
   eng.preview = initializePreview( api, payload );
+  eng.targetFeedback = initializeColorTargetFeedback( root, payload, { customize: api } );
 
   // Native Save (core-data entity) + server-evaluated control visibility.
   setupEntityIntegration( eng );
