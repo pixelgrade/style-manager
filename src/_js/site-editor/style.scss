@@ -799,6 +799,123 @@
 	gap: 8px;
 }
 
+.sm-site-editor #customize-control-sm_dark_mode_advanced_control .components-base-control__label,
+.sm-site-editor #customize-control-sm_dark_mode_advanced_control legend {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-panel {
+	margin-top: 12px;
+	margin-bottom: 0;
+	padding: 0;
+	border-top: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-before-group-panel {
+	margin-bottom: 8px;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-panel + li.sm-se-group-start {
+	margin-top: 0;
+}
+
+.sm-site-editor .sm-se-group-panel__title {
+	margin: 0 !important;
+}
+
+.sm-site-editor .sm-se-group-panel__toggle.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	height: auto;
+	padding: 16px;
+	border: 0;
+	border-radius: 0;
+	color: #1e1e1e;
+	font-size: 13px;
+	font-weight: 600;
+	text-align: start;
+
+	&:hover,
+	&:focus-visible {
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&:focus-visible {
+		box-shadow: inset 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+		outline: none;
+	}
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-page__content > li.sm-se-group-panel.components-panel__body.is-opened > .sm-se-group-panel__title .sm-se-group-panel__toggle.components-button {
+	width: 100% !important;
+	margin-inline: 0;
+}
+
+.sm-site-editor .sm-se-group-panel__arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	margin-inline-start: 8px;
+	color: #757575;
+	transform: rotate(-90deg);
+	transition: transform .12s ease;
+}
+
+.sm-site-editor .sm-se-group-panel.is-opened .sm-se-group-panel__arrow {
+	transform: rotate(0);
+}
+
+.sm-site-editor .sm-se-group-panel__content {
+	margin: 0;
+	padding: 0 16px 16px;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li {
+	margin: 0 0 10px;
+	padding: 0;
+	border: 0;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li.customize-control-html[id*="section_title_control"] {
+	margin-top: 18px;
+	margin-bottom: 6px;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li.customize-control-html[id*="section_title_control"]:first-of-type {
+	margin-top: 14px;
+}
+
+.sm-site-editor .sm-se-group-panel__content li[id*="section_title_control"] .sm-group__title {
+	display: block;
+	color: #757575;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+.sm-site-editor#customize-controls[id] .sm-se-group-panel__content > li.customize-control-sm_toggle {
+	margin-bottom: 12px;
+}
+
+.sm-site-editor .sm-se-group-panel__content .components-base-control,
+.sm-site-editor .sm-se-group-panel__content .components-base-control__field {
+	margin-bottom: 0;
+}
+
 // The master switch rides the title row as just a switch — its label is kept
 // for assistive tech (the section title names the feature) but visually hidden.
 .sm-site-editor .sm-se-section-head__switch .components-base-control,

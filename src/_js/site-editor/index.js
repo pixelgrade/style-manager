@@ -15,6 +15,7 @@ import './style.scss';
 
 import { createCustomizeApi, createContainerObject } from './customize-api';
 import { SECTION_PREVIEW_MODES, parseSiteEditorDeepLink } from './deep-link';
+import { initDocsLinks } from './docs-links';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
 import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay, ContextualColorsOverlay } from '../customizer/components';
@@ -73,6 +74,91 @@ let engine = null;
  */
 const getControlContainerId = controlId => `customize-control-${ controlId.replace( /\[/g, '-' ).replace( /\]/g, '' ) }`;
 
+const decodeHtmlText = text => {
+  const decoder = document.createElement( 'textarea' );
+  decoder.innerHTML = text || '';
+  return decoder.value;
+};
+
+const getGroupItems = groupStartEl => {
+  const items = [];
+  let item = groupStartEl.nextElementSibling;
+
+  while ( item && ! item.classList.contains( 'sm-se-group-start' ) ) {
+    items.push( item );
+    item = item.nextElementSibling;
+  }
+
+  return items;
+};
+
+let groupPanelIndex = 0;
+
+const setupCollapsibleGroup = ( groupStartEl, marker ) => {
+  if ( ! marker.collapsible ) {
+    return;
+  }
+
+  const titleEl = groupStartEl.querySelector( '.sm-se-section-head__title' );
+  if ( ! titleEl ) {
+    return;
+  }
+
+  const label = titleEl.textContent.trim() || decodeHtmlText( marker.label );
+  const contentId = `sm-se-group-panel-content-${ ++groupPanelIndex }`;
+  const items = getGroupItems( groupStartEl );
+  const title = document.createElement( 'h2' );
+  const toggle = document.createElement( 'button' );
+  const icon = document.createElement( 'span' );
+  const labelEl = document.createElement( 'span' );
+  const content = document.createElement( 'ul' );
+  const previousItem = groupStartEl.previousElementSibling;
+
+  if ( previousItem ) {
+    previousItem.classList.add( 'sm-se-before-group-panel' );
+  }
+
+  groupStartEl.className = 'customize-control sm-se-group-panel sm-se-group-start components-panel__body';
+  title.className = 'components-panel__body-title sm-se-group-panel__title';
+  title.style.setProperty( 'width', '100%', 'important' );
+  title.style.setProperty( 'margin', '0', 'important' );
+  toggle.type = 'button';
+  toggle.className = 'components-button components-panel__body-toggle sm-se-group-panel__toggle';
+  toggle.style.setProperty( 'width', '100%', 'important' );
+  toggle.style.setProperty( 'margin-inline', '0', 'important' );
+  toggle.setAttribute( 'aria-controls', contentId );
+  icon.className = 'components-panel__arrow sm-se-group-panel__arrow';
+  icon.setAttribute( 'aria-hidden', 'true' );
+  icon.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" focusable="false" aria-hidden="true"><path d="M12.5 15.7 7.8 11l1.1-1.1 3.6 3.6 3.6-3.6 1.1 1.1z"></path></svg>';
+  labelEl.className = 'sm-se-group-panel__label';
+  labelEl.textContent = label;
+  toggle.appendChild( labelEl );
+  toggle.appendChild( icon );
+  title.appendChild( toggle );
+
+  content.id = contentId;
+  content.className = 'sm-se-group-panel__content';
+  items.forEach( item => {
+    item.hidden = false;
+    content.appendChild( item );
+  } );
+
+  groupStartEl.replaceChildren( title, content );
+
+  const setExpanded = isExpanded => {
+    toggle.setAttribute( 'aria-expanded', isExpanded ? 'true' : 'false' );
+    groupStartEl.classList.toggle( 'is-opened', isExpanded );
+    content.hidden = ! isExpanded;
+  };
+
+  toggle.addEventListener( 'click', event => {
+    event.preventDefault();
+    setExpanded( 'true' !== toggle.getAttribute( 'aria-expanded' ) );
+  } );
+
+  setExpanded( false );
+};
+
 /**
  * Mark up a section's group structure, per the payload group markers. Each
  * marker starts a group; the groups are separated by a divider (not boxed) and
@@ -81,11 +167,14 @@ const getControlContainerId = controlId => `customize-control-${ controlId.repla
  * html intro IS the section title — it is flagged `sm-se-group-head` so the
  * native-control merge leaves it standing as a header instead of folding it
  * into a following toggle (native-controls.js). A `preview` marker rides the
- * section title's line, docked right.
+ * section title's line, docked right. A `collapsible` marker turns the group
+ * into a core PanelBody-style section and moves its items into the panel body.
  *
  * Runs while building the panel, before the merge; both resolve controls by id.
  */
 const markGroupSections = ( contentEl, markers ) => {
+  const collapsibleGroups = [];
+
   markers.forEach( marker => {
     const anchorLi = contentEl.querySelector( `#${ CSS.escape( getControlContainerId( `${ marker.before }_control` ) ) }` );
     if ( ! anchorLi ) {
@@ -98,12 +187,8 @@ const markGroupSections = ( contentEl, markers ) => {
     if ( marker.label ) {
       const heading = document.createElement( 'li' );
       heading.className = 'customize-control sm-se-group-title';
-      // Labels arrive esc_html'd from PHP (e.g. "Contrast &amp; balance"); decode
-      // entities via a textarea (text-only, so no HTML is parsed) before setting
-      // them as text, otherwise the raw entity would show.
-      const decoder = document.createElement( 'textarea' );
-      decoder.innerHTML = marker.label;
-      heading.textContent = decoder.value;
+      // Labels arrive esc_html'd from PHP (e.g. "Contrast &amp; balance").
+      heading.textContent = decodeHtmlText( marker.label );
       contentEl.insertBefore( heading, anchorLi );
       groupStartEl = heading;
       titleEl = heading;
@@ -166,6 +251,14 @@ const markGroupSections = ( contentEl, markers ) => {
       }
       actions.appendChild( previewBtn );
     }
+
+    if ( marker.collapsible ) {
+      collapsibleGroups.push( { groupStartEl, marker } );
+    }
+  } );
+
+  collapsibleGroups.forEach( ( { groupStartEl, marker } ) => {
+    setupCollapsibleGroup( groupStartEl, marker );
   } );
 };
 
@@ -1384,6 +1477,7 @@ const handleDeepLink = () => {
 
 if ( payload && window.styleManager && wp && wp.plugins && wp.editor && wp.editor.PluginSidebar ) {
   registerSidebar();
+  initDocsLinks();
   wp.domReady( handleDeepLink );
 } else if ( payload ) {
   console.warn( 'Style Manager: the Site Editor PluginSidebar API is not available; the Style Manager sidebar was not registered.' );

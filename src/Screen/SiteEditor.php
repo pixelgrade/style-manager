@@ -341,14 +341,17 @@ class SiteEditor extends AbstractHookProvider {
 	 */
 	protected function get_site_editor_payload( array $localized = [] ): array {
 		// Same data the Customizer preview JS callbacks receive (see Screen\Customizer\Preview).
-		$fallback_palettes = function_exists( 'sm_get_fallback_palettes' ) ? sm_get_fallback_palettes() : [];
-		$palettes          = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
-		$user_palettes     = is_array( $palettes ) && function_exists( 'sm_filter_user_palettes' )
+		$fallback_palettes         = function_exists( 'sm_get_fallback_palettes' ) ? sm_get_fallback_palettes() : [];
+		$palettes                  = json_decode( get_option( 'sm_advanced_palette_output', '[]' ) );
+		$user_palettes             = is_array( $palettes ) && function_exists( 'sm_filter_user_palettes' )
 			? array_filter( $palettes, 'sm_filter_user_palettes' )
 			: [];
+		$structure                 = $this->headless_customizer->get_structure();
+		$theme_colors_group_header = $this->merge_theme_colors_section_into_usage_section( $structure );
+		$section_group_headers     = $this->get_site_editor_section_group_headers( $theme_colors_group_header );
 
 		return [
-			'structure'          => $this->headless_customizer->get_structure(),
+			'structure'          => $structure,
 			// Mirrors the parts of _wpCustomizeSettings the SM engine reads.
 			// Note: `google_fonts_opts` is deliberately NOT shipped — the ~96 KB
 			// of <option> markup is synthesized client-side from the
@@ -374,17 +377,10 @@ class SiteEditor extends AbstractHookProvider {
 			 * workaround. Filter: parent section id => ordered tabs
 			 * [ [ id, label ] ] where the parent lists itself first.
 			 */
-			'sectionTabs'        => apply_filters( 'style_manager/site_editor_section_tabs', [
-				'sm_color_palettes_section' => [
-					[ 'id' => 'sm_color_palettes_section', 'label' => esc_html__( 'Palette', '__plugin_txtd' ) ],
-					[ 'id' => 'sm_color_usage_section', 'label' => esc_html__( 'Usage', '__plugin_txtd' ) ],
-					[ 'id' => 'sm_fine_tune_color_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
-				],
-				'sm_font_palettes_section'  => [
-					[ 'id' => 'sm_font_palettes_section', 'label' => esc_html__( 'Palettes', '__plugin_txtd' ) ],
-					[ 'id' => 'sm_fine_tune_font_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
-				],
-			] ),
+			'sectionTabs'        => apply_filters(
+				'style_manager/site_editor_section_tabs',
+				$this->get_site_editor_section_tabs()
+			),
 			/**
 			 * Group headers injected before specific controls in a section —
 			 * gives sibling controls a shared identity (e.g. the Collections
@@ -396,69 +392,10 @@ class SiteEditor extends AbstractHookProvider {
 			 * when the theme is absent. Filter: section id => [ [ before
 			 * (setting id), label, preview? ] ].
 			 */
-			'sectionGroupHeaders' => apply_filters( 'style_manager/site_editor_section_group_headers', [
-				'sm_tweak_board_section' => [
-					// Each entry marks a group start (drawn with a divider).
-					// Cards Collections has no intro of its own — inject a label.
-					[
-						'before' => 'sm_collection_title_position',
-						'label'  => esc_html__( 'Cards Collections', '__plugin_txtd' ),
-					],
-					// Site Frame and Fancy Titles already render an html intro
-					// title; attach the Preview affordance to it (no label).
-					// Site Frame's None/Editorial style IS its on/off — drive it
-					// from a master switch on the title row (on = editorial).
-					[
-						'before'  => 'sm_site_frame_intro',
-						'preview' => [ 'mode' => 'site-frame' ],
-						'toggle'  => [
-							'setting' => 'sm_site_frame_style',
-							'on'      => 'editorial',
-							'off'     => 'none',
-						],
-					],
-					[
-						'before'  => 'sm_decorative_titles_style_intro',
-						'preview' => [ 'mode' => 'fancy-titles' ],
-					],
-					// Content Colors: its intro is the title; the Preview opens
-					// the (premium) per-item colour board, shown only while the
-					// feature's master toggle is on.
-					[
-						'before'  => 'sm_contextual_entry_colors_intro',
-						'preview' => [ 'mode' => 'contextual-colors' ],
-					],
-				],
-				// Motion: its two behaviours each get a titled, divider-separated
-				// section. The intros already title them; keeping them standing
-				// (group-head) makes the toggles read "Enabled" under the title.
-				// The section's Live Site Preview stays in the page header.
-				'sm_motion_section' => [
-					[
-						'before' => 'sm_page_transitions_intro',
-					],
-					[
-						'before' => 'sm_intro_animations_intro',
-					],
-				],
-				// Color fine-tune: presets lead (their own label), then the
-				// granular controls grouped by what they shape. Color promotion's
-				// html intro heads two toggles, so it stays a plain header (no
-				// master switch) — see markGroupSections / native-controls.
-				'sm_fine_tune_color_palette_section' => [
-					[
-						'before' => 'sm_color_grades_number',
-						'label'  => esc_html__( 'Structure', '__plugin_txtd' ),
-					],
-					[
-						'before' => 'sm_potential_color_contrast',
-						'label'  => esc_html__( 'Contrast & balance', '__plugin_txtd' ),
-					],
-					[
-						'before' => 'sm_color_promotion_brand',
-					],
-				],
-			] ),
+			'sectionGroupHeaders' => apply_filters(
+				'style_manager/site_editor_section_group_headers',
+				$section_group_headers
+			),
 			/**
 			 * Toggle-driven control visibility (the Customizer gets this from
 			 * theme-shipped JS, e.g. Anima's motion controls script).
@@ -485,6 +422,217 @@ class SiteEditor extends AbstractHookProvider {
 			 */
 			'editorCssSelectors' => $this->get_editor_css_selector_overrides( $localized ),
 		];
+	}
+
+	/**
+	 * Fold the active theme's per-element color controls into the Color Usage section.
+	 *
+	 * @param array $structure Headless Customizer structure.
+	 *
+	 * @return array|null Group header marker for the folded controls.
+	 */
+	protected function merge_theme_colors_section_into_usage_section( array &$structure ): ?array {
+		$theme_colors_section_id = $this->get_theme_colors_section_id();
+		if (
+			'' === $theme_colors_section_id
+			|| empty( $structure['sections'] )
+			|| ! is_array( $structure['sections'] )
+		) {
+			return null;
+		}
+
+		$usage_section_index        = null;
+		$theme_colors_section_index = null;
+		foreach ( $structure['sections'] as $section_index => $section ) {
+			if ( ! is_array( $section ) ) {
+				continue;
+			}
+
+			if ( 'sm_color_usage_section' === ( $section['id'] ?? '' ) ) {
+				$usage_section_index = $section_index;
+			}
+
+			if ( $theme_colors_section_id === ( $section['id'] ?? '' ) ) {
+				$theme_colors_section_index = $section_index;
+			}
+		}
+
+		if ( null === $usage_section_index || null === $theme_colors_section_index ) {
+			return null;
+		}
+
+		$theme_colors_controls = $structure['sections'][ $theme_colors_section_index ]['controls'] ?? [];
+		array_splice( $structure['sections'], $theme_colors_section_index, 1 );
+		if ( $theme_colors_section_index < $usage_section_index ) {
+			$usage_section_index--;
+		}
+
+		if ( ! is_array( $theme_colors_controls ) || [] === $theme_colors_controls ) {
+			return null;
+		}
+
+		if ( empty( $structure['sections'][ $usage_section_index ]['controls'] ) || ! is_array( $structure['sections'][ $usage_section_index ]['controls'] ) ) {
+			$structure['sections'][ $usage_section_index ]['controls'] = [];
+		}
+
+		$insert_index = count( $structure['sections'][ $usage_section_index ]['controls'] );
+		foreach ( $structure['sections'][ $usage_section_index ]['controls'] as $control_index => $control ) {
+			if ( is_array( $control ) && 'sm_coloration_level_control' === ( $control['id'] ?? '' ) ) {
+				$insert_index = $control_index + 1;
+				break;
+			}
+		}
+
+		array_splice( $structure['sections'][ $usage_section_index ]['controls'], $insert_index, 0, $theme_colors_controls );
+
+		$first_control = reset( $theme_colors_controls );
+		if ( ! is_array( $first_control ) || empty( $first_control['id'] ) ) {
+			return null;
+		}
+
+		return [
+			'before'      => $this->get_group_header_anchor_from_control_id( (string) $first_control['id'] ),
+			'label'       => esc_html__( 'Color targets', '__plugin_txtd' ),
+			'collapsible' => true,
+		];
+	}
+
+	/**
+	 * Build the section tab map consumed by the Site Editor sidebar.
+	 *
+	 * @return array
+	 */
+	protected function get_site_editor_section_tabs(): array {
+		return [
+			'sm_color_palettes_section' => [
+				[ 'id' => 'sm_color_palettes_section', 'label' => esc_html__( 'Palette', '__plugin_txtd' ) ],
+				[ 'id' => 'sm_fine_tune_color_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
+				[ 'id' => 'sm_color_usage_section', 'label' => esc_html__( 'Usage', '__plugin_txtd' ) ],
+			],
+			'sm_font_palettes_section'  => [
+				[ 'id' => 'sm_font_palettes_section', 'label' => esc_html__( 'Palettes', '__plugin_txtd' ) ],
+				[ 'id' => 'sm_fine_tune_font_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
+			],
+		];
+	}
+
+	/**
+	 * Build the section group headers consumed by the Site Editor sidebar.
+	 *
+	 * @param array|null $theme_colors_group_header Dynamic marker for folded theme color controls.
+	 *
+	 * @return array
+	 */
+	protected function get_site_editor_section_group_headers( ?array $theme_colors_group_header = null ): array {
+		$section_group_headers = [
+			'sm_tweak_board_section' => [
+				// Each entry marks a group start (drawn with a divider).
+				// Cards Collections has no intro of its own — inject a label.
+				[
+					'before' => 'sm_collection_title_position',
+					'label'  => esc_html__( 'Cards Collections', '__plugin_txtd' ),
+				],
+				// Site Frame and Fancy Titles already render an html intro
+				// title; attach the Preview affordance to it (no label).
+				// Site Frame's None/Editorial style IS its on/off — drive it
+				// from a master switch on the title row (on = editorial).
+				[
+					'before'  => 'sm_site_frame_intro',
+					'preview' => [ 'mode' => 'site-frame' ],
+					'toggle'  => [
+						'setting' => 'sm_site_frame_style',
+						'on'      => 'editorial',
+						'off'     => 'none',
+					],
+				],
+				[
+					'before'  => 'sm_decorative_titles_style_intro',
+					'preview' => [ 'mode' => 'fancy-titles' ],
+				],
+				// Content Colors: its intro is the title; the Preview opens
+				// the (premium) per-item colour board, shown only while the
+				// feature's master toggle is on.
+				[
+					'before'  => 'sm_contextual_entry_colors_intro',
+					'preview' => [ 'mode' => 'contextual-colors' ],
+				],
+			],
+			// Motion: its two behaviours each get a titled, divider-separated
+			// section. The intros already title them; keeping them standing
+			// (group-head) makes the toggles read "Enabled" under the title.
+			// The section's Live Site Preview stays in the page header.
+			'sm_motion_section' => [
+				[
+					'before' => 'sm_page_transitions_intro',
+				],
+				[
+					'before' => 'sm_intro_animations_intro',
+				],
+			],
+			// Color fine-tune: presets lead (their own label), then the
+			// granular controls grouped by what they shape. Color promotion's
+			// html intro heads two toggles, so it stays a plain header (no
+			// master switch) — see markGroupSections / native-controls.
+			'sm_fine_tune_color_palette_section' => [
+				[
+					'before' => 'sm_color_grades_number',
+					'label'  => esc_html__( 'Structure', '__plugin_txtd' ),
+				],
+				[
+					'before' => 'sm_potential_color_contrast',
+					'label'  => esc_html__( 'Contrast & balance', '__plugin_txtd' ),
+				],
+				[
+					'before' => 'sm_color_promotion_brand',
+				],
+			],
+		];
+
+		$usage_group_headers = [
+			[
+				'before' => 'sm_dark_mode_advanced',
+				'label'  => esc_html__( 'Appearance', '__plugin_txtd' ),
+			],
+		];
+		if ( null !== $theme_colors_group_header ) {
+			array_unshift( $usage_group_headers, $theme_colors_group_header );
+		}
+
+		$section_group_headers = array_merge(
+			[ 'sm_color_usage_section' => $usage_group_headers ],
+			$section_group_headers
+		);
+
+		return $section_group_headers;
+	}
+
+	/**
+	 * Build the final Customizer section ID used by themes for per-element
+	 * color controls when they register the `colors_section` Style Manager
+	 * config section.
+	 *
+	 * @return string
+	 */
+	protected function get_theme_colors_section_id(): string {
+		$options_key = $this->options->get_options_key();
+		if ( '' === $options_key ) {
+			return '';
+		}
+
+		return $options_key . '[colors_section]';
+	}
+
+	/**
+	 * Convert a rendered Customizer control ID to the marker anchor expected by JS.
+	 *
+	 * @param string $control_id Rendered Customizer control ID.
+	 *
+	 * @return string
+	 */
+	protected function get_group_header_anchor_from_control_id( string $control_id ): string {
+		$anchor = preg_replace( '/_control$/', '', $control_id );
+
+		return is_string( $anchor ) && '' !== $anchor ? $anchor : $control_id;
 	}
 
 	/**

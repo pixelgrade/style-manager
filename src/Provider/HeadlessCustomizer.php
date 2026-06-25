@@ -168,9 +168,14 @@ class HeadlessCustomizer {
 	public function get_sm_section_ids(): array {
 		$manager = $this->get_manager();
 
-		$section_ids = [];
+		$theme_colors_section_id = $this->get_theme_colors_section_id();
+		$section_ids             = [];
 		foreach ( $manager->sections() as $section_id => $section ) {
-			if ( 'style_manager_panel' === $section->panel || 0 === strpos( (string) $section_id, 'sm_' ) ) {
+			if (
+				'style_manager_panel' === $section->panel
+				|| 0 === strpos( (string) $section_id, 'sm_' )
+				|| $theme_colors_section_id === (string) $section_id
+			) {
 				$section_ids[] = (string) $section_id;
 			}
 		}
@@ -182,6 +187,22 @@ class HeadlessCustomizer {
 		 * @param \WP_Customize_Manager $manager
 		 */
 		return apply_filters( 'style_manager/site_editor_section_ids', $section_ids, $manager );
+	}
+
+	/**
+	 * Build the final Customizer section ID used by themes for per-element
+	 * color controls when they register the `colors_section` Style Manager
+	 * config section.
+	 *
+	 * @return string
+	 */
+	protected function get_theme_colors_section_id(): string {
+		$options_key = $this->options->get_options_key();
+		if ( '' === $options_key ) {
+			return '';
+		}
+
+		return $options_key . '[colors_section]';
 	}
 
 	/**
