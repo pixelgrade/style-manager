@@ -342,9 +342,9 @@ const getRowMeta = row => {
   const field = row.querySelector( '.components-base-control__field' ) || row.querySelector( '.sm-native-control' ) || row;
   // ToggleControl wraps the switch + label in an HStack; the status rides on a
   // second line of that HStack (laid out as a grid) so it sits beneath the label.
-  const stack = field.querySelector( ':scope > .components-h-stack' )
-    || field.querySelector( '.components-h-stack' )
-    || field;
+  // The CSS only grids a direct-child HStack, so fall back to the field itself
+  // rather than to some arbitrary nested HStack.
+  const stack = field.querySelector( ':scope > .components-h-stack' ) || field;
   const input = row.querySelector( 'input, select, textarea' );
 
   // Status and locate are created independently so a React re-render that drops
@@ -390,10 +390,11 @@ const updateRowStatus = ( row, count ) => {
   status.textContent = formatVisibleCount( count );
   row.classList.toggle( 'sm-se-target-row--has-visible-targets', count > 0 );
 
+  const locateHint = label ? `Locate ${ label } in preview` : 'Locate target in preview';
   locate.hidden = count <= 0;
   locate.disabled = count <= 0;
-  locate.setAttribute( 'aria-label', label ? `Locate ${ label } in preview` : 'Locate target in preview' );
-  locate.setAttribute( 'title', label ? `Locate ${ label } in preview` : 'Locate target in preview' );
+  locate.setAttribute( 'aria-label', locateHint );
+  locate.setAttribute( 'title', locateHint );
 };
 
 const isElementInActivePanel = element => {
