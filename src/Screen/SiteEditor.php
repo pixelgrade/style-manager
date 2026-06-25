@@ -450,6 +450,7 @@ class SiteEditor extends AbstractHookProvider {
 		 */
 		$gated = apply_filters( 'style_manager/plus_gated_objects', [
 			'sm_fine_tune_color_palette_section' => 'plus', // the whole Fine-tune tab
+			'sm_color_usage_section'             => 'plus', // the whole Usage tab
 			'sm_colorize_elements_button'        => 'plus', // colorize elements one by one
 		] );
 
@@ -530,6 +531,7 @@ class SiteEditor extends AbstractHookProvider {
 			'productName' => esc_html__( 'Pixelgrade Plus', '__plugin_txtd' ),
 			'notes'       => [
 				'sm_fine_tune_color_palette_section' => esc_html__( 'Take the Fine-tune controls for a spin — grades, contrast, and color promotion update live as you go. Changes here aren\'t saved; fine-tuning your palette\'s structure is part of Pixelgrade Plus.', '__plugin_txtd' ),
+				'sm_color_usage_section'             => esc_html__( 'Try the Usage controls live — shift how colors apply across your site, dial coloration up or down, and preview dark mode. Changes here aren\'t saved; saving how your palette is applied is part of Pixelgrade Plus.', '__plugin_txtd' ),
 				'sm_colorize_elements_button'        => esc_html__( 'Try colorizing elements one by one — it works live. Saving is part of Pixelgrade Plus.', '__plugin_txtd' ),
 			],
 		];

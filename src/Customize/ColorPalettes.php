@@ -63,6 +63,50 @@ class ColorPalettes extends AbstractHookProvider {
 	];
 
 	/**
+	 * The Color Usage section field ids, in display order.
+	 *
+	 * Canonical, single source of truth for the Usage controls. Consumed both to register the Usage
+	 * section (see add_color_usage_section()) and — via the persisted subset returned by
+	 * get_usage_premium_setting_ids() — to gate + strip the premium Usage settings on save when
+	 * Pixelgrade Plus is absent (see \Pixelgrade\StyleManager\plus_gated_setting_ids()).
+	 *
+	 * Items prefixed `sm_separator_` / `sm_*_intro` are presentational, not persisted settings.
+	 * `sm_dark_mode` is a proxy field replaced by the enhanced `sm_dark_mode_advanced` control (see
+	 * maybe_enhance_dark_mode_control()); only the latter is a persisted setting.
+	 *
+	 * @since 2.2.16
+	 *
+	 * @var string[]
+	 */
+	const COLOR_USAGE_FIELDS = [
+		'sm_description_color_usage_intro',
+		'sm_separator_1_0',
+		'sm_text_color_switch_master',
+		'sm_accent_color_switch_master',
+		'sm_coloration_level',
+		'sm_colorize_elements_button',
+		'sm_separator_1_1',
+		'sm_dark_mode',
+		'sm_dark_mode_advanced',
+	];
+
+	/**
+	 * The SM-owned Usage fields that are NOT persisted settings (proxies/affordances/presentational).
+	 *
+	 * `sm_colorize_elements_button` is a navigation affordance, not a setting. `sm_dark_mode` is a
+	 * proxy replaced by the persisted `sm_dark_mode_advanced` control. Excluded from the premium
+	 * Usage strip set (the colorize affordance is still tracked separately in plus_gated_setting_ids()).
+	 *
+	 * @since 2.2.16
+	 *
+	 * @var string[]
+	 */
+	const COLOR_USAGE_NON_PERSISTED_FIELDS = [
+		'sm_colorize_elements_button',
+		'sm_dark_mode',
+	];
+
+	/**
 	 * Return the persisted (savable) subset of the Fine-tune fields.
 	 *
 	 * Excludes presentational entries (intros, separators) that are never persisted settings, so the
@@ -76,6 +120,28 @@ class ColorPalettes extends AbstractHookProvider {
 		return array_values( array_filter( self::FINE_TUNE_PALETTE_FIELDS, static function ( $field_id ) {
 			return 0 !== strpos( $field_id, 'sm_separator_' )
 			       && false === strpos( $field_id, '_intro' );
+		} ) );
+	}
+
+	/**
+	 * Return the persisted (savable) premium subset of the SM-owned Color Usage fields.
+	 *
+	 * The whole Usage tab is gated behind Pixelgrade Plus (the master color switches, coloration
+	 * level, and dark mode). This excludes presentational entries (intros, separators), the
+	 * non-persisted proxies/affordances (see COLOR_USAGE_NON_PERSISTED_FIELDS), so the result is the
+	 * canonical set of premium SM-owned Usage setting ids to gate + strip on save. The theme's
+	 * per-element color targets folded into this tab are gated separately + theme-agnostically (see
+	 * \Pixelgrade\StyleManager\plus_gated_setting_ids()).
+	 *
+	 * @since 2.2.16
+	 *
+	 * @return string[]
+	 */
+	public static function get_usage_premium_setting_ids(): array {
+		return array_values( array_filter( self::COLOR_USAGE_FIELDS, static function ( $field_id ) {
+			return 0 !== strpos( $field_id, 'sm_separator_' )
+			       && false === strpos( $field_id, '_intro' )
+			       && ! in_array( $field_id, self::COLOR_USAGE_NON_PERSISTED_FIELDS, true );
 		} ) );
 	}
 
@@ -236,17 +302,8 @@ class ColorPalettes extends AbstractHookProvider {
 	 */
 	protected function add_color_usage_section( array $config ): array {
 
-		$color_usage_fields = [
-			'sm_description_color_usage_intro',
-			'sm_separator_1_0',
-			'sm_text_color_switch_master',
-			'sm_accent_color_switch_master',
-			'sm_coloration_level',
-			'sm_colorize_elements_button',
-			'sm_separator_1_1',
-			'sm_dark_mode',
-			'sm_dark_mode_advanced',
-		];
+		// Single source of truth: self::COLOR_USAGE_FIELDS.
+		$color_usage_fields = self::COLOR_USAGE_FIELDS;
 
 		$color_usage_section = [
 			'title'      => esc_html__( 'Color Usage', '__plugin_txtd' ),

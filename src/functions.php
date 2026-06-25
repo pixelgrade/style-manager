@@ -210,20 +210,31 @@ function plus_advanced_controls_locked(): bool {
  * The canonical set of premium (Plus) Style Manager setting ids.
  *
  * Single source of truth shared by the UI gating (Screen\SiteEditor::apply_plus_gating()) and the
- * server-side save strip (Provider\SiteEditorEndpoints): the persisted Fine-tune palette-structure
- * settings plus the colorize-elements affordance. When a non-entitled user saves, these ids are
- * dropped so everything else persists while the premium palette structure reverts to last-saved.
+ * server-side save strip (Provider\SiteEditorEndpoints). The whole advanced Color System layer is
+ * premium: the Fine-tune palette-structure settings, the entire Color Usage tab (master color
+ * switches, coloration level, dark mode) and the theme's per-element color targets folded into it,
+ * plus the colorize-elements affordance. When a non-entitled user saves, these ids are dropped so
+ * everything else persists while the premium settings revert to last-saved.
  *
  * @since 2.2.15
  *
  * @return string[] Premium setting ids.
  */
 function plus_gated_setting_ids(): array {
+	// Fine-tune palette structure.
 	$ids = Customize\ColorPalettes::get_premium_setting_ids();
+
+	// The whole Color Usage tab: the SM-owned master switches, coloration level and dark mode.
+	$ids = array_merge( $ids, Customize\ColorPalettes::get_usage_premium_setting_ids() );
 
 	// The colorize-elements control is a navigation/affordance, not itself a persisted setting, but
 	// we keep it in the gated set as the single source of truth (harmless to the strip).
 	$ids[] = 'sm_colorize_elements_button';
+
+	// The theme's per-element color targets folded into the Usage tab ("Color targets" group).
+	// Derived theme-agnostically from the live Customize registry so this stays maintainable and
+	// works for any theme that registers a Style Manager `colors_section`.
+	$ids = array_merge( $ids, plus_gated_theme_color_target_setting_ids() );
 
 	/**
 	 * Filter the canonical list of premium Style Manager setting ids.
@@ -237,6 +248,34 @@ function plus_gated_setting_ids(): array {
 	$ids = (array) \apply_filters( 'style_manager/plus_gated_setting_ids', $ids );
 
 	return array_values( array_unique( array_filter( array_map( 'strval', $ids ) ) ) );
+}
+
+/**
+ * The theme's per-element color-target setting ids gated behind Pixelgrade Plus.
+ *
+ * Bridges plus_gated_setting_ids() to the Headless Customizer's theme-agnostic derivation, guarded
+ * so contexts without the container (e.g. unit tests) degrade to an empty list rather than fatal.
+ *
+ * @since 2.2.16
+ *
+ * @return string[]
+ */
+function plus_gated_theme_color_target_setting_ids(): array {
+	try {
+		$container = plugin()->get_container();
+		if ( ! $container->has( 'provider.headless_customizer' ) ) {
+			return [];
+		}
+
+		$headless_customizer = $container->get( 'provider.headless_customizer' );
+		if ( ! $headless_customizer instanceof Provider\HeadlessCustomizer ) {
+			return [];
+		}
+
+		return $headless_customizer->get_theme_color_target_setting_ids();
+	} catch ( \Throwable $e ) {
+		return [];
+	}
 }
 
 /**

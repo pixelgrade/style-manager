@@ -206,6 +206,51 @@ class HeadlessCustomizer {
 	}
 
 	/**
+	 * The persisted setting ids of the theme's per-element color targets.
+	 *
+	 * These are the controls a theme registers in its Style Manager `colors_section` (the "Color
+	 * targets" group folded into the Color Usage tab — e.g. body/links/heading/button color toggles).
+	 * Derived theme-agnostically from the live Customize registry: every actual setting attached to a
+	 * control in that section, skipping the presentational `html` controls (separators/intros/titles)
+	 * which carry no real setting.
+	 *
+	 * Used to gate + strip these targets on save when Pixelgrade Plus is absent — the whole Color
+	 * Usage tab is premium (see \Pixelgrade\StyleManager\plus_gated_setting_ids()).
+	 *
+	 * @since 2.2.16
+	 *
+	 * @return string[] Setting ids (full registered form, e.g. `anima_options[body_color]`).
+	 */
+	public function get_theme_color_target_setting_ids(): array {
+		$section_id = $this->get_theme_colors_section_id();
+		if ( '' === $section_id ) {
+			return [];
+		}
+
+		$manager = $this->get_manager();
+
+		$setting_ids = [];
+		foreach ( $manager->controls() as $control ) {
+			/** @var \WP_Customize_Control $control */
+			if ( (string) $control->section !== $section_id ) {
+				continue;
+			}
+
+			// Presentational controls (group separators, section titles, intros) carry no real
+			// setting to persist; skip them so only genuine color-target settings are gated.
+			if ( 'html' === $control->type ) {
+				continue;
+			}
+
+			foreach ( (array) $control->settings as $setting ) {
+				$setting_ids[] = is_object( $setting ) ? (string) $setting->id : (string) $setting;
+			}
+		}
+
+		return array_values( array_unique( array_filter( $setting_ids ) ) );
+	}
+
+	/**
 	 * Collect the settings data the JS engine expects, in the exact shape of
 	 * _wpCustomizeSettings.settings (value/transport/type) augmented with
 	 * Style Manager's connected_fields data.
