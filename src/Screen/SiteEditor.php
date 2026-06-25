@@ -529,6 +529,17 @@ class SiteEditor extends AbstractHookProvider {
 			'badge'       => esc_html__( 'Plus', '__plugin_txtd' ),
 			'learnMore'   => esc_html__( 'Learn more', '__plugin_txtd' ),
 			'productName' => esc_html__( 'Pixelgrade Plus', '__plugin_txtd' ),
+			// The Try & Play overlay's primary button + the slim post-reveal banner copy. Generic
+			// (feature-agnostic) so the same Try & Play surface can back fonts, spacing, etc.
+			'buttonLabel' => esc_html__( 'Try and play', '__plugin_txtd' ),
+			'bannerText'  => esc_html__( 'Trial — changes here aren\'t saved. Get Pixelgrade Plus to keep them.', '__plugin_txtd' ),
+			// The short invite shown ON the Try & Play overlay, per gated section (gentle, never
+			// implying the free tool is incomplete). `notes` stays the longer per-control copy used
+			// for the subtle Plus pills.
+			'overlayNotes' => [
+				'sm_fine_tune_color_palette_section' => esc_html__( 'Fine-tune your palette live — grades, contrast, and color promotion update as you go.', '__plugin_txtd' ),
+				'sm_color_usage_section'             => esc_html__( 'Play with how colors apply across your site — coloration, dark mode, and per-element targets, live.', '__plugin_txtd' ),
+			],
 			'notes'       => [
 				'sm_fine_tune_color_palette_section' => esc_html__( 'Take the Fine-tune controls for a spin — grades, contrast, and color promotion update live as you go. Changes here aren\'t saved; fine-tuning your palette\'s structure is part of Pixelgrade Plus.', '__plugin_txtd' ),
 				'sm_color_usage_section'             => esc_html__( 'Try the Usage controls live — shift how colors apply across your site, dial coloration up or down, and preview dark mode. Changes here aren\'t saved; saving how your palette is applied is part of Pixelgrade Plus.', '__plugin_txtd' ),

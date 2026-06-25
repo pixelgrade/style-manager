@@ -1234,31 +1234,70 @@
 }
 
 // ---------------------------------------------------------------------------
-// Pixelgrade Plus — gentle inline trial affordances.
+// Try & Play — a reusable, feature-agnostic trial-overlay surface.
 //
-// Gated controls stay fully interactive (a live sandbox); only saving the
-// premium palette structure is gated server-side. These styles are deliberately
-// quiet and WP-core-ish — an info Notice and a small pill — never a wall.
+// A locked-but-functional group of controls gets a SOFT, semi-transparent
+// overlay: the real controls stay visible (slightly dimmed) underneath but are
+// inert. A primary "Try and play" button dissolves the scrim, restores the
+// controls, and leaves a slim persistent trial banner. Deliberately quiet and
+// WP-core-feeling — an invitation, never a "PRO lock" wall. Markup is owned by
+// try-and-play.js; nothing here is color/Plus-specific.
 // ---------------------------------------------------------------------------
-.sm-se-plus-trial {
-	display: flex;
-	margin: 0 0 16px;
-	padding: 10px 12px;
-	border-radius: 4px;
-	border: 1px solid rgba(var(--wp-admin-theme-color--rgb, 56, 88, 233), 0.25);
-	background: rgba(var(--wp-admin-theme-color--rgb, 56, 88, 233), 0.06);
-	box-shadow: none;
 
-	.sm-se-plus-trial__content {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-		margin: 0;
-		padding: 0;
+// The positioned host the overlay is anchored to (set up by mountTryAndPlay).
+.sm-tap-host {
+	position: relative;
+}
+
+// The controls underneath while covered: dimmed and visually "asleep". They are
+// also made inert in JS (out of the tab order / a11y tree); the pointer-events
+// guard is a belt-and-suspenders for engines without `inert`.
+.sm-tap-covered {
+	pointer-events: none;
+	opacity: 0.45;
+	filter: saturate(0.85);
+	user-select: none;
+	transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.sm-tap-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 6;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 24px 16px;
+	// A light scrim so the controls read through it — not an opaque wall. The
+	// blur is gentle and capped; reduced-motion users get the scrim without it.
+	background: rgba(255, 255, 255, 0.55);
+	backdrop-filter: blur(1px);
+	-webkit-backdrop-filter: blur(1px);
+	opacity: 1;
+	transition: opacity 0.25s ease;
+
+	&.is-leaving {
+		opacity: 0;
+		pointer-events: none;
 	}
 
-	.sm-se-plus-trial__badge {
-		align-self: flex-start;
+	&__inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		max-width: 260px;
+		// Stay in view as the user scrolls a long control list.
+		position: sticky;
+		top: 16px;
+		padding: 16px;
+		border-radius: 6px;
+		background: #fff;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.12);
+		text-align: center;
+	}
+
+	&__badge {
 		font-size: 10px;
 		font-weight: 600;
 		line-height: 1;
@@ -1270,15 +1309,20 @@
 		background: var(--wp-admin-theme-color, #3858e9);
 	}
 
-	.sm-se-plus-trial__text {
+	&__text {
 		margin: 0;
 		font-size: 12px;
 		line-height: 1.5;
 		color: #1e1e1e;
 	}
 
-	.sm-se-plus-trial__link {
-		align-self: flex-start;
+	&__button.components-button.is-primary {
+		justify-content: center;
+		min-height: 32px;
+		padding-inline: 16px;
+	}
+
+	&__link {
 		font-size: 12px;
 		font-weight: 500;
 		text-decoration: none;
@@ -1288,6 +1332,65 @@
 		&:focus {
 			text-decoration: underline;
 		}
+	}
+}
+
+// The slim, persistent trial reminder shown after the user reveals the controls.
+.sm-tap-banner {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px 8px;
+	margin: 0 16px 12px;
+	padding: 7px 10px;
+	border-radius: 4px;
+	border: 1px solid rgba(var(--wp-admin-theme-color--rgb, 56, 88, 233), 0.2);
+	background: rgba(var(--wp-admin-theme-color--rgb, 56, 88, 233), 0.05);
+
+	&__badge {
+		font-size: 9px;
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		padding: 2px 6px;
+		border-radius: 8px;
+		color: var(--wp-admin-theme-color, #3858e9);
+		background: rgba(var(--wp-admin-theme-color--rgb, 56, 88, 233), 0.12);
+	}
+
+	&__text {
+		flex: 1 1 auto;
+		min-width: 0;
+		font-size: 11px;
+		line-height: 1.45;
+		color: #50575e;
+	}
+
+	&__link {
+		flex: 0 0 auto;
+		font-size: 11px;
+		font-weight: 500;
+		text-decoration: none;
+		color: var(--wp-admin-theme-color, #3858e9);
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
+		}
+	}
+}
+
+// Respect reduced-motion: drop the blur + fade, keep the (instant) state change.
+@media (prefers-reduced-motion: reduce) {
+	.sm-tap-overlay {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		transition: none;
+	}
+
+	.sm-tap-covered {
+		transition: none;
 	}
 }
 

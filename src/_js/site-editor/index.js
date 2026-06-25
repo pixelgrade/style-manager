@@ -18,6 +18,7 @@ import { SECTION_PREVIEW_MODES, parseSiteEditorDeepLink } from './deep-link';
 import { initDocsLinks } from './docs-links';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
+import { mountTryAndPlay } from './try-and-play';
 import { initializeColorTargetFeedback } from './target-feedback';
 import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay, ContextualColorsOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
@@ -96,53 +97,35 @@ const plusPayload = payload.plus || null;
 const plusIsLocked = () => !! ( plusPayload && plusPayload.locked );
 
 /**
- * Build a gentle, inline trial banner (WP-core Notice pattern) for a locked Plus section.
+ * Resolve the Try & Play trial options for a locked Plus section from the `plus` payload.
  *
- * Controls stay interactive; this just frames the experience: you're trying it live, saving the
- * palette structure is part of Pixelgrade Plus. Returns null when there's nothing to show.
+ * Controls stay interactive; the overlay (and, post-reveal, the slim banner) just frames the
+ * experience: you're trying it live, saving the palette structure is part of Pixelgrade Plus.
+ * Returns null when this section isn't a locked, copy-bearing Plus surface.
  */
-const buildPlusTrialBanner = sectionId => {
+const getPlusTrialOptions = sectionId => {
   if ( ! plusIsLocked() || ! plusPayload ) {
     return null;
   }
 
-  const note = ( plusPayload.notes || {} )[ sectionId ];
-  if ( ! note ) {
+  // The overlay line: a dedicated short invite, falling back to the section's note.
+  const overlayText = ( plusPayload.overlayNotes || {} )[ sectionId ]
+    || ( plusPayload.notes || {} )[ sectionId ];
+  if ( ! overlayText ) {
     return null;
   }
 
-  // Mirrors @wordpress/components Notice (status="info", non-dismissible) so it reads as native.
-  const banner = document.createElement( 'div' );
-  banner.className = 'sm-se-plus-trial components-notice is-info';
-  banner.setAttribute( 'role', 'status' );
-
-  const content = document.createElement( 'div' );
-  content.className = 'components-notice__content sm-se-plus-trial__content';
-
-  const heading = document.createElement( 'span' );
-  heading.className = 'sm-se-plus-trial__badge';
-  heading.textContent = plusPayload.badge || 'Plus';
-  content.appendChild( heading );
-
-  const text = document.createElement( 'p' );
-  text.className = 'sm-se-plus-trial__text';
-  // Notes arrive esc_html'd from PHP.
-  text.textContent = decodeHtmlText( note );
-  content.appendChild( text );
-
-  if ( plusPayload.upsellUrl ) {
-    const link = document.createElement( 'a' );
-    link.className = 'sm-se-plus-trial__link';
-    link.href = plusPayload.upsellUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = `${ decodeHtmlText( plusPayload.learnMore || 'Learn more' ) } →`;
-    content.appendChild( link );
-  }
-
-  banner.appendChild( content );
-
-  return banner;
+  return {
+    id: sectionId,
+    locked: true,
+    overlayText,
+    buttonLabel: plusPayload.buttonLabel || 'Try and play',
+    bannerText: plusPayload.bannerText || '',
+    badge: plusPayload.badge || 'Plus',
+    learnMore: plusPayload.upsellUrl
+      ? { label: plusPayload.learnMore || 'Learn more', url: plusPayload.upsellUrl }
+      : null,
+  };
 };
 
 /**
@@ -382,14 +365,10 @@ const buildSectionPanel = section => {
   panel.className = 'sm-se-tab-panel';
   panel.setAttribute( 'data-tab-section', section.id );
 
-  // A locked Plus section becomes a live trial: leave every control interactive and add a gentle
-  // inline banner at the top of the panel. Saving the premium settings is gated server-side.
-  if ( section.locked && section.gate ) {
-    const banner = buildPlusTrialBanner( section.id );
-    if ( banner ) {
-      panel.appendChild( banner );
-    }
-  }
+  // A locked Plus section becomes a live trial. Resolve its Try & Play options here; the overlay
+  // is mounted over the controls list below (it needs the built controls to exist first). Saving
+  // the premium settings is gated server-side regardless.
+  const trialOptions = ( section.locked && section.gate ) ? getPlusTrialOptions( section.id ) : null;
 
   if ( section.description ) {
     const descriptionEl = document.createElement( 'div' );
@@ -425,6 +404,19 @@ const buildSectionPanel = section => {
 
   // Mark the controls into titled, divider-separated group sections.
   markGroupSections( contentEl, ( payload.sectionGroupHeaders || {} )[ section.id ] || [] );
+
+  // A locked Plus section: drape a soft Try & Play overlay over the controls list (visible but not
+  // interactive underneath) until the user opts to try them live, then reveal + leave a slim
+  // persistent trial banner. Per-session dismissal is keyed by the section id. We wrap the controls
+  // <ul> in a positioned host so the scrim covers ONLY the controls (the description/tools stay
+  // clear) and so the slim banner — a <div> — is a valid sibling, not a child of the <ul>.
+  if ( trialOptions ) {
+    const trialHost = document.createElement( 'div' );
+    trialHost.className = 'sm-se-trial-host';
+    contentEl.parentNode.insertBefore( trialHost, contentEl );
+    trialHost.appendChild( contentEl );
+    mountTryAndPlay( trialHost, { ...trialOptions, controlsEl: contentEl } );
+  }
 
   // The voice tuner as a "find by voice" filter panel attached to the font
   // palette list (the floating accordion rows are hidden in this context).
