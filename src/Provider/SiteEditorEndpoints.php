@@ -11,6 +11,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Provider;
 
+use Pixelgrade\StyleManager\Customize\ColorPalettes;
 use Pixelgrade\StyleManager\Customize\FontPalettes;
 use Pixelgrade\StyleManager\Customize\Fonts;
 use Pixelgrade\StyleManager\Screen\EditWithBlocks;
@@ -57,6 +58,20 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 * @var FrontendOutput
 	 */
 	protected FrontendOutput $frontend_output;
+
+	/**
+	 * The generated palette output setting produced by the Color System builder.
+	 */
+	protected const PALETTE_OUTPUT_SETTING_ID = 'sm_advanced_palette_output';
+
+	/**
+	 * Free Color System settings that justify saving a generated palette output.
+	 */
+	protected const FREE_PALETTE_SETTING_IDS = [
+		'sm_advanced_palette_source',
+		ColorPalettes::SM_COLOR_PALETTE_OPTION_KEY,
+		ColorPalettes::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
+	];
 
 	/**
 	 * @param HeadlessCustomizer $headless_customizer Headless Customizer.
@@ -228,16 +243,33 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 			return $values;
 		}
 
-		$premium_ids = \Pixelgrade\StyleManager\plus_gated_setting_ids();
-		if ( empty( $premium_ids ) ) {
-			return $values;
-		}
+		$original_values             = $values;
+		$premium_ids                 = \Pixelgrade\StyleManager\plus_gated_setting_ids();
+		$has_premium_setting_change = false;
 
 		foreach ( $premium_ids as $premium_id ) {
+			if ( array_key_exists( $premium_id, $values ) ) {
+				$has_premium_setting_change = true;
+			}
 			unset( $values[ $premium_id ] );
 		}
 
+		if ( array_key_exists( self::PALETTE_OUTPUT_SETTING_ID, $values )
+			&& ( $has_premium_setting_change || ! $this->has_free_palette_setting_change( $original_values ) ) ) {
+			unset( $values[ self::PALETTE_OUTPUT_SETTING_ID ] );
+		}
+
 		return $values;
+	}
+
+	protected function has_free_palette_setting_change( array $values ): bool {
+		foreach ( self::FREE_PALETTE_SETTING_IDS as $setting_id ) {
+			if ( array_key_exists( $setting_id, $values ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

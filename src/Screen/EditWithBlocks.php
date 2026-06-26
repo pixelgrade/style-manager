@@ -240,6 +240,10 @@ class EditWithBlocks extends AbstractHookProvider {
 			return;
 		}
 
+		if ( ! $this->plugin_settings->get( 'enable_editor_style', true ) ) {
+			return;
+		}
+
 		$this->sm_fonts->enqueue_frontend_scripts_styles();
 
 		add_filter( 'style_manager/font_css_selector', [ $this, 'gutenbergify_font_css_selectors' ], 10, 2 );

@@ -94,7 +94,7 @@ function is_plugin_file( string $plugin_file ): bool {
 function display_missing_dependencies_notice() {
 	$message = sprintf(
 	/* translators: %s: documentation URL */
-		__( 'Style Manager is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', '__plugin_txtd' ),
+		__( 'Style Manager is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferrer">Learn more.</a>', '__plugin_txtd' ),
 		'https://github.com/pixelgrade/style-manager'
 	);
 

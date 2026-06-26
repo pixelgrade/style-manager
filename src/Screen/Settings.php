@@ -204,8 +204,12 @@ class Settings extends AbstractHookProvider {
 		         ->add_tab( esc_html__( 'Tools', '__plugin_txtd' ), [
 			         Field::make( 'html', 'reset_customizer_settings', esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) )
 			              ->set_help_text( esc_html__( 'Resets all the Customizer settings introduced by this plugin. It will NOT reset the core WordPress Customizer settings or plugin settings.', '__plugin_txtd' ) )
-			              ->set_html( '<br><div class="reset_style_manager_settings"><div class="button" id="reset_customizer_settings">' . esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) . '</div></div>' ),
+			              ->set_html( $this->get_reset_customizer_settings_html() ),
 		         ] );
+	}
+
+	protected function get_reset_customizer_settings_html(): string {
+		return '<br><div class="reset_style_manager_settings"><button type="button" class="button" id="reset_customizer_settings">' . esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) . '</button></div>';
 	}
 
 	protected function get_page_parent(): string {
@@ -288,7 +292,7 @@ class Settings extends AbstractHookProvider {
 			wp_send_json_error( esc_html__( 'We couldn\'t  find an options key. Nothing was reset.', '__plugin_txtd' ) );
 		}
 
-		// @todo This is not quite right since it will not delete if we save as options, not theme_mods.
+		delete_option( $key );
 		remove_theme_mod( $key );
 
 		$this->options->invalidate_all_caches();

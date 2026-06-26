@@ -4,15 +4,50 @@ declare ( strict_types = 1 );
 namespace {
 	if ( ! class_exists( 'WP_Customize_Manager', false ) ) {
 		class WP_Customize_Manager {
-			private array $sections;
+			public static array $instances = [];
+
+			public string $options_key = '';
+
+			public array $constructor_args = [];
+
+			public array $save_changeset_post_calls = [];
+
+			private array $sections = [];
 
 			public function __construct( array $sections = [] ) {
-				$this->sections = $sections;
+				if ( array_key_exists( 'changeset_uuid', $sections ) || array_key_exists( 'settings_previewed', $sections ) ) {
+					$this->constructor_args = $sections;
+					$this->sections         = [];
+				} else {
+					$this->sections = $sections;
+				}
+
+				self::$instances[] = $this;
 			}
 
 			public function sections(): array {
 				return $this->sections;
 			}
+
+			public function get_section( $id ) {
+				return $this->sections[ $id ] ?? null;
+			}
+
+			public function remove_section( $id ): void {}
+			public function remove_panel( $id ): void {}
+
+			public function register_controls(): void {
+			}
+
+			public function save_changeset_post( array $args ) {
+				$this->save_changeset_post_calls[] = $args;
+
+				return 123;
+			}
+
+			public function add_section( $id, $args = [] ) {}
+			public function add_setting( $id, $args = [] ) {}
+			public function add_control( $id, $args = [] ) {}
 		}
 	}
 }
@@ -32,8 +67,66 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 	class HeadlessCustomizerSiteEditorSectionsTest extends TestCase {
 		public function tearDown(): void {
 			unset( $GLOBALS['wp_current_filter'] );
+			\WP_Customize_Manager::$instances = [];
 
 			parent::tearDown();
+		}
+
+		public function test_preview_changesets_are_written_through_customizer_save_api(): void {
+			Functions\when( 'wp_generate_uuid4' )->justReturn( '11111111-1111-4111-8111-111111111111' );
+			Functions\when( 'wp_json_encode' )->alias( static function( $value ) {
+				return json_encode( $value );
+			} );
+			Functions\when( 'wp_insert_post' )->justReturn( 123 );
+			Functions\when( 'is_wp_error' )->alias( static function( $value ): bool {
+				return false;
+			} );
+			Functions\when( 'get_current_user_id' )->justReturn( 7 );
+			Functions\when( 'home_url' )->alias( static function( string $path = '' ): string {
+				return 'https://example.test' . $path;
+			} );
+			Functions\when( 'add_query_arg' )->alias( static function( string $key, string $value, string $url ): string {
+				return $url . '?' . rawurlencode( $key ) . '=' . rawurlencode( $value );
+			} );
+			Functions\when( 'add_filter' )->justReturn( true );
+			Functions\when( 'remove_filter' )->justReturn( true );
+			Functions\when( 'remove_action' )->justReturn( true );
+			Functions\when( 'do_action' )->justReturn( null );
+
+			$headless = new HeadlessCustomizer(
+				$this->createMock( Options::class ),
+				$this->createMock( Customizer::class )
+			);
+
+			$result = $headless->upsert_preview_changeset(
+				[
+					'sm_page_transitions_enable' => true,
+					'sm_logo_loading_style'      => 'cycling_images',
+				]
+			);
+
+			$this->assertSame( '11111111-1111-4111-8111-111111111111', $result['uuid'] );
+			$this->assertNotEmpty(
+				\WP_Customize_Manager::$instances,
+				'Preview changesets should use the Customizer manager so WordPress preserves and previews the changeset data.'
+			);
+
+			$manager = \WP_Customize_Manager::$instances[0];
+			$this->assertSame(
+				'11111111-1111-4111-8111-111111111111',
+				$manager->constructor_args['changeset_uuid']
+			);
+			$this->assertSame(
+				[
+					'status' => '',
+					'title'  => HeadlessCustomizer::PREVIEW_CHANGESET_TITLE,
+					'data'   => [
+						'sm_page_transitions_enable' => [ 'value' => true ],
+						'sm_logo_loading_style'      => [ 'value' => 'cycling_images' ],
+					],
+				],
+				$manager->save_changeset_post_calls[0]
+			);
 		}
 
 		public function test_sm_section_ids_include_theme_colors_section_for_active_options_key(): void {

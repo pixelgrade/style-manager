@@ -3,6 +3,7 @@ declare ( strict_types = 1 );
 
 namespace Pixelgrade\StyleManager\Tests\Unit\Lab;
 
+use Brain\Monkey\Functions;
 use Pixelgrade\StyleManager\Lab\Config;
 use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 
@@ -62,6 +63,8 @@ class ConfigTest extends TestCase {
 	}
 
 	public function test_color_system_preview_config_returns_palette_payload_and_strings(): void {
+		Functions\when( '__' )->alias( static fn( string $text, ...$args ): string => $text );
+
 		$params = \Pixelgrade\StyleManager\Lab\QueryParams::from_array( [
 			'dark' => '1',
 		] );

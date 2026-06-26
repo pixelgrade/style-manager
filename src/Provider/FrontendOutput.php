@@ -119,46 +119,6 @@ class FrontendOutput extends AbstractHookProvider {
 		// We will initialize the Customizer logic after the plugin has finished with it's configuration (at priority 15).
 		$this->add_action( 'init', 'setup', 15 );
 
-		// Anima gates page transitions inside customize previews (Barba's AJAX
-		// navigation conflicts with the Customizer's reload-based tracking).
-		// The Site Editor's Live Site preview delegates navigation to the
-		// transitions engine instead, so it opts back in via its URL marker.
-		$this->add_filter( 'anima/page_transitions_in_customize_preview', 'allow_page_transitions_in_site_editor_preview' );
-	}
-
-	/**
-	 * Allow page transitions inside the Site Editor's Live Site preview.
-	 *
-	 * The preview is identified by its changeset: the Site Editor creates
-	 * Live Site preview changesets with a marker title, and the changeset
-	 * uuid rides every request inside the preview — including the AJAX
-	 * fetches the transitions engine itself makes and any link core's
-	 * preview rewriting produces. (A `sm-live-preview` URL marker is kept
-	 * as a fallback for the initial pane-built URL.)
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param bool $allowed Whether transitions are allowed in this customize preview.
-	 *
-	 * @return bool
-	 */
-	protected function allow_page_transitions_in_site_editor_preview( $allowed ): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- presence-only marker toggling a preview behavior.
-		if ( isset( $_GET['sm-live-preview'] ) ) {
-			return true;
-		}
-
-		if ( ! empty( $GLOBALS['wp_customize'] ) && is_callable( [ $GLOBALS['wp_customize'], 'changeset_post_id' ] ) ) {
-			$changeset_post_id = $GLOBALS['wp_customize']->changeset_post_id();
-			if ( $changeset_post_id ) {
-				$changeset = get_post( $changeset_post_id );
-				if ( $changeset && HeadlessCustomizer::PREVIEW_CHANGESET_TITLE === $changeset->post_title ) {
-					return true;
-				}
-			}
-		}
-
-		return (bool) $allowed;
 	}
 
 	/**
@@ -339,12 +299,12 @@ class FrontendOutput extends AbstractHookProvider {
 			return '';
 		}
 
-		$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . wp_strip_all_tags( $value ) . $unit . '; }' . "\n";
-
 		// Handle the value filter callback.
 		if ( isset( $css_property['filter_value_cb'] ) ) {
 			$value = $this->maybe_apply_filter( $css_property['filter_value_cb'], $value );
 		}
+
+		$property_output = $css_property['selector'] . ' { ' . $css_property['property'] . ': ' . wp_strip_all_tags( $value ) . $unit . '; }' . "\n";
 
 		// Handle output callback.
 		if ( isset( $css_property['callback_filter'] ) && is_callable( $css_property['callback_filter'] ) ) {

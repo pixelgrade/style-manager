@@ -308,14 +308,33 @@ export const initializePreview = ( api, payload ) => {
     } );
   } );
 
-  // Dark mode: toggle the admin body class; the existing EditWithBlocks
-  // MutationObserver propagates it to the canvas iframe root as `is-dark`.
-  api( 'sm_dark_mode_advanced', setting => {
-    const applyDarkMode = value => {
-      document.body.classList.toggle( 'dark-mode-advanced', isDarkModeValueDark( value ) );
-    };
+	  const syncDarkModeToCanvas = isDark => {
+	    const canvasDocument = getCanvasDocument();
+	
+	    if ( canvasDocument?.documentElement ) {
+	      canvasDocument.documentElement.classList.toggle( 'is-dark', isDark );
+	    }
 
-    setting.bind( applyDarkMode );
+	    // Gutenberg may rewrite the iframe html class after load; body is the
+	    // durable scope for live preview selectors inside the canvas.
+	    if ( canvasDocument?.body ) {
+	      canvasDocument.body.classList.toggle( 'is-dark', isDark );
+	    }
+	  };
+
+  const applyDarkModePreview = value => {
+    const isDark = isDarkModeValueDark( value );
+
+    document.body.classList.toggle( 'dark-mode-advanced', isDark );
+    syncDarkModeToCanvas( isDark );
+  };
+
+  // Dark mode: toggle the admin body class and mirror the state directly into
+  // the canvas iframe. The older EditWithBlocks bridge still covers saved
+  // initial state, but live Site Editor setting changes must not depend on it.
+  api( 'sm_dark_mode_advanced', setting => {
+    applyDarkModePreview( setting() );
+    setting.bind( applyDarkModePreview );
   } );
 
   // The canvas iframe gets torn down and recreated as the user navigates
@@ -329,6 +348,10 @@ export const initializePreview = ( api, payload ) => {
       iframe.addEventListener( 'load', () => {
         canvasFontsCache = [];
         renderAll();
+        const darkModeSetting = api( 'sm_dark_mode_advanced' );
+        if ( darkModeSetting ) {
+          applyDarkModePreview( darkModeSetting() );
+        }
       } );
     }
 

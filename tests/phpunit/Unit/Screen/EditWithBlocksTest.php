@@ -52,6 +52,39 @@ class EditWithBlocksTest extends TestCase {
 		$this->create_edit_screen( $fonts, $frontend_output )->enqueue_editor_dynamic_css();
 	}
 
+	public function test_dynamic_css_respects_disabled_editor_style_setting(): void {
+		Functions\when( 'is_admin' )->justReturn( true );
+		Functions\when( 'get_current_screen' )->justReturn( new class() {
+			public string $id = 'post';
+
+			public function is_block_editor(): bool {
+				return true;
+			}
+		} );
+
+		$plugin_settings = $this->createMock( PluginSettings::class );
+		$plugin_settings
+			->expects( $this->once() )
+			->method( 'get' )
+			->with( 'enable_editor_style', true )
+			->willReturn( false );
+
+		$fonts = $this->createMock( Fonts::class );
+		$fonts
+			->expects( $this->never() )
+			->method( 'enqueue_frontend_scripts_styles' );
+		$fonts
+			->expects( $this->never() )
+			->method( 'getFontsDynamicStyle' );
+
+		$frontend_output = $this->createMock( FrontendOutput::class );
+		$frontend_output
+			->expects( $this->never() )
+			->method( 'get_dynamic_style' );
+
+		$this->create_edit_screen( $fonts, $frontend_output, $plugin_settings )->enqueue_editor_dynamic_css();
+	}
+
 	public function test_dynamic_css_still_renders_for_the_admin_block_editor_canvas(): void {
 		Functions\when( 'is_admin' )->justReturn( true );
 		Functions\when( 'get_current_screen' )->justReturn( new class() {
@@ -328,11 +361,20 @@ class EditWithBlocksTest extends TestCase {
 
 	private function create_edit_screen(
 		?Fonts $fonts = null,
-		?FrontendOutput $frontend_output = null
+		?FrontendOutput $frontend_output = null,
+		?PluginSettings $plugin_settings = null
 	): EditWithBlocks {
+		if ( null === $plugin_settings ) {
+			$plugin_settings = $this->createMock( PluginSettings::class );
+			$plugin_settings
+				->method( 'get' )
+				->with( 'enable_editor_style', true )
+				->willReturn( true );
+		}
+
 		return new EditWithBlocks(
 			$this->createMock( Options::class ),
-			$this->createMock( PluginSettings::class ),
+			$plugin_settings,
 			$fonts ?? $this->createMock( Fonts::class ),
 			$frontend_output ?? $this->createMock( FrontendOutput::class ),
 			$this->createMock( LoggerInterface::class )

@@ -78,7 +78,23 @@ class HeadlessCustomizer {
 			return $this->manager;
 		}
 
-		require_once ABSPATH . WPINC . '/class-wp-customize-manager.php';
+		$this->manager = $this->create_manager( wp_generate_uuid4(), false );
+
+		return $this->manager;
+	}
+
+	/**
+	 * Creates a WP_Customize_Manager with the full customize_register chain applied.
+	 *
+	 * @param string $changeset_uuid     Changeset UUID used by the manager.
+	 * @param bool   $settings_previewed Whether settings should be previewed.
+	 *
+	 * @return \WP_Customize_Manager
+	 */
+	protected function create_manager( string $changeset_uuid, bool $settings_previewed ): \WP_Customize_Manager {
+		if ( ! class_exists( \WP_Customize_Manager::class, false ) ) {
+			require_once ABSPATH . WPINC . '/class-wp-customize-manager.php';
+		}
 
 		// Keep the heavyweight core components out: we only need settings/controls.
 		$disable_components = static function () {
@@ -88,8 +104,8 @@ class HeadlessCustomizer {
 
 		$manager = new \WP_Customize_Manager(
 			[
-				'changeset_uuid'     => wp_generate_uuid4(),
-				'settings_previewed' => false,
+				'changeset_uuid'     => $changeset_uuid,
+				'settings_previewed' => $settings_previewed,
 			]
 		);
 
@@ -116,8 +132,6 @@ class HeadlessCustomizer {
 		 * full registry. Controls are grouped into sections by
 		 * get_section_controls() instead.
 		 */
-
-		$this->manager = $manager;
 
 		return $manager;
 	}
@@ -478,47 +492,26 @@ class HeadlessCustomizer {
 	 * @return array|\WP_Error { uuid, previewUrl }
 	 */
 	public function upsert_preview_changeset( array $values, ?string $uuid = null ) {
+		if ( ! $uuid || ! wp_is_uuid( $uuid ) ) {
+			$uuid   = wp_generate_uuid4();
+		}
+
 		$data = [];
 		foreach ( $values as $setting_id => $value ) {
 			$data[ (string) $setting_id ] = [ 'value' => $value ];
 		}
 
-		$post = null;
-		if ( $uuid && wp_is_uuid( $uuid ) ) {
-			$existing = get_posts( [
-				'post_type'      => 'customize_changeset',
-				'post_status'    => [ 'auto-draft', 'draft' ],
-				'name'           => $uuid,
-				'posts_per_page' => 1,
-				'author'         => get_current_user_id(),
-			] );
-			$post     = $existing[0] ?? null;
-		}
+		$manager = $this->create_manager( $uuid, false );
+		$result  = $manager->save_changeset_post(
+			[
+				'status' => '',
+				'title'  => self::PREVIEW_CHANGESET_TITLE,
+				'data'   => $data,
+			]
+		);
 
-		if ( $post instanceof \WP_Post ) {
-			$result = wp_update_post( [
-				'ID'           => $post->ID,
-				'post_title'   => self::PREVIEW_CHANGESET_TITLE,
-				'post_content' => wp_json_encode( $data ),
-			], true );
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
-		} else {
-			$uuid   = wp_generate_uuid4();
-			$result = wp_insert_post( [
-				'post_type'    => 'customize_changeset',
-				'post_status'  => 'auto-draft',
-				'post_name'    => $uuid,
-				'post_title'   => self::PREVIEW_CHANGESET_TITLE,
-				'post_content' => wp_json_encode( $data ),
-				'post_author'  => get_current_user_id(),
-			], true );
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return [

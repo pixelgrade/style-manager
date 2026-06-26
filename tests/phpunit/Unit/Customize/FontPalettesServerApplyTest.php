@@ -11,6 +11,40 @@ use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 class FontPalettesServerApplyTest extends TestCase {
+	public function test_get_palettes_uses_default_config_when_design_assets_have_no_font_palettes(): void {
+		Functions\when( 'esc_html__' )->alias( static fn( string $text ): string => $text );
+		Functions\when( 'apply_filters' )->alias( static function( string $hook, $value, ...$args ) {
+			return $value;
+		} );
+		Functions\when( 'wp_parse_args' )->alias( static function( $args, $defaults = [] ) {
+			return array_merge( (array) $defaults, (array) $args );
+		} );
+		Functions\when( 'sanitize_title' )->alias( static function( string $text ): string {
+			return strtolower( preg_replace( '/[^a-z0-9]+/i', '-', trim( $text ) ) ?? '' );
+		} );
+		Functions\when( 'wp_strip_all_tags' )->alias( static fn( string $text ): string => strip_tags( $text ) );
+
+		$design_assets = $this->createMock( DesignAssets::class );
+		$design_assets
+			->expects( $this->once() )
+			->method( 'get_entry' )
+			->with( 'font_palettes', true )
+			->willReturn( null );
+
+		$font_palettes = new FontPalettes(
+			$this->createMock( Options::class ),
+			$design_assets,
+			$this->createMock( LoggerInterface::class )
+		);
+
+		$palettes = $font_palettes->get_palettes( true );
+
+		$this->assertArrayHasKey( 'gema', $palettes );
+		$this->assertSame( 'Gema', $palettes['gema']['label'] );
+		$this->assertArrayHasKey( 'fonts_logic', $palettes['gema'] );
+		$this->assertNotEmpty( $palettes['gema']['fonts_logic'] );
+	}
+
 	public function test_apply_current_font_palette_to_connected_fields_writes_theme_font_values(): void {
 		$options = $this->createMock( Options::class );
 		$options

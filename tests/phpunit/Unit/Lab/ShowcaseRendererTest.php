@@ -21,6 +21,13 @@ class ShowcaseRendererTest extends TestCase {
 		} );
 		Functions\when( 'esc_html__' )->alias( static fn( $text, ...$args ) => (string) $text );
 		Functions\when( 'do_blocks' )->alias( static fn( string $markup ): string => $markup );
+		Functions\when( 'wp_get_theme' )->alias(
+			static fn(): object => new class() {
+				public function get_stylesheet(): string {
+					return 'anima';
+				}
+			}
+		);
 
 		$html = ( new ShowcaseRenderer() )->render( QueryParams::from_array( [
 			'palette'         => 'brand',

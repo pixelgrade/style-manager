@@ -19,7 +19,23 @@ import { initDocsLinks } from './docs-links';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
 import { mountTryAndPlay } from './try-and-play';
+import {
+  clearNativeSaveEdits,
+  filterLockedPlusChangedValues,
+  getBaselineSettingsValues,
+  getChangedSettingsValues,
+  isTruthyBool,
+} from './plus-save-filter';
 import { initializeColorTargetFeedback } from './target-feedback';
+import { playSiteEditorMotionPreview } from './motion-preview';
+import {
+  getPreviewContext,
+  getPreviewMode,
+  getPreviewState,
+  isPreviewEntryOpen,
+  setPreviewMode,
+  subscribePreviewMode,
+} from './preview-mode';
 import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay, ContextualColorsOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
@@ -696,15 +712,14 @@ const buildRoot = api => {
   `;
   const liveButton = liveBlock.querySelector( '.sm-se-live-preview__button' );
 
-  const renderLiveButton = currentMode => {
-    const isOpen = 'site' === currentMode;
+  const renderLiveButton = state => {
+    const isOpen = 'site' === state.mode;
     liveButton.textContent = isOpen
       ? wp.i18n.__( 'Close live site preview', '__plugin_txtd' )
       : wp.i18n.__( 'Preview live site', '__plugin_txtd' );
     liveButton.classList.toggle( 'is-open', isOpen );
   };
-  renderLiveButton( getPreviewMode() );
-  previewModeListeners.add( renderLiveButton );
+  subscribePreviewMode( renderLiveButton );
 
   liveButton.addEventListener( 'click', () => {
     setPreviewMode( 'site' === getPreviewMode() ? null : 'site' );
@@ -850,8 +865,9 @@ const LiveSiteOverlay = ( { show, hint } ) => {
     // Boots the frontend as a real customize-preview: SM's own preview
     // bundle loads inside and applies live (postMessage) settings instantly.
     u.searchParams.set( 'customize_messenger_channel', PREVIEW_CHANNEL );
-    // Marks this as OUR preview: Anima re-enables page transitions for it
-    // (they are gated off in regular Customizer previews).
+    // Marks this as Style Manager's Site Editor preview for diagnostics and
+    // future integrations. Theme AJAX transitions remain disabled because the
+    // iframe is still a Customizer preview context.
     u.searchParams.set( 'sm-live-preview', '1' );
     counterRef.current++;
     u.searchParams.set( 'sm-preview', String( counterRef.current ) );
@@ -934,14 +950,9 @@ const LiveSiteOverlay = ( { show, hint } ) => {
         currentPageRef.current = message.data;
         scrollRef.current = 0;
 
-        // With page transitions enabled, Barba owns in-iframe navigation —
-        // rebuilding the src here would hard-reload mid-animation. Record
-        // the page (for later refreshes) and let the transition play out.
-        const transitionsSetting = window.wp.customize( 'sm_page_transitions_enable' );
-        if ( transitionsSetting && isTruthyBool( transitionsSetting() ) ) {
-          return;
-        }
-
+        // The frontend is still a Customizer preview, so core intercepts links
+        // and asks the parent pane to load the next URL with preview markers.
+        // Theme AJAX transitions remain disabled in this context; always rebuild.
         setUrl( buildUrl( message.data ) );
       }
     };
@@ -959,54 +970,29 @@ const LiveSiteOverlay = ( { show, hint } ) => {
 
   const { __ } = wp.i18n;
 
-  // Each motion behavior gets the replay that matches its real trigger:
+  // Each motion behavior gets the replay that matches its safe preview path:
   // intro animations play on page load (reload through the changeset
-  // mechanics), page transitions play on navigation (click a real internal
-  // link inside the preview so the theme's own transition path runs).
+  // mechanics), page transitions render a controlled in-iframe overlay because
+  // Anima intentionally disables its Barba engine inside Customizer previews.
   const replayIntro = () => refresh();
 
   const playTransition = () => {
     const doc = iframeRef.current?.contentDocument;
     if ( doc ) {
-      const currentPath = doc.location.pathname.replace( /\/$/, '' );
+      const api = window.wp.customize;
+      const transitionSymbol = api( 'sm_transition_symbol' ) ? api( 'sm_transition_symbol' )() : '';
+      const fallbackSymbol = ( doc.title || payload.siteTitle || '' ).trim().replace( /[^a-z0-9]/ig, '' ).charAt( 0 );
 
-      // Prefer real navigation links (what a visitor would click); fall back
-      // to any internal page link. Never action links (nonces, cart ops) and
-      // never the page we are already on — compare by pathname, since the
-      // preview rewrites every href with changeset query args.
-      const candidates = [
-        ...doc.querySelectorAll( 'nav a[href], [class*="navigation"] a[href], [class*="menu"] a[href]' ),
-        ...doc.querySelectorAll( 'a[href]' ),
-      ];
-
-      const link = candidates.find( a => {
-        let parsed;
-        try {
-          parsed = new URL( a.href, doc.location.href );
-        } catch ( e ) {
-          return false;
-        }
-
-        if ( parsed.origin !== doc.location.origin ) {
-          return false;
-        }
-        if ( /\/wp-(admin|login)/.test( parsed.pathname ) ) {
-          return false;
-        }
-        if ( /(_wpnonce|remove_item|add-to-cart|logout|download)/.test( parsed.search ) ) {
-          return false;
-        }
-
-        return parsed.pathname.replace( /\/$/, '' ) !== currentPath;
-      } );
-
-      if ( link ) {
-        link.click();
+      if ( playSiteEditorMotionPreview( doc, {
+        pageTransitionStyle: api( 'sm_page_transition_style' ) ? api( 'sm_page_transition_style' )() : 'border_iris',
+        logoLoadingStyle: api( 'sm_logo_loading_style' ) ? api( 'sm_logo_loading_style' )() : 'progress_bar',
+        transitionSymbol,
+      }, { fallbackSymbol } ) ) {
         return;
       }
     }
 
-    // No internal link found on this page — fall back to reloading home.
+    // No preview document available yet — fall back to reloading home.
     currentPageRef.current = payload.homeUrl;
     refresh();
   };
@@ -1088,19 +1074,7 @@ const MotionHint = ( { onReplayIntro, onPlayTransition } ) => {
  * body-mounted overlay host) and in vanilla-DOM section pages, so the mode
  * lives in a tiny external store everyone can reach.
  */
-let previewMode = null;
-let previewContext = null;
-const previewModeListeners = new Set();
-
-export const getPreviewMode = () => previewMode;
-
-export const getPreviewContext = () => previewContext;
-
-export const setPreviewMode = ( mode, context = null ) => {
-  previewMode = mode || null;
-  previewContext = previewMode ? context : null;
-  previewModeListeners.forEach( listener => listener( previewMode ) );
-};
+export { getPreviewContext, getPreviewMode, setPreviewMode } from './preview-mode';
 
 /**
  * A Preview toggle button bound to the shared preview store: it reads
@@ -1116,18 +1090,17 @@ const createPreviewToggleButton = ( previewEntry, className ) => {
   button.type = 'button';
   button.className = className;
 
-  const renderState = currentMode => {
-    const isOpen = currentMode === previewEntry.mode;
+  const renderState = state => {
+    const isOpen = isPreviewEntryOpen( previewEntry, state );
     button.textContent = isOpen
       ? wp.i18n.__( 'Close Preview', '__plugin_txtd' )
       : wp.i18n.__( 'Preview', '__plugin_txtd' );
     button.classList.toggle( 'is-open', isOpen );
   };
-  renderState( getPreviewMode() );
-  previewModeListeners.add( renderState );
+  subscribePreviewMode( renderState );
 
   button.addEventListener( 'click', () => {
-    if ( getPreviewMode() === previewEntry.mode ) {
+    if ( isPreviewEntryOpen( previewEntry ) ) {
       setPreviewMode( null );
     } else {
       setPreviewMode( previewEntry.mode, previewEntry.context || null );
@@ -1139,14 +1112,13 @@ const createPreviewToggleButton = ( previewEntry, className ) => {
 
 const usePreviewMode = () => {
   const { useState, useEffect } = wp.element;
-  const [ mode, setMode ] = useState( previewMode );
+  const [ state, setState ] = useState( getPreviewState() );
 
   useEffect( () => {
-    previewModeListeners.add( setMode );
-    return () => previewModeListeners.delete( setMode );
+    return subscribePreviewMode( setState );
   }, [] );
 
-  return mode;
+  return state;
 };
 
 /**
@@ -1163,7 +1135,7 @@ const usePreviewMode = () => {
 const SiteEditorPreviewOverlays = () => {
   const { useEffect } = wp.element;
   const { __ } = wp.i18n;
-  const mode = usePreviewMode();
+  const { mode, context } = usePreviewMode();
 
   useEffect( () => {
     if ( ! mode ) {
@@ -1195,7 +1167,7 @@ const SiteEditorPreviewOverlays = () => {
       <div className="sm-preview__content">
         { /* Mount only the active overlay: the hidden ones would render their
              full trees on editor boot and re-render on every palette change. */ }
-        { 'site' === mode && <LiveSiteOverlay show hint={ getPreviewContext() } /> }
+        { 'site' === mode && <LiveSiteOverlay show hint={ context } /> }
         { 'colors' === mode && <ColorsOverlay show /> }
         { 'typography' === mode && <TypographyOverlay show /> }
         { 'spacing' === mode && <SpacingOverlay show /> }
@@ -1229,51 +1201,13 @@ const unmountPreviewOverlays = rootEl => {
 };
 
 /**
- * Deep equality where the "no value" spellings count as the same thing:
- * PHP-saved font configs store `false`, the JS engine recomputes `null` or
- * `NaN` (parseFloat of false) for the same empty subfields.
- */
-const isNoValue = v => false === v || null === v || undefined === v || ( 'number' === typeof v && isNaN( v ) );
-// Checkboxes produce booleans where PHP stored '1' / '' / '0'.
-const isTruthyBool = v => true === v || '1' === v;
-const isFalsyBool = v => false === v || '' === v || '0' === v;
-
-const isEquivalentValue = ( a, b ) => _.isEqualWith( a, b, ( x, y ) => {
-  if ( isNoValue( x ) && isNoValue( y ) ) {
-    return true;
-  }
-  if ( ( 'boolean' === typeof x || 'boolean' === typeof y ) && (
-    ( isTruthyBool( x ) && isTruthyBool( y ) ) || ( isFalsyBool( x ) && isFalsyBool( y ) )
-  ) ) {
-    return true;
-  }
-  // Native range/number inputs emit numbers where PHP stored numeric strings.
-  if ( ( 'number' === typeof x || 'number' === typeof y )
-    && '' !== x && '' !== y && null !== x && null !== y
-    && isFinite( Number( x ) ) && isFinite( Number( y ) )
-    && Number( x ) === Number( y ) ) {
-    return true;
-  }
-  return undefined;
-} );
-
-/**
  * The values that actually differ from what was loaded (or last saved).
  * A->B->A round-trips and boot-time churn must never publish anything.
  */
-const getChangedValues = eng => {
-  const baseline = payload.customizeSettings.settings;
-  const changed = {};
-
-  Object.entries( eng.api.dirtyValues() ).forEach( ( [ id, value ] ) => {
-    if ( baseline[ id ] && isEquivalentValue( baseline[ id ].value, value ) ) {
-      return;
-    }
-    changed[ id ] = value;
-  } );
-
-  return changed;
-};
+const getChangedValues = eng => getChangedSettingsValues(
+  eng.api.dirtyValues(),
+  payload.customizeSettings.settings
+);
 
 /**
  * --- Native Save integration ---
@@ -1327,34 +1261,34 @@ const setupEntityIntegration = eng => {
   ] );
 
   // Seed the persisted record from the localized baseline — no GET round-trip.
-  const baselineSettings = {};
-  Object.entries( payload.customizeSettings.settings ).forEach( ( [ id, data ] ) => {
-    baselineSettings[ id ] = data.value;
-  } );
   dispatch( 'core' ).receiveEntityRecords( ENTITY_KIND, ENTITY_NAME, [
     {
       id: ENTITY_RECORD_ID,
       title: __( 'Design system settings', '__plugin_txtd' ),
-      settings: baselineSettings,
+      settings: getBaselineSettingsValues( payload.customizeSettings.settings ),
     },
   ] );
 
   // Mirror engine changes into entity edits: this is what enables the native
   // Save button and lists Style Manager in the save panel.
   const pushEdits = _.debounce( () => {
-    const changed = getChangedValues( eng );
+    const changed = filterLockedPlusChangedValues( getChangedValues( eng ), plusPayload );
+    const coreDispatch = dispatch( 'core' );
 
     if ( Object.keys( changed ).length ) {
-      dispatch( 'core' ).editEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID, { settings: changed } );
+      coreDispatch.editEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID, { settings: changed } );
       return;
     }
 
-    // Everything reverted: point the edit back at the persisted value so
-    // core-data drops it and the Save button goes back to sleep.
-    const record = select( 'core' ).getEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID );
-    if ( record ) {
-      dispatch( 'core' ).editEntityRecord( ENTITY_KIND, ENTITY_NAME, ENTITY_RECORD_ID, { settings: record.settings } );
-    }
+    // Everything reverted: clear core-data's edit record so the Save button
+    // goes back to sleep, including nested font object round-trips.
+    clearNativeSaveEdits(
+      coreDispatch,
+      ENTITY_KIND,
+      ENTITY_NAME,
+      ENTITY_RECORD_ID,
+      getBaselineSettingsValues( payload.customizeSettings.settings )
+    );
   }, 250 );
 
   eng.api.bind( 'sm:setting-change', pushEdits );

@@ -1,22 +1,23 @@
 /**
  * Try & Play — a reusable, feature-agnostic trial-overlay component.
  *
- * Drops a soft, semi-transparent overlay over a group of gated-but-functional
- * controls. The real controls stay VISIBLE underneath (slightly dimmed) but are
- * not interactive or tabbable while covered. A primary "Try and play" button
- * dissolves the overlay, restores the controls, and replaces it with a slim,
- * persistent trial-reminder banner. The dismissal is remembered per browser
- * session (sessionStorage), so moving between tabs and back doesn't re-prompt —
- * but a fresh page load re-discloses it.
+ * For a group of gated-but-functional controls, the explanation sits in normal
+ * flow in an intro ABOVE the controls (covering nothing); only a primary
+ * "Try and play" button floats over a soft, blurred scrim that dims the controls
+ * underneath (visible, but not interactive or tabbable while covered). Clicking
+ * the button dissolves the scrim, restores the controls, and the same intro
+ * switches to a slim, persistent trial reminder. The dismissal is remembered for
+ * the page load, so moving between tabs and back doesn't re-prompt — but a fresh
+ * load re-discloses it.
  *
  * It hardcodes NOTHING product-, Plus-, or color-specific: every string, link,
  * id and badge is passed in, so the same module backs fonts, spacing, or any
  * future gated-preview surface.
  *
- * Framework-light: vanilla DOM, no React dependency. The overlay is positioned
- * absolutely over `targetEl`, so `targetEl` must be a positioned ancestor of
- * the controls it covers (the caller is responsible for `position: relative`,
- * or relies on the shipped `.sm-tap-host` helper class applied here).
+ * Framework-light: vanilla DOM, no React dependency. The scrim is positioned
+ * absolutely over `targetEl`, so `targetEl` must be a positioned ancestor of the
+ * controls it covers (handled by the shipped `.sm-tap-host` helper applied here);
+ * the intro is inserted as `targetEl`'s previous sibling, so it stays uncovered.
  *
  * @since 2.4.0
  */
@@ -98,6 +99,37 @@ const decodeHtmlText = text => {
  *
  * @return {HTMLAnchorElement|null}
  */
+/**
+ * Build the optional trailing CTA icon. Only the 'play' triangle is built in;
+ * pass a falsy `icon` to omit it. Inline SVG so there's no icon-font or React
+ * dependency (the component stays framework-light + reusable).
+ *
+ * @param {string|boolean} icon
+ *
+ * @return {SVGElement|null}
+ */
+const buildPlayIcon = icon => {
+	if ( 'play' !== icon ) {
+		return null;
+	}
+
+	const ns = 'http://www.w3.org/2000/svg';
+	const svg = document.createElementNS( ns, 'svg' );
+	svg.setAttribute( 'class', 'sm-tap-scrim__button-icon' );
+	svg.setAttribute( 'viewBox', '0 0 24 24' );
+	svg.setAttribute( 'width', '18' );
+	svg.setAttribute( 'height', '18' );
+	svg.setAttribute( 'aria-hidden', 'true' );
+	svg.setAttribute( 'focusable', 'false' );
+
+	const path = document.createElementNS( ns, 'path' );
+	path.setAttribute( 'd', 'M8 5v14l11-7z' );
+	path.setAttribute( 'fill', 'currentColor' );
+	svg.appendChild( path );
+
+	return svg;
+};
+
 const buildLearnMore = ( learnMore, className ) => {
 	if ( ! learnMore || ! learnMore.url ) {
 		return null;
@@ -136,37 +168,33 @@ const setGroupCovered = ( groupEl, covered ) => {
 };
 
 /**
- * Mount a Try & Play trial overlay over a target element.
+ * Mount a Try & Play trial surface over a target element.
  *
  * @param {HTMLElement} targetEl The element wrapping the gated controls. The
- *                               overlay is positioned over it; it gets the
- *                               `sm-tap-host` class (which sets up relative
- *                               positioning). The controls themselves are
- *                               expected to be its children (or, when
- *                               `controlsEl` is given, that subtree).
+ *                               scrim is positioned over it (it gets the
+ *                               `sm-tap-host` class); the intro is inserted as
+ *                               its previous sibling so it stays uncovered.
  * @param {Object}      options
  * @param {string}      options.id          Unique key for sessionStorage
  *                                          dismissal (e.g. the section id).
  * @param {boolean}     options.locked      When false, nothing renders and the
  *                                          controls are left fully normal.
- * @param {string}      [options.overlayText] Short explanatory line on the
- *                                          overlay (HTML entities are decoded).
+ * @param {string}      [options.overlayText] The intro line shown above the
+ *                                          controls BEFORE reveal (decoded).
  * @param {string}      [options.buttonLabel] Primary button label
  *                                          (default "Try and play").
  * @param {{label?: string, url?: string}} [options.learnMore] Quiet learn-more
- *                                          link, shown on the overlay and in the
- *                                          persistent banner.
- * @param {string}      [options.bannerText]  Slim persistent reminder shown
- *                                          AFTER reveal (HTML entities decoded).
+ *                                          link shown in the intro.
+ * @param {string}      [options.bannerText]  The reminder the same intro shows
+ *                                          AFTER reveal (decoded).
  * @param {string}      [options.badge]       Short badge label (e.g. "Plus").
  * @param {HTMLElement} [options.controlsEl]  The subtree to make inert while
- *                                          covered. Defaults to `targetEl`'s
- *                                          existing children at mount time.
+ *                                          covered. Defaults to `targetEl`.
  * @param {boolean}     [options.autoFocus=true] Move focus to the Try-and-play
- *                                          button when the overlay appears.
+ *                                          button when the scrim appears.
  *
  * @return {{ destroy: function(): void, isRevealed: function(): boolean }}
- *         A handle. `destroy()` removes the overlay/banner and restores the
+ *         A handle. `destroy()` removes the intro/scrim and restores the
  *         controls (does NOT clear the session dismissal).
  */
 export const mountTryAndPlay = ( targetEl, options = {} ) => {
@@ -181,6 +209,7 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 		id,
 		overlayText = '',
 		buttonLabel = 'Try and play',
+		icon = 'play',
 		learnMore = null,
 		bannerText = '',
 		badge = '',
@@ -189,60 +218,58 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 
 	const storageKey = `${ STORAGE_PREFIX }${ LOAD_NONCE }:${ id || 'default' }`;
 
-	// The group whose controls go inert under the overlay. Snapshot the current
-	// children into a wrapper-agnostic NodeList reference via the target itself.
+	// The group whose controls go inert under the scrim.
 	const controlsEl = options.controlsEl || targetEl;
 
 	targetEl.classList.add( 'sm-tap-host' );
 
-	let overlayEl = null;
-	let bannerEl = null;
+	let scrimEl = null;
+	let introEl = null;
+	let introTextEl = null;
 	let revealed = isRevealed( storageKey );
 
-	// --- The slim persistent banner (post-reveal) ---------------------------
+	// --- The persistent intro, in normal flow ABOVE the controls ------------
+	// Covers nothing. Before reveal it carries the invitation; after reveal it
+	// switches to the slim trial reminder. The button is NOT here — it floats
+	// over the scrim, the only thing that overlaps the controls.
 
-	const buildBanner = () => {
-		if ( ! bannerText && ! learnMore ) {
-			return null;
-		}
-
-		const banner = document.createElement( 'div' );
-		banner.className = 'sm-tap-banner';
-		banner.setAttribute( 'role', 'status' );
+	const buildIntro = () => {
+		const intro = document.createElement( 'div' );
+		intro.className = 'sm-tap-intro' + ( revealed ? ' is-revealed' : '' );
+		intro.setAttribute( 'role', 'note' );
 
 		if ( badge ) {
 			const badgeEl = document.createElement( 'span' );
-			badgeEl.className = 'sm-tap-banner__badge';
+			badgeEl.className = 'sm-tap-intro__badge';
 			badgeEl.textContent = decodeHtmlText( badge );
-			banner.appendChild( badgeEl );
+			intro.appendChild( badgeEl );
 		}
 
-		if ( bannerText ) {
-			const text = document.createElement( 'span' );
-			text.className = 'sm-tap-banner__text';
-			text.textContent = decodeHtmlText( bannerText );
-			banner.appendChild( text );
-		}
+		const text = document.createElement( 'span' );
+		text.className = 'sm-tap-intro__text';
+		text.textContent = decodeHtmlText( revealed ? ( bannerText || overlayText ) : overlayText );
+		intro.appendChild( text );
+		introTextEl = text;
 
-		const link = buildLearnMore( learnMore, 'sm-tap-banner__link' );
+		const link = buildLearnMore( learnMore, 'sm-tap-intro__link' );
 		if ( link ) {
-			banner.appendChild( link );
+			intro.appendChild( link );
 		}
 
-		return banner;
+		return intro;
 	};
 
-	const showBanner = () => {
-		if ( bannerEl ) {
+	const mountIntro = () => {
+		if ( introEl ) {
 			return;
 		}
-		bannerEl = buildBanner();
-		if ( bannerEl ) {
-			targetEl.insertBefore( bannerEl, targetEl.firstChild );
+		introEl = buildIntro();
+		if ( introEl && targetEl.parentNode ) {
+			targetEl.parentNode.insertBefore( introEl, targetEl );
 		}
 	};
 
-	// --- The soft overlay (pre-reveal) --------------------------------------
+	// --- The soft scrim (pre-reveal) — JUST the button floats over it --------
 
 	const reveal = ( { focusControls = true } = {} ) => {
 		if ( revealed ) {
@@ -254,24 +281,30 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 		// Restore the controls to fully interactive + tabbable.
 		setGroupCovered( controlsEl, false );
 
-		if ( overlayEl ) {
-			overlayEl.classList.add( 'is-leaving' );
+		// The intro stays put; swap the invitation for the slim trial reminder.
+		if ( introEl ) {
+			introEl.classList.add( 'is-revealed' );
+		}
+		if ( introTextEl && bannerText ) {
+			introTextEl.textContent = decodeHtmlText( bannerText );
+		}
+
+		if ( scrimEl ) {
+			scrimEl.classList.add( 'is-leaving' );
 			const remove = () => {
-				if ( overlayEl ) {
-					overlayEl.remove();
-					overlayEl = null;
+				if ( scrimEl ) {
+					scrimEl.remove();
+					scrimEl = null;
 				}
 			};
-			// Honour the fade-out, but never strand the overlay if the
-			// transitionend doesn't fire (reduced motion, display:none, etc.).
-			overlayEl.addEventListener( 'transitionend', remove, { once: true } );
+			// Honour the fade-out, but never strand the scrim if transitionend
+			// doesn't fire (reduced motion, display:none, etc.).
+			scrimEl.addEventListener( 'transitionend', remove, { once: true } );
 			window.setTimeout( remove, 400 );
 		}
 
-		showBanner();
-
-		// Move focus into the controls so keyboard users land where they can
-		// act, instead of being stranded on a button that just vanished.
+		// Move focus into the controls so keyboard users land where they can act,
+		// instead of being stranded on a button that just vanished.
 		if ( focusControls ) {
 			const focusable = controlsEl.querySelector(
 				'input, select, textarea, button, a[href], [tabindex]:not([tabindex="-1"])'
@@ -282,74 +315,59 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 		}
 	};
 
-	const buildOverlay = () => {
-		const overlay = document.createElement( 'div' );
-		overlay.className = 'sm-tap-overlay';
+	const buildScrim = () => {
+		const scrim = document.createElement( 'div' );
+		scrim.className = 'sm-tap-scrim';
 		// Modeless: the rest of the editor stays usable; this is an invitation,
 		// not a modal wall.
-		overlay.setAttribute( 'role', 'group' );
-
-		const inner = document.createElement( 'div' );
-		inner.className = 'sm-tap-overlay__inner';
-
-		if ( badge ) {
-			const badgeEl = document.createElement( 'span' );
-			badgeEl.className = 'sm-tap-overlay__badge';
-			badgeEl.textContent = decodeHtmlText( badge );
-			inner.appendChild( badgeEl );
-		}
-
-		if ( overlayText ) {
-			const text = document.createElement( 'p' );
-			text.className = 'sm-tap-overlay__text';
-			text.textContent = decodeHtmlText( overlayText );
-			inner.appendChild( text );
-		}
+		scrim.setAttribute( 'role', 'group' );
 
 		const button = document.createElement( 'button' );
 		button.type = 'button';
 		// WP-core primary Button look.
-		button.className = 'components-button is-primary sm-tap-overlay__button';
-		button.textContent = decodeHtmlText( buttonLabel );
-		button.addEventListener( 'click', () => reveal() );
-		inner.appendChild( button );
+		button.className = 'components-button is-primary sm-tap-scrim__button';
 
-		const link = buildLearnMore( learnMore, 'sm-tap-overlay__link' );
-		if ( link ) {
-			inner.appendChild( link );
+		const labelEl = document.createElement( 'span' );
+		labelEl.className = 'sm-tap-scrim__button-label';
+		labelEl.textContent = decodeHtmlText( buttonLabel );
+		button.appendChild( labelEl );
+
+		const iconEl = buildPlayIcon( icon );
+		if ( iconEl ) {
+			button.appendChild( iconEl );
 		}
 
-		overlay.appendChild( inner );
-		overlay._tapButton = button;
-		return overlay;
+		button.addEventListener( 'click', () => reveal() );
+
+		scrim.appendChild( button );
+		scrim._tapButton = button;
+		return scrim;
 	};
 
 	// --- Initial state ------------------------------------------------------
 
-	if ( revealed ) {
-		// Already tried this session: controls normal, slim banner only.
-		setGroupCovered( controlsEl, false );
-		showBanner();
-	} else {
-		setGroupCovered( controlsEl, true );
-		overlayEl = buildOverlay();
-		targetEl.appendChild( overlayEl );
+	mountIntro();
 
-		if ( autoFocus && overlayEl._tapButton ) {
+	if ( ! revealed ) {
+		setGroupCovered( controlsEl, true );
+		scrimEl = buildScrim();
+		targetEl.appendChild( scrimEl );
+
+		if ( autoFocus && scrimEl._tapButton ) {
 			// Defer so the element is laid out (and the sidebar has settled)
-			// before we pull focus. Only focus when the overlay is actually
-			// visible (offsetParent is null while its tab is hidden) and the
-			// user/editor hasn't already landed in a text field — never yank
-			// focus out from under someone or fight the editor's own settling.
+			// before we pull focus. Only focus when the scrim is actually visible
+			// (offsetParent is null while its tab is hidden) and the user/editor
+			// hasn't already landed in a text field — never yank focus out from
+			// under someone or fight the editor's own settling.
 			window.requestAnimationFrame( () => {
-				const button = overlayEl && overlayEl._tapButton;
+				const button = scrimEl && scrimEl._tapButton;
 				if ( ! button || null === button.offsetParent ) {
 					return;
 				}
 				const active = document.activeElement;
 				const isEditingElsewhere = active
 					&& active !== document.body
-					&& ! overlayEl.contains( active )
+					&& ! scrimEl.contains( active )
 					&& /^(INPUT|SELECT|TEXTAREA)$/.test( active.tagName );
 				if ( ! isEditingElsewhere ) {
 					button.focus();
@@ -360,13 +378,13 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 
 	return {
 		destroy: () => {
-			if ( overlayEl ) {
-				overlayEl.remove();
-				overlayEl = null;
+			if ( scrimEl ) {
+				scrimEl.remove();
+				scrimEl = null;
 			}
-			if ( bannerEl ) {
-				bannerEl.remove();
-				bannerEl = null;
+			if ( introEl ) {
+				introEl.remove();
+				introEl = null;
 			}
 			setGroupCovered( controlsEl, false );
 			targetEl.classList.remove( 'sm-tap-host' );
