@@ -139,6 +139,90 @@ export const filterLockedPlusChangedValues = ( changedValues = {}, plusPayload =
   return filtered;
 };
 
+/**
+ * The genuinely Plus-gated subset of changed values: changes whose setting id
+ * is in `plusPayload.gatedSettingIds` while the trial is locked. These are the
+ * trial-only refinements that update the live preview but can never be
+ * persisted — the set that drives the "Save · Plus" affordance.
+ *
+ * This is intentionally NOT the full inverse of
+ * `filterLockedPlusChangedValues`. That filter also strips the generated
+ * `sm_advanced_palette_output` blob when it is an orphan (present without any
+ * free palette-source change) — that suppression is boot/round-trip churn, not
+ * a gated refinement. Counting it here would raise a phantom "Save · Plus" with
+ * no real gated change, so the orphan is deliberately excluded.
+ *
+ * @param {Object} changedValues Setting id => value map from wp.customize.
+ * @param {Object} plusPayload   Localized Plus payload.
+ *
+ * @return {Object} The gated subset: setting id => value map.
+ */
+export const getGatedChangedValues = ( changedValues = {}, plusPayload = null ) => {
+  if ( ! plusPayload || ! plusPayload.locked ) {
+    return {};
+  }
+
+  const gatedSettingIds = new Set( Array.isArray( plusPayload.gatedSettingIds )
+    ? plusPayload.gatedSettingIds
+    : [] );
+
+  return Object.fromEntries(
+    Object.entries( changedValues ).filter( ( [ id ] ) => gatedSettingIds.has( id ) )
+  );
+};
+
+// Higher-level typography controls that RE-DERIVE the per-category font settings
+// (master family + elevation/pitch, and the theme font targets) as a side
+// effect: the global font sizing and the font-palette selection. When one of
+// these drives the change, the per-category font edits are not deliberate
+// individual tweaks. (Neither driver is itself in the gated set.)
+export const TYPOGRAPHY_CASCADE_DRIVER_IDS = [ 'sm_font_sizing', 'sm_font_palette' ];
+
+// A gated id is a per-category font *output* (master family `sm_font_primary…`,
+// or its `…_elevation` / `…_pitch`) — i.e. something a palette/sizing change
+// re-derives. The drivers themselves are never gated, but exclude them anyway.
+const isPerCategoryFontOutputId = id => /^sm_font_/.test( id ) && ! TYPOGRAPHY_CASCADE_DRIVER_IDS.includes( id );
+
+/**
+ * The gated changes that represent a *deliberate* premium refinement — the
+ * signal that drives the "Save · Plus" affordance. Two rules narrow the raw
+ * gated set so derived typography outputs don't light up the gate on their own:
+ *
+ *   1. Derived theme font targets (`anima_options[…font]`) are pure rendered
+ *      outputs — never individually tuned — so they never count as a signal.
+ *   2. Per-category font settings (master family + elevation/pitch) ARE premium
+ *      controls, but only an *individual* tweak counts: drop them when a
+ *      higher-level driver (font sizing or font-palette selection) re-derived
+ *      them in the same batch.
+ *
+ * Heuristic by design: changing font sizing/palette AND individually tuning a
+ * per-category font in the same unsaved batch suppresses the latter's signal.
+ * The persistence gate is unaffected — filterLockedPlusChangedValues() still
+ * strips every gated id on save; this only narrows the affordance's signal.
+ * Scoped to typography; the color side is untouched.
+ *
+ * @param {Object} changedValues Setting id => value map from wp.customize.
+ * @param {Object} plusPayload   Localized Plus payload.
+ *
+ * @return {Object} The deliberate-refinement gated subset.
+ */
+export const getSignalGatedChangedValues = ( changedValues = {}, plusPayload = null ) => {
+  const gated = getGatedChangedValues( changedValues, plusPayload );
+  const drivenByHigherLevel = TYPOGRAPHY_CASCADE_DRIVER_IDS.some( id => hasOwn( changedValues, id ) );
+
+  return Object.fromEntries(
+    Object.entries( gated ).filter( ( [ id ] ) => {
+      if ( isThemeFontOption( id ) ) {
+        return false;
+      }
+      if ( drivenByHigherLevel && isPerCategoryFontOutputId( id ) ) {
+        return false;
+      }
+      return true;
+    } )
+  );
+};
+
 export const getBaselineSettingsValues = ( settings = {} ) => Object.entries( settings ).reduce(
   ( values, [ id, data ] ) => {
     values[ id ] = data && hasOwn( data, 'value' ) ? data.value : data;

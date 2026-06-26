@@ -214,6 +214,7 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 		bannerText = '',
 		badge = '',
 		autoFocus = true,
+		onActivate = null,
 	} = options;
 
 	const storageKey = `${ STORAGE_PREFIX }${ LOAD_NONCE }:${ id || 'default' }`;
@@ -224,6 +225,7 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 	targetEl.classList.add( 'sm-tap-host' );
 
 	let scrimEl = null;
+	let tabListener = null;
 	let introEl = null;
 	let introTextEl = null;
 	let revealed = isRevealed( storageKey );
@@ -280,6 +282,10 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 
 		// Restore the controls to fully interactive + tabbable.
 		setGroupCovered( controlsEl, false );
+
+		// Mark the host as "playing" so its State-2 texture (the soft diagonal
+		// "this isn't saved" affordance) shows behind the now-live controls.
+		targetEl.classList.add( 'is-playing' );
 
 		// The intro stays put; swap the invitation for the slim trial reminder.
 		if ( introEl ) {
@@ -348,7 +354,10 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 
 	mountIntro();
 
-	if ( ! revealed ) {
+	if ( revealed ) {
+		// Already playing this session: no scrim, but keep the State-2 texture.
+		targetEl.classList.add( 'is-playing' );
+	} else {
 		setGroupCovered( controlsEl, true );
 		scrimEl = buildScrim();
 		targetEl.appendChild( scrimEl );
@@ -376,8 +385,27 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 		}
 	}
 
+	// When this gated tab is activated (a locked user lands on it), let the caller
+	// react once per page load — used to auto-open the live Preview so the trial's
+	// changes are actually visible. The activation event bubbles up to document.
+	if ( onActivate ) {
+		const previewKey = `${ STORAGE_PREFIX }${ LOAD_NONCE }:preview:${ id || 'default' }`;
+		tabListener = event => {
+			if ( ! event || ! event.detail || event.detail.id !== id || isRevealed( previewKey ) ) {
+				return;
+			}
+			markRevealed( previewKey );
+			onActivate();
+		};
+		document.addEventListener( 'sm:site-editor-tab-activated', tabListener );
+	}
+
 	return {
 		destroy: () => {
+			if ( tabListener ) {
+				document.removeEventListener( 'sm:site-editor-tab-activated', tabListener );
+				tabListener = null;
+			}
 			if ( scrimEl ) {
 				scrimEl.remove();
 				scrimEl = null;
@@ -387,7 +415,7 @@ export const mountTryAndPlay = ( targetEl, options = {} ) => {
 				introEl = null;
 			}
 			setGroupCovered( controlsEl, false );
-			targetEl.classList.remove( 'sm-tap-host' );
+			targetEl.classList.remove( 'sm-tap-host', 'is-playing' );
 		},
 		isRevealed: () => revealed,
 	};

@@ -26,6 +26,7 @@ import {
   getChangedSettingsValues,
   isTruthyBool,
 } from './plus-save-filter';
+import { initPlusSaveAffordance } from './plus-save-affordance';
 import { initializeColorTargetFeedback } from './target-feedback';
 import { playSiteEditorMotionPreview } from './motion-preview';
 import {
@@ -431,7 +432,22 @@ const buildSectionPanel = section => {
     trialHost.className = 'sm-se-trial-host';
     contentEl.parentNode.insertBefore( trialHost, contentEl );
     trialHost.appendChild( contentEl );
-    mountTryAndPlay( trialHost, { ...trialOptions, controlsEl: contentEl } );
+    // A gated tab inherits its PARENT section's live Preview (Fine-tune/Usage →
+    // the color preview; the Typography tabs → typography). Auto-open it when a
+    // locked user lands on the tab so the trial's changes are actually visible.
+    const tabsMap = payload.sectionTabs || {};
+    const parentId = Object.keys( tabsMap ).find(
+      pid => ( tabsMap[ pid ] || [] ).some( t => t.id === section.id )
+    );
+    const previewEntry = SECTION_PREVIEW_MODES[ section.id ]
+      || ( parentId ? SECTION_PREVIEW_MODES[ parentId ] : null );
+    mountTryAndPlay( trialHost, {
+      ...trialOptions,
+      controlsEl: contentEl,
+      onActivate: previewEntry
+        ? () => setPreviewMode( previewEntry.mode, previewEntry.context || null )
+        : null,
+    } );
   }
 
   // The voice tuner as a "find by voice" filter panel attached to the font
@@ -443,6 +459,48 @@ const buildSectionPanel = section => {
       host.className = 'customize-control sm-voice-panel-li';
       contentEl.insertBefore( host, paletteLi );
       ReactDOM.render( <VoiceTunerPanel />, host );
+    }
+
+    // The pro (premium-licensed) font palettes are a gated-but-functional group,
+    // exactly like the Fine-tune/Usage tabs: wrap them in a Try & Play host so a
+    // free user can reveal them and take any for a spin live (selection applies
+    // client-side), while saving a premium pick stays part of Plus (enforced
+    // server-side). The reveal leaves the same slim trial banner + the diagonal
+    // "sandbox" texture the tabs use. Present only when locked — PHP tags the
+    // pro cards `is-plus-locked` exactly when the site isn't entitled.
+    const paletteList = contentEl.querySelector( '.js-font-palette, .customize-control-font-palette' );
+    const lockedCards = paletteList ? Array.from( paletteList.querySelectorAll( '.is-plus-locked' ) ) : [];
+    if ( paletteList && lockedCards.length ) {
+      const fpCopy = ( plusPayload && plusPayload.fontPalettes ) || {};
+      // Two nested elements, mirroring the tabs' trial host: the OUTER host
+      // carries the scrim + button (stays interactive), the INNER wrapper holds
+      // the cards and is the one made `inert` while covered. Passing the host
+      // itself as controlsEl would make the scrim's own button inert — visible
+      // but unclickable — so the cards get their own wrapper.
+      const proHost = document.createElement( 'div' );
+      proHost.className = 'sm-plus-palette-group';
+      const proCards = document.createElement( 'div' );
+      proCards.className = 'sm-plus-palette-cards';
+      proHost.appendChild( proCards );
+      // Insert the host where the first pro card is, then move the whole pro
+      // group into the inner wrapper. The cards stay descendants of
+      // `.js-font-palette`, so the selection handler still binds them; the voice
+      // tuner only sorts the free direct-child cards and pins this group last.
+      paletteList.insertBefore( proHost, lockedCards[ 0 ] );
+      lockedCards.forEach( card => proCards.appendChild( card ) );
+
+      mountTryAndPlay( proHost, {
+        id: 'sm_font_palettes_plus',
+        locked: true,
+        overlayText: fpCopy.overlayText || '',
+        buttonLabel: fpCopy.buttonLabel || ( plusPayload && plusPayload.buttonLabel ) || 'Try and play',
+        bannerText: fpCopy.bannerText || ( plusPayload && plusPayload.bannerText ) || '',
+        badge: ( plusPayload && plusPayload.badge ) || 'Plus',
+        learnMore: ( plusPayload && plusPayload.upsellUrl )
+          ? { label: ( plusPayload && plusPayload.learnMore ) || 'Learn more', url: plusPayload.upsellUrl }
+          : null,
+        controlsEl: proCards,
+      } );
     }
   }
 
@@ -818,6 +876,17 @@ const bootEngine = eng => {
 
   // Native Save (core-data entity) + server-evaluated control visibility.
   setupEntityIntegration( eng );
+
+  // "Save · Plus" affordance: gives gated-only / mixed Plus-trial changes a
+  // voice on the native Save button without ever persisting them. Inert unless
+  // the trial is locked (licensed users keep 100% native behaviour).
+  initPlusSaveAffordance( {
+    engine: eng,
+    plusPayload,
+    getChanges: () => getChangedValues( eng ),
+    entity: { kind: ENTITY_KIND, name: ENTITY_NAME, recordId: ENTITY_RECORD_ID },
+  } );
+
   initializeActiveStatesRefresher( eng );
   initializeControlDependencies( eng );
 };
