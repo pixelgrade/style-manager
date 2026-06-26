@@ -97,6 +97,19 @@ const getPaletteRecords = ( $paletteSet ) => {
 
 const reorderPaletteCards = ( paletteSet, orderedCards ) => {
   paletteSet.append( ...orderedCards );
+
+  // Voice-fit reordering only moves the free direct-child cards. The pro
+  // palettes live in a Try & Play group (with its banner inserted just before
+  // it); re-append both so the gated group always stays pinned after the free
+  // palettes, no matter how the free set gets sorted.
+  const banner = paletteSet.querySelector( ':scope > .sm-tap-intro' );
+  const proGroup = paletteSet.querySelector( ':scope > .sm-plus-palette-group' );
+  if ( banner ) {
+    paletteSet.appendChild( banner );
+  }
+  if ( proGroup ) {
+    paletteSet.appendChild( proGroup );
+  }
 };
 
 const syncPaletteBadge = ( badgeState ) => {

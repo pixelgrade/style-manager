@@ -7,6 +7,9 @@ export const buildVoiceTunerUpdatePlan = ( {
   hasBalancedProfile,
   personalityMap,
 } ) => {
+  // Only the free, direct-child palette cards are records here — the pro group is
+  // wrapped in its Try & Play host and pinned last by the voice tuner itself, so
+  // it never reaches this plan. Sorting is therefore plain fit (then original).
   const orderedRecords = hasBalancedProfile
     ? records.slice().sort( ( left, right ) => left.originalIndex - right.originalIndex )
     : records
