@@ -13,15 +13,12 @@ use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 /**
- * The advanced Color System Fine-tune tab is ALWAYS registered, regardless of the Pixelgrade Plus
- * entitlement. Free (non-entitled) users get a fully interactive live trial — the controls move and
- * the preview recomputes — and the trial framing + the real save-strip gate live elsewhere
- * (Screen\SiteEditor::apply_plus_gating() + the server-side strip). This pins that the COLOR
- * Fine-tune section registration is no longer conditional on the entitlement, and that the premium
+ * The advanced Color System AND Typography Fine-tune tabs are ALWAYS registered, regardless of the
+ * Pixelgrade Plus entitlement. Free (non-entitled) users get a fully interactive live trial — the
+ * controls move and the preview recomputes — and the trial framing + the real save-strip gate live
+ * elsewhere (Screen\SiteEditor::apply_plus_gating() + the server-side strip). This pins that both
+ * Fine-tune sections' registration is no longer conditional on the entitlement, and that the premium
  * setting-id accessors return the persisted subsets (the single source of truth for the strip).
- *
- * The FONT Fine-tune section still uses the legacy remove-when-locked model; that is out of scope
- * here and asserted as-is so this test reflects current behavior.
  */
 class FineTuneEntitlementGateTest extends TestCase {
 	public function test_color_fine_tune_section_registers_when_plus_entitlement_bridge_is_absent(): void {
@@ -39,19 +36,19 @@ class FineTuneEntitlementGateTest extends TestCase {
 		);
 	}
 
-	public function test_color_fine_tune_section_stays_registered_when_plus_bridge_denies_advanced_controls(): void {
+	public function test_fine_tune_sections_stay_registered_when_plus_bridge_denies_advanced_controls(): void {
 		$this->mock_plus_entitlement_bridge( true, false );
 
 		$config = $this->apply_fine_tune_sections( $this->base_config() );
 
-		// COLOR Fine-tune is always registered: the editor presents it as an interactive live trial
-		// with a gentle banner; saving the premium settings is what is gated (server-side strip).
+		// Both Fine-tune sections are always registered: the editor presents them as an interactive
+		// live trial with a gentle banner; saving the premium settings is what is gated (server-side
+		// strip), not the section's presence.
 		$this->assertArrayHasKey(
 			'sm_fine_tune_color_palette_section',
 			$config['panels']['theme_options_panel']['sections']
 		);
-		// FONT Fine-tune keeps the legacy remove-when-locked behavior (unchanged, out of scope).
-		$this->assertArrayNotHasKey(
+		$this->assertArrayHasKey(
 			'sm_fine_tune_font_palette_section',
 			$config['panels']['theme_options_panel']['sections']
 		);
@@ -79,6 +76,26 @@ class FineTuneEntitlementGateTest extends TestCase {
 		$this->assertContains( 'sm_color_promotion_white', $ids );
 		// Intros and separators are never persisted settings — they must not be in the strip set.
 		$this->assertNotContains( 'sm_color_fine_tune_intro', $ids );
+		foreach ( $ids as $id ) {
+			$this->assertStringStartsNotWith( 'sm_separator_', $id );
+			$this->assertStringNotContainsString( '_intro', $id );
+		}
+	}
+
+	public function test_premium_font_fine_tune_setting_ids_exclude_presentational_fields(): void {
+		$ids = FontPalettes::get_premium_setting_ids();
+
+		// The persisted, premium typography settings (master fonts, sizing, connected-fields preset).
+		$this->assertContains( 'sm_font_primary', $ids );
+		$this->assertContains( 'sm_font_primary_elevation', $ids );
+		$this->assertContains( 'sm_font_secondary', $ids );
+		$this->assertContains( 'sm_font_body', $ids );
+		$this->assertContains( 'sm_font_accent', $ids );
+		$this->assertContains( 'sm_fonts_connected_fields_preset', $ids );
+
+		// Intros and separators are never persisted settings — they must not be in the strip set.
+		$this->assertNotContains( 'sm_fine_tune_intro', $ids );
+		$this->assertNotContains( 'sm_font_primary_intro', $ids );
 		foreach ( $ids as $id ) {
 			$this->assertStringStartsNotWith( 'sm_separator_', $id );
 			$this->assertStringNotContainsString( '_intro', $id );

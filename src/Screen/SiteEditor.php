@@ -348,6 +348,9 @@ class SiteEditor extends AbstractHookProvider {
 			: [];
 		$structure                 = $this->headless_customizer->get_structure();
 		$theme_colors_group_header = $this->merge_theme_colors_section_into_usage_section( $structure );
+		// The Font Usage tab is built ENTIRELY from the theme's per-element font controls (SM has no
+		// native font-usage controls); this creates the synthetic sm_font_usage_section to host them.
+		$this->merge_theme_fonts_section_into_usage_section( $structure );
 		$section_group_headers     = $this->get_site_editor_section_group_headers( $theme_colors_group_header );
 
 		// Tag Plus-gated sections/controls so the sidebar can present them inline as a live trial
@@ -449,9 +452,11 @@ class SiteEditor extends AbstractHookProvider {
 		 * @param array $gated
 		 */
 		$gated = apply_filters( 'style_manager/plus_gated_objects', [
-			'sm_fine_tune_color_palette_section' => 'plus', // the whole Fine-tune tab
-			'sm_color_usage_section'             => 'plus', // the whole Usage tab
+			'sm_fine_tune_color_palette_section' => 'plus', // the whole Color Fine-tune tab
+			'sm_color_usage_section'             => 'plus', // the whole Color Usage tab
 			'sm_colorize_elements_button'        => 'plus', // colorize elements one by one
+			'sm_fine_tune_font_palette_section'  => 'plus', // the whole Typography Fine-tune tab
+			'sm_font_usage_section'              => 'plus', // the whole Font Usage tab (theme per-element type system)
 		] );
 
 		if ( empty( $gated ) || empty( $structure['sections'] ) || ! is_array( $structure['sections'] ) ) {
@@ -540,11 +545,24 @@ class SiteEditor extends AbstractHookProvider {
 			'overlayNotes' => [
 				'sm_fine_tune_color_palette_section' => esc_html__( 'Fine-tune shapes the palette itself — how many grades it has, how they contrast and balance, and which colors anchor it.', '__plugin_txtd' ),
 				'sm_color_usage_section'             => esc_html__( 'Usage is where you shape how the palette lands on your site — how much color shows, light or dark, and the color of individual elements.', '__plugin_txtd' ),
+				'sm_fine_tune_font_palette_section'  => esc_html__( 'Fine-tune shapes the typography itself — the font for each category and how its sizing scales, so headings, body, and accents keep their hierarchy.', '__plugin_txtd' ),
+				'sm_font_usage_section'              => esc_html__( 'Usage is where you set the font for each part of your site — headings, body, accents, small text — and the spacing between headline lines, so every piece of type lands just where you want it.', '__plugin_txtd' ),
 			],
 			'notes'       => [
 				'sm_fine_tune_color_palette_section' => esc_html__( 'Take the Fine-tune controls for a spin — grades, contrast, and color promotion update live as you go. Changes here aren\'t saved; fine-tuning your palette\'s structure is part of Pixelgrade Plus.', '__plugin_txtd' ),
 				'sm_color_usage_section'             => esc_html__( 'Try the Usage controls live — shift how colors apply across your site, dial coloration up or down, and preview dark mode. Changes here aren\'t saved; saving how your palette is applied is part of Pixelgrade Plus.', '__plugin_txtd' ),
 				'sm_colorize_elements_button'        => esc_html__( 'Try colorizing elements one by one — it works live. Saving is part of Pixelgrade Plus.', '__plugin_txtd' ),
+				'sm_fine_tune_font_palette_section'  => esc_html__( 'Take the Fine-tune typography controls for a spin — swap fonts per category and adjust the sizing scale live. Changes here aren\'t saved; fine-tuning your type system is part of Pixelgrade Plus.', '__plugin_txtd' ),
+				'sm_font_usage_section'              => esc_html__( 'Try the Usage controls live — set the font for headings, body, accents, and small text, and adjust the headline line spacing. Changes here aren\'t saved; tailoring the type of each element is part of Pixelgrade Plus.', '__plugin_txtd' ),
+			],
+			// The pro font-palette group's own Try & Play banner copy. The group is
+			// gated-but-functional like the tabs: try any premium palette live, but
+			// saving a premium pick is part of Plus. Its own button label fits the
+			// list context while echoing the tabs' "Play with these…" pattern.
+			'fontPalettes' => [
+				'buttonLabel' => esc_html__( 'Play with these palettes', '__plugin_txtd' ),
+				'overlayText' => esc_html__( 'More font palettes, built on premium-licensed fonts. Take any of them for a spin — they apply to your site live. Saving a premium palette is part of Pixelgrade Plus.', '__plugin_txtd' ),
+				'bannerText'  => esc_html__( 'Trying these out — if one fits, Pixelgrade Plus makes it yours. If not, your free palettes are just as strong.', '__plugin_txtd' ),
 			],
 		];
 	}
@@ -625,6 +643,95 @@ class SiteEditor extends AbstractHookProvider {
 	}
 
 	/**
+	 * Fold the active theme's per-element font controls into a Font Usage section.
+	 *
+	 * Unlike color — where Style Manager ships its own native Usage controls — there are NO native
+	 * font-usage controls; the Font Usage tab is ENTIRELY the theme's per-element type system (Body,
+	 * Lead Paragraphs, Small Text, Super Display, Display, Heading 1–6, Accent, Headline Lines Spacing,
+	 * …). So this method does NOT merge into an existing SM section: it CREATES a synthetic
+	 * `sm_font_usage_section` (an `sm_` id, so it's allowlisted + tabbable + gatable like the other SM
+	 * sections), moves the theme's font controls into it, and inserts it into the structure right after
+	 * the Font Palettes section so the tab map can list it.
+	 *
+	 * When the theme registers no `fonts_section`, the section is not created and nothing changes.
+	 *
+	 * @param array $structure Headless Customizer structure (modified in place).
+	 *
+	 * @return bool Whether the synthetic Font Usage section was created.
+	 */
+	protected function merge_theme_fonts_section_into_usage_section( array &$structure ): bool {
+		$theme_fonts_section_id = $this->get_theme_fonts_section_id();
+		if (
+			'' === $theme_fonts_section_id
+			|| empty( $structure['sections'] )
+			|| ! is_array( $structure['sections'] )
+		) {
+			return false;
+		}
+
+		$font_palettes_section_index = null;
+		$theme_fonts_section_index   = null;
+		foreach ( $structure['sections'] as $section_index => $section ) {
+			if ( ! is_array( $section ) ) {
+				continue;
+			}
+
+			if ( 'sm_font_palettes_section' === ( $section['id'] ?? '' ) ) {
+				$font_palettes_section_index = $section_index;
+			}
+
+			if ( $theme_fonts_section_id === ( $section['id'] ?? '' ) ) {
+				$theme_fonts_section_index = $section_index;
+			}
+		}
+
+		if ( null === $theme_fonts_section_index ) {
+			return false;
+		}
+
+		$theme_fonts_section   = $structure['sections'][ $theme_fonts_section_index ];
+		$theme_fonts_controls  = $theme_fonts_section['controls'] ?? [];
+
+		// Lift the theme font section out of the structure (it must not surface as its own menu row).
+		array_splice( $structure['sections'], $theme_fonts_section_index, 1 );
+		if ( null !== $font_palettes_section_index && $theme_fonts_section_index < $font_palettes_section_index ) {
+			$font_palettes_section_index--;
+		}
+
+		if ( ! is_array( $theme_fonts_controls ) || [] === $theme_fonts_controls ) {
+			return false;
+		}
+
+		// The Font Palettes section anchors the priority so the synthetic Usage section sorts right
+		// after it; fall back to the theme section's own priority when Font Palettes is absent.
+		$font_palettes_priority = null;
+		if ( null !== $font_palettes_section_index ) {
+			$font_palettes_priority = $structure['sections'][ $font_palettes_section_index ]['priority'] ?? null;
+		}
+		$priority = is_numeric( $font_palettes_priority )
+			? ( (float) $font_palettes_priority + 0.5 )
+			: ( $theme_fonts_section['priority'] ?? 10 );
+
+		$usage_section = [
+			'id'          => 'sm_font_usage_section',
+			'title'       => esc_html__( 'Font Usage', '__plugin_txtd' ),
+			'description' => '',
+			'priority'    => $priority,
+			// Mirror the Color Usage section's home so panel grouping/ordering matches.
+			'panel'       => 'theme_options_panel',
+			'controls'    => array_values( $theme_fonts_controls ),
+		];
+
+		// Insert right after Font Palettes when present, otherwise where the theme section sat.
+		$insert_at = null !== $font_palettes_section_index
+			? $font_palettes_section_index + 1
+			: $theme_fonts_section_index;
+		array_splice( $structure['sections'], $insert_at, 0, [ $usage_section ] );
+
+		return true;
+	}
+
+	/**
 	 * Build the section tab map consumed by the Site Editor sidebar.
 	 *
 	 * @return array
@@ -637,8 +744,9 @@ class SiteEditor extends AbstractHookProvider {
 				[ 'id' => 'sm_color_usage_section', 'label' => esc_html__( 'Usage', '__plugin_txtd' ) ],
 			],
 			'sm_font_palettes_section'  => [
-				[ 'id' => 'sm_font_palettes_section', 'label' => esc_html__( 'Palettes', '__plugin_txtd' ) ],
+				[ 'id' => 'sm_font_palettes_section', 'label' => esc_html__( 'Font Palettes', '__plugin_txtd' ) ],
 				[ 'id' => 'sm_fine_tune_font_palette_section', 'label' => esc_html__( 'Fine-tune', '__plugin_txtd' ) ],
+				[ 'id' => 'sm_font_usage_section', 'label' => esc_html__( 'Usage', '__plugin_txtd' ) ],
 			],
 		];
 	}
@@ -747,6 +855,23 @@ class SiteEditor extends AbstractHookProvider {
 		}
 
 		return $options_key . '[colors_section]';
+	}
+
+	/**
+	 * Build the final Customizer section ID used by themes for per-element
+	 * font controls when they register the `fonts_section` Style Manager
+	 * config section. Theme-agnostic: derives the theme prefix from the
+	 * options key (e.g. `anima_options[fonts_section]`).
+	 *
+	 * @return string
+	 */
+	protected function get_theme_fonts_section_id(): string {
+		$options_key = $this->options->get_options_key();
+		if ( '' === $options_key ) {
+			return '';
+		}
+
+		return $options_key . '[fonts_section]';
 	}
 
 	/**

@@ -183,12 +183,14 @@ class HeadlessCustomizer {
 		$manager = $this->get_manager();
 
 		$theme_colors_section_id = $this->get_theme_colors_section_id();
+		$theme_fonts_section_id  = $this->get_theme_fonts_section_id();
 		$section_ids             = [];
 		foreach ( $manager->sections() as $section_id => $section ) {
 			if (
 				'style_manager_panel' === $section->panel
 				|| 0 === strpos( (string) $section_id, 'sm_' )
 				|| $theme_colors_section_id === (string) $section_id
+				|| $theme_fonts_section_id === (string) $section_id
 			) {
 				$section_ids[] = (string) $section_id;
 			}
@@ -220,6 +222,27 @@ class HeadlessCustomizer {
 	}
 
 	/**
+	 * Build the final Customizer section ID used by themes for per-element
+	 * font controls when they register the `fonts_section` Style Manager
+	 * config section (the per-element type system folded into the Font Usage tab).
+	 *
+	 * Detected theme-agnostically the same way as the color targets: the
+	 * theme's section config key (`fonts_section`) wrapped in the theme's
+	 * options key, so it resolves to e.g. `anima_options[fonts_section]`
+	 * without hardcoding the theme prefix.
+	 *
+	 * @return string
+	 */
+	protected function get_theme_fonts_section_id(): string {
+		$options_key = $this->options->get_options_key();
+		if ( '' === $options_key ) {
+			return '';
+		}
+
+		return $options_key . '[fonts_section]';
+	}
+
+	/**
 	 * The persisted setting ids of the theme's per-element color targets.
 	 *
 	 * These are the controls a theme registers in its Style Manager `colors_section` (the "Color
@@ -236,7 +259,42 @@ class HeadlessCustomizer {
 	 * @return string[] Setting ids (full registered form, e.g. `anima_options[body_color]`).
 	 */
 	public function get_theme_color_target_setting_ids(): array {
-		$section_id = $this->get_theme_colors_section_id();
+		return $this->get_section_target_setting_ids( $this->get_theme_colors_section_id() );
+	}
+
+	/**
+	 * The persisted setting ids of the theme's per-element font targets.
+	 *
+	 * These are the controls a theme registers in its Style Manager `fonts_section` (the per-element
+	 * type system folded into the Font Usage tab — e.g. Body / Lead Paragraphs / Heading 1–6 / Accent
+	 * font pickers and the Headline Lines Spacing range). Derived theme-agnostically from the live
+	 * Customize registry exactly like the color targets: every actual setting attached to a control in
+	 * that section, skipping the presentational `html` controls (the "Body Fonts" / "Heading Fonts"
+	 * sub-section labels) which carry no real setting.
+	 *
+	 * Used to gate + strip these targets on save when Pixelgrade Plus is absent — the whole Font Usage
+	 * tab is premium (see \Pixelgrade\StyleManager\plus_gated_setting_ids()).
+	 *
+	 * @since 2.2.17
+	 *
+	 * @return string[] Setting ids (full registered form, e.g. `anima_options[body_font]`).
+	 */
+	public function get_theme_font_target_setting_ids(): array {
+		return $this->get_section_target_setting_ids( $this->get_theme_fonts_section_id() );
+	}
+
+	/**
+	 * Collect every genuine (non-presentational) persisted setting id attached to a control in the
+	 * given Customizer section. Shared by the theme color/font per-element target derivations so both
+	 * stay theme-agnostic and skip the `html` separators/intros that carry no real setting.
+	 *
+	 * @since 2.2.17
+	 *
+	 * @param string $section_id Full registered Customizer section id.
+	 *
+	 * @return string[]
+	 */
+	protected function get_section_target_setting_ids( string $section_id ): array {
 		if ( '' === $section_id ) {
 			return [];
 		}
@@ -251,7 +309,7 @@ class HeadlessCustomizer {
 			}
 
 			// Presentational controls (group separators, section titles, intros) carry no real
-			// setting to persist; skip them so only genuine color-target settings are gated.
+			// setting to persist; skip them so only genuine target settings are gated.
 			if ( 'html' === $control->type ) {
 				continue;
 			}

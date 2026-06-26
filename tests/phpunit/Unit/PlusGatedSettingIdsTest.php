@@ -5,6 +5,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit;
 
 use Brain\Monkey\Functions;
 use Pixelgrade\StyleManager\Customize\ColorPalettes;
+use Pixelgrade\StyleManager\Customize\FontPalettes;
 
 class PlusGatedSettingIdsTest extends TestCase {
 	public function test_canonical_plus_gated_setting_ids_include_persisted_color_system_subsets(): void {
@@ -17,6 +18,11 @@ class PlusGatedSettingIdsTest extends TestCase {
 		}
 
 		foreach ( ColorPalettes::get_usage_premium_setting_ids() as $id ) {
+			$this->assertContains( $id, $ids );
+		}
+
+		// The advanced Typography layer is gated the same way as color.
+		foreach ( FontPalettes::get_premium_setting_ids() as $id ) {
 			$this->assertContains( $id, $ids );
 		}
 

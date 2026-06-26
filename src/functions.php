@@ -213,8 +213,10 @@ function plus_advanced_controls_locked(): bool {
  * server-side save strip (Provider\SiteEditorEndpoints). The whole advanced Color System layer is
  * premium: the Fine-tune palette-structure settings, the entire Color Usage tab (master color
  * switches, coloration level, dark mode) and the theme's per-element color targets folded into it,
- * plus the colorize-elements affordance. When a non-entitled user saves, these ids are dropped so
- * everything else persists while the premium settings revert to last-saved.
+ * plus the colorize-elements affordance. The advanced Typography layer is premium the same way: the
+ * Fine-tune font settings (per-category master fonts, elevation/pitch sizing, connected-fields
+ * preset). When a non-entitled user saves, these ids are dropped so everything else persists while
+ * the premium settings revert to last-saved.
  *
  * @since 2.2.15
  *
@@ -227,6 +229,10 @@ function plus_gated_setting_ids(): array {
 	// The whole Color Usage tab: the SM-owned master switches, coloration level and dark mode.
 	$ids = array_merge( $ids, Customize\ColorPalettes::get_usage_premium_setting_ids() );
 
+	// Fine-tune typography: the per-category master fonts, their elevation/pitch sizing and the
+	// connected-fields preset. The whole advanced typography layer is premium, mirroring color.
+	$ids = array_merge( $ids, Customize\FontPalettes::get_premium_setting_ids() );
+
 	// The colorize-elements control is a navigation/affordance, not itself a persisted setting, but
 	// we keep it in the gated set as the single source of truth (harmless to the strip).
 	$ids[] = 'sm_colorize_elements_button';
@@ -235,6 +241,12 @@ function plus_gated_setting_ids(): array {
 	// Derived theme-agnostically from the live Customize registry so this stays maintainable and
 	// works for any theme that registers a Style Manager `colors_section`.
 	$ids = array_merge( $ids, plus_gated_theme_color_target_setting_ids() );
+
+	// The theme's per-element font targets surfaced in the Font Usage tab (the entire tab — Body,
+	// Lead Paragraphs, Heading 1–6, Accent, Headline Lines Spacing, …). Derived theme-agnostically
+	// from the live Customize registry, mirroring the color targets, so it works for any theme that
+	// registers a Style Manager `fonts_section`.
+	$ids = array_merge( $ids, plus_gated_theme_font_target_setting_ids() );
 
 	/**
 	 * Filter the canonical list of premium Style Manager setting ids.
@@ -273,6 +285,35 @@ function plus_gated_theme_color_target_setting_ids(): array {
 		}
 
 		return $headless_customizer->get_theme_color_target_setting_ids();
+	} catch ( \Throwable $e ) {
+		return [];
+	}
+}
+
+/**
+ * The theme's per-element font-target setting ids gated behind Pixelgrade Plus.
+ *
+ * Bridges plus_gated_setting_ids() to the Headless Customizer's theme-agnostic derivation, guarded
+ * so contexts without the container (e.g. unit tests) degrade to an empty list rather than fatal.
+ * The mirror of plus_gated_theme_color_target_setting_ids() for the Font Usage tab.
+ *
+ * @since 2.2.17
+ *
+ * @return string[]
+ */
+function plus_gated_theme_font_target_setting_ids(): array {
+	try {
+		$container = plugin()->get_container();
+		if ( ! $container->has( 'provider.headless_customizer' ) ) {
+			return [];
+		}
+
+		$headless_customizer = $container->get( 'provider.headless_customizer' );
+		if ( ! $headless_customizer instanceof Provider\HeadlessCustomizer ) {
+			return [];
+		}
+
+		return $headless_customizer->get_theme_font_target_setting_ids();
 	} catch ( \Throwable $e ) {
 		return [];
 	}

@@ -277,6 +277,11 @@ class Preset extends BaseControl {
 				// Preprocess all choices once.
 				$choices = $this->sm_font_palettes->preprocess_config( $this->choices );
 
+				// Palette ids whose tier the site is not entitled to (default: pro).
+				// These stay visible + selectable (live preview is the whole point);
+				// they're badged "Plus" and the pick is gated on save, not on sight.
+				$locked_ids = array_map( 'strval', $this->sm_font_palettes->get_locked_palette_ids() );
+
 				// Collect all preview font variants needed for the cards.
 				$preview_heading_size = 34;
 				$preview_body_size    = 15;
@@ -380,10 +385,23 @@ class Preset extends BaseControl {
 
 						$body_font_family = $body_style['font_family'];
 						$body_font_weight = (string) $body_style['font_weight'];
+
+						// Pro palettes the site can't yet save: visible + selectable (live
+						// preview), badged "Plus". The Site Editor groups them under a
+						// Try & Play banner; the save gate lives server-side.
+						$is_locked = in_array( (string) $choice_value, $locked_ids, true );
+
+						$row_classes = [ 'customize-inside-control-row' ];
+						if ( (string) $this->value() === (string) $choice_value ) {
+							$row_classes[] = 'current-font-palette';
+						}
+						if ( $is_locked ) {
+							$row_classes[] = 'is-plus-locked';
+						}
 						?>
 
 						<span
-							class="customize-inside-control-row <?php echo( (string) $this->value() === (string) $choice_value ? 'current-font-palette' : '' ); ?>">
+							class="<?php echo esc_attr( implode( ' ', $row_classes ) ); ?>"<?php echo $is_locked ? ' data-tier="pro"' : ''; ?>>
 							<input
 								<?php $this->link(); ?>
 								name="<?php echo esc_attr( $this->setting->id ); ?>"
@@ -393,6 +411,9 @@ class Preset extends BaseControl {
 								<?php selected( $this->value(), $choice_value ); ?>
 								<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 							/>
+							<?php if ( $is_locked ) { ?>
+							<span class="sm-plus-badge"><?php esc_html_e( 'Plus', '__plugin_txtd' ); ?></span>
+							<?php } ?>
 							<span class="font-palette-preview__watermark"
 								style="font-family: '<?php echo esc_attr( $heading_font_family ); ?>', sans-serif;">Aa</span>
 							<span class="font-palette-preview__title"

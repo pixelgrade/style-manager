@@ -16,7 +16,6 @@ use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Utils\ArrayHelpers;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
-use function Pixelgrade\StyleManager\advanced_style_manager_controls_are_unlocked;
 
 /**
  * Provides the font palettes logic.
@@ -28,6 +27,62 @@ class FontPalettes extends AbstractHookProvider {
 	const SM_FONT_PALETTE_OPTION_KEY = 'sm_font_palette';
 	const SM_FONT_PALETTE_VARIATION_OPTION_KEY = 'sm_font_palette_variation';
 	const SM_IS_CUSTOM_FONT_PALETTE_OPTION_KEY = 'sm_is_custom_font_palette';
+
+	/**
+	 * The Fine-tune font section field ids, in display order.
+	 *
+	 * This is the canonical, single source of truth for the Fine-tune typography controls. It is
+	 * consumed both to register the Fine-tune section (see add_fine_tune_palette_section()) and — via
+	 * the persisted subset returned by get_premium_setting_ids() — to gate + strip the premium
+	 * typography settings on save when Pixelgrade Plus is absent (see
+	 * \Pixelgrade\StyleManager\plus_gated_setting_ids()). Mirrors ColorPalettes::FINE_TUNE_PALETTE_FIELDS.
+	 *
+	 * Items prefixed `sm_separator_` / `sm_*_intro` are presentational, not persisted settings.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @var string[]
+	 */
+	const FINE_TUNE_PALETTE_FIELDS = [
+		'sm_fine_tune_intro',
+		'sm_font_primary_intro',
+		'sm_font_primary',
+		'sm_font_primary_elevation',
+		'sm_font_primary_pitch',
+		'sm_separator_0_1',
+		'sm_font_secondary_intro',
+		'sm_font_secondary',
+		'sm_font_secondary_elevation',
+		'sm_font_secondary_pitch',
+		'sm_separator_0_2',
+		'sm_font_body_intro',
+		'sm_font_body',
+		'sm_font_body_elevation',
+		'sm_font_body_pitch',
+		'sm_separator_0_3',
+		'sm_font_accent_intro',
+		'sm_font_accent',
+		'sm_separator_0_4',
+		'sm_fonts_connected_fields_preset',
+	];
+
+	/**
+	 * Return the persisted (savable) subset of the Fine-tune font fields.
+	 *
+	 * Excludes presentational entries (intros, separators) that are never persisted settings, so the
+	 * result is the canonical set of premium typography setting ids to gate + strip on save. Mirrors
+	 * ColorPalettes::get_premium_setting_ids().
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string[]
+	 */
+	public static function get_premium_setting_ids(): array {
+		return array_values( array_filter( self::FINE_TUNE_PALETTE_FIELDS, static function ( $field_id ) {
+			return 0 !== strpos( $field_id, 'sm_separator_' )
+			       && false === strpos( $field_id, '_intro' );
+		} ) );
+	}
 
 	/**
 	 * Options.
@@ -115,32 +170,12 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	protected function add_fine_tune_palette_section( array $config ): array {
-		if ( ! advanced_style_manager_controls_are_unlocked() ) {
-			return $config;
-		}
-
-		$fine_tune_palette_fields = [
-			'sm_fine_tune_intro',
-			'sm_font_primary_intro',
-			'sm_font_primary',
-			'sm_font_primary_elevation',
-			'sm_font_primary_pitch',
-			'sm_separator_0_1',
-			'sm_font_secondary_intro',
-			'sm_font_secondary',
-			'sm_font_secondary_elevation',
-			'sm_font_secondary_pitch',
-			'sm_separator_0_2',
-			'sm_font_body_intro',
-			'sm_font_body',
-			'sm_font_body_elevation',
-			'sm_font_body_pitch',
-			'sm_separator_0_3',
-			'sm_font_accent_intro',
-			'sm_font_accent',
-			'sm_separator_0_4',
-			'sm_fonts_connected_fields_preset',
-		];
+		// Always register the Fine-tune section so the editor can present it inline as a live trial
+		// (controls stay fully interactive) with a gentle Plus banner rather than hiding it. The locked
+		// state + trial metadata are applied to the Site Editor payload in
+		// Screen\SiteEditor::apply_plus_gating(); saving the premium settings is gated server-side.
+		// Single source of truth: self::FINE_TUNE_PALETTE_FIELDS.
+		$fine_tune_palette_fields = self::FINE_TUNE_PALETTE_FIELDS;
 
 		$fine_tune_palette_section = [
 			'title'      => esc_html__( 'Fine-tune font palette', '__plugin_txtd' ),
@@ -656,10 +691,7 @@ class FontPalettes extends AbstractHookProvider {
 		 *
 		 * @param string[] $allowed_tiers Allowed tier slugs.
 		 */
-		$allowed = apply_filters( 'style_manager/cloud_font_palettes_allowed_tiers', [ 'free' ] );
-		if ( ! is_array( $allowed ) || empty( $allowed ) ) {
-			$allowed = [ 'free' ];
-		}
+		$allowed = $this->get_allowed_palette_tiers();
 
 		foreach ( $config as $palette_id => $palette_config ) {
 			$tier = ( is_array( $palette_config ) && isset( $palette_config['tier'] ) ) ? $palette_config['tier'] : 'free';
@@ -719,6 +751,177 @@ class FontPalettes extends AbstractHookProvider {
 		}
 
 		return $filtered_config;
+	}
+
+	/**
+	 * Get the font palettes for the selection CONTROL — all palettes (free + pro).
+	 *
+	 * Unlike get_palettes() (which drops pro palettes the site is not entitled to
+	 * so output/resolution never resolves them), the control shows everyone every
+	 * palette: free users can SELECT a pro palette and watch the live preview change
+	 * — saving is the gate, not seeing. Each palette keeps its `tier`, and the list
+	 * is ordered free first, then pro (stable within each group) so the renderer can
+	 * group + badge the pro palettes. Pro picks are stripped server-side on save
+	 * (see SiteEditorEndpoints::strip_locked_premium_font_palette()).
+	 *
+	 * The legacy Customizer pane is the exception: it has no live-trial UI and its
+	 * save path doesn't run the Site Editor's premium save gate, so showing pro
+	 * palettes there would let a non-entitled site select — and persist — one. In
+	 * that one context we keep the original behaviour and withhold pro palettes
+	 * (get_palettes()); the Site Editor, the supported surface, still shows them as
+	 * a gated live trial.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param bool $skip_cache Optional. Whether to use the cached config or fetch a new one.
+	 *
+	 * @return array
+	 */
+	public function get_palettes_for_control( bool $skip_cache = false ): array {
+		if ( \Pixelgrade\StyleManager\is_customizer() ) {
+			return $this->get_palettes( $skip_cache );
+		}
+
+		$config = $this->design_assets->get_entry( 'font_palettes', $skip_cache );
+		if ( is_null( $config ) ) {
+			$config = $this->get_default_config();
+		}
+
+		// Order free first, then pro (stable within each group) so the control can
+		// render the pro palettes as a clearly-marked group at the end of the list.
+		$config = $this->order_palettes_free_first( $config );
+
+		$preprocessed_config = $this->preprocess_config( $config );
+		$filtered_config     = apply_filters( 'style_manager/get_font_palettes', $config );
+
+		foreach ( $filtered_config as $palette_id => $palette_config ) {
+			if ( ! isset( $preprocessed_config[ $palette_id ] ) || ! is_array( $preprocessed_config[ $palette_id ] ) || ! is_array( $palette_config ) ) {
+				continue;
+			}
+
+			$source_palette_config = $preprocessed_config[ $palette_id ];
+
+			// Preserve source metadata when site filters provide partial palette overrides.
+			$filtered_config[ $palette_id ] = wp_parse_args( $palette_config, $source_palette_config );
+
+			if ( isset( $source_palette_config['fonts_logic'] ) && is_array( $source_palette_config['fonts_logic'] ) ) {
+				$filtered_config[ $palette_id ]['fonts_logic'] = wp_parse_args(
+					isset( $palette_config['fonts_logic'] ) && is_array( $palette_config['fonts_logic'] ) ? $palette_config['fonts_logic'] : [],
+					$source_palette_config['fonts_logic']
+				);
+			}
+
+			if ( isset( $source_palette_config['personality'] ) && is_array( $source_palette_config['personality'] ) ) {
+				$filtered_config[ $palette_id ]['personality'] = wp_parse_args(
+					isset( $palette_config['personality'] ) && is_array( $palette_config['personality'] ) ? $palette_config['personality'] : [],
+					$source_palette_config['personality']
+				);
+			}
+		}
+
+		return $filtered_config;
+	}
+
+	/**
+	 * Sort a palette config map free-tier first, then pro, keeping the original
+	 * order stable within each group.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $config Palettes keyed by id.
+	 *
+	 * @return array
+	 */
+	protected function order_palettes_free_first( array $config ): array {
+		$free = [];
+		$pro  = [];
+
+		foreach ( $config as $palette_id => $palette_config ) {
+			$tier = ( is_array( $palette_config ) && isset( $palette_config['tier'] ) ) ? $palette_config['tier'] : 'free';
+			if ( 'pro' === $tier ) {
+				$pro[ $palette_id ] = $palette_config;
+			} else {
+				$free[ $palette_id ] = $palette_config;
+			}
+		}
+
+		return $free + $pro;
+	}
+
+	/**
+	 * Get the ids of the palettes whose catalog tier the site is NOT entitled to.
+	 *
+	 * These are the palettes the control shows but gates on save — the renderer
+	 * badges them "Plus" and SiteEditorEndpoints reverts a pick to last-saved.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return array Locked palette ids (string).
+	 */
+	public function get_locked_palette_ids(): array {
+		$config = $this->design_assets->get_entry( 'font_palettes' );
+		if ( is_null( $config ) ) {
+			$config = $this->get_default_config();
+		}
+
+		$allowed = $this->get_allowed_palette_tiers();
+
+		$locked = [];
+		foreach ( $config as $palette_id => $palette_config ) {
+			$tier = ( is_array( $palette_config ) && isset( $palette_config['tier'] ) ) ? $palette_config['tier'] : 'free';
+			if ( ! in_array( $tier, $allowed, true ) ) {
+				$locked[] = (string) $palette_id;
+			}
+		}
+
+		return $locked;
+	}
+
+	/**
+	 * Whether a given palette id is locked: its tier is not in the allowed tiers.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $id Palette id.
+	 *
+	 * @return bool
+	 */
+	public function is_palette_tier_locked( string $id ): bool {
+		if ( '' === $id ) {
+			return false;
+		}
+
+		$config = $this->design_assets->get_entry( 'font_palettes' );
+		if ( is_null( $config ) ) {
+			$config = $this->get_default_config();
+		}
+
+		if ( ! isset( $config[ $id ] ) ) {
+			return false;
+		}
+
+		$tier = ( is_array( $config[ $id ] ) && isset( $config[ $id ]['tier'] ) ) ? $config[ $id ]['tier'] : 'free';
+
+		return ! in_array( $tier, $this->get_allowed_palette_tiers(), true );
+	}
+
+	/**
+	 * The font-palette catalog tiers the site may use.
+	 *
+	 * Defaults to the free tier; Pixelgrade Plus widens the allowed tiers through
+	 * the `style_manager/cloud_font_palettes_allowed_tiers` filter when entitled.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string[]
+	 */
+	protected function get_allowed_palette_tiers(): array {
+		$allowed = apply_filters( 'style_manager/cloud_font_palettes_allowed_tiers', [ 'free' ] );
+		if ( ! is_array( $allowed ) || empty( $allowed ) ) {
+			$allowed = [ 'free' ];
+		}
+
+		return $allowed;
 	}
 
 	/**
@@ -841,7 +1044,11 @@ class FontPalettes extends AbstractHookProvider {
 					'desc'         => esc_html__( 'Conveniently change the design of your site with font palettes. Easy as pie.', '__plugin_txtd' ),
 					'default'      => 'julia',
 					'choices_type' => 'font_palette',
-					'choices'      => $this->get_palettes(),
+					// The control shows ALL palettes (free + pro, free-first). Free users can
+					// select a pro palette and watch the live preview — saving is the gate
+					// (see SiteEditorEndpoints::strip_locked_premium_font_palette()). Output
+					// and resolution paths stay tier-filtered via get_palettes().
+					'choices'      => $this->get_palettes_for_control(),
 				],
 				'sm_font_palettes_spacing_bottom' => [
 					'type'       => 'html',

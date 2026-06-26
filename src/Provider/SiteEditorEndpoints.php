@@ -200,6 +200,7 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 */
 	public function handle_save_settings_record( \WP_REST_Request $request ) {
 		$values = $this->strip_locked_premium_settings( (array) $request->get_param( 'settings' ) );
+		$values = $this->strip_locked_premium_font_palette( $values );
 
 		$result = $this->headless_customizer->save( $values );
 
@@ -270,6 +271,38 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 		}
 
 		return false;
+	}
+
+	/**
+	 * The save gate for pro font palettes: the control lets free users SELECT a
+	 * pro palette and watch the live preview change, but the selection must not
+	 * persist. When the submitted `sm_font_palette` pointer is a tier-locked
+	 * (pro) palette, drop the pointer so the pick reverts to last-saved on reload.
+	 *
+	 * Dropping the pointer alone is sufficient: the per-element font values a
+	 * palette diffuses into are already in plus_gated_setting_ids() and stripped
+	 * by strip_locked_premium_settings(), and apply_post_save_side_effects()
+	 * only re-applies a palette when its pointer is in the saved ids — which it
+	 * no longer is here. Intrinsic server-side enforcement, never client-trusted.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $values Setting id => value map submitted by the editor.
+	 *
+	 * @return array The filtered values to persist.
+	 */
+	protected function strip_locked_premium_font_palette( array $values ): array {
+		$key = FontPalettes::SM_FONT_PALETTE_OPTION_KEY;
+
+		if ( ! array_key_exists( $key, $values ) ) {
+			return $values;
+		}
+
+		if ( $this->font_palettes->is_palette_tier_locked( (string) $values[ $key ] ) ) {
+			unset( $values[ $key ] );
+		}
+
+		return $values;
 	}
 
 	/**
