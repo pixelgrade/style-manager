@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 export const PALETTE_OUTPUT_SETTING_ID = 'sm_advanced_palette_output';
+export const FONT_PALETTE_SETTING_ID = 'sm_font_palette';
 
 export const FREE_PALETTE_SETTING_IDS = [
   'sm_advanced_palette_source',
@@ -42,6 +43,23 @@ const isEquivalentValue = ( a, b ) => _.isEqualWith( a, b, ( x, y ) => {
 } );
 
 const isThemeFontOption = id => /\[[^\]]*font[^\]]*\]$/.test( id );
+
+const getLockedFontPaletteIds = plusPayload => {
+  const fontPalettes = plusPayload && plusPayload.fontPalettes;
+  const lockedIds = fontPalettes && Array.isArray( fontPalettes.lockedIds )
+    ? fontPalettes.lockedIds
+    : [];
+
+  return new Set( lockedIds.map( id => String( id ) ) );
+};
+
+const hasLockedFontPaletteChange = ( changedValues, plusPayload ) => {
+  if ( ! plusPayload || ! plusPayload.locked || ! hasOwn( changedValues, FONT_PALETTE_SETTING_ID ) ) {
+    return false;
+  }
+
+  return getLockedFontPaletteIds( plusPayload ).has( String( changedValues[ FONT_PALETTE_SETTING_ID ] ) );
+};
 
 const isDefaultMaterializedFontValue = ( key, value, baselineValue, candidateValue ) => {
   if ( 'font_variant' === key ) {
@@ -123,15 +141,20 @@ export const filterLockedPlusChangedValues = ( changedValues = {}, plusPayload =
     ? plusPayload.gatedSettingIds
     : [] );
   const hasGatedSettingChange = Object.keys( changedValues ).some( id => gatedSettingIds.has( id ) );
+  const hasLockedPaletteChange = hasLockedFontPaletteChange( changedValues, plusPayload );
 
   gatedSettingIds.forEach( id => {
     delete filtered[ id ];
   } );
 
+  if ( hasLockedPaletteChange ) {
+    delete filtered[ FONT_PALETTE_SETTING_ID ];
+  }
+
   if ( hasOwn( changedValues, PALETTE_OUTPUT_SETTING_ID ) ) {
     const hasFreePaletteChange = FREE_PALETTE_SETTING_IDS.some( id => hasOwn( changedValues, id ) );
 
-    if ( hasGatedSettingChange || ! hasFreePaletteChange ) {
+    if ( hasGatedSettingChange || hasLockedPaletteChange || ! hasFreePaletteChange ) {
       delete filtered[ PALETTE_OUTPUT_SETTING_ID ];
     }
   }
@@ -177,6 +200,7 @@ export const getGatedChangedValues = ( changedValues = {}, plusPayload = null ) 
 // these drives the change, the per-category font edits are not deliberate
 // individual tweaks. (Neither driver is itself in the gated set.)
 export const TYPOGRAPHY_CASCADE_DRIVER_IDS = [ 'sm_font_sizing', 'sm_font_palette' ];
+export const CONNECTED_FIELDS_PRESET_SETTING_ID = 'sm_fonts_connected_fields_preset';
 
 // A gated id is a per-category font *output* (master family `sm_font_primary…`,
 // or its `…_elevation` / `…_pitch`) — i.e. something a palette/sizing change
@@ -209,18 +233,28 @@ const isPerCategoryFontOutputId = id => /^sm_font_/.test( id ) && ! TYPOGRAPHY_C
 export const getSignalGatedChangedValues = ( changedValues = {}, plusPayload = null ) => {
   const gated = getGatedChangedValues( changedValues, plusPayload );
   const drivenByHigherLevel = TYPOGRAPHY_CASCADE_DRIVER_IDS.some( id => hasOwn( changedValues, id ) );
+  const drivenByFontPalette = hasOwn( changedValues, FONT_PALETTE_SETTING_ID );
+  const lockedPaletteSignal = hasLockedFontPaletteChange( changedValues, plusPayload )
+    ? { [ FONT_PALETTE_SETTING_ID ]: changedValues[ FONT_PALETTE_SETTING_ID ] }
+    : {};
 
-  return Object.fromEntries(
-    Object.entries( gated ).filter( ( [ id ] ) => {
-      if ( isThemeFontOption( id ) ) {
-        return false;
-      }
-      if ( drivenByHigherLevel && isPerCategoryFontOutputId( id ) ) {
-        return false;
-      }
-      return true;
-    } )
-  );
+  return {
+    ...lockedPaletteSignal,
+    ...Object.fromEntries(
+      Object.entries( gated ).filter( ( [ id ] ) => {
+        if ( isThemeFontOption( id ) ) {
+          return false;
+        }
+        if ( drivenByFontPalette && CONNECTED_FIELDS_PRESET_SETTING_ID === id ) {
+          return false;
+        }
+        if ( drivenByHigherLevel && isPerCategoryFontOutputId( id ) ) {
+          return false;
+        }
+        return true;
+      } )
+    ),
+  };
 };
 
 export const getBaselineSettingsValues = ( settings = {} ) => Object.entries( settings ).reduce(

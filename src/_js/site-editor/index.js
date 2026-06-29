@@ -108,6 +108,25 @@ const decodeHtmlText = text => {
  */
 const plusPayload = payload.plus || null;
 
+const hydrateLockedFontPaletteIds = root => {
+  if ( ! plusPayload || ! plusPayload.locked || ! root ) {
+    return;
+  }
+
+  const lockedIds = Array.from( root.querySelectorAll( '.is-plus-locked input[type="radio"]' ) )
+    .map( input => input.value )
+    .filter( Boolean );
+
+  if ( ! lockedIds.length ) {
+    return;
+  }
+
+  plusPayload.fontPalettes = {
+    ...( plusPayload.fontPalettes || {} ),
+    lockedIds,
+  };
+};
+
 /**
  * Whether the Plus advanced controls are presented as a locked live trial.
  */
@@ -816,6 +835,7 @@ const ensureEngine = () => {
   }
 
   const root = buildRoot( api );
+  hydrateLockedFontPaletteIds( root );
 
   engine = { api, root, booted: false, preview: null };
 

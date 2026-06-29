@@ -24,6 +24,9 @@ const lockedPlus = {
 // genuine color refinement.
 const lockedPlusFont = {
 	locked: true,
+	fontPalettes: {
+		lockedIds: [ 'mnzord' ],
+	},
 	gatedSettingIds: [
 		'sm_color_grades_number',
 		'sm_font_primary',          // per-category master font (family)
@@ -31,6 +34,7 @@ const lockedPlusFont = {
 		'sm_font_primary_elevation',
 		'sm_font_primary_pitch',
 		'sm_font_body_elevation',
+		'sm_fonts_connected_fields_preset',
 		'anima_options[lead_font]',
 		'anima_options[heading_1_font]',
 	],
@@ -73,6 +77,20 @@ test( 'locked Plus strips generated palette output when premium tuning changed t
 		{
 			sm_advanced_palette_source: '[{"sources":[{"value":"#123456"}]}]',
 		}
+	);
+} );
+
+test( 'locked Plus strips a tier-locked font-palette selection from native save edits', () => {
+	assert.deepEqual(
+		filterLockedPlusChangedValues(
+			{
+				sm_font_palette: 'mnzord',
+				sm_font_primary: '{"font_family":"Trueno"}',
+				sm_advanced_palette_output: '[{"options":{"sm_color_grades_number":4}}]',
+			},
+			lockedPlusFont
+		),
+		{}
 	);
 } );
 
@@ -278,6 +296,27 @@ test( 'signal gated values: a font-palette change drops the whole per-category f
 		'anima_options[lead_font]': '{"font_size":18}',
 	};
 	assert.deepEqual( getSignalGatedChangedValues( changed, lockedPlusFont ), {} );
+} );
+
+test( 'signal gated values: a font-palette change drops the connected-fields preset cascade', () => {
+	const changed = {
+		sm_font_palette: 'l82pvc',                         // higher-level driver
+		sm_fonts_connected_fields_preset: 'preset-1',      // palette-driven connected field map
+	};
+	assert.deepEqual( getSignalGatedChangedValues( changed, lockedPlusFont ), {} );
+} );
+
+test( 'signal gated values: a tier-locked font-palette selection counts as the gated signal', () => {
+	const changed = {
+		sm_font_palette: 'mnzord',
+		sm_font_primary: '{"font_family":"Trueno"}',
+		sm_fonts_connected_fields_preset: 'preset-1-7-5',
+		'anima_options[lead_font]': '{"font_family":"Trueno"}',
+	};
+	assert.deepEqual(
+		getSignalGatedChangedValues( changed, lockedPlusFont ),
+		{ sm_font_palette: 'mnzord' }
+	);
 } );
 
 test( 'signal gated values: an individual master-font tweak still counts (no driver)', () => {
