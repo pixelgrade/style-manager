@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -119,6 +119,16 @@ When fetching design assets, the plugin sends: your site URL, whether the site u
 * Web fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.3.1 =
+* New: gentle live-trial "Try &amp; Play" gating for Plus-only advanced controls across Color System (Usage tab), Typography, and font palettes, with a reusable trial overlay and a "Save · Plus" save affordance.
+* New: gate cloud font palettes by catalog tier (free/pro).
+* New: a Style Manager launcher in the post editor with deep-link previews into the editor.
+* Improved: Site Editor sidebar folds theme colors into Color Usage with grouped sections and a docs-link pop-up; clearer two-line visibility feedback on color-target rows.
+* Fix: font palette voice tuner keeps pro palettes pinned after a voice-fit sort.
+* Fix: FrontendOutput tolerates non-bool color-switch toggle values.
+* Fix: dark-mode switcher can override the Light default.
+* Maintenance: send the active theme's WUpdates id to Pixelgrade Cloud; hardened feature-story QA flows.
 
 = 2.3.0-beta2 =
 * Fix: resolve a fresh-install fatal — building the color-palette config could recurse without bound when no Style Manager configuration is stored yet (the palette fallback re-entered option-details during the filter-fields build), exhausting memory on activation. Supersedes 2.3.0-beta1, which is affected.
