@@ -14,6 +14,25 @@
 - `bin/bootstrap-private` can hydrate private local overlays from a user-provided private source.
 - Do not commit hydrated private overlays or local environment files.
 
+## Cross-Stack Strategy Decisions
+
+When Style Manager work changes or settles product, business, positioning, monetization, Pixelgrade.com, Pixelgrade LT vs Pixelgrade Plus, starter strategy, or cross-repo LT stack architecture, save the durable decision in the central strategy folder:
+
+`/Users/georgeolaru/Developer/pixelsite/master-strategy/`
+
+Before making or changing those decisions, read:
+- `/Users/georgeolaru/Developer/pixelsite/master-strategy/README.md`
+- `/Users/georgeolaru/Developer/pixelsite/master-strategy/decisions/README.md`
+- `/Users/georgeolaru/Developer/pixelsite/master-strategy/pixelgrade-lt-stack-strategy.md`
+- `/Users/georgeolaru/Developer/pixelsite/master-strategy/source-index.md`
+
+For any meaningful cross-stack strategy decision:
+- Create a dated note in `/Users/georgeolaru/Developer/pixelsite/master-strategy/decisions/YYYY-MM-DD-short-title.md` using the template in `decisions/README.md`.
+- Update `source-index.md` when the decision depends on a new source document, repo note, issue, or public reference.
+- Update `pixelgrade-lt-stack-strategy.md` only when the decision changes the central strategy.
+
+Keep implementation details, tests, and repo-specific plans in the repo where the work happens. Keep cross-stack product direction, positioning, monetization, and Pixelgrade.com strategy in `pixelsite/master-strategy`.
+
 ## Tooling Prerequisites
 
 - Node: 22+
@@ -115,4 +134,3 @@ Every fix or improvement should follow the project workflow:
 2. Assign it to the latest open milestone, or create the next appropriate release milestone if none exists.
 3. Commit with `Fixes #N` in the message.
 4. Push to `main` after verification passes.
-
