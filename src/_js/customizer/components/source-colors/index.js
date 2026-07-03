@@ -72,7 +72,6 @@ const SourceColorsGroup = ( props ) => {
           groupIndex={ groupIndex }
           index={ index }
           color={ color }
-          showPicker={ color.showPicker }
         />
       ) ) }
     </div>
@@ -91,7 +90,7 @@ const SourceColorControl = ( props ) => {
   const [ hover, setHover ] = useState( false );
   const [ menuIsOpen, setMenuIsOpen ] = useState( false );
   const [ editable, setEditable ] = useState( false );
-  const [ showPicker, setShowPicker ] = useState();
+  const [ showPicker, setShowPicker ] = useState( false );
 
   const { config } = useContext( ConfigContext );
   const updateSourceSetting = useUpdateSourceSetting();
@@ -135,13 +134,6 @@ const SourceColorControl = ( props ) => {
   useOutsideClick( pickerRef, () => {
     setShowPicker( false );
   } );
-
-  // delay setting showPicker with one render cycle in order to show fadein animation
-  useEffect( () => {
-    if ( typeof showPicker === "undefined" && typeof props.showPicker !== "undefined" ) {
-      setShowPicker( props.showPicker );
-    }
-  }, [ showPicker ] );
 
   useEffect( () => {
     setActive( hover || menuIsOpen );

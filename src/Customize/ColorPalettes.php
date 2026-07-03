@@ -425,10 +425,9 @@ class ColorPalettes extends AbstractHookProvider {
 								'uid'     => 'color_group_1',
 								'sources' => [
 									[
-										'uid'        => 'color_11',
-										'showPicker' => true,
-										'label'      => 'Color',
-										'value'      => '#ddaa61',
+										'uid'   => 'color_11',
+										'label' => 'Color',
+										'value' => '#ddaa61',
 									],
 								],
 							],
@@ -436,10 +435,9 @@ class ColorPalettes extends AbstractHookProvider {
 								'uid'     => 'color_group_2',
 								'sources' => [
 									[
-										'uid'        => 'color_21',
-										'showPicker' => true,
-										'label'      => 'Color',
-										'value'      => '#39497C',
+										'uid'   => 'color_21',
+										'label' => 'Color',
+										'value' => '#39497C',
 									],
 								],
 							],
@@ -447,10 +445,9 @@ class ColorPalettes extends AbstractHookProvider {
 								'uid'     => 'color_group_3',
 								'sources' => [
 									[
-										'uid'        => 'color_31',
-										'showPicker' => true,
-										'label'      => 'Color',
-										'value'      => '#B12C4A',
+										'uid'   => 'color_31',
+										'label' => 'Color',
+										'value' => '#B12C4A',
 									],
 								],
 							],

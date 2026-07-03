@@ -7,7 +7,6 @@ export const getNewColorHex = () => {
 export const getNewColor = ( label = '' ) => {
   return {
     uid: `color_${ new Date().getTime() }`,
-    showPicker: true,
     label: label,
     value: getNewColorHex()
   }
