@@ -6,9 +6,11 @@ import {
   EXIT_MS,
   INTRO_SETTLE_MS,
   REDUCED_MOTION_FADE_MS,
+  SWITCH_SETTLE_MS,
   clearOverlayRender,
   getExitMs,
   getIntroSettleMs,
+  getSwitchSettleMs,
   prefersReducedMotion,
   resolveOverlayRender,
   schedulePreviewAutoOpen,
@@ -42,11 +44,32 @@ test( 'reopening during the exit re-enters', () => {
   assert.deepEqual( rendered, { mode: 'colors', context: null, phase: 'entering' } );
 } );
 
-test( 'a mode-to-mode switch swaps content without replaying the entrance', () => {
+test( 'a mode-to-mode switch cross-fades instead of replaying the entrance', () => {
   const open = { mode: 'site-frame', context: null, phase: 'open' };
   const rendered = resolveOverlayRender( open, { mode: 'fancy-titles', context: null } );
 
-  assert.deepEqual( rendered, { mode: 'fancy-titles', context: null, phase: 'open' } );
+  assert.deepEqual( rendered, { mode: 'fancy-titles', context: null, phase: 'switching' } );
+} );
+
+test( 'a switch during the entrance keeps the entrance playing', () => {
+  const entering = { mode: 'colors', context: null, phase: 'entering' };
+  const rendered = resolveOverlayRender( entering, { mode: 'site', context: null } );
+
+  assert.deepEqual( rendered, { mode: 'site', context: null, phase: 'entering' } );
+} );
+
+test( 'a second switch before the first settles stays in switching', () => {
+  const switching = { mode: 'colors', context: null, phase: 'switching' };
+  const rendered = resolveOverlayRender( switching, { mode: 'spacing', context: null } );
+
+  assert.deepEqual( rendered, { mode: 'spacing', context: null, phase: 'switching' } );
+} );
+
+test( 'closing from a switch exits like any open board', () => {
+  const switching = { mode: 'spacing', context: null, phase: 'switching' };
+  const rendered = resolveOverlayRender( switching, { mode: null, context: null } );
+
+  assert.deepEqual( rendered, { mode: 'spacing', context: null, phase: 'exiting' } );
 } );
 
 test( 'a context change while open swaps in place too', () => {
@@ -63,9 +86,14 @@ test( 'a cleared store with nothing rendered stays cleared', () => {
   assert.equal( rendered, cleared );
 } );
 
-test( 'settleOverlayRender releases only the entering phase', () => {
+test( 'settleOverlayRender releases the entering and switching phases', () => {
   assert.deepEqual(
     settleOverlayRender( { mode: 'colors', context: null, phase: 'entering' } ),
+    { mode: 'colors', context: null, phase: 'open' }
+  );
+
+  assert.deepEqual(
+    settleOverlayRender( { mode: 'colors', context: null, phase: 'switching' } ),
     { mode: 'colors', context: null, phase: 'open' }
   );
 
@@ -76,6 +104,7 @@ test( 'settleOverlayRender releases only the entering phase', () => {
 test( 'durations fall back to the full motion without a reduced-motion signal', () => {
   assert.equal( prefersReducedMotion(), false );
   assert.equal( getIntroSettleMs(), INTRO_SETTLE_MS );
+  assert.equal( getSwitchSettleMs(), SWITCH_SETTLE_MS );
   assert.equal( getExitMs(), EXIT_MS );
 } );
 
@@ -89,6 +118,7 @@ test( 'prefers-reduced-motion collapses both directions to the short fade', t =>
 
   assert.equal( prefersReducedMotion(), true );
   assert.equal( getIntroSettleMs(), REDUCED_MOTION_FADE_MS );
+  assert.equal( getSwitchSettleMs(), REDUCED_MOTION_FADE_MS );
   assert.equal( getExitMs(), REDUCED_MOTION_FADE_MS );
 } );
 

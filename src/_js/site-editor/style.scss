@@ -520,6 +520,30 @@ $sm-se-board-exit-ms: 220ms;
 		animation: sm-se-fade-out 160ms ease-in both;
 		pointer-events: none;
 	}
+
+	// Preview-to-preview switches (Colors -> Live Site, the Tweak Board's
+	// group previews) keep the surface and cross-fade only the content —
+	// the frame zoom is reserved for the editor <-> preview boundary. The
+	// incoming overlay root is a fresh node, so the animation runs on mount;
+	// the receded canvas glimpsed through the fade is the intended seam.
+	.sm-preview.is-switching .sm-preview__content > * {
+		animation: sm-se-fade-in 200ms ease-out both;
+	}
+
+	// A compressed stagger: same gesture as the entrance, tighter timings.
+	.sm-preview.is-switching .sm-overlay > * > * {
+		animation: sm-se-board-item-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+
+	@for $i from 1 through 8 {
+		.sm-preview.is-switching .sm-overlay > * > *:nth-child(#{$i}) {
+			animation-delay: #{30 + ($i - 1) * 25}ms;
+		}
+	}
+
+	.sm-preview.is-switching .sm-overlay > * > *:nth-child(n + 9) {
+		animation-delay: #{30 + 7 * 25}ms;
+	}
 }
 
 // The editor canvas recedes underneath while a board is up — a depth cue
@@ -556,6 +580,14 @@ $sm-se-board-exit-ms: 220ms;
 		.sm-preview.is-exiting .sm-preview__content,
 		.sm-preview.is-exiting .sm-preview__close {
 			animation: sm-se-fade-out 120ms ease-in both;
+		}
+
+		.sm-preview.is-switching .sm-preview__content > * {
+			animation: sm-se-fade-in 120ms ease-out both;
+		}
+
+		.sm-preview.is-switching .sm-overlay > * > * {
+			animation: none;
 		}
 	}
 

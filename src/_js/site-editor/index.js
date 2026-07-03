@@ -41,6 +41,7 @@ import {
   clearOverlayRender,
   getExitMs,
   getIntroSettleMs,
+  getSwitchSettleMs,
   resolveOverlayRender,
   schedulePreviewAutoOpen,
   settleOverlayRender,
@@ -1271,11 +1272,16 @@ const SiteEditorPreviewOverlays = () => {
     setRendered( prev => resolveOverlayRender( prev, store ) );
   }, [ store.mode, store.context ] );
 
-  // Phase timers: release the intro animations once everything is at rest,
-  // and drop the node once the exit animation has finished.
+  // Phase timers: release the intro/switch animations once everything is at
+  // rest, and drop the node once the exit animation has finished. The mode
+  // dep matters for switching -> switching (a second switch before the first
+  // settles): the phase string is unchanged but the timer must restart.
   useEffect( () => {
-    if ( 'entering' === rendered.phase ) {
-      const timer = setTimeout( () => setRendered( settleOverlayRender ), getIntroSettleMs() );
+    if ( 'entering' === rendered.phase || 'switching' === rendered.phase ) {
+      const timer = setTimeout(
+        () => setRendered( settleOverlayRender ),
+        'switching' === rendered.phase ? getSwitchSettleMs() : getIntroSettleMs()
+      );
       return () => clearTimeout( timer );
     }
     if ( 'exiting' === rendered.phase ) {

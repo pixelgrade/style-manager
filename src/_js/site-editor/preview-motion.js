@@ -15,6 +15,9 @@
 // The frame zoom runs 450ms; content stagger tails off around 770ms and the
 // close affordance settles at 450ms. Past 800ms everything is at rest.
 export const INTRO_SETTLE_MS = 800;
+// A preview-to-preview switch keeps the surface and cross-fades only the
+// content (200ms fade + a compressed stagger tailing off around 455ms).
+export const SWITCH_SETTLE_MS = 500;
 export const EXIT_MS = 220;
 // prefers-reduced-motion collapses both directions to a plain opacity fade.
 export const REDUCED_MOTION_FADE_MS = 120;
@@ -29,6 +32,8 @@ export const prefersReducedMotion = () =>
 
 export const getIntroSettleMs = () => ( prefersReducedMotion() ? REDUCED_MOTION_FADE_MS : INTRO_SETTLE_MS );
 
+export const getSwitchSettleMs = () => ( prefersReducedMotion() ? REDUCED_MOTION_FADE_MS : SWITCH_SETTLE_MS );
+
 export const getExitMs = () => ( prefersReducedMotion() ? REDUCED_MOTION_FADE_MS : EXIT_MS );
 
 export const clearOverlayRender = () => ( { mode: null, context: null, phase: null } );
@@ -40,14 +45,21 @@ export const clearOverlayRender = () => ( { mode: null, context: null, phase: nu
 export const resolveOverlayRender = ( rendered, store ) => {
   if ( store.mode ) {
     const reentering = ! rendered.mode || 'exiting' === rendered.phase;
+    // A mode -> mode switch (e.g. Colors -> Live Site, or the Tweak Board's
+    // group previews) keeps the surface and cross-fades only the content:
+    // the frame zoom is reserved for the editor <-> preview boundary, but a
+    // hard cut would be the original instant-swap problem in miniature.
+    // Mid-entrance switches keep 'entering' — the frame zoom is still
+    // playing on the persistent content container, and the incoming
+    // content picks up the entrance stagger on its fresh nodes.
+    const switching = ! reentering
+      && store.mode !== rendered.mode
+      && 'entering' !== rendered.phase;
 
     return {
       mode: store.mode,
       context: store.context || null,
-      // A mode -> mode switch (e.g. the Tweak Board's two group previews)
-      // swaps content in place: replaying the frame zoom over a board that
-      // already covers the canvas would read as a glitch, not an entrance.
-      phase: reentering ? 'entering' : rendered.phase,
+      phase: reentering ? 'entering' : ( switching ? 'switching' : rendered.phase ),
     };
   }
 
@@ -59,12 +71,14 @@ export const resolveOverlayRender = ( rendered, store ) => {
 };
 
 /**
- * 'entering' settles into 'open': the fill-mode intro animations are released
- * once everything is at rest, so palette/font changes that re-render the
- * board's React tree mid-session don't replay the stagger on the new nodes.
+ * 'entering' and 'switching' settle into 'open': the fill-mode animations are
+ * released once everything is at rest, so palette/font changes that re-render
+ * the board's React tree mid-session don't replay the stagger on the new nodes.
  */
 export const settleOverlayRender = rendered =>
-  ( 'entering' === rendered.phase ? { ...rendered, phase: 'open' } : rendered );
+  ( 'entering' === rendered.phase || 'switching' === rendered.phase
+    ? { ...rendered, phase: 'open' }
+    : rendered );
 
 /**
  * Debounced auto-open for previews triggered by navigation rather than a
