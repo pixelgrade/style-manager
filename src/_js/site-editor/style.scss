@@ -395,6 +395,178 @@
 	}
 }
 
+// --- Preview board intro/exit motion --------------------------------------
+// Borrowed from the Site Editor's own canvas-entry gesture: the board arrives
+// as a slightly scaled, rounded "frame" with a soft shadow and settles to
+// full bleed; leaving mirrors it, faster. The phases (`is-entering` /
+// `is-exiting`) come from the overlay host's deferred-unmount lifecycle in
+// preview-motion.js — keep the timings there and here in sync.
+
+$sm-se-board-ease-enter: cubic-bezier(0.4, 0, 0.2, 1);
+$sm-se-board-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+$sm-se-board-enter-ms: 450ms;
+$sm-se-board-exit-ms: 220ms;
+
+@keyframes sm-se-board-in {
+	from {
+		opacity: 0;
+		transform: scale(0.97);
+		border-radius: 12px;
+		box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1);
+		border-radius: 0;
+		box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+	}
+}
+
+@keyframes sm-se-board-out {
+	from {
+		opacity: 1;
+		transform: scale(1);
+		border-radius: 0;
+		box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+	}
+
+	to {
+		opacity: 0;
+		transform: scale(0.97);
+		border-radius: 12px;
+		box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+	}
+}
+
+@keyframes sm-se-board-item-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes sm-se-close-in {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes sm-se-fade-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes sm-se-fade-out {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+.sm-preview-tabs-root--floating {
+	.sm-preview.is-entering .sm-preview__content,
+	.sm-preview.is-exiting .sm-preview__content {
+		// The rounded frame needs to clip the board; radius is 0 outside the
+		// animations, so clipping is scoped to them.
+		overflow: hidden;
+	}
+
+	.sm-preview.is-entering .sm-preview__content {
+		animation: sm-se-board-in $sm-se-board-enter-ms $sm-se-board-ease-enter both;
+	}
+
+	// The board's content blocks cascade in once the panel is about a third
+	// of the way in (150ms of the 450ms frame zoom), 40ms apart. Only the
+	// system boards stagger — the Live Site overlay is a single iframe.
+	.sm-preview.is-entering .sm-overlay > * > * {
+		animation: sm-se-board-item-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+
+	@for $i from 1 through 8 {
+		.sm-preview.is-entering .sm-overlay > * > *:nth-child(#{$i}) {
+			animation-delay: #{150 + ($i - 1) * 40}ms;
+		}
+	}
+
+	// Everything past the eighth block arrives together with the tail.
+	.sm-preview.is-entering .sm-overlay > * > *:nth-child(n + 9) {
+		animation-delay: #{150 + 8 * 40}ms;
+	}
+
+	// The close affordance settles in after the board, so it never beats it.
+	.sm-preview.is-entering .sm-preview__close {
+		animation: sm-se-close-in 250ms ease-out 200ms both;
+	}
+
+	.sm-preview.is-exiting .sm-preview__content {
+		animation: sm-se-board-out $sm-se-board-exit-ms $sm-se-board-ease-exit both;
+
+		> * {
+			pointer-events: none;
+		}
+	}
+
+	.sm-preview.is-exiting .sm-preview__close {
+		animation: sm-se-fade-out 160ms ease-in both;
+		pointer-events: none;
+	}
+}
+
+// The editor canvas recedes underneath while a board is up — a depth cue
+// that the board sits above the page, visible during the fades. The classes
+// go on the canvas element itself (see setCanvasRecedeState in index.js):
+// a body-level toggle would force a style recalc across the editor's whole
+// (large) DOM on every open/close.
+.editor-visual-editor.sm-se-canvas-receded,
+.editor-visual-editor.sm-se-canvas-restoring {
+	transition: transform $sm-se-board-enter-ms $sm-se-board-ease-enter, opacity $sm-se-board-enter-ms $sm-se-board-ease-enter;
+}
+
+.editor-visual-editor.sm-se-canvas-restoring {
+	transition-duration: $sm-se-board-exit-ms, $sm-se-board-exit-ms;
+	transition-timing-function: $sm-se-board-ease-exit, $sm-se-board-ease-exit;
+}
+
+.editor-visual-editor.sm-se-canvas-receded {
+	transform: scale(0.982);
+	opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sm-preview-tabs-root--floating {
+		.sm-preview.is-entering .sm-preview__content,
+		.sm-preview.is-entering .sm-preview__close {
+			animation: sm-se-fade-in 120ms ease-out both;
+		}
+
+		.sm-preview.is-entering .sm-overlay > * > * {
+			animation: none;
+		}
+
+		.sm-preview.is-exiting .sm-preview__content,
+		.sm-preview.is-exiting .sm-preview__close {
+			animation: sm-se-fade-out 120ms ease-in both;
+		}
+	}
+
+	.editor-visual-editor.sm-se-canvas-receded,
+	.editor-visual-editor.sm-se-canvas-restoring {
+		transition: none;
+		transform: none;
+		opacity: 1;
+	}
+}
+
 // The per-section Preview affordance on the page header line.
 .sm-se-page__header .sm-se-page__preview {
 	margin-left: auto;

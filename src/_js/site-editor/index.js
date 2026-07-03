@@ -37,6 +37,14 @@ import {
   setPreviewMode,
   subscribePreviewMode,
 } from './preview-mode';
+import {
+  clearOverlayRender,
+  getExitMs,
+  getIntroSettleMs,
+  resolveOverlayRender,
+  schedulePreviewAutoOpen,
+  settleOverlayRender,
+} from './preview-motion';
 import { ColorsOverlay, TypographyOverlay, SpacingOverlay, SiteFrameOverlay, FancyTitlesOverlay, ContextualColorsOverlay } from '../customizer/components';
 // Keep the original preview-tabs styles (tab pills, overlay shells).
 import '../customizer/components/preview-tabs/style.scss';
@@ -464,7 +472,9 @@ const buildSectionPanel = section => {
       ...trialOptions,
       controlsEl: contentEl,
       onActivate: previewEntry
-        ? () => setPreviewMode( previewEntry.mode, previewEntry.context || null )
+        // Debounced so the revealed controls paint first and the board's
+        // entrance reads as a response, not a flash over the navigation.
+        ? () => schedulePreviewAutoOpen( () => setPreviewMode( previewEntry.mode, previewEntry.context || null ) )
         : null,
     } );
   }
@@ -1217,17 +1227,75 @@ const usePreviewMode = () => {
  * motion-specific hint (principle 6 in the section-preview principles doc).
  */
 /**
+ * The board components memoized once: their props are stable primitives, so
+ * the host's phase-only re-renders bail out at the memo boundary. Without
+ * this, closing re-renders the whole board tree just to swap a class on the
+ * root — a stall that eats the exit animation's frames.
+ */
+const MemoLiveSiteOverlay = wp.element.memo( LiveSiteOverlay );
+const MemoColorsOverlay = wp.element.memo( ColorsOverlay );
+const MemoTypographyOverlay = wp.element.memo( TypographyOverlay );
+const MemoSpacingOverlay = wp.element.memo( SpacingOverlay );
+const MemoSiteFrameOverlay = wp.element.memo( SiteFrameOverlay );
+const MemoFancyTitlesOverlay = wp.element.memo( FancyTitlesOverlay );
+const MemoContextualColorsOverlay = wp.element.memo( ContextualColorsOverlay );
+
+/**
+ * The canvas recede classes live on the canvas element itself, not <body> —
+ * see the effect in SiteEditorPreviewOverlays. `phase` of 'entering'/'open'
+ * recedes, 'exiting' eases back, null clears both classes.
+ */
+const setCanvasRecedeState = phase => {
+  const canvas = document.querySelector( '.editor-visual-editor' );
+  if ( ! canvas ) {
+    return;
+  }
+  canvas.classList.toggle( 'sm-se-canvas-receded', !! phase && 'exiting' !== phase );
+  canvas.classList.toggle( 'sm-se-canvas-restoring', 'exiting' === phase );
+};
+
+/**
  * The overlay host, mounted on document.body (the editor header and canvas
  * containers clip fixed descendants). Renders only the active overlay plus a
  * "Back to editor" close affordance; nothing renders while in editor mode.
  */
 const SiteEditorPreviewOverlays = () => {
-  const { useEffect } = wp.element;
+  const { useEffect, useState } = wp.element;
   const { __ } = wp.i18n;
-  const { mode, context } = usePreviewMode();
+  const store = usePreviewMode();
+  // What actually renders lags the store on close (deferred unmount): the
+  // board keeps rendering with `is-exiting` until the exit animation ends.
+  const [ rendered, setRendered ] = useState( () => resolveOverlayRender( clearOverlayRender(), getPreviewState() ) );
 
   useEffect( () => {
-    if ( ! mode ) {
+    setRendered( prev => resolveOverlayRender( prev, store ) );
+  }, [ store.mode, store.context ] );
+
+  // Phase timers: release the intro animations once everything is at rest,
+  // and drop the node once the exit animation has finished.
+  useEffect( () => {
+    if ( 'entering' === rendered.phase ) {
+      const timer = setTimeout( () => setRendered( settleOverlayRender ), getIntroSettleMs() );
+      return () => clearTimeout( timer );
+    }
+    if ( 'exiting' === rendered.phase ) {
+      const timer = setTimeout( () => setRendered( clearOverlayRender() ), getExitMs() );
+      return () => clearTimeout( timer );
+    }
+    return undefined;
+  }, [ rendered.phase, rendered.mode ] );
+
+  // The editor canvas recedes underneath while a board is up — a depth cue
+  // that the board sits above the page. The classes go on the canvas element
+  // itself, NOT <body>: a body-level toggle forces a style recalc across the
+  // editor's whole (large) DOM, which alone can eat the 220ms exit window.
+  useEffect( () => {
+    setCanvasRecedeState( rendered.mode ? rendered.phase : null );
+    return () => setCanvasRecedeState( null );
+  }, [ rendered.mode, rendered.phase ] );
+
+  useEffect( () => {
+    if ( ! store.mode ) {
       return undefined;
     }
 
@@ -1238,14 +1306,19 @@ const SiteEditorPreviewOverlays = () => {
     };
     document.addEventListener( 'keydown', onKeyDown );
     return () => document.removeEventListener( 'keydown', onKeyDown );
-  }, [ mode ] );
+  }, [ store.mode ] );
 
-  if ( ! mode ) {
+  if ( ! rendered.mode ) {
     return null;
   }
 
+  const { mode, context, phase } = rendered;
+
   return (
-    <div className="sm-preview sm-preview--visible">
+    <div
+      className={ `sm-preview sm-preview--visible${ phase ? ` is-${ phase }` : '' }` }
+      aria-hidden={ 'exiting' === phase ? 'true' : undefined }
+    >
       <button
         type="button"
         className="sm-preview__close"
@@ -1255,14 +1328,17 @@ const SiteEditorPreviewOverlays = () => {
       </button>
       <div className="sm-preview__content">
         { /* Mount only the active overlay: the hidden ones would render their
-             full trees on editor boot and re-render on every palette change. */ }
-        { 'site' === mode && <LiveSiteOverlay show hint={ context } /> }
-        { 'colors' === mode && <ColorsOverlay show /> }
-        { 'typography' === mode && <TypographyOverlay show /> }
-        { 'spacing' === mode && <SpacingOverlay show /> }
-        { 'site-frame' === mode && <SiteFrameOverlay show /> }
-        { 'fancy-titles' === mode && <FancyTitlesOverlay show /> }
-        { 'contextual-colors' === mode && <ContextualColorsOverlay show /> }
+             full trees on editor boot and re-render on every palette change.
+             Memoized (MEMO_OVERLAYS) so the host's phase-only re-renders
+             (entering -> open -> exiting) bail out instead of re-rendering
+             the board's expensive tree during the animation. */ }
+        { 'site' === mode && <MemoLiveSiteOverlay show hint={ context } /> }
+        { 'colors' === mode && <MemoColorsOverlay show /> }
+        { 'typography' === mode && <MemoTypographyOverlay show /> }
+        { 'spacing' === mode && <MemoSpacingOverlay show /> }
+        { 'site-frame' === mode && <MemoSiteFrameOverlay show /> }
+        { 'fancy-titles' === mode && <MemoFancyTitlesOverlay show /> }
+        { 'contextual-colors' === mode && <MemoContextualColorsOverlay show /> }
       </div>
     </div>
   );
@@ -1603,7 +1679,8 @@ const handleDeepLink = () => {
     if ( engine && engine.booted && engine.api.section( targetSection ) ) {
       engine.api.section( targetSection, section => section.focus() );
       if ( previewEntry ) {
-        setPreviewMode( previewEntry.mode, previewEntry.context || null );
+        // Debounced so the focused section paints before the board enters.
+        schedulePreviewAutoOpen( () => setPreviewMode( previewEntry.mode, previewEntry.context || null ) );
       }
       return;
     }
