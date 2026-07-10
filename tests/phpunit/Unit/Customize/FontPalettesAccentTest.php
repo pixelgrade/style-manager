@@ -16,6 +16,7 @@ class FontPalettesAccentTest extends TestCase {
 			static fn( string $feature ): bool => 'style_manager_font_palettes' === $feature
 		);
 		Functions\when( 'apply_filters' )->alias( static fn( string $hook, $value ) => $value );
+		Functions\when( 'is_admin' )->justReturn( false );
 		Functions\when( 'esc_html__' )->returnArg( 1 );
 		Functions\when( '__' )->returnArg( 1 );
 		Functions\when( 'wp_kses' )->returnArg( 1 );
