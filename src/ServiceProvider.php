@@ -293,6 +293,12 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['hooks.frontend_output']
 			);
 		};
+		$container['provider.design_system_preview_endpoint'] = function( $container ) {
+			return new Provider\DesignSystemPreviewEndpoint(
+				$container['options'],
+				$container['customize.fonts']
+			);
+		};
 		$container['screen.site_editor'] = function( $container ) {
 			return new Screen\SiteEditor(
 				$container['options'],

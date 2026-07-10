@@ -64,7 +64,9 @@ class Plugin extends BasePlugin implements Composable {
 		}
 
 		// REST routes must be available outside is_admin() (REST requests are not admin).
-		$this->register_hooks( $container->get( 'provider.site_editor_endpoints' ) );
+		$this
+			->register_hooks( $container->get( 'provider.site_editor_endpoints' ) )
+			->register_hooks( $container->get( 'provider.design_system_preview_endpoint' ) );
 
 		// WP-CLI commands (e.g. `wp style-manager flush-cache`).
 		if ( \defined( 'WP_CLI' ) && \WP_CLI ) {
