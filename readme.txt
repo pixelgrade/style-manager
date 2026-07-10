@@ -121,6 +121,8 @@ When fetching design assets or submitting the plugin's existing settings statist
 == Changelog ==
 
 = 2.3.2 =
+* Improved: preview boards now enter and exit smoothly, including cross-fades when switching directly between previews.
+* Fix: Color System pickers remain closed on initial load until the user opens one.
 * Maintenance: report privacy-bounded first-party design-service observations to Pixelgrade Cloud, including the canonical site URL, environment, WordPress locale, and plugin/theme versions.
 * Tests: define the WordPress admin dependency used by the font-palette unit test.
 
