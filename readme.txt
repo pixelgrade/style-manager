@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -111,7 +111,7 @@ Style Manager uses external services to deliver some design assets.
 
 To provide color palettes, font palettes, and curated design configurations, the plugin can fetch design assets from Pixelgrade Cloud. This request is made from the WordPress admin, not from your site's frontend, and the response is cached locally.
 
-When fetching design assets, the plugin sends: your site URL, whether the site uses SSL, your WordPress version, the Style Manager version, and your active theme's slug, name, URI, version, and text domain. No personal data about your site's visitors is sent or collected, and the plugin does not load tracking or analytics scripts.
+When fetching design assets or submitting the plugin's existing settings statistics, the plugin sends: your site URL, whether the site uses SSL, your WordPress version and language, the site's environment type, the Style Manager version, an observed first-party service label, and your active theme's slug, name, URI, version, and text domain. Pixelgrade Cloud retains the site URL and daily aggregate service observations so Pixelgrade can understand which first-party services are in use. This does not record page views, visitor activity, site content, credentials, license data, support messages, usernames, email addresses, or IP addresses in the service registry, and the plugin does not load tracking or analytics scripts.
 
 * Service: Pixelgrade Cloud
 * Provider: Pixelgrade - https://pixelgrade.com
@@ -119,6 +119,10 @@ When fetching design assets, the plugin sends: your site URL, whether the site u
 * Web fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.3.2 =
+* Maintenance: report privacy-bounded first-party design-service observations to Pixelgrade Cloud, including the canonical site URL, environment, WordPress locale, and plugin/theme versions.
+* Tests: define the WordPress admin dependency used by the font-palette unit test.
 
 = 2.3.1 =
 * New: gentle live-trial "Try &amp; Play" gating for Plus-only advanced controls across Color System (Usage tab), Typography, and font palettes, with a reusable trial overlay and a "Save · Plus" save affordance.
