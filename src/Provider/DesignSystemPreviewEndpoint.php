@@ -12,6 +12,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Provider;
 
 use Pixelgrade\StyleManager\Customize\Fonts;
+use Pixelgrade\StyleManager\Utils\Fonts as FontsHelper;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 
 /**
@@ -366,7 +367,7 @@ final class DesignSystemPreviewEndpoint extends AbstractHookProvider {
 		}
 
 		$master = $details[ $master_id ];
-		$value = $this->font_value( $master['value'] ?? [] );
+		$value = $this->font_value( $master['value'] ?? [], $master );
 		$closest_distance = INF;
 
 		foreach ( (array) ( $master['connected_fields'] ?? [] ) as $field_id ) {
@@ -374,7 +375,7 @@ final class DesignSystemPreviewEndpoint extends AbstractHookProvider {
 				continue;
 			}
 
-			$candidate = $this->font_value( $details[ $field_id ]['value'] ?? [] );
+			$candidate = $this->font_value( $details[ $field_id ]['value'] ?? [], $details[ $field_id ] );
 			$font_size = $candidate['font_size']['value'] ?? null;
 
 			if ( ! \is_numeric( $font_size ) ) {
@@ -502,12 +503,17 @@ final class DesignSystemPreviewEndpoint extends AbstractHookProvider {
 	/**
 	 * Normalizes a stored font value.
 	 */
-	private function font_value( $value ): array {
-		if ( \is_array( $value ) ) {
-			return $value;
+	private function font_value( $value, array $font_config = [] ): array {
+		$standardized = $this->fonts->standardizeFontValue(
+			FontsHelper::maybeDecodeValue( $value ),
+			$font_config
+		);
+
+		if ( empty( $standardized ) && \is_string( $value ) ) {
+			return $this->fonts->getFontDefaultsValue( \str_replace( '"', '', $value ) );
 		}
 
-		return \is_string( $value ) ? [ 'font_family' => $value ] : [];
+		return $standardized;
 	}
 
 	/**

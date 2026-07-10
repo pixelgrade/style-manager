@@ -14,6 +14,7 @@ class DesignSystemPreviewEndpointTest extends TestCase {
 		parent::setUp();
 
 		Functions\when( '__' )->returnArg( 1 );
+		Functions\when( 'wp_unslash' )->returnArg( 1 );
 	}
 
 	public function test_endpoint_requires_edit_theme_options_capability(): void {
@@ -104,6 +105,33 @@ class DesignSystemPreviewEndpointTest extends TestCase {
 		$this->assertSame( 'uppercase', $secondary['textTransform'] );
 	}
 
+	public function test_typography_decodes_associative_and_legacy_positional_font_values(): void {
+		$details = $this->option_details_fixture();
+		$details['heading_1_font']['value'] = rawurlencode(
+			json_encode(
+				[
+					'font-family'    => 'Encoded Display',
+					'font-size'      => [ 'value' => 64, 'unit' => 'px' ],
+					'font-weight'    => '800italic',
+					'letter-spacing' => [ 'value' => -0.03, 'unit' => 'em' ],
+					'line-height'    => [ 'value' => 0.98, 'unit' => false ],
+				]
+			)
+		);
+		$details['sm_font_body']['connected_fields'] = [];
+		$details['sm_font_body']['value'] = rawurlencode( json_encode( [ 'Legacy Sans', '500' ] ) );
+
+		$payload = $this->create_endpoint( $this->options_mock( $details ) )->get_payload();
+		$primary = $payload['typography']['roles'][0];
+		$body = $payload['typography']['roles'][1];
+
+		$this->assertSame( 'Encoded Display', $primary['family'] );
+		$this->assertSame( 800, $primary['weight'] );
+		$this->assertSame( 'italic', $primary['style'] );
+		$this->assertSame( 'Legacy Sans', $body['family'] );
+		$this->assertSame( 500, $body['weight'] );
+	}
+
 	public function test_invalid_sections_are_null_without_discarding_valid_sections(): void {
 		$details = $this->option_details_fixture();
 		unset( $details['sm_font_secondary'], $details['sm_content_inset'] );
@@ -168,6 +196,40 @@ class DesignSystemPreviewEndpointTest extends TestCase {
 
 	private function fonts_mock( ?array $stylesheet_urls = null ): Fonts {
 		$fonts = $this->createMock( Fonts::class );
+		$fonts->method( 'standardizeFontValue' )->willReturnCallback(
+			static function( $value ): array {
+				if ( is_object( $value ) ) {
+					$value = (array) $value;
+				}
+				if ( is_string( $value ) ) {
+					$value = [ $value ];
+				}
+				if ( ! is_array( $value ) ) {
+					return [];
+				}
+				if ( array_is_list( $value ) ) {
+					return array_filter(
+						[
+							'font_family'  => $value[0] ?? '',
+							'font_variant' => $value[1] ?? '',
+						]
+					);
+				}
+
+				$standardized = [];
+				foreach ( $value as $key => $entry ) {
+					$standardized[ str_replace( '-', '_', (string) $key ) ] = $entry;
+				}
+				if ( isset( $standardized['font_weight'] ) && ! isset( $standardized['font_variant'] ) ) {
+					$standardized['font_variant'] = $standardized['font_weight'];
+				}
+
+				return $standardized;
+			}
+		);
+		$fonts->method( 'getFontDefaultsValue' )->willReturnCallback(
+			static fn( string $family ): array => [ 'font_family' => $family ]
+		);
 		$fonts->method( 'getFontsStylesheetUrls' )->willReturn(
 			$stylesheet_urls ?? [ 'https://fonts.googleapis.com/css2?family=Rubik&display=swap' ]
 		);
