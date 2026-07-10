@@ -61,6 +61,8 @@ class PixelgradeCloud implements CloudInterface {
 	 */
 	public function fetch_design_assets(): ?array {
 		$request_data = [
+			// This is an observed functional request, not a claim about a user action.
+			'service' => 'design_assets_requested',
 			// We will only fetch design assets that are handled by Style Manager.
 			'types' => [
 				'color_palettes_v2',
@@ -261,8 +263,11 @@ class PixelgradeCloud implements CloudInterface {
 		$site_data = [
 			'url' => home_url('/'),
 			'is_ssl' => is_ssl(),
+			'environment_type' => function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production',
 			'wp' => [
 				'version' => get_bloginfo('version'),
+				'language' => get_bloginfo('language'),
+				'rtl' => is_rtl(),
 			],
 			'style_manager' => [
 				'version' => VERSION,
@@ -286,12 +291,16 @@ class PixelgradeCloud implements CloudInterface {
 		if ( empty( $data ) ) {
 			// This is what we send by default.
 			$data = [
+				'service' => 'style_manager_stats_submitted',
 				'site_url' => home_url('/'),
 				// We are only interested in data needed to identify the theme and eventually deliver only design assets suitable for it.
 				'theme_data' => $this->get_active_theme_data(),
 				// We are only interested in data needed to identify the plugin version and eventually deliver design assets suitable for it.
 				'site_data' => $this->get_site_data(),
 			];
+		}
+		if ( empty( $data['service'] ) ) {
+			$data['service'] = 'style_manager_stats_submitted';
 		}
 
 		/**
