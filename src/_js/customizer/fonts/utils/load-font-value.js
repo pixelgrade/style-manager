@@ -2,6 +2,7 @@ import $ from "jquery";
 import { fontsService } from './index';
 import { round } from './round';
 import { standardizeNumericalValue } from './standardize-numerical-value';
+import { ensureFontFamilyOption } from '../native-ui';
 
 /**
  * This function is a reverse of selfUpdateValue(), initializing the entire font field controls
@@ -68,6 +69,12 @@ export const loadFontValue = function( wrapper, value, settingID ) {
 
       $input.val( subfieldValue.value )
     } else {
+      // The native skin keeps the font family selects free of the full
+      // catalog — make sure the incoming family has an option to land on.
+      if ( 'font_family' === valueEntry && 'SELECT' === input.tagName ) {
+        ensureFontFamilyOption( input, value[valueEntry] );
+      }
+
       $input.val( value[valueEntry] )
     }
 

@@ -79,7 +79,16 @@ const createCallbacks = () => {
       return this;
     },
     fireWith( context, args = [] ) {
-      items.slice().forEach( callback => callback.apply( context, args ) );
+      // Isolate listeners: one throwing callback must not silence the rest
+      // (e.g. the engine's own field-sync listener vs the native-skin
+      // re-render listener bound after it).
+      items.slice().forEach( callback => {
+        try {
+          callback.apply( context, args );
+        } catch ( e ) {
+          console.error( e );
+        }
+      } );
       return this;
     },
   };
@@ -215,49 +224,11 @@ export const createContainerObject = ( id, params = {} ) => {
   return instance;
 };
 
-const escapeAttr = value => String( value )
-  .replace( /&/g, '&amp;' )
-  .replace( /"/g, '&quot;' )
-  .replace( /</g, '&lt;' )
-  .replace( />/g, '&gt;' );
-
-/**
- * Rebuild the Google fonts <option> markup the font-family selects inject in
- * place of `.google-fonts-opts-placeholder` — same shape as the Customizer's
- * server-rendered `getGoogleFontsSelectOptions()` (category optgroups with
- * `google_font` options), sourced from the already-localized fonts catalog.
- */
-const buildGoogleFontsSelectOptions = () => {
-  const fonts = ( window.styleManager && window.styleManager.fonts ) || {};
-  const googleFonts = fonts.google_fonts || {};
-
-  const grouped = {};
-  Object.keys( googleFonts ).forEach( key => {
-    const details = googleFonts[ key ] || {};
-    const category = details.category || 'uncategorized';
-    grouped[ category ] = grouped[ category ] || [];
-    grouped[ category ].push( details );
-  } );
-
-  return Object.keys( grouped ).map( category => {
-    const options = grouped[ category ].map( details => {
-      const family = details.family || '';
-      if ( ! family ) {
-        return '';
-      }
-      const display = details.family_display || family;
-      return `<option class="google_font" value="${ escapeAttr( family ) }">${ escapeAttr( display ) }</option>`;
-    } ).join( '' );
-
-    return `<optgroup label="${ escapeAttr( `Google fonts ${ category }` ) }">${ options }</optgroup>`;
-  } ).join( '' );
-};
-
 /**
  * Build the api object.
  *
  * @param {Object} customizeSettings The `_wpCustomizeSettings`-shaped data:
- *                                   { settings: { id: { value, transport, type, connected_fields } }, google_fonts_opts }
+ *                                   { settings: { id: { value, transport, type, connected_fields } } }
  */
 export const createCustomizeApi = customizeSettings => {
   const emitter = createEmitter();
@@ -271,17 +242,12 @@ export const createCustomizeApi = customizeSettings => {
   api.unbind = emitter.unbind;
   api.trigger = emitter.trigger;
 
-  // The parts of _wpCustomizeSettings the SM engine reads
-  // (settings configs + google_fonts_opts).
+  // The parts of _wpCustomizeSettings the SM engine reads (settings configs).
+  // Note: no `google_fonts_opts` here — the Customizer inlines a ~96 KB
+  // server-rendered <option> blob to fill every font select with the full
+  // Google catalog, but the Site Editor's native font picker reads the
+  // styleManager.fonts catalog directly, so the selects stay lean.
   api.settings = customizeSettings;
-
-  // The Customizer inlines a server-rendered <option> blob for the Google
-  // fonts (~96 KB). The same data already ships in the styleManager.fonts
-  // catalog, so outside the Customizer we synthesize the markup instead of
-  // paying for it twice in the document payload.
-  if ( ! api.settings.google_fonts_opts ) {
-    api.settings.google_fonts_opts = buildGoogleFontsSelectOptions();
-  }
 
   api.add = ( id, initialValue ) => settingsRegistry.add(
     id,

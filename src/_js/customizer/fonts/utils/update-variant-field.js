@@ -1,4 +1,5 @@
 import $ from "jquery";
+import { isNativeFontUI } from "../native-ui";
 const fontVariantSelector = '.style-manager_font_weight';
 
 /**
@@ -52,6 +53,28 @@ export const updateVariantField = function( newFontDetails, wrapper ) {
 
     newVariants.push( newVariant )
   } );
+
+  if ( isNativeFontUI() ) {
+    // The native skin needs no select2 — repopulate the hidden select with
+    // plain options so it can carry whatever variant the native control sets.
+    // Fields without a font-weight subfield have no variant select at all.
+    const variantSelect = fontVariantInput.get( 0 );
+    if ( variantSelect ) {
+      newVariants.forEach( variant => {
+        const option = document.createElement( 'option' );
+        option.value = variant.id;
+        option.textContent = variant.text;
+        if ( variant.selected ) {
+          option.selected = true;
+        }
+        variantSelect.appendChild( option );
+      } );
+
+      // Mark this input as enabled (visibility is the native control's business).
+      fontVariantInput.data( 'disabled', false );
+    }
+    return;
+  }
 
   // This is a costly operation especially when font palettes are changed and multiple font fields are updated
   // Use requestIdleCallback with setTimeout fallback for Safari < 16.4 which lacks support.

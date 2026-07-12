@@ -60,6 +60,7 @@ import { handleFoldingFields } from '../customizer/folding-fields';
 import { initializePaletteBuilder } from '../customizer/colors/initialize-palette-builder';
 import { applyColorationValueToFields } from '../customizer/colors/apply-coloration-value-to-fields';
 import { initializeFonts } from '../customizer/fonts';
+import { setNativeFontUI } from '../customizer/fonts/native-ui';
 import { initializeFontPalettes } from '../customizer/font-palettes';
 import { maybeLoadWebfontloaderScript } from '../utils';
 
@@ -76,6 +77,10 @@ export { getFontDetails, determineFontType, convertFontVariantToFVD } from '../c
 export { maybeFillPalettesArray, getCSSFromPalettes } from '../customizer/utils';
 
 const payload = window._styleManagerSiteEditor;
+
+// The Site Editor always skins the font fields with native editor components:
+// flip the engine into native-font mode before anything touches the selects.
+setNativeFontUI( true );
 
 const ensureSmCustomizerAlias = () => {
   window.sm = window.sm || {};

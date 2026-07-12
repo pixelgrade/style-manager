@@ -21,6 +21,7 @@ import {
 import { reloadConnectedFields } from "./connected-fields";
 import { initializeConnectedFieldsPresets } from "./initialize-connected-fields-presets";
 import { initializeTypographyShortcuts } from "./initialize-typography-shortcuts";
+import { isNativeFontUI, ensureFontFamilyOption } from "./native-ui";
 
 import { getCallback, getSetting, getSettingConfig, setCallback } from "../global-service";
 import ReactDOM from "react-dom";
@@ -54,13 +55,24 @@ const initializeFontFamilyField = ( $fontField ) => {
   const $fontFamilyField = $fontField.find( '.style-manager_font_family' );
   const familyPlaceholderText = styleManager.l10n.fonts.familyPlaceholderText;
 
-  // Add the Google Fonts opts to each control
-  addGoogleFontsToFontFamilyField( $fontFamilyField );
+  if ( isNativeFontUI() ) {
+    // The native skin renders its own picker from the styleManager.fonts
+    // catalog: keep the hidden select lean (no injected Google options, no
+    // select2) and just make sure it can hold the active family as a value.
+    const activeFontFamily = $fontFamilyField.data( 'active_font_family' );
+    ensureFontFamilyOption( $fontFamilyField.get( 0 ), activeFontFamily );
+    if ( typeof activeFontFamily !== 'undefined' ) {
+      $fontFamilyField.val( activeFontFamily );
+    }
+  } else {
+    // Add the Google Fonts opts to each control
+    addGoogleFontsToFontFamilyField( $fontFamilyField );
 
-  // Initialize the select2 field for the font family
-  $fontFamilyField.select2( {
-    placeholder: familyPlaceholderText
-  } );
+    // Initialize the select2 field for the font family
+    $fontFamilyField.select2( {
+      placeholder: familyPlaceholderText
+    } );
+  }
 
   $fontFamilyField.on( 'change', onFontFamilyChange );
   bindFontFamilySettingChange( $fontFamilyField );
@@ -71,8 +83,8 @@ const initializeSubfields = ( $fontField ) => {
   const $select = $fontField.find( 'select' ).not( 'select[class*=\' select2\'],select[class^=\'select2\']' );
   const $range = $fontField.find( 'input[type="range"]' );
 
-  // Initialize the select2 field for the font variant
-  initSubfield( $variant, true );
+  // Initialize the select2 field for the font variant (plain select under the native skin).
+  initSubfield( $variant, ! isNativeFontUI() );
 
   // Initialize all the regular selects in the font subfields
   initSubfield( $select, false );

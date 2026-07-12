@@ -9,11 +9,14 @@
  *
  * Per review: range -> RangeControl (reset + input field), sm_toggle ->
  * ToggleControl, plain radio -> ToggleGroupControl (<=4 choices) /
- * RadioControl, select -> SelectControl. Kept as-is: sm_radio pills,
- * font palettes, the palette builder, font fields.
+ * RadioControl, select -> SelectControl, font -> NativeFont (searchable,
+ * windowed family picker — see font-control.js). Kept as-is: sm_radio pills,
+ * font palettes, the palette builder.
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { NativeFont } from './font-control';
 
 const stripHtml = html => {
   const div = document.createElement( 'div' );
@@ -447,6 +450,7 @@ const COMPONENTS = {
   radio: NativeRadio,
   preset: NativePreset,
   select: NativeSelect,
+  font: NativeFont,
 };
 
 // sm_radio is custom pills by default. These specific ones are simple
