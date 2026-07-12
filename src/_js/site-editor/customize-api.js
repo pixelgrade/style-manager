@@ -58,11 +58,39 @@ const createEmitter = () => {
 };
 
 /**
+ * Create the callback surface exposed by a core wp.customize.Value.
+ */
+const createCallbacks = () => {
+  const items = [];
+
+  return {
+    add( ...callbacks ) {
+      callbacks.filter( callback => 'function' === typeof callback ).forEach( callback => items.push( callback ) );
+      return this;
+    },
+    remove( ...callbacks ) {
+      callbacks.forEach( callback => {
+        let index = items.indexOf( callback );
+        while ( index > -1 ) {
+          items.splice( index, 1 );
+          index = items.indexOf( callback );
+        }
+      } );
+      return this;
+    },
+    fireWith( context, args = [] ) {
+      items.slice().forEach( callback => callback.apply( context, args ) );
+      return this;
+    },
+  };
+};
+
+/**
  * Create a callable Value, compatible with wp.customize settings:
  * value() -> get, value( to ) -> set, plus get/set/bind/unbind/id/_dirty.
  */
 export const createValue = ( id, initial, notify ) => {
-  const callbacks = [];
+  const callbacks = createCallbacks();
   let current = initial;
 
   const value = function( ...args ) {
@@ -90,13 +118,7 @@ export const createValue = ( id, initial, notify ) => {
     current = to;
     value._dirty = true;
 
-    callbacks.slice().forEach( callback => {
-      try {
-        callback.call( value, to, from );
-      } catch ( e ) {
-        console.error( `Style Manager: error in setting callback for "${ id }"`, e );
-      }
-    } );
+    callbacks.fireWith( value, [ to, from ] );
 
     if ( typeof notify === 'function' ) {
       notify( to, from );
@@ -106,15 +128,12 @@ export const createValue = ( id, initial, notify ) => {
   };
 
   value.bind = callback => {
-    callbacks.push( callback );
+    callbacks.add( callback );
     return value;
   };
 
   value.unbind = callback => {
-    const index = callbacks.indexOf( callback );
-    if ( index > -1 ) {
-      callbacks.splice( index, 1 );
-    }
+    callbacks.remove( callback );
     return value;
   };
 

@@ -94,6 +94,38 @@ const getCanvasDocument = () => {
 };
 
 /**
+ * Keep Gutenberg's named font-family presets aligned with Style Manager's
+ * live theme roles inside the editor canvas. Blocks with an explicit
+ * `has-*-font-family` class read the WordPress preset variables directly,
+ * bypassing the theme role selectors that Style Manager refreshes.
+ */
+const syncFontPresetsToCanvas = canvasDocument => {
+  const root = canvasDocument?.documentElement;
+  const view = canvasDocument?.defaultView;
+
+  if ( ! root?.style || ! view?.getComputedStyle ) {
+    return;
+  }
+
+  const styles = view.getComputedStyle( root );
+  const roles = [
+    [ '--wp--preset--font-family--heading', '--theme-heading-1-font-family' ],
+    [ '--wp--preset--font-family--body', '--theme-body-font-family' ],
+  ];
+
+  roles.forEach( ( [ presetProperty, themeProperty ] ) => {
+    const presetValue = styles.getPropertyValue( presetProperty ).trim();
+    const themeValue = styles.getPropertyValue( themeProperty ).trim();
+
+    if ( ! presetValue || ! themeValue || themeValue.includes( presetProperty ) ) {
+      return;
+    }
+
+    root.style.setProperty( presetProperty, themeValue );
+  } );
+};
+
+/**
  * Load a font value's webfont into a given window (the editor canvas iframe),
  * mirroring maybeLoadFontFamily() but with WebFont's `context` option.
  */
@@ -279,6 +311,8 @@ export const initializePreview = ( api, payload ) => {
         renderSetting( canvasDocument, settingID, setting() );
       }
     } );
+
+    syncFontPresetsToCanvas( canvasDocument );
   };
 
   // Debounced queue, like the Customizer preview, so a flurry of connected
@@ -297,6 +331,8 @@ export const initializePreview = ( api, payload ) => {
     Object.keys( queue ).forEach( settingID => {
       renderSetting( canvasDocument, settingID, queue[ settingID ] );
     } );
+
+    syncFontPresetsToCanvas( canvasDocument );
   }, 100 );
 
   properKeys.forEach( settingID => {
@@ -389,6 +425,10 @@ export const initializePreview = ( api, payload ) => {
           tag.innerHTML = css.editor;
         }
       } );
+
+      if ( canvasDocument ) {
+        syncFontPresetsToCanvas( canvasDocument );
+      }
     },
   };
 };

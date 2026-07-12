@@ -180,3 +180,58 @@ test( 'Site Editor dark mode preview mirrors setting changes to the canvas ifram
 		globalThis.styleManager = previousStyleManager;
 	}
 } );
+
+test( 'Site Editor preview bridges Style Manager font roles into Gutenberg font presets', () => {
+	const previousWindow = globalThis.window;
+	const previousDocument = globalThis.document;
+	const previousStyleManager = globalThis.styleManager;
+	const appliedProperties = {};
+	const computedProperties = {
+		'--theme-heading-1-font-family': '"Playfair Display", serif',
+		'--theme-body-font-family': '"Noto Serif", serif',
+		'--wp--preset--font-family--heading': '"Space Grotesk", sans-serif',
+		'--wp--preset--font-family--body': '"Space Grotesk", sans-serif',
+	};
+	const iframe = createIframe();
+
+	iframe.contentDocument.documentElement.style = {
+		setProperty: ( property, value ) => {
+			appliedProperties[ property ] = value;
+		},
+	};
+	iframe.contentDocument.defaultView = {
+		getComputedStyle: () => ( {
+			getPropertyValue: property => computedProperties[ property ] || '',
+		} ),
+	};
+
+	globalThis.window = {
+		styleManager: { config: { settings: {} } },
+		matchMedia: () => ( { matches: false } ),
+	};
+	globalThis.document = {
+		body: { classList: createClassList() },
+		querySelector: selector => 'iframe[name="editor-canvas"]' === selector ? iframe : null,
+		querySelectorAll: () => [],
+	};
+	globalThis.styleManager = globalThis.window.styleManager;
+
+	try {
+		const initializePreview = loadInitializePreview();
+
+		initializePreview( () => undefined, {} );
+
+		assert.equal(
+			appliedProperties[ '--wp--preset--font-family--heading' ],
+			'"Playfair Display", serif'
+		);
+		assert.equal(
+			appliedProperties[ '--wp--preset--font-family--body' ],
+			'"Noto Serif", serif'
+		);
+	} finally {
+		globalThis.window = previousWindow;
+		globalThis.document = previousDocument;
+		globalThis.styleManager = previousStyleManager;
+	}
+} );
