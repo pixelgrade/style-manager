@@ -27,6 +27,7 @@ async function updatePhpGoogleFontsList(done) {
       delete item.version;
       delete item.lastModified;
       delete item.files;
+      delete item.menu;
 
       fontsList[item.family] = item;
     } );
@@ -35,9 +36,10 @@ async function updatePhpGoogleFontsList(done) {
     let php = ['<?php'];
 
     php.push( '// Returns an associative array with fonts.' );
+    php.push( "\\defined( 'ABSPATH' ) || exit;" );
     php.push( 'return json_decode( \'' + JSON.stringify( fontsList ) + '\', true );' );
 
-    fs.writeFileSync('resources/google.fonts.php', php.join( '\r\n' ));
+    fs.writeFileSync('resources/google.fonts.php', php.join( '\n' ));
 
     done();
   } catch ( error ) {
