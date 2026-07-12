@@ -31,6 +31,27 @@ const getConfig = settingId => window.styleManager?.config?.settings?.[ settingI
 /** Families whose preview face was already requested (persists across opens). */
 const requestedPreviews = new Set();
 
+/**
+ * The last-used filter, shared by every font field and kept for the session —
+ * browsing "Staff Picks · Headings" across several fields shouldn't mean
+ * re-picking the filter on every open.
+ */
+const FILTER_STORAGE_KEY = 'sm-font-picker-filter';
+
+const getStoredFilter = () => {
+  try {
+    return window.sessionStorage.getItem( FILTER_STORAGE_KEY ) || '';
+  } catch ( e ) {
+    return '';
+  }
+};
+
+const storeFilter = value => {
+  try {
+    window.sessionStorage.setItem( FILTER_STORAGE_KEY, value );
+  } catch ( e ) {}
+};
+
 const quoteFamily = family => /[\s"']/.test( family ) ? `"${ family.replace( /"/g, '' ) }"` : family;
 
 /**
@@ -185,7 +206,7 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
   const { __, sprintf } = wp.i18n;
 
   const [ search, setSearch ] = useState( '' );
-  const [ category, setCategory ] = useState( '' );
+  const [ category, setCategoryState ] = useState( getStoredFilter );
   const [ scrollTop, setScrollTop ] = useState( 0 );
   const [ activeIndex, setActiveIndex ] = useState( -1 );
   const listRef = useRef( null );
@@ -235,6 +256,18 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
     } ) );
   }, [ catalog ] );
 
+  const setCategory = value => {
+    setCategoryState( value );
+    storeFilter( value );
+  };
+
+  // A stored filter may not resolve on this site (collection without local
+  // families, categories from another catalog) — fall back to "All fonts".
+  const categoryIsValid = ! category || ( category.startsWith( 'picks:' )
+    ? collections.some( collection => `picks:${ collection.key }` === category )
+    : categories.some( entry => entry.value === category ) );
+  const effectiveCategory = categoryIsValid ? category : '';
+
   // Group -> filtered fonts, flattened into windowable rows.
   const rows = useMemo( () => {
     const term = search.trim().toLowerCase();
@@ -243,8 +276,8 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
       || font.family.toLowerCase().includes( term );
 
     // A Staff Picks collection renders as one flat, curated-order group.
-    if ( category.startsWith( 'picks:' ) ) {
-      const collection = collections.find( entry => `picks:${ entry.key }` === category );
+    if ( effectiveCategory.startsWith( 'picks:' ) ) {
+      const collection = collections.find( entry => `picks:${ entry.key }` === effectiveCategory );
       const fonts = ( collection ? collection.fonts : [] ).filter( matchesTerm );
       if ( ! fonts.length ) {
         return [];
@@ -256,7 +289,7 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
     }
 
     const matches = font => {
-      if ( category && font.category !== category ) {
+      if ( effectiveCategory && font.category !== effectiveCategory ) {
         return false;
       }
       return matchesTerm( font );
@@ -279,7 +312,7 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
     } );
 
     return flat;
-  }, [ catalog, byFamily, collections, groupLabels, recommended, search, category ] );
+  }, [ catalog, byFamily, collections, groupLabels, recommended, search, effectiveCategory ] );
 
   // Row offsets for the windowed rendering (headers and items differ in height).
   const { offsets, totalHeight } = useMemo( () => {
@@ -314,7 +347,7 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
     }
     setScrollTop( 0 );
     setActiveIndex( -1 );
-  }, [ search, category ] );
+  }, [ search, effectiveCategory ] );
 
   // On mount, bring the selected family into view.
   useEffect( () => {
@@ -400,7 +433,7 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
             __nextHasNoMarginBottom
             __next40pxDefaultSize
             aria-label={ __( 'Filter fonts', '__plugin_txtd' ) }
-            value={ category }
+            value={ effectiveCategory }
             onChange={ setCategory }
           >
             <option value="">{ __( 'All fonts', '__plugin_txtd' ) }</option>
