@@ -224,7 +224,8 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['integration.pixelgrade_assistant'] = function( $container ) {
 			return new Integration\PixelgradeAssistant(
-				$container['options']
+				$container['options'],
+				$container['plugin.settings']
 			);
 		};
 
