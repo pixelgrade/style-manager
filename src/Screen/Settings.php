@@ -210,8 +210,8 @@ class Settings extends AbstractHookProvider {
 					              'value' => true,
 				              ],
 			              ] ),
-			         Field::make( 'checkbox', 'typography_host_cloud_fonts_locally', esc_html__( 'Host cloud fonts on this site', '__plugin_txtd' ) )
-			              ->set_help_text( esc_html__( 'Fonts are downloaded once to your media folder and served from this site. Your visitors never connect to Pixelgrade servers, and your typography keeps working independently.', '__plugin_txtd' ) )
+			         Field::make( 'checkbox', 'typography_host_cloud_fonts_locally', esc_html__( 'Keep fonts on this site', '__plugin_txtd' ) )
+			              ->set_help_text( esc_html__( 'Every cloud font you use is saved to your site and served from here. Your visitors never connect to Pixelgrade, and your typography is yours to keep — it works forever, with or without us.', '__plugin_txtd' ) )
 			              ->set_option_value( 'yes' )
 			              ->set_default_value( 'yes' )
 			              ->set_conditional_logic( [
@@ -313,7 +313,7 @@ class Settings extends AbstractHookProvider {
 	 */
 	public static function build_local_fonts_status_html( array $manifest ): string {
 		if ( empty( $manifest ) ) {
-			return '<p>' . esc_html__( 'No cloud fonts hosted locally yet.', '__plugin_txtd' ) . '</p>';
+			return '<p>' . esc_html__( 'No cloud fonts saved to your site yet.', '__plugin_txtd' ) . '</p>';
 		}
 
 		$rows     = [];
@@ -323,8 +323,8 @@ class Settings extends AbstractHookProvider {
 			$family_label = ! empty( $entry['family_display'] ) ? (string) $entry['family_display'] : (string) $family;
 			$is_ok        = 'ok' === ( $entry['status'] ?? '' );
 			$status_label = $is_ok
-				? esc_html__( 'hosted locally', '__plugin_txtd' )
-				: esc_html__( 'download failed, will retry', '__plugin_txtd' );
+				? esc_html__( 'on your site', '__plugin_txtd' )
+				: esc_html__( 'download hiccup, we’ll retry automatically', '__plugin_txtd' );
 
 			if ( $is_ok ) {
 				$ok_count++;
@@ -338,10 +338,10 @@ class Settings extends AbstractHookProvider {
 		// doesn't overstate what's actually being served locally.
 		$heading = esc_html(
 			sprintf(
-				/* translators: %d: number of font families hosted locally on this site. */
+				/* translators: %d: number of font families saved to this site. */
 				_n(
-					'%d font family hosted locally on this site.',
-					'%d font families hosted locally on this site.',
+					'%d font family saved to your site.',
+					'%d font families saved to your site.',
 					$ok_count,
 					'__plugin_txtd'
 				),

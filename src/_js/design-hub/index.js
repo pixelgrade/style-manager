@@ -25,9 +25,9 @@ const REST_PATH = '/style_manager/v1/local-fonts';
  * arguments to be literal, not built or looked up dynamically.
  */
 const FAMILY_STATUS_LABELS = {
-	[ FAMILY_STATUS.HEALTHY ]: () => __( 'Hosted locally', '__plugin_txtd' ),
-	[ FAMILY_STATUS.FAILED ]: () => __( 'Download failed — retrying automatically', '__plugin_txtd' ),
-	[ FAMILY_STATUS.NOT_DOWNLOADED ]: () => __( 'Not downloaded yet', '__plugin_txtd' ),
+	[ FAMILY_STATUS.HEALTHY ]: () => __( 'on your site', '__plugin_txtd' ),
+	[ FAMILY_STATUS.FAILED ]: () => __( 'download hiccup, we’ll retry automatically', '__plugin_txtd' ),
+	[ FAMILY_STATUS.NOT_DOWNLOADED ]: () => __( 'downloading soon', '__plugin_txtd' ),
 };
 
 const getFamilyStatusLabel = ( family ) => FAMILY_STATUS_LABELS[ getFamilyStatusKey( family ) ]();
@@ -54,7 +54,7 @@ const FamilyStatusList = ( { families } ) => {
 		return el(
 			'p',
 			{ className: 'sm-design-hub-fonts__empty' },
-			__( 'No cloud fonts in use yet.', '__plugin_txtd' )
+			__( 'No cloud fonts in use yet. Pick one and it’s saved to your site automatically.', '__plugin_txtd' )
 		);
 	}
 
@@ -110,7 +110,7 @@ const FontsSection = () => {
 			el(
 				CardBody,
 				{},
-				el( 'p', {}, __( 'Something went wrong loading the fonts status.', '__plugin_txtd' ) ),
+				el( 'p', {}, __( 'Something went wrong loading your fonts.', '__plugin_txtd' ) ),
 				el( Button, { variant: 'secondary', onClick: load }, __( 'Retry', '__plugin_txtd' ) )
 			)
 		);
@@ -153,12 +153,12 @@ const FontsSection = () => {
 				'p',
 				{ className: 'sm-design-hub-fonts__description' },
 				__(
-					'Cloud fonts are downloaded to this site and served to your visitors from here — no connection to Pixelgrade servers.',
+					'Every cloud font you use is saved to your site and served from right here. Your visitors never connect to Pixelgrade, and your typography is yours to keep — it works forever, with or without us.',
 					'__plugin_txtd'
 				)
 			),
 			el( ToggleControl, {
-				label: __( 'Host cloud fonts on this site', '__plugin_txtd' ),
+				label: __( 'Keep fonts on this site', '__plugin_txtd' ),
 				checked: !! enabled,
 				disabled: savingToggle,
 				onChange: handleToggle,
@@ -172,7 +172,7 @@ const FontsSection = () => {
 					disabled: mirroring,
 					onClick: handleMirror,
 				},
-				__( 'Host fonts locally', '__plugin_txtd' )
+				__( 'Save fonts to this site', '__plugin_txtd' )
 			),
 			showSuccessNotice && el(
 				Notice,
@@ -181,7 +181,7 @@ const FontsSection = () => {
 					isDismissible: true,
 					onRemove: () => setShowSuccessNotice( false ),
 				},
-				__( 'All fonts are now served from your site.', '__plugin_txtd' )
+				__( 'Done — all your fonts now live on your site.', '__plugin_txtd' )
 			)
 		)
 	);

@@ -259,10 +259,10 @@ class PixelgradeAssistant extends AbstractHookProvider {
 		} else {
 			$value = esc_html(
 				sprintf(
-					/* translators: %d: number of fonts hosted on this site. */
+					/* translators: %d: number of fonts served from this site. */
 					_n(
-						'%d font hosted on this site',
-						'%d fonts hosted on this site',
+						'%d font served from your site',
+						'%d fonts served from your site',
 						$used_count,
 						'__plugin_txtd'
 					),
@@ -277,8 +277,8 @@ class PixelgradeAssistant extends AbstractHookProvider {
 			'label'    => esc_html__( 'Fonts', '__plugin_txtd' ),
 			'status'   => $status,
 			'value'    => $value,
-			'expected' => esc_html__( 'Cloud fonts served from this site', '__plugin_txtd' ),
-			'why'      => esc_html__( 'Hosting cloud fonts on this site means visitors never connect to Pixelgrade, and your typography keeps working independently no matter what.', '__plugin_txtd' ),
+			'expected' => esc_html__( 'Fonts served from your own site', '__plugin_txtd' ),
+			'why'      => esc_html__( 'Fonts saved to your site load privately — visitors never connect to Pixelgrade — and they’re yours to keep, working forever, with or without us.', '__plugin_txtd' ),
 			'action'   => null,
 			'items'    => [],
 		];

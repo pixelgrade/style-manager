@@ -310,7 +310,7 @@ class PixelgradeAssistantTest extends TestCase {
 		$checks = $integration->expose_add_local_fonts_readiness_check( [], [] );
 
 		$this->assertSame( 'ok', $checks[0]['status'] );
-		$this->assertSame( '2 fonts hosted on this site', $checks[0]['value'] );
+		$this->assertSame( '2 fonts served from your site', $checks[0]['value'] );
 		$this->assertNull( $checks[0]['action'] );
 	}
 

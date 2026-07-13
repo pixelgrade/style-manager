@@ -24,7 +24,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 
 	public function test_empty_manifest_reports_nothing_hosted_locally(): void {
 		$this->assertSame(
-			'<p>No cloud fonts hosted locally yet.</p>',
+			'<p>No cloud fonts saved to your site yet.</p>',
 			Settings::build_local_fonts_status_html( [] )
 		);
 	}
@@ -45,9 +45,9 @@ class SettingsLocalFontsStatusTest extends TestCase {
 		// even though both entries still appear in the list below. A single
 		// hosted family must use the singular form ("1 font family", not
 		// "1 font families").
-		$this->assertStringContainsString( '1 font family hosted locally on this site.', $html );
-		$this->assertStringContainsString( '<li>Uncut Sans &mdash; hosted locally</li>', $html );
-		$this->assertStringContainsString( '<li>Quentin &mdash; download failed, will retry</li>', $html );
+		$this->assertStringContainsString( '1 font family saved to your site.', $html );
+		$this->assertStringContainsString( '<li>Uncut Sans &mdash; on your site</li>', $html );
+		$this->assertStringContainsString( '<li>Quentin &mdash; download hiccup, we’ll retry automatically</li>', $html );
 	}
 
 	public function test_heading_uses_singular_form_for_a_single_hosted_family(): void {
@@ -55,7 +55,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 			'Uncut Sans' => [ 'family_display' => 'Uncut Sans', 'status' => 'ok' ],
 		] );
 
-		$this->assertStringContainsString( '1 font family hosted locally on this site.', $html );
+		$this->assertStringContainsString( '1 font family saved to your site.', $html );
 		$this->assertStringNotContainsString( '1 font families', $html );
 	}
 
@@ -66,7 +66,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 			'Font C' => [ 'family_display' => 'Font C', 'status' => 'failed' ],
 		] );
 
-		$this->assertStringContainsString( '2 font families hosted locally on this site.', $html );
+		$this->assertStringContainsString( '2 font families saved to your site.', $html );
 	}
 
 	public function test_heading_shows_zero_when_all_entries_failed(): void {
@@ -75,9 +75,9 @@ class SettingsLocalFontsStatusTest extends TestCase {
 			'Font B' => [ 'family_display' => 'Font B', 'status' => 'failed' ],
 		] );
 
-		$this->assertStringContainsString( '0 font families hosted locally on this site.', $html );
-		$this->assertStringContainsString( '<li>Font A &mdash; download failed, will retry</li>', $html );
-		$this->assertStringContainsString( '<li>Font B &mdash; download failed, will retry</li>', $html );
+		$this->assertStringContainsString( '0 font families saved to your site.', $html );
+		$this->assertStringContainsString( '<li>Font A &mdash; download hiccup, we’ll retry automatically</li>', $html );
+		$this->assertStringContainsString( '<li>Font B &mdash; download hiccup, we’ll retry automatically</li>', $html );
 	}
 
 	public function test_family_display_is_preferred_over_the_family_key_when_non_empty(): void {
@@ -88,7 +88,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 			],
 		] );
 
-		$this->assertStringContainsString( '<li>Uncut Sans &mdash; hosted locally</li>', $html );
+		$this->assertStringContainsString( '<li>Uncut Sans &mdash; on your site</li>', $html );
 		$this->assertStringNotContainsString( 'uncut-sans-family-key', $html );
 	}
 
@@ -100,7 +100,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 			],
 		] );
 
-		$this->assertStringContainsString( '<li>Uncut Sans &mdash; hosted locally</li>', $html );
+		$this->assertStringContainsString( '<li>Uncut Sans &mdash; on your site</li>', $html );
 	}
 
 	public function test_family_name_with_special_characters_is_escaped(): void {
@@ -138,7 +138,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 
 		$html = $settings->get_local_fonts_status_html();
 
-		$this->assertStringContainsString( '<p>No cloud fonts hosted locally yet.</p>', $html );
+		$this->assertStringContainsString( '<p>No cloud fonts saved to your site yet.</p>', $html );
 		$this->assertStringContainsString( '<p><a href="https://example.test/wp-admin/admin.php?page=pixelgrade&tab=styles&section=fonts">Manage in Pixelgrade Design &rarr;</a></p>', $html );
 	}
 
@@ -159,7 +159,7 @@ class SettingsLocalFontsStatusTest extends TestCase {
 
 		$html = $settings->get_local_fonts_status_html();
 
-		$this->assertSame( '<p>No cloud fonts hosted locally yet.</p>', $html );
+		$this->assertSame( '<p>No cloud fonts saved to your site yet.</p>', $html );
 		$this->assertStringNotContainsString( 'Manage in Pixelgrade Design', $html );
 	}
 
