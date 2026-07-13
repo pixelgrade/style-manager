@@ -148,7 +148,7 @@ const FontsSection = () => {
 		el(
 			CardBody,
 			{},
-			el( 'h2', {}, __( 'Fonts', '__plugin_txtd' ) ),
+			el( 'h2', {}, __( 'Fonts on Your Site', '__plugin_txtd' ) ),
 			el(
 				'p',
 				{ className: 'sm-design-hub-fonts__description' },

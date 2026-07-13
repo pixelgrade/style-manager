@@ -274,7 +274,7 @@ class PixelgradeAssistant extends AbstractHookProvider {
 		$check = [
 			'id'       => 'sm-local-fonts',
 			'group'    => 'integrations',
-			'label'    => esc_html__( 'Fonts', '__plugin_txtd' ),
+			'label'    => esc_html__( 'Fonts on Your Site', '__plugin_txtd' ),
 			'status'   => $status,
 			'value'    => $value,
 			'expected' => esc_html__( 'Fonts served from your own site', '__plugin_txtd' ),
