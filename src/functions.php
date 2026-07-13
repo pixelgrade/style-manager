@@ -132,6 +132,27 @@ function is_sm_supported(): bool {
 	return apply_filters( 'style_manager/is_supported', current_theme_supports( 'customizer_style_manager' ) );
 }
 
+/**
+ * Get the URL to the Fonts section of the Pixelgrade Design hub's Site Setup tab.
+ *
+ * Returns an empty string when the Assistant-provided hub helper isn't
+ * available (Assistant inactive or shadowed by Pixelgrade Care, or an older
+ * Assistant version that doesn't expose the hub yet). Consumers use this to
+ * decide whether to surface a "Manage in Pixelgrade Design" link alongside
+ * their own local-fonts controls.
+ *
+ * @since 2.4.0
+ *
+ * @return string
+ */
+function get_design_hub_fonts_url(): string {
+	if ( ! \function_exists( 'pixassist_get_hub_url' ) ) {
+		return '';
+	}
+
+	return (string) \pixassist_get_hub_url( 'plugins', 'fonts' );
+}
+
 const PIXELGRADE_PLUS_ADVANCED_CONTROLS_ENTITLEMENT = 'advanced_style_manager_controls';
 
 /**

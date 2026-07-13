@@ -4,10 +4,6 @@ declare ( strict_types = 1 );
 namespace Pixelgrade\StyleManager\Tests\Unit\Screen;
 
 use Brain\Monkey\Functions;
-use Pixelgrade\StyleManager\Customize\Fonts;
-use Pixelgrade\StyleManager\Customize\LocalFontStore;
-use Pixelgrade\StyleManager\Provider\LocalFonts;
-use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Screen\GeneralAdmin;
 use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
@@ -15,21 +11,12 @@ use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 class GeneralAdminTest extends TestCase {
 
 	/**
-	 * Build a GeneralAdmin instance with mocked dependencies, allowing overrides.
+	 * Build a GeneralAdmin instance with mocked dependencies.
 	 *
 	 * @since 2.4.0
 	 */
-	private function make_general_admin(
-		?LocalFontStore $local_font_store = null,
-		?Fonts $sm_fonts = null,
-		?LocalFonts $local_fonts_provider = null,
-		?PluginSettings $plugin_settings = null
-	): GeneralAdmin {
+	private function make_general_admin(): GeneralAdmin {
 		return new GeneralAdmin(
-			$local_font_store ?? $this->createMock( LocalFontStore::class ),
-			$sm_fonts ?? $this->createMock( Fonts::class ),
-			$local_fonts_provider ?? $this->createMock( LocalFonts::class ),
-			$plugin_settings ?? $this->createMock( PluginSettings::class ),
 			$this->createMock( LoggerInterface::class )
 		);
 	}

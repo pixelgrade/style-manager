@@ -258,7 +258,45 @@ class Settings extends AbstractHookProvider {
 	 * @since 2.4.0
 	 */
 	public function get_local_fonts_status_html(): string {
-		return self::build_local_fonts_status_html( $this->local_font_store->get_manifest() );
+		return self::build_local_fonts_status_html( $this->local_font_store->get_manifest() ) . $this->get_manage_in_hub_link_html();
+	}
+
+	/**
+	 * Build the "Manage in Pixelgrade Design &rarr;" link paragraph appended
+	 * after the local fonts status HTML, or an empty string when the hub
+	 * isn't available.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string Escaped HTML, or ''.
+	 */
+	protected function get_manage_in_hub_link_html(): string {
+		$hub_url = $this->get_hub_fonts_url();
+		if ( '' === $hub_url ) {
+			return '';
+		}
+
+		return sprintf(
+			'<p><a href="%1$s">%2$s &rarr;</a></p>',
+			esc_url( $hub_url ),
+			esc_html__( 'Manage in Pixelgrade Design', '__plugin_txtd' )
+		);
+	}
+
+	/**
+	 * Get the URL to the Fonts section of the Pixelgrade Design hub's Styles tab.
+	 *
+	 * Extracted as a seam over the shared namespaced helper -- the underlying
+	 * `pixassist_get_hub_url()` function is defined by the Assistant plugin at
+	 * runtime, which can't be toggled on/off mid test-suite the way an
+	 * overridden method can.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string
+	 */
+	protected function get_hub_fonts_url(): string {
+		return \Pixelgrade\StyleManager\get_design_hub_fonts_url();
 	}
 
 	/**

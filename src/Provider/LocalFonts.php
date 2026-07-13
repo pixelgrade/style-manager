@@ -271,11 +271,14 @@ class LocalFonts extends AbstractHookProvider {
 	/**
 	 * `admin_init` callback, throttled to once per 12h: decides which families
 	 * need a refresh -- healthy manifest families whose cloud `last_modified`
-	 * has changed, plus previously-failed USED families (attempts cap
-	 * respected) -- and schedules them all via the cron hook (see
-	 * mirror_families()). Never mirrors a family that is neither already in
-	 * the manifest nor currently used -- no silent retroactive migration of
-	 * fonts that were never requested.
+	 * has changed, plus any currently-used family that isn't healthy yet
+	 * (attempts cap respected), whether or not it has ever been attempted
+	 * before -- and schedules them all via the cron hook (see
+	 * mirror_families()). This is how pre-existing sites get quietly migrated
+	 * to local hosting in the background: no admin notice, just this
+	 * throttled sweep picking up used-but-never-mirrored families over time.
+	 * Never mirrors a family that is neither used nor already in the
+	 * manifest -- an unused, never-attempted family is not this method's job.
 	 *
 	 * This method never mirrors inline: a stale-but-healthy mirror keeps
 	 * working, so a refresh is never urgent enough to justify doing remote
@@ -314,15 +317,13 @@ class LocalFonts extends AbstractHookProvider {
 				continue;
 			}
 
-			// Only retry families that were already attempted (present in the
-			// manifest, e.g. from a previous mirror_used_fonts() failure). A
-			// family that was never mirrored is not this method's job.
-			$entry = $this->local_font_store->get_entry( $family );
-			if ( null === $entry ) {
-				continue;
-			}
-
-			if ( (int) ( $entry['attempts'] ?? 0 ) >= self::MAX_ATTEMPTS ) {
+			// A used family absent from the manifest (never successfully
+			// mirrored, e.g. added after cloud fonts were already enabled with
+			// hosting toggled off) is scheduled here too -- this is the quiet
+			// background migration path for pre-existing sites.
+			$entry    = $this->local_font_store->get_entry( $family );
+			$attempts = is_array( $entry ) ? (int) ( $entry['attempts'] ?? 0 ) : 0;
+			if ( $attempts >= self::MAX_ATTEMPTS ) {
 				continue;
 			}
 
