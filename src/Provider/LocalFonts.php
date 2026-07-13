@@ -189,9 +189,19 @@ class LocalFonts extends AbstractHookProvider {
 				continue;
 			}
 
-			if ( ! $this->mirror_family( $family ) ) {
-				$failed[] = $family;
+			if ( $this->mirror_family( $family ) ) {
+				continue;
 			}
+
+			if ( ! $this->is_resolvable_from_cloud_config( $family ) ) {
+				// Unresolvable from the cloud config (e.g. delisted): retrying on a
+				// timer would never succeed and would never move an attempts
+				// counter either, so it must not be scheduled at all.
+				$this->logger->warning( sprintf( 'Style Manager: cannot mirror local font "%s": not found in the cloud font config.', $family ) );
+				continue;
+			}
+
+			$failed[] = $family;
 		}
 
 		if ( ! empty( $failed ) ) {
@@ -239,6 +249,15 @@ class LocalFonts extends AbstractHookProvider {
 			}
 
 			if ( $this->mirror_family( $family ) ) {
+				continue;
+			}
+
+			if ( ! $this->is_resolvable_from_cloud_config( $family ) ) {
+				// Same guard as mirror_used_fonts(): a family that is not (or no
+				// longer) in the cloud config can never succeed here, so it must
+				// not be rescheduled -- otherwise it retries every 30 minutes
+				// forever with an attempts counter that never increments.
+				$this->logger->warning( sprintf( 'Style Manager: cannot mirror local font "%s": not found in the cloud font config.', $family ) );
 				continue;
 			}
 
@@ -374,23 +393,62 @@ class LocalFonts extends AbstractHookProvider {
 	 * @return bool True on success, false if the family is unknown or mirroring failed.
 	 */
 	protected function mirror_family( string $family ): bool {
+		$font_config = $this->resolve_font_config( $family );
+		if ( null === $font_config ) {
+			return false;
+		}
+
+		$last_modified = $this->get_cloud_last_modified_map()[ $family ] ?? '';
+
+		return $this->local_font_store->mirror_font( $font_config, $last_modified );
+	}
+
+	/**
+	 * Whether a family is currently resolvable from CloudFonts::get_cloud_fonts()
+	 * -- i.e. present and with a usable src -- as opposed to failing because the
+	 * mirror attempt itself failed (network error, bad stylesheet, etc.).
+	 *
+	 * Used to distinguish "will never succeed, don't bother rescheduling" from
+	 * "transient failure, worth retrying" in mirror_used_fonts() and
+	 * mirror_families().
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $family Font family name.
+	 *
+	 * @return bool
+	 */
+	protected function is_resolvable_from_cloud_config( string $family ): bool {
+		return null !== $this->resolve_font_config( $family );
+	}
+
+	/**
+	 * Resolve a family's current, mirror-ready font config from
+	 * CloudFonts::get_cloud_fonts() -- preferring `remote_src` over `src` since
+	 * the latter may already have been swapped to a local URL.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $family Font family name.
+	 *
+	 * @return array|null The font config, or null if the family is unknown or has no usable src.
+	 */
+	protected function resolve_font_config( string $family ): ?array {
 		$cloud_fonts = $this->cloud_fonts->get_cloud_fonts();
 		if ( empty( $cloud_fonts[ $family ] ) || ! is_array( $cloud_fonts[ $family ] ) ) {
-			return false;
+			return null;
 		}
 
 		$font_config = $cloud_fonts[ $family ];
 		$src         = $font_config['remote_src'] ?? ( $font_config['src'] ?? '' );
 		if ( empty( $src ) ) {
-			return false;
+			return null;
 		}
 
 		$font_config['src'] = $src;
 		unset( $font_config['remote_src'] );
 
-		$last_modified = $this->get_cloud_last_modified_map()[ $family ] ?? '';
-
-		return $this->local_font_store->mirror_font( $font_config, $last_modified );
+		return $font_config;
 	}
 
 	/**

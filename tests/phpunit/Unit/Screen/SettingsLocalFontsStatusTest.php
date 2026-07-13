@@ -13,6 +13,9 @@ class SettingsLocalFontsStatusTest extends TestCase {
 
 		Functions\when( 'esc_html' )->alias( static fn( $text ) => htmlspecialchars( (string) $text, ENT_QUOTES ) );
 		Functions\when( 'esc_html__' )->alias( static fn( $text, ...$args ) => htmlspecialchars( (string) $text, ENT_QUOTES ) );
+		Functions\when( '_n' )->alias( static function ( string $single, string $plural, $number ) {
+			return 1 === (int) $number ? $single : $plural;
+		} );
 	}
 
 	public function test_empty_manifest_reports_nothing_hosted_locally(): void {
@@ -35,10 +38,21 @@ class SettingsLocalFontsStatusTest extends TestCase {
 		] );
 
 		// The heading counts only successfully-hosted (status 'ok') entries,
-		// even though both entries still appear in the list below.
-		$this->assertStringContainsString( '1 font families hosted locally on this site.', $html );
+		// even though both entries still appear in the list below. A single
+		// hosted family must use the singular form ("1 font family", not
+		// "1 font families").
+		$this->assertStringContainsString( '1 font family hosted locally on this site.', $html );
 		$this->assertStringContainsString( '<li>Uncut Sans &mdash; hosted locally</li>', $html );
 		$this->assertStringContainsString( '<li>Quentin &mdash; download failed, will retry</li>', $html );
+	}
+
+	public function test_heading_uses_singular_form_for_a_single_hosted_family(): void {
+		$html = Settings::build_local_fonts_status_html( [
+			'Uncut Sans' => [ 'family_display' => 'Uncut Sans', 'status' => 'ok' ],
+		] );
+
+		$this->assertStringContainsString( '1 font family hosted locally on this site.', $html );
+		$this->assertStringNotContainsString( '1 font families', $html );
 	}
 
 	public function test_heading_counts_only_ok_entries_when_multiple_of_each_status(): void {

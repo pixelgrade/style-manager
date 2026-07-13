@@ -158,7 +158,7 @@ class LocalFontStoreTest extends TestCase {
 
 		$this->assertTrue( $result );
 		$this->assertCount( 5, $requested_urls, 'Expected the stylesheet, 2 font files, and the 2 best-effort sibling files to be requested.' );
-		$this->assertCount( 3, $written, 'Expected 2 font files + stylesheet.css to be written.' );
+		$this->assertCount( 4, $written, 'Expected 2 font files + stylesheet.css + the guard index.php to be written.' );
 
 		$this->assertNotNull( $updated_manifest );
 		$this->assertArrayHasKey( $family, $updated_manifest );
@@ -173,6 +173,127 @@ class LocalFontStoreTest extends TestCase {
 		$this->assertSame( '', $entry['last_error'] );
 		$this->assertSame( '2020-03-31 10:00:00', $entry['last_modified'] );
 		$this->assertSame( 'https://cloud.pixelgrade.com/wp-content/uploads/cloud-fonts-v2/uncut-sans-happy/stylesheet.css', $entry['source_stylesheet'] );
+
+		// A guard index.php must be written into the slug dir on every
+		// successful mirror (standard WP uploads-dir convention), but it must
+		// not be counted among the manifest's tracked font files.
+		$index_php_path = $this->find_written_path( $written, 'style-manager/fonts/uncut-sans-happy/index.php' );
+		$this->assertNotNull( $index_php_path, 'Expected a guard index.php to be written into the slug dir.' );
+		$this->assertStringContainsString( '<?php', $written[ $index_php_path ] );
+		foreach ( $entry['files'] as $tracked_file ) {
+			$this->assertStringNotContainsString( 'index.php', $tracked_file );
+		}
+	}
+
+	public function test_mirror_font_rejects_a_disallowed_file_extension_in_a_relative_ref(): void {
+		$family      = 'Evil Ref Font';
+		$font_config = [
+			'family'         => $family,
+			'family_display' => 'Evil Ref Font',
+			'src'            => 'https://pxgcdn.com/fonts/evil-ref/stylesheet.css',
+			'variants'       => [ '400' ],
+			'category'       => 'sans-serif',
+			'fallback_stack' => 'sans-serif',
+		];
+		// A malicious stylesheet trying to smuggle an executable file into the
+		// uploads dir via a font `url()` reference.
+		$css = "@font-face{src:url('backdoor.php') format('woff2');}";
+
+		$this->mock_uploads_dir();
+		Functions\when( 'get_option' )->justReturn( [] );
+
+		$updated_manifest = null;
+		Functions\when( 'update_option' )->alias( static function( string $option, $value ) use ( &$updated_manifest ) {
+			$updated_manifest = $value;
+
+			return true;
+		} );
+
+		$store = $this->partial_mock( [ 'remote_get', 'write_file' ] );
+		$store->method( 'remote_get' )->willReturnCallback( static function( string $url ) use ( $css ) {
+			if ( str_ends_with( $url, '/stylesheet.css' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => $css ];
+			}
+
+			// Should never be reached, but return 200 so the only way the test
+			// can fail closed is via the extension allowlist check.
+			return [ 'response' => [ 'code' => 200 ], 'body' => "<?php echo 'pwned'; " ];
+		} );
+		// Nothing should ever be written -- the whole mirror must fail.
+		$store->expects( $this->never() )->method( 'write_file' );
+
+		$result = $store->mirror_font( $font_config );
+
+		$this->assertFalse( $result );
+		$entry = $updated_manifest[ $family ];
+		$this->assertSame( 'failed', $entry['status'] );
+	}
+
+	public function test_mirror_font_strips_query_and_fragment_from_a_ref_and_dedupes_downloads(): void {
+		$family      = 'Iefix Font';
+		$font_config = [
+			'family'         => $family,
+			'family_display' => 'Iefix Font',
+			'src'            => 'https://pxgcdn.com/fonts/iefix-font/stylesheet.css',
+			'variants'       => [ '400' ],
+			'category'       => 'sans-serif',
+			'fallback_stack' => 'sans-serif',
+		];
+		// Two refs to the same underlying file: one with the classic
+		// `?#iefix` IE hack, one plain. Both must resolve to the on-disk
+		// filename `font.eot` (query/fragment are not part of the filesystem
+		// path), and the file must only be downloaded once.
+		$css = "@font-face{src:url('font.eot?#iefix') format('embedded-opentype'),url('font.eot') format('opentype');}";
+
+		$this->mock_uploads_dir();
+		Functions\when( 'get_option' )->justReturn( [] );
+
+		$updated_manifest = null;
+		Functions\when( 'update_option' )->alias( static function( string $option, $value ) use ( &$updated_manifest ) {
+			$updated_manifest = $value;
+
+			return true;
+		} );
+
+		$requested_urls = [];
+		$store          = $this->partial_mock( [ 'remote_get', 'write_file' ] );
+		$store->method( 'remote_get' )->willReturnCallback( static function( string $url ) use ( &$requested_urls, $css ) {
+			$requested_urls[] = $url;
+
+			if ( str_ends_with( $url, '/stylesheet.css' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => $css ];
+			}
+			if ( str_contains( $url, 'font.eot' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => 'EOT-BYTES' ];
+			}
+
+			return [ 'response' => [ 'code' => 404 ], 'body' => '' ];
+		} );
+
+		$written = [];
+		$store->method( 'write_file' )->willReturnCallback( static function( string $path, string $contents ) use ( &$written ) {
+			$written[ $path ] = $contents;
+
+			return true;
+		} );
+
+		$result = $store->mirror_font( $font_config );
+
+		$this->assertTrue( $result );
+
+		$font_file_requests = array_filter( $requested_urls, static fn( string $u ): bool => str_contains( $u, 'font.eot' ) );
+		$this->assertCount( 1, $font_file_requests, 'The font.eot file must only be downloaded once, despite 2 distinct refs.' );
+
+		$entry = $updated_manifest[ $family ];
+		$this->assertSame( [ 'style-manager/fonts/iefix-font/font.eot' ], $entry['files'] );
+		$this->assertNotNull(
+			$this->find_written_path( $written, 'style-manager/fonts/iefix-font/font.eot' ),
+			'Expected font.eot to be written under its clean (query/fragment-stripped) filename.'
+		);
+		foreach ( array_keys( $written ) as $path ) {
+			$this->assertStringNotContainsString( '?', $path, 'No written path should retain the query string.' );
+			$this->assertStringNotContainsString( '#', $path, 'No written path should retain the fragment.' );
+		}
 	}
 
 	public function test_mirror_font_failure_marks_manifest_failed_when_no_prior_ok_entry(): void {
@@ -606,5 +727,24 @@ class LocalFontStoreTest extends TestCase {
 			->setConstructorArgs( [ $this->createMock( LoggerInterface::class ) ] )
 			->onlyMethods( $methods )
 			->getMock();
+	}
+
+	/**
+	 * Find the key in a `$written` map (absolute-path => contents, as recorded
+	 * by write_file() mocks) whose path ends with the given relative suffix.
+	 *
+	 * @param array<string, string> $written           The recorded written files.
+	 * @param string                $relative_path_suffix The relative (uploads-relative) path to look for.
+	 *
+	 * @return string|null The matching absolute path key, or null if none found.
+	 */
+	private function find_written_path( array $written, string $relative_path_suffix ): ?string {
+		foreach ( array_keys( $written ) as $path ) {
+			if ( str_ends_with( $path, $relative_path_suffix ) ) {
+				return $path;
+			}
+		}
+
+		return null;
 	}
 }

@@ -178,6 +178,34 @@ class LocalFontsTest extends TestCase {
 		$this->addToAssertionCount( 1 );
 	}
 
+	public function test_mirror_used_fonts_does_not_schedule_a_retry_for_a_family_missing_from_the_cloud_config(): void {
+		// The family was delisted from the cloud (e.g. removed from the palette
+		// config) and is not resolvable at all -- this must not be treated the
+		// same as a transient network failure, otherwise it gets rescheduled
+		// every 30 minutes forever without the attempts counter ever moving
+		// (see mirror_family(), which never touches the manifest for this case).
+		$sm_fonts = $this->createMock( Fonts::class );
+		$sm_fonts->method( 'get_used_cloud_font_families' )->willReturn( [ 'Delisted Font' ] );
+
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'is_healthy' )->willReturn( false );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
+
+		$cloud_fonts = $this->createMock( CloudFonts::class );
+		$cloud_fonts->method( 'get_cloud_fonts' )->willReturn( [] );
+
+		$design_assets = $this->createMock( DesignAssets::class );
+		$design_assets->method( 'get_entry' )->willReturn( [] );
+
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->expects( $this->once() )->method( 'warning' );
+
+		Functions\expect( 'wp_next_scheduled' )->never();
+		Functions\expect( 'wp_schedule_single_event' )->never();
+
+		$this->make_provider( $local_font_store, $sm_fonts, $cloud_fonts, $design_assets, null, $logger )->mirror_used_fonts();
+	}
+
 	public function test_mirror_used_fonts_does_not_schedule_a_duplicate_retry_event(): void {
 		$sm_fonts = $this->createMock( Fonts::class );
 		$sm_fonts->method( 'get_used_cloud_font_families' )->willReturn( [ 'Broken Font' ] );
@@ -270,6 +298,31 @@ class LocalFontsTest extends TestCase {
 
 		$this->make_provider( $local_font_store, null, $cloud_fonts, $design_assets )->mirror_families( [ 'Recovering Font' ] );
 		$this->addToAssertionCount( 1 );
+	}
+
+	public function test_mirror_families_does_not_reschedule_a_family_missing_from_the_cloud_config(): void {
+		// A family that was delisted from the cloud config between the previous
+		// attempt and now (or whose local mirror later broke while it stayed
+		// delisted) can never succeed via mirror_family() -- it must not be
+		// rescheduled forever with an attempts counter that never increments.
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'is_healthy' )->willReturn( false );
+		$local_font_store->method( 'get_entry' )->willReturn( [ 'attempts' => 1 ] );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
+
+		$cloud_fonts = $this->createMock( CloudFonts::class );
+		$cloud_fonts->method( 'get_cloud_fonts' )->willReturn( [] );
+
+		$design_assets = $this->createMock( DesignAssets::class );
+		$design_assets->method( 'get_entry' )->willReturn( [] );
+
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->expects( $this->once() )->method( 'warning' );
+
+		Functions\expect( 'wp_next_scheduled' )->never();
+		Functions\expect( 'wp_schedule_single_event' )->never();
+
+		$this->make_provider( $local_font_store, null, $cloud_fonts, $design_assets, null, $logger )->mirror_families( [ 'Delisted Font' ] );
 	}
 
 	public function test_mirror_families_re_mirrors_a_healthy_but_stale_family(): void {
@@ -501,7 +554,8 @@ class LocalFontsTest extends TestCase {
 		?Fonts $sm_fonts = null,
 		?CloudFonts $cloud_fonts = null,
 		?DesignAssets $design_assets = null,
-		?PluginSettings $plugin_settings = null
+		?PluginSettings $plugin_settings = null,
+		?LoggerInterface $logger = null
 	): LocalFonts {
 		return new LocalFonts(
 			$local_font_store ?? $this->createMock( LocalFontStore::class ),
@@ -509,7 +563,7 @@ class LocalFontsTest extends TestCase {
 			$cloud_fonts ?? $this->createMock( CloudFonts::class ),
 			$design_assets ?? $this->createMock( DesignAssets::class ),
 			$plugin_settings ?? $this->settings( [ 'typography_cloud_fonts' => true, 'typography_host_cloud_fonts_locally' => true ] ),
-			$this->createMock( LoggerInterface::class )
+			$logger ?? $this->createMock( LoggerInterface::class )
 		);
 	}
 }

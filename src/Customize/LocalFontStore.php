@@ -36,6 +36,16 @@ class LocalFontStore {
 	const BASE_SUBDIR = 'style-manager/fonts';
 
 	/**
+	 * File extensions allowed for anything downloaded from a stylesheet's
+	 * `url()` references (relative or absolute). Anything else (e.g. `.php`)
+	 * fails the whole mirror rather than being written verbatim into a
+	 * web-reachable uploads directory.
+	 *
+	 * @since 2.4.0
+	 */
+	const ALLOWED_FILE_EXTENSIONS = [ 'woff2', 'woff', 'ttf', 'otf', 'eot', 'svg', 'css', 'txt' ];
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -115,8 +125,25 @@ class LocalFontStore {
 				if ( '' === $ref || str_contains( $ref, '..' ) || str_starts_with( $ref, '/' ) ) {
 					return $this->handle_mirror_failure( $family, $font_config, $last_modified, $url, $slug, 'Rejected an unsafe relative font path in the stylesheet.' );
 				}
+				// Download from the full original ref (query intact), but the
+				// on-disk path never includes the query/fragment -- neither
+				// affects the filesystem path a browser resolves to, and
+				// keeping them would write literal filenames like `font.eot?#iefix`.
 				$file_url = $dir_url . $ref;
-				$rel_path = $ref;
+				$rel_path = self::strip_query_and_fragment( $ref );
+				if ( '' === $rel_path ) {
+					return $this->handle_mirror_failure( $family, $font_config, $last_modified, $url, $slug, 'Rejected an unsafe relative font path in the stylesheet.' );
+				}
+			}
+
+			if ( ! self::has_allowed_extension( $rel_path ) ) {
+				return $this->handle_mirror_failure( $family, $font_config, $last_modified, $url, $slug, sprintf( 'Rejected a disallowed file extension: %s', $rel_path ) );
+			}
+
+			if ( array_key_exists( $rel_path, $downloads ) ) {
+				// Already downloaded under this on-disk path (e.g. a `?#iefix`
+				// ref alongside a plain ref to the same file).
+				continue;
 			}
 
 			$file_response = $this->remote_get( $file_url );
@@ -171,6 +198,12 @@ class LocalFontStore {
 		if ( ! $this->write_file( $base_abs_dir . '/stylesheet.css', $css ) ) {
 			return $this->handle_mirror_failure( $family, $font_config, $last_modified, $url, $slug, 'Failed to write the stylesheet.' );
 		}
+
+		// Standard WP uploads-dir convention: guard the directory listing.
+		// Best-effort -- never affects success, and deliberately not part of
+		// $downloads (which is subject to the extension allowlist above) nor
+		// of the manifest's tracked `files` list, since it isn't a font asset.
+		$this->write_file( $base_abs_dir . '/index.php', "<?php // Silence is golden.\n" );
 
 		$manifest            = $this->get_manifest();
 		$manifest[ $family ] = [
@@ -422,6 +455,42 @@ class LocalFontStore {
 	 */
 	protected function is_absolute_ref( string $ref ): bool {
 		return (bool) preg_match( '#^(https?:)?//#i', $ref );
+	}
+
+	/**
+	 * Strip the query string and/or fragment off a CSS `url()` ref, e.g.
+	 * `font.eot?#iefix` => `font.eot`. Used when computing the on-disk relative
+	 * path for a ref (and for deduping): the query/fragment are never part of
+	 * the filesystem path a browser request resolves to, so keeping them would
+	 * write literal filenames like `font.eot?#iefix` to disk. The full original
+	 * ref (query intact) is still used for the actual download.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $ref The ref as found in the stylesheet.
+	 *
+	 * @return string
+	 */
+	protected static function strip_query_and_fragment( string $ref ): string {
+		return substr( $ref, 0, strcspn( $ref, '?#' ) );
+	}
+
+	/**
+	 * Whether a relative on-disk path's file extension is on the allowlist of
+	 * font/text asset types. Guards against a malicious (or compromised)
+	 * stylesheet referencing an arbitrary file (e.g. `url(backdoor.php)`) that
+	 * would otherwise be written verbatim into a web-reachable uploads directory.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $rel_path The on-disk relative path (or any filename/ref) to check.
+	 *
+	 * @return bool
+	 */
+	protected static function has_allowed_extension( string $rel_path ): bool {
+		$extension = strtolower( (string) pathinfo( $rel_path, PATHINFO_EXTENSION ) );
+
+		return in_array( $extension, self::ALLOWED_FILE_EXTENSIONS, true );
 	}
 
 	/**

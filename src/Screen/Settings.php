@@ -298,8 +298,18 @@ class Settings extends AbstractHookProvider {
 		// Only count successfully-hosted entries in the heading; failed
 		// entries are still listed below (with their status) so the count
 		// doesn't overstate what's actually being served locally.
-		/* translators: %d: number of font families hosted locally on this site. */
-		$heading = sprintf( esc_html__( '%d font families hosted locally on this site.', '__plugin_txtd' ), $ok_count );
+		$heading = esc_html(
+			sprintf(
+				/* translators: %d: number of font families hosted locally on this site. */
+				_n(
+					'%d font family hosted locally on this site.',
+					'%d font families hosted locally on this site.',
+					$ok_count,
+					'__plugin_txtd'
+				),
+				$ok_count
+			)
+		);
 
 		return '<p>' . $heading . '</p><ul>' . implode( '', $rows ) . '</ul>';
 	}
