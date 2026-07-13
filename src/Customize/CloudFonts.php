@@ -11,6 +11,7 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Customize;
 
+use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 use function Pixelgrade\StyleManager\is_sm_supported;
@@ -30,6 +31,20 @@ class CloudFonts extends AbstractHookProvider {
 	protected DesignAssets $design_assets;
 
 	/**
+	 * Local font store, used to serve mirrored (self-hosted) cloud fonts.
+	 *
+	 * @var LocalFontStore
+	 */
+	protected LocalFontStore $local_font_store;
+
+	/**
+	 * Plugin settings.
+	 *
+	 * @var PluginSettings
+	 */
+	protected PluginSettings $plugin_settings;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -41,15 +56,21 @@ class CloudFonts extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param DesignAssets    $design_assets Design assets.
-	 * @param LoggerInterface $logger        Logger.
+	 * @param DesignAssets    $design_assets    Design assets.
+	 * @param LocalFontStore  $local_font_store Local font store.
+	 * @param PluginSettings  $plugin_settings  Plugin settings.
+	 * @param LoggerInterface $logger           Logger.
 	 */
 	public function __construct(
 		DesignAssets $design_assets,
+		LocalFontStore $local_font_store,
+		PluginSettings $plugin_settings,
 		LoggerInterface $logger
 	) {
-		$this->design_assets = $design_assets;
-		$this->logger        = $logger;
+		$this->design_assets    = $design_assets;
+		$this->local_font_store = $local_font_store;
+		$this->plugin_settings  = $plugin_settings;
+		$this->logger           = $logger;
 	}
 
 	/**
@@ -224,6 +245,67 @@ class CloudFonts extends AbstractHookProvider {
 
 		$fonts = array_merge( $fonts, $this->get_cloud_fonts() );
 
+		if ( $this->is_local_hosting_enabled() ) {
+			$fonts = $this->add_mirrored_fonts_missing_from_cloud( $fonts );
+		}
+
+		return $fonts;
+	}
+
+	/**
+	 * Whether cloud fonts should be served from this site's own uploads directory
+	 * (mirrored locally) instead of directly from Pixelgrade Cloud.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return bool
+	 */
+	protected function is_local_hosting_enabled(): bool {
+		return (bool) $this->plugin_settings->get( 'typography_host_cloud_fonts_locally', 'yes' );
+	}
+
+	/**
+	 * Re-add font configs for families that have a healthy local mirror but are no
+	 * longer present in the cloud's current font list (e.g. the font was renamed,
+	 * removed, or is temporarily unavailable upstream). Without this, a site that
+	 * already has visitors using a mirrored font would silently lose it the moment
+	 * the cloud stops listing it.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $fonts The merged font list (family => font config).
+	 *
+	 * @return array
+	 */
+	protected function add_mirrored_fonts_missing_from_cloud( array $fonts ): array {
+		foreach ( $this->local_font_store->get_manifest() as $family => $entry ) {
+			if ( ! is_string( $family ) || '' === $family || ! is_array( $entry ) ) {
+				continue;
+			}
+
+			if ( isset( $fonts[ $family ] ) ) {
+				continue;
+			}
+
+			if ( ! $this->local_font_store->is_healthy( $family ) ) {
+				continue;
+			}
+
+			$local_src = $this->local_font_store->get_local_src( $family );
+			if ( null === $local_src ) {
+				continue;
+			}
+
+			$fonts[ $family ] = [
+				'family'         => $family,
+				'family_display' => $entry['family_display'] ?? '',
+				'src'            => $local_src,
+				'variants'       => $entry['variants'] ?? [],
+				'category'       => $entry['category'] ?? '',
+				'fallback_stack' => $entry['fallback_stack'] ?? '',
+			];
+		}
+
 		return $fonts;
 	}
 
@@ -295,7 +377,7 @@ class CloudFonts extends AbstractHookProvider {
 		}
 
 		// We need to convert the received data structure to the one expected by Style Manager.
-		return [
+		$new_config = [
 			'family'         => $font_config['font_family'],
 			'family_display' => empty( $font_config['font_family_display'] ) ? '' : $font_config['font_family_display'],
 			'src'            => empty( $font_config['stylesheet'] ) ? false : $font_config['stylesheet'],
@@ -303,5 +385,20 @@ class CloudFonts extends AbstractHookProvider {
 			'category'       => empty( $font_config['category'] ) ? '' : $font_config['category'],
 			'fallback_stack' => empty( $font_config['fallback_stack'] ) ? '' : $font_config['fallback_stack'],
 		];
+
+		$family = (string) ( $font_config['font_family'] ?? '' );
+		if ( '' === $family || ! $this->is_local_hosting_enabled() ) {
+			return $new_config;
+		}
+
+		$local_src = $this->local_font_store->get_local_src( $family );
+		if ( null === $local_src ) {
+			return $new_config;
+		}
+
+		$new_config['remote_src'] = $new_config['src'];
+		$new_config['src']        = $local_src;
+
+		return $new_config;
 	}
 }

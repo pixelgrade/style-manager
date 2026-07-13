@@ -61,6 +61,8 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['customize.cloud_fonts'] = function( $container ) {
 			return new Customize\CloudFonts(
 				$container['customize.design_assets'],
+				$container['customize.local_font_store'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
