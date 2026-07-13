@@ -351,6 +351,10 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['screen.general_admin'] = function( $container ) {
 			return new Screen\GeneralAdmin(
+				$container['customize.local_font_store'],
+				$container['customize.fonts'],
+				$container['hooks.local_fonts'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
