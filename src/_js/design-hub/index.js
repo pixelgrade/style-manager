@@ -65,6 +65,7 @@ const FamilyStatusList = ( { families } ) => {
 			'li',
 			{ key: family.family, className: 'sm-design-hub-fonts__list-item' },
 			el( 'span', { className: 'sm-design-hub-fonts__family' }, family.display || family.family ),
+			' — ',
 			el(
 				'span',
 				{ className: 'sm-design-hub-fonts__status' },
