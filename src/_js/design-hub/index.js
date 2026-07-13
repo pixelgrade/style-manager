@@ -1,9 +1,9 @@
 /* global wp */
 /**
- * Style Manager's "Fonts" section for the Pixelgrade Design hub's Styles tab.
+ * Style Manager's "Fonts" section for the Pixelgrade Design hub's Site Setup tab.
  *
  * Registered through the JS extension point the hub exposes on `wp.hooks`
- * (`pixelgrade.adminHub.stylesSections`), and backed by Style Manager's own
+ * (`pixelgrade.adminHub.setupSections`), and backed by Style Manager's own
  * `style_manager/v1/local-fonts` REST endpoints so this bundle never
  * duplicates the underlying local-fonts (self-hosted cloud fonts) logic --
  * the same endpoints the Settings screen equivalent could use.
@@ -188,7 +188,7 @@ const FontsSection = () => {
 };
 
 addFilter(
-	'pixelgrade.adminHub.stylesSections',
+	'pixelgrade.adminHub.setupSections',
 	'style-manager/fonts',
 	( sections ) => [
 		...( Array.isArray( sections ) ? sections : [] ),

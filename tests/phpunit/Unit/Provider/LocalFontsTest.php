@@ -508,20 +508,61 @@ class LocalFontsTest extends TestCase {
 		$this->make_provider( $local_font_store, $sm_fonts, $cloud_fonts, $design_assets )->maybe_refresh_mirrors();
 	}
 
-	public function test_maybe_refresh_mirrors_never_mirrors_a_used_family_that_was_never_previously_attempted(): void {
+	public function test_maybe_refresh_mirrors_schedules_a_used_family_that_was_never_previously_attempted(): void {
+		// Quiet background migration: a used-but-unhealthy family absent from
+		// the manifest (never successfully mirrored before) is now picked up
+		// by the throttled admin_init sweep too, not just mirror_used_fonts() --
+		// this is how pre-existing sites get migrated without an admin notice.
 		Functions\when( 'get_option' )->justReturn( 0 );
 		Functions\when( 'update_option' )->justReturn( true );
 
 		$local_font_store = $this->createMock( LocalFontStore::class );
 		$local_font_store->method( 'get_manifest' )->willReturn( [] );
-		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
 
-		// The family is used, but never mirrored before (no manifest entry) --
-		// that is mirror_used_fonts()'s job, not a "refresh".
 		$sm_fonts = $this->createMock( Fonts::class );
 		$sm_fonts->method( 'get_used_cloud_font_families' )->willReturn( [ 'Never Mirrored Font' ] );
 		$local_font_store->method( 'is_healthy' )->with( 'Never Mirrored Font' )->willReturn( false );
 		$local_font_store->method( 'get_entry' )->with( 'Never Mirrored Font' )->willReturn( null );
+
+		$cloud_fonts = $this->createMock( CloudFonts::class );
+		$cloud_fonts->expects( $this->never() )->method( 'get_cloud_fonts' );
+
+		$design_assets = $this->createMock( DesignAssets::class );
+		$design_assets->method( 'get_entry' )->willReturn( [] );
+
+		Functions\expect( 'wp_next_scheduled' )
+			->once()
+			->with( LocalFonts::CRON_HOOK, [ [ 'Never Mirrored Font' ] ] )
+			->andReturn( false );
+
+		Functions\expect( 'wp_schedule_single_event' )
+			->once()
+			->with(
+				Mockery::type( 'integer' ),
+				LocalFonts::CRON_HOOK,
+				[ [ 'Never Mirrored Font' ] ]
+			)
+			->andReturn( true );
+
+		$this->make_provider( $local_font_store, $sm_fonts, $cloud_fonts, $design_assets )->maybe_refresh_mirrors();
+		$this->addToAssertionCount( 1 );
+	}
+
+	public function test_maybe_refresh_mirrors_never_mirrors_an_unused_family_absent_from_the_manifest(): void {
+		// An unused family is never this method's job, whether or not it has a
+		// manifest entry -- only the "used" and "in-manifest" loops schedule
+		// anything, and an unused, manifest-absent family satisfies neither.
+		Functions\when( 'get_option' )->justReturn( 0 );
+		Functions\when( 'update_option' )->justReturn( true );
+
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'get_manifest' )->willReturn( [] );
+		$local_font_store->expects( $this->never() )->method( 'is_healthy' );
+		$local_font_store->expects( $this->never() )->method( 'get_entry' );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
+
+		$sm_fonts = $this->createMock( Fonts::class );
+		$sm_fonts->method( 'get_used_cloud_font_families' )->willReturn( [] );
 
 		$cloud_fonts = $this->createMock( CloudFonts::class );
 		$cloud_fonts->expects( $this->never() )->method( 'get_cloud_fonts' );

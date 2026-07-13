@@ -225,7 +225,9 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['integration.pixelgrade_assistant'] = function( $container ) {
 			return new Integration\PixelgradeAssistant(
 				$container['options'],
-				$container['plugin.settings']
+				$container['plugin.settings'],
+				$container['customize.local_font_store'],
+				$container['customize.fonts']
 			);
 		};
 
@@ -362,10 +364,6 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['screen.general_admin'] = function( $container ) {
 			return new Screen\GeneralAdmin(
-				$container['customize.local_font_store'],
-				$container['customize.fonts'],
-				$container['hooks.local_fonts'],
-				$container['plugin.settings'],
 				$container['logger']
 			);
 		};

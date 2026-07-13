@@ -133,7 +133,7 @@ function is_sm_supported(): bool {
 }
 
 /**
- * Get the URL to the Fonts section of the Pixelgrade Design hub's Styles tab.
+ * Get the URL to the Fonts section of the Pixelgrade Design hub's Site Setup tab.
  *
  * Returns an empty string when the Assistant-provided hub helper isn't
  * available (Assistant inactive or shadowed by Pixelgrade Care, or an older
@@ -150,7 +150,7 @@ function get_design_hub_fonts_url(): string {
 		return '';
 	}
 
-	return (string) \pixassist_get_hub_url( 'styles', 'fonts' );
+	return (string) \pixassist_get_hub_url( 'plugins', 'fonts' );
 }
 
 const PIXELGRADE_PLUS_ADVANCED_CONTROLS_ENTITLEMENT = 'advanced_style_manager_controls';
