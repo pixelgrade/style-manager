@@ -96,6 +96,11 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['customize.tweak_board_section'] = function() {
 			return new Customize\TweakBoardSection();
 		};
+		$container['customize.local_font_store'] = function( $container ) {
+			return new Customize\LocalFontStore(
+				$container['logger']
+			);
+		};
 		$container['customize.general'] = function( $container ) {
 			return new Customize\Customize(
 				$container['client.pixelgrade_cloud'],
