@@ -278,6 +278,149 @@ class LocalFontStoreTest extends TestCase {
 		$this->assertSame( $prior_entry['mirrored_at'], $entry['mirrored_at'] );
 	}
 
+	public function test_mirror_font_disambiguates_slug_when_another_family_derives_the_same_slug_from_a_different_url(): void {
+		$family_a = 'Foo Family A';
+		$url_a    = 'https://pxgcdn.com/fonts/foo/stylesheet.css';
+		$prior_entry_a = [
+			'slug'              => 'foo',
+			'source_stylesheet' => $url_a,
+			'stylesheet_path'   => 'style-manager/fonts/foo/stylesheet.css',
+			'files'             => [ 'style-manager/fonts/foo/foo-400.woff2' ],
+			'variants'          => [ '400' ],
+			'category'          => 'sans-serif',
+			'fallback_stack'    => 'sans-serif',
+			'family_display'    => $family_a,
+			'last_modified'     => '2020-01-01 00:00:00',
+			'mirrored_at'       => 1_600_000_000,
+			'status'            => 'ok',
+			'attempts'          => 0,
+			'last_error'        => '',
+		];
+
+		$family_b = 'Foo Family B';
+		$url_b    = '//cloud.pixelgrade.com/wp-content/uploads/cloud-fonts-v2/foo/stylesheet.css';
+		$normalized_url_b = 'https://cloud.pixelgrade.com/wp-content/uploads/cloud-fonts-v2/foo/stylesheet.css';
+		$expected_slug_b  = 'foo-' . substr( md5( $normalized_url_b ), 0, 8 );
+
+		$font_config_b = [
+			'family'         => $family_b,
+			'family_display' => $family_b,
+			'src'            => $url_b,
+			'variants'       => [ '400' ],
+			'category'       => 'sans-serif',
+			'fallback_stack' => 'sans-serif',
+		];
+		$css_b = "@font-face{font-family:'Foo Family B';src:url('foo-b-400.woff2') format('woff2');}";
+
+		$this->mock_uploads_dir();
+		Functions\when( 'get_option' )->justReturn( [ $family_a => $prior_entry_a ] );
+
+		$updated_manifest = null;
+		Functions\when( 'update_option' )->alias( static function( string $option, $value ) use ( &$updated_manifest ) {
+			$updated_manifest = $value;
+
+			return true;
+		} );
+
+		$store = $this->partial_mock( [ 'remote_get', 'write_file' ] );
+		$store->method( 'remote_get' )->willReturnCallback( static function( string $url ) use ( $css_b ) {
+			if ( str_ends_with( $url, '/stylesheet.css' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => $css_b ];
+			}
+			if ( str_ends_with( $url, '/foo-b-400.woff2' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => 'FONT-B-400-BYTES' ];
+			}
+
+			return [ 'response' => [ 'code' => 404 ], 'body' => '' ];
+		} );
+
+		$written = [];
+		$store->method( 'write_file' )->willReturnCallback( static function( string $path, string $contents ) use ( &$written ) {
+			$written[ $path ] = $contents;
+
+			return true;
+		} );
+
+		$result = $store->mirror_font( $font_config_b );
+
+		$this->assertTrue( $result );
+		$this->assertNotNull( $updated_manifest );
+
+		// Family A's entry must be left completely untouched.
+		$this->assertSame( $prior_entry_a, $updated_manifest[ $family_a ] );
+
+		// Family B must be disambiguated onto its own slug/directory.
+		$entry_b = $updated_manifest[ $family_b ];
+		$this->assertSame( $expected_slug_b, $entry_b['slug'] );
+		$this->assertSame( "style-manager/fonts/{$expected_slug_b}/stylesheet.css", $entry_b['stylesheet_path'] );
+		$this->assertContains( "style-manager/fonts/{$expected_slug_b}/foo-b-400.woff2", $entry_b['files'] );
+
+		foreach ( array_keys( $written ) as $path ) {
+			$this->assertStringContainsString( "/{$expected_slug_b}/", $path, 'No file should be written into family A\'s slug directory.' );
+		}
+	}
+
+	public function test_mirror_font_keeps_plain_slug_when_remirroring_the_same_family(): void {
+		$family = 'Foo Family Same';
+		$url    = 'https://pxgcdn.com/fonts/foo/stylesheet.css';
+
+		$prior_entry = [
+			'slug'              => 'foo',
+			'source_stylesheet' => $url,
+			'stylesheet_path'   => 'style-manager/fonts/foo/stylesheet.css',
+			'files'             => [ 'style-manager/fonts/foo/foo-400.woff2' ],
+			'variants'          => [ '400' ],
+			'category'          => 'sans-serif',
+			'fallback_stack'    => 'sans-serif',
+			'family_display'    => $family,
+			'last_modified'     => '2020-01-01 00:00:00',
+			'mirrored_at'       => 1_600_000_000,
+			'status'            => 'ok',
+			'attempts'          => 0,
+			'last_error'        => '',
+		];
+
+		$font_config = [
+			'family'         => $family,
+			'family_display' => $family,
+			'src'            => $url,
+			'variants'       => [ '400' ],
+			'category'       => 'sans-serif',
+			'fallback_stack' => 'sans-serif',
+		];
+		$css = "@font-face{font-family:'Foo Family Same';src:url('foo-400.woff2') format('woff2');}";
+
+		$this->mock_uploads_dir();
+		Functions\when( 'get_option' )->justReturn( [ $family => $prior_entry ] );
+
+		$updated_manifest = null;
+		Functions\when( 'update_option' )->alias( static function( string $option, $value ) use ( &$updated_manifest ) {
+			$updated_manifest = $value;
+
+			return true;
+		} );
+
+		$store = $this->partial_mock( [ 'remote_get', 'write_file' ] );
+		$store->method( 'remote_get' )->willReturnCallback( static function( string $url ) use ( $css ) {
+			if ( str_ends_with( $url, '/stylesheet.css' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => $css ];
+			}
+			if ( str_ends_with( $url, '/foo-400.woff2' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => 'FONT-400-BYTES' ];
+			}
+
+			return [ 'response' => [ 'code' => 404 ], 'body' => '' ];
+		} );
+		$store->method( 'write_file' )->willReturn( true );
+
+		$result = $store->mirror_font( $font_config );
+
+		$this->assertTrue( $result );
+		$entry = $updated_manifest[ $family ];
+		$this->assertSame( 'foo', $entry['slug'] );
+		$this->assertSame( 'style-manager/fonts/foo/stylesheet.css', $entry['stylesheet_path'] );
+	}
+
 	public function test_mirror_font_rejects_path_traversal_in_relative_ref(): void {
 		$family      = 'Traversal Font';
 		$font_config = [

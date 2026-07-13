@@ -84,7 +84,7 @@ class LocalFontStore {
 		}
 
 		$url  = $this->normalize_to_https( (string) $font_config['src'] );
-		$slug = self::derive_slug( $url );
+		$slug = $this->resolve_slug( self::derive_slug( $url ), $family, $url );
 
 		$response = $this->remote_get( $url );
 		if ( $this->is_error_response( $response ) ) {
@@ -172,8 +172,8 @@ class LocalFontStore {
 			return $this->handle_mirror_failure( $family, $font_config, $last_modified, $url, $slug, 'Failed to write the stylesheet.' );
 		}
 
-		$manifest              = $this->get_manifest();
-		$manifest[ $family ]   = [
+		$manifest            = $this->get_manifest();
+		$manifest[ $family ] = [
 			'slug'              => $slug,
 			'source_stylesheet' => $url,
 			'stylesheet_path'   => $stylesheet_rel_path,
@@ -354,6 +354,42 @@ class LocalFontStore {
 		$slug = self::sanitize_slug( $raw );
 		if ( '' === $slug ) {
 			$slug = md5( $stylesheet_url );
+		}
+
+		return $slug;
+	}
+
+	/**
+	 * Disambiguate a derived slug against the manifest so two different families
+	 * whose stylesheet URLs happen to share the same last path segment (e.g. across
+	 * cloud generations) never mirror into the same directory and clobber each
+	 * other's files.
+	 *
+	 * The plain slug is kept when no other family's manifest entry already claims
+	 * it, when the family re-mirrors itself, or when another family's entry uses
+	 * the exact same source stylesheet URL. Otherwise the slug is suffixed with a
+	 * short hash of the (normalized) URL so both mirrors coexist.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $slug   The slug derived from the stylesheet URL.
+	 * @param string $family The font family being mirrored.
+	 * @param string $url    The normalized (https) stylesheet URL for this family.
+	 *
+	 * @return string
+	 */
+	protected function resolve_slug( string $slug, string $family, string $url ): string {
+		foreach ( $this->get_manifest() as $other_family => $entry ) {
+			if ( $other_family === $family || ! is_array( $entry ) ) {
+				continue;
+			}
+
+			$other_slug   = (string) ( $entry['slug'] ?? '' );
+			$other_source = (string) ( $entry['source_stylesheet'] ?? '' );
+
+			if ( $other_slug === $slug && $other_source !== $url ) {
+				return $slug . '-' . substr( md5( $url ), 0, 8 );
+			}
 		}
 
 		return $slug;
