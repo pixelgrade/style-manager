@@ -255,6 +255,75 @@ class GeneralAdminLocalFontsNoticeTest extends TestCase {
 	}
 
 	// -----------------------------------------------------------------
+	// get_manage_in_hub_link_html()
+	// -----------------------------------------------------------------
+
+	public function test_manage_in_hub_link_is_rendered_when_hub_url_is_available(): void {
+		Functions\when( 'esc_url' )->returnArg( 1 );
+		Functions\when( 'esc_html__' )->returnArg( 1 );
+
+		$general_admin = new class(
+			$this->createMock( LocalFontStore::class ),
+			$this->createMock( Fonts::class ),
+			$this->createMock( LocalFonts::class ),
+			$this->settings( [ 'typography_cloud_fonts' => true, 'typography_host_cloud_fonts_locally' => true ] ),
+			$this->createMock( LoggerInterface::class )
+		) extends GeneralAdmin {
+			public function expose_get_manage_in_hub_link_html(): string {
+				return $this->get_manage_in_hub_link_html();
+			}
+
+			protected function get_hub_fonts_url(): string {
+				return 'https://example.test/wp-admin/admin.php?page=pixelgrade&tab=styles&section=fonts';
+			}
+		};
+
+		$html = $general_admin->expose_get_manage_in_hub_link_html();
+
+		$this->assertStringContainsString( 'href="https://example.test/wp-admin/admin.php?page=pixelgrade&tab=styles&section=fonts"', $html );
+		$this->assertStringContainsString( 'class="js-sm-manage-in-hub"', $html );
+		$this->assertStringContainsString( 'Manage in Pixelgrade Design', $html );
+	}
+
+	public function test_manage_in_hub_link_is_empty_when_hub_url_is_unavailable(): void {
+		$general_admin = new class(
+			$this->createMock( LocalFontStore::class ),
+			$this->createMock( Fonts::class ),
+			$this->createMock( LocalFonts::class ),
+			$this->settings( [ 'typography_cloud_fonts' => true, 'typography_host_cloud_fonts_locally' => true ] ),
+			$this->createMock( LoggerInterface::class )
+		) extends GeneralAdmin {
+			public function expose_get_manage_in_hub_link_html(): string {
+				return $this->get_manage_in_hub_link_html();
+			}
+
+			protected function get_hub_fonts_url(): string {
+				return '';
+			}
+		};
+
+		$this->assertSame( '', $general_admin->expose_get_manage_in_hub_link_html() );
+	}
+
+	public function test_get_hub_fonts_url_delegates_to_the_shared_namespaced_helper(): void {
+		// Real behavior, unmocked: `pixassist_get_hub_url()` is never defined
+		// in this test process, so the shared helper's absent-hub branch runs.
+		$general_admin = new class(
+			$this->createMock( LocalFontStore::class ),
+			$this->createMock( Fonts::class ),
+			$this->createMock( LocalFonts::class ),
+			$this->settings( [ 'typography_cloud_fonts' => true, 'typography_host_cloud_fonts_locally' => true ] ),
+			$this->createMock( LoggerInterface::class )
+		) extends GeneralAdmin {
+			public function expose_get_hub_fonts_url(): string {
+				return $this->get_hub_fonts_url();
+			}
+		};
+
+		$this->assertSame( '', $general_admin->expose_get_hub_fonts_url() );
+	}
+
+	// -----------------------------------------------------------------
 	// Helpers
 	// -----------------------------------------------------------------
 

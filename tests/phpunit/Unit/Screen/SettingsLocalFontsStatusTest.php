@@ -4,8 +4,12 @@ declare ( strict_types = 1 );
 namespace Pixelgrade\StyleManager\Tests\Unit\Screen;
 
 use Brain\Monkey\Functions;
+use Carbon_Fields\Datastore\Datastore;
+use Pixelgrade\StyleManager\Customize\LocalFontStore;
+use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Screen\Settings;
 use Pixelgrade\StyleManager\Tests\Unit\TestCase;
+use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 class SettingsLocalFontsStatusTest extends TestCase {
 	public function setUp(): void {
@@ -109,5 +113,70 @@ class SettingsLocalFontsStatusTest extends TestCase {
 
 		$this->assertStringNotContainsString( '<script>alert(1)</script>', $html );
 		$this->assertStringContainsString( '&lt;script&gt;alert(1)&lt;/script&gt;', $html );
+	}
+
+	// -----------------------------------------------------------------
+	// get_local_fonts_status_html() -- instance wrapper + hub link
+	// -----------------------------------------------------------------
+
+	public function test_instance_html_appends_manage_in_hub_link_when_hub_url_is_available(): void {
+		Functions\when( 'esc_url' )->returnArg( 1 );
+
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'get_manifest' )->willReturn( [] );
+
+		$settings = new class(
+			$this->createMock( Options::class ),
+			$this->createMock( Datastore::class ),
+			$local_font_store,
+			$this->createMock( LoggerInterface::class )
+		) extends Settings {
+			protected function get_hub_fonts_url(): string {
+				return 'https://example.test/wp-admin/admin.php?page=pixelgrade&tab=styles&section=fonts';
+			}
+		};
+
+		$html = $settings->get_local_fonts_status_html();
+
+		$this->assertStringContainsString( '<p>No cloud fonts hosted locally yet.</p>', $html );
+		$this->assertStringContainsString( '<p><a href="https://example.test/wp-admin/admin.php?page=pixelgrade&tab=styles&section=fonts">Manage in Pixelgrade Design &rarr;</a></p>', $html );
+	}
+
+	public function test_instance_html_omits_manage_in_hub_link_when_hub_url_is_unavailable(): void {
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'get_manifest' )->willReturn( [] );
+
+		$settings = new class(
+			$this->createMock( Options::class ),
+			$this->createMock( Datastore::class ),
+			$local_font_store,
+			$this->createMock( LoggerInterface::class )
+		) extends Settings {
+			protected function get_hub_fonts_url(): string {
+				return '';
+			}
+		};
+
+		$html = $settings->get_local_fonts_status_html();
+
+		$this->assertSame( '<p>No cloud fonts hosted locally yet.</p>', $html );
+		$this->assertStringNotContainsString( 'Manage in Pixelgrade Design', $html );
+	}
+
+	public function test_get_hub_fonts_url_delegates_to_the_shared_namespaced_helper(): void {
+		// Real behavior, unmocked: `pixassist_get_hub_url()` is never defined
+		// in this test process, so the shared helper's absent-hub branch runs.
+		$settings = new class(
+			$this->createMock( Options::class ),
+			$this->createMock( Datastore::class ),
+			$this->createMock( LocalFontStore::class ),
+			$this->createMock( LoggerInterface::class )
+		) extends Settings {
+			public function expose_get_hub_fonts_url(): string {
+				return $this->get_hub_fonts_url();
+			}
+		};
+
+		$this->assertSame( '', $settings->expose_get_hub_fonts_url() );
 	}
 }

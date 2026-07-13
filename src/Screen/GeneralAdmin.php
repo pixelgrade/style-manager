@@ -276,6 +276,7 @@ class GeneralAdmin extends AbstractHookProvider {
 						<span class="style-manager-local-fonts-button__text"><?php esc_html_e( 'Host fonts locally', '__plugin_txtd' ); ?></span>
 					</button>
 					<a href="#" class="js-style-manager-dismiss-local-fonts-notice"><?php esc_html_e( 'Dismiss', '__plugin_txtd' ); ?></a>
+					<?php echo $this->get_manage_in_hub_link_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped in get_manage_in_hub_link_html(). ?>
 					&nbsp;<span class="message js-style-manager-local-fonts-message" style="font-style:italic"></span>
 				</p>
 			</div>
@@ -406,6 +407,43 @@ class GeneralAdmin extends AbstractHookProvider {
 		}
 
 		return $unhealthy;
+	}
+
+	/**
+	 * Build the "Manage in Pixelgrade Design" link markup shown next to the
+	 * Dismiss link, or an empty string when the hub isn't available.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string Escaped HTML, or ''.
+	 */
+	protected function get_manage_in_hub_link_html(): string {
+		$hub_url = $this->get_hub_fonts_url();
+		if ( '' === $hub_url ) {
+			return '';
+		}
+
+		return sprintf(
+			'&nbsp;<a href="%1$s" class="js-sm-manage-in-hub">%2$s</a>',
+			esc_url( $hub_url ),
+			esc_html__( 'Manage in Pixelgrade Design', '__plugin_txtd' )
+		);
+	}
+
+	/**
+	 * Get the URL to the Fonts section of the Pixelgrade Design hub's Styles tab.
+	 *
+	 * Extracted as a seam over the shared namespaced helper -- the underlying
+	 * `pixassist_get_hub_url()` function is defined by the Assistant plugin at
+	 * runtime, which can't be toggled on/off mid test-suite the way an
+	 * overridden method can.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string
+	 */
+	protected function get_hub_fonts_url(): string {
+		return \Pixelgrade\StyleManager\get_design_hub_fonts_url();
 	}
 
 	/**
