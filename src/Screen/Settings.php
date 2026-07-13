@@ -16,6 +16,7 @@ use Carbon_Fields\Container\Container;
 use Carbon_Fields\Datastore\Datastore;
 use Carbon_Fields\Field;
 use Pixelgrade\StyleManager\Capabilities;
+use Pixelgrade\StyleManager\Customize\LocalFontStore;
 use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
@@ -55,6 +56,13 @@ class Settings extends AbstractHookProvider {
 	protected Datastore $cf_datastore;
 
 	/**
+	 * The local font store, used to report which cloud fonts are hosted locally.
+	 *
+	 * @var LocalFontStore
+	 */
+	protected LocalFontStore $local_font_store;
+
+	/**
 	 * Logger.
 	 *
 	 * @var LoggerInterface
@@ -66,18 +74,21 @@ class Settings extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param Options         $options      Options.
-	 * @param Datastore       $cf_datastore The Carbon Fields datastore to use.
-	 * @param LoggerInterface $logger       Logger.
+	 * @param Options         $options          Options.
+	 * @param Datastore       $cf_datastore     The Carbon Fields datastore to use.
+	 * @param LocalFontStore  $local_font_store The local font store.
+	 * @param LoggerInterface $logger           Logger.
 	 */
 	public function __construct(
 		Options $options,
 		Datastore $cf_datastore,
+		LocalFontStore $local_font_store,
 		LoggerInterface $logger
 	) {
-		$this->options      = $options;
-		$this->cf_datastore = $cf_datastore;
-		$this->logger       = $logger;
+		$this->options          = $options;
+		$this->cf_datastore     = $cf_datastore;
+		$this->local_font_store = $local_font_store;
+		$this->logger           = $logger;
 	}
 
 	/**
@@ -199,6 +210,32 @@ class Settings extends AbstractHookProvider {
 					              'value' => true,
 				              ],
 			              ] ),
+			         Field::make( 'checkbox', 'typography_host_cloud_fonts_locally', esc_html__( 'Host cloud fonts on this site', '__plugin_txtd' ) )
+			              ->set_help_text( esc_html__( 'Fonts are downloaded once to your media folder and served from this site. Your visitors never connect to Pixelgrade servers, and your typography keeps working independently.', '__plugin_txtd' ) )
+			              ->set_option_value( 'yes' )
+			              ->set_default_value( 'yes' )
+			              ->set_conditional_logic( [
+				              [
+					              'field' => 'enable_typography',
+					              'value' => true,
+				              ],
+				              [
+					              'field' => 'typography_cloud_fonts',
+					              'value' => true,
+				              ],
+			              ] ),
+			         Field::make( 'html', 'local_fonts_status' )
+			              ->set_html( [ $this, 'get_local_fonts_status_html' ] )
+			              ->set_conditional_logic( [
+				              [
+					              'field' => 'enable_typography',
+					              'value' => true,
+				              ],
+				              [
+					              'field' => 'typography_cloud_fonts',
+					              'value' => true,
+				              ],
+			              ] ),
 
 		         ] )
 		         ->add_tab( esc_html__( 'Tools', '__plugin_txtd' ), [
@@ -210,6 +247,53 @@ class Settings extends AbstractHookProvider {
 
 	protected function get_reset_customizer_settings_html(): string {
 		return '<br><div class="reset_style_manager_settings"><button type="button" class="button" id="reset_customizer_settings">' . esc_html__( 'Reset Customizer Settings', '__plugin_txtd' ) . '</button></div>';
+	}
+
+	/**
+	 * Build the local fonts status HTML from the current local fonts manifest.
+	 *
+	 * Public so Carbon Fields can invoke it as the `html` field's lazy content
+	 * callback (`Field::make( 'html', ... )->set_html( [ $this, ... ] )`).
+	 *
+	 * @since 2.4.0
+	 */
+	public function get_local_fonts_status_html(): string {
+		return self::build_local_fonts_status_html( $this->local_font_store->get_manifest() );
+	}
+
+	/**
+	 * Build the local fonts status HTML for a given local fonts manifest.
+	 *
+	 * Pure and static so it can be unit-tested without a full Settings instance.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param array $manifest The local fonts manifest, as returned by
+	 *                        `LocalFontStore::get_manifest()` (`[ family => entry ]`).
+	 *
+	 * @return string Escaped HTML.
+	 */
+	public static function build_local_fonts_status_html( array $manifest ): string {
+		if ( empty( $manifest ) ) {
+			return '<p>' . esc_html__( 'No cloud fonts hosted locally yet.', '__plugin_txtd' ) . '</p>';
+		}
+
+		$rows = [];
+		foreach ( $manifest as $family => $entry ) {
+			$entry        = is_array( $entry ) ? $entry : [];
+			$family_label = ! empty( $entry['family_display'] ) ? (string) $entry['family_display'] : (string) $family;
+			$is_ok        = 'ok' === ( $entry['status'] ?? '' );
+			$status_label = $is_ok
+				? esc_html__( 'hosted locally', '__plugin_txtd' )
+				: esc_html__( 'download failed, will retry', '__plugin_txtd' );
+
+			$rows[] = '<li>' . esc_html( $family_label ) . ' &mdash; ' . $status_label . '</li>';
+		}
+
+		/* translators: %d: number of font families hosted locally on this site. */
+		$heading = sprintf( esc_html__( '%d font families hosted locally on this site.', '__plugin_txtd' ), count( $manifest ) );
+
+		return '<p>' . $heading . '</p><ul>' . implode( '', $rows ) . '</ul>';
 	}
 
 	protected function get_page_parent(): string {

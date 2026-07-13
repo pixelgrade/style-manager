@@ -348,6 +348,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\Settings(
 				$container['options'],
 				$container['plugin.settings.cfdatastore'],
+				$container['customize.local_font_store'],
 				$container['logger']
 			);
 		};
