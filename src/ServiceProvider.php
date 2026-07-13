@@ -172,6 +172,17 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new I18n();
 		};
 
+		$container['hooks.local_fonts'] = function( $container ) {
+			return new Provider\LocalFonts(
+				$container['customize.local_font_store'],
+				$container['customize.fonts'],
+				$container['customize.cloud_fonts'],
+				$container['customize.design_assets'],
+				$container['plugin.settings'],
+				$container['logger']
+			);
+		};
+
 		$container['hooks.rewrite_rules'] = function() {
 			return new Provider\RewriteRules();
 		};

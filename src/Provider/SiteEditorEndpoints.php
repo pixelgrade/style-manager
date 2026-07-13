@@ -210,6 +210,19 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 
 		$this->apply_post_save_side_effects( $result['saved'] );
 
+		/**
+		 * Fires after Site Editor settings have been successfully saved.
+		 *
+		 * Mirrors the Customizer's `customize_save_after` for consumers that need
+		 * a "settings were just saved" signal outside the Customizer (e.g. local
+		 * font mirroring, see Provider\LocalFonts).
+		 *
+		 * @since 2.4.0
+		 *
+		 * @param string[] $saved_setting_ids Setting IDs saved by the Site Editor endpoint.
+		 */
+		do_action( 'style_manager/settings_saved', $result['saved'] );
+
 		$record          = $this->get_settings_record( (string) $request->get_param( 'id' ) );
 		$record['saved'] = $result['saved'];
 
