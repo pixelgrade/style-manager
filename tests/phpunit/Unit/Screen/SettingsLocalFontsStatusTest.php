@@ -34,9 +34,32 @@ class SettingsLocalFontsStatusTest extends TestCase {
 			],
 		] );
 
-		$this->assertStringContainsString( '2 font families hosted locally on this site.', $html );
+		// The heading counts only successfully-hosted (status 'ok') entries,
+		// even though both entries still appear in the list below.
+		$this->assertStringContainsString( '1 font families hosted locally on this site.', $html );
 		$this->assertStringContainsString( '<li>Uncut Sans &mdash; hosted locally</li>', $html );
 		$this->assertStringContainsString( '<li>Quentin &mdash; download failed, will retry</li>', $html );
+	}
+
+	public function test_heading_counts_only_ok_entries_when_multiple_of_each_status(): void {
+		$html = Settings::build_local_fonts_status_html( [
+			'Font A' => [ 'family_display' => 'Font A', 'status' => 'ok' ],
+			'Font B' => [ 'family_display' => 'Font B', 'status' => 'ok' ],
+			'Font C' => [ 'family_display' => 'Font C', 'status' => 'failed' ],
+		] );
+
+		$this->assertStringContainsString( '2 font families hosted locally on this site.', $html );
+	}
+
+	public function test_heading_shows_zero_when_all_entries_failed(): void {
+		$html = Settings::build_local_fonts_status_html( [
+			'Font A' => [ 'family_display' => 'Font A', 'status' => 'failed' ],
+			'Font B' => [ 'family_display' => 'Font B', 'status' => 'failed' ],
+		] );
+
+		$this->assertStringContainsString( '0 font families hosted locally on this site.', $html );
+		$this->assertStringContainsString( '<li>Font A &mdash; download failed, will retry</li>', $html );
+		$this->assertStringContainsString( '<li>Font B &mdash; download failed, will retry</li>', $html );
 	}
 
 	public function test_family_display_is_preferred_over_the_family_key_when_non_empty(): void {

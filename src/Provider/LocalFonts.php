@@ -54,14 +54,6 @@ class LocalFonts extends AbstractHookProvider {
 	const MAX_ATTEMPTS = 5;
 
 	/**
-	 * How many stale mirrors maybe_refresh_mirrors() re-mirrors inline per run;
-	 * the rest are scheduled via the cron hook.
-	 *
-	 * @since 2.4.0
-	 */
-	const MAX_INLINE_REFRESHES_PER_RUN = 3;
-
-	/**
 	 * Local font store.
 	 *
 	 * @var LocalFontStore
@@ -212,6 +204,12 @@ class LocalFonts extends AbstractHookProvider {
 	 * cap. Families still failing after the attempt are rescheduled with
 	 * backoff at `time() + attempts * 30 * MINUTE_IN_SECONDS`.
 	 *
+	 * A family that is already healthy is normally skipped -- unless it was
+	 * scheduled here because it is stale (the cloud's `last_modified` changed
+	 * since it was mirrored, see maybe_refresh_mirrors()), in which case it is
+	 * re-mirrored too. Without this, scheduled refreshes of healthy-but-stale
+	 * families would never actually run.
+	 *
 	 * @since 2.4.0
 	 *
 	 * @param array $families Font family names to retry.
@@ -222,8 +220,15 @@ class LocalFonts extends AbstractHookProvider {
 		}
 
 		foreach ( $families as $family ) {
-			if ( ! is_string( $family ) || '' === $family || $this->local_font_store->is_healthy( $family ) ) {
+			if ( ! is_string( $family ) || '' === $family ) {
 				continue;
+			}
+
+			if ( $this->local_font_store->is_healthy( $family ) ) {
+				$cloud_last_modified = $this->get_cloud_last_modified_map()[ $family ] ?? '';
+				if ( ! $this->local_font_store->needs_refresh( $family, $cloud_last_modified ) ) {
+					continue;
+				}
 			}
 
 			$entry    = $this->local_font_store->get_entry( $family );
@@ -245,11 +250,18 @@ class LocalFonts extends AbstractHookProvider {
 	}
 
 	/**
-	 * `admin_init` callback, throttled to once per 12h: re-mirrors healthy
-	 * manifest families whose cloud `last_modified` has changed, and retries
-	 * previously-failed USED families (attempts cap respected). Never mirrors a
-	 * family that is neither already in the manifest nor currently used -- no
-	 * silent retroactive migration of fonts that were never requested.
+	 * `admin_init` callback, throttled to once per 12h: decides which families
+	 * need a refresh -- healthy manifest families whose cloud `last_modified`
+	 * has changed, plus previously-failed USED families (attempts cap
+	 * respected) -- and schedules them all via the cron hook (see
+	 * mirror_families()). Never mirrors a family that is neither already in
+	 * the manifest nor currently used -- no silent retroactive migration of
+	 * fonts that were never requested.
+	 *
+	 * This method never mirrors inline: a stale-but-healthy mirror keeps
+	 * working, so a refresh is never urgent enough to justify doing remote
+	 * HTTP during an admin page load, which could stall the admin for
+	 * several seconds. All mirroring happens out-of-band via the cron hook.
 	 *
 	 * @since 2.4.0
 	 */
@@ -302,14 +314,7 @@ class LocalFonts extends AbstractHookProvider {
 			return;
 		}
 
-		$inline    = array_slice( $to_refresh, 0, self::MAX_INLINE_REFRESHES_PER_RUN );
-		$scheduled = array_slice( $to_refresh, self::MAX_INLINE_REFRESHES_PER_RUN );
-
-		foreach ( $inline as $family ) {
-			$this->mirror_family( $family );
-		}
-
-		$this->schedule_retry( $scheduled, MINUTE_IN_SECONDS );
+		$this->schedule_retry( $to_refresh, MINUTE_IN_SECONDS );
 	}
 
 	/**

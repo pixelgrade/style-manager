@@ -278,7 +278,8 @@ class Settings extends AbstractHookProvider {
 			return '<p>' . esc_html__( 'No cloud fonts hosted locally yet.', '__plugin_txtd' ) . '</p>';
 		}
 
-		$rows = [];
+		$rows     = [];
+		$ok_count = 0;
 		foreach ( $manifest as $family => $entry ) {
 			$entry        = is_array( $entry ) ? $entry : [];
 			$family_label = ! empty( $entry['family_display'] ) ? (string) $entry['family_display'] : (string) $family;
@@ -287,11 +288,18 @@ class Settings extends AbstractHookProvider {
 				? esc_html__( 'hosted locally', '__plugin_txtd' )
 				: esc_html__( 'download failed, will retry', '__plugin_txtd' );
 
+			if ( $is_ok ) {
+				$ok_count++;
+			}
+
 			$rows[] = '<li>' . esc_html( $family_label ) . ' &mdash; ' . $status_label . '</li>';
 		}
 
+		// Only count successfully-hosted entries in the heading; failed
+		// entries are still listed below (with their status) so the count
+		// doesn't overstate what's actually being served locally.
 		/* translators: %d: number of font families hosted locally on this site. */
-		$heading = sprintf( esc_html__( '%d font families hosted locally on this site.', '__plugin_txtd' ), count( $manifest ) );
+		$heading = sprintf( esc_html__( '%d font families hosted locally on this site.', '__plugin_txtd' ), $ok_count );
 
 		return '<p>' . $heading . '</p><ul>' . implode( '', $rows ) . '</ul>';
 	}

@@ -272,6 +272,64 @@ class LocalFontsTest extends TestCase {
 		$this->addToAssertionCount( 1 );
 	}
 
+	public function test_mirror_families_re_mirrors_a_healthy_but_stale_family(): void {
+		// A family scheduled by maybe_refresh_mirrors() because the cloud's
+		// last_modified changed is healthy (still serving its old mirror) but
+		// must still be re-mirrored -- otherwise scheduled refreshes never run.
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'is_healthy' )->with( 'Stale Font' )->willReturn( true );
+		$local_font_store->method( 'needs_refresh' )->with( 'Stale Font', 'new' )->willReturn( true );
+		$local_font_store->method( 'get_entry' )->willReturn( [ 'attempts' => 0 ] );
+
+		$cloud_fonts = $this->createMock( CloudFonts::class );
+		$cloud_fonts->method( 'get_cloud_fonts' )->willReturn( [
+			'Stale Font' => [ 'family' => 'Stale Font', 'src' => 'https://cloud.example.test/stale/stylesheet.css' ],
+		] );
+
+		$design_assets = $this->createMock( DesignAssets::class );
+		$design_assets->method( 'get_entry' )->with( 'cloud_fonts' )->willReturn( [
+			'hash1' => [ 'font_family' => 'Stale Font', 'last_modified' => 'new' ],
+		] );
+
+		$local_font_store->expects( $this->once() )->method( 'mirror_font' )->willReturn( true );
+
+		$this->make_provider( $local_font_store, null, $cloud_fonts, $design_assets )->mirror_families( [ 'Stale Font' ] );
+	}
+
+	public function test_mirror_families_skips_a_healthy_family_that_does_not_need_refresh(): void {
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'is_healthy' )->with( 'Fresh Font' )->willReturn( true );
+		$local_font_store->method( 'needs_refresh' )->willReturn( false );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
+
+		$cloud_fonts = $this->createMock( CloudFonts::class );
+		$cloud_fonts->expects( $this->never() )->method( 'get_cloud_fonts' );
+
+		Functions\expect( 'wp_schedule_single_event' )->never();
+
+		$this->make_provider( $local_font_store, null, $cloud_fonts )->mirror_families( [ 'Fresh Font' ] );
+		$this->addToAssertionCount( 1 );
+	}
+
+	public function test_mirror_families_still_caps_attempts_for_a_healthy_stale_family(): void {
+		// The attempts cap applies uniformly; a healthy-but-stale family whose
+		// attempts already reached the cap (from prior failed refreshes) is left
+		// serving its stale-but-working local mirror rather than retried forever.
+		$local_font_store = $this->createMock( LocalFontStore::class );
+		$local_font_store->method( 'is_healthy' )->willReturn( true );
+		$local_font_store->method( 'needs_refresh' )->willReturn( true );
+		$local_font_store->method( 'get_entry' )->willReturn( [ 'attempts' => LocalFonts::MAX_ATTEMPTS ] );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
+
+		$cloud_fonts = $this->createMock( CloudFonts::class );
+		$cloud_fonts->expects( $this->never() )->method( 'get_cloud_fonts' );
+
+		Functions\expect( 'wp_schedule_single_event' )->never();
+
+		$this->make_provider( $local_font_store, null, $cloud_fonts )->mirror_families( [ 'Capped Stale Font' ] );
+		$this->addToAssertionCount( 1 );
+	}
+
 	// -----------------------------------------------------------------
 	// maybe_refresh_mirrors()
 	// -----------------------------------------------------------------
@@ -287,7 +345,11 @@ class LocalFontsTest extends TestCase {
 		$this->make_provider( $local_font_store )->maybe_refresh_mirrors();
 	}
 
-	public function test_maybe_refresh_mirrors_reruns_a_stale_family_when_last_modified_changed(): void {
+	public function test_maybe_refresh_mirrors_schedules_a_stale_family_when_last_modified_changed(): void {
+		// admin_init only decides + schedules; it must never mirror inline
+		// (remote HTTP during an admin page load could stall the admin for
+		// seconds). The actual mirroring happens in the cron-driven
+		// mirror_families().
 		Functions\when( 'get_option' )->justReturn( 0 ); // Never run before -> not throttled.
 		Functions\when( 'update_option' )->justReturn( true );
 
@@ -297,23 +359,35 @@ class LocalFontsTest extends TestCase {
 		] );
 		$local_font_store->method( 'needs_refresh' )->with( 'Stale Font', 'new' )->willReturn( true );
 		$local_font_store->method( 'is_healthy' )->willReturn( true );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
 
 		$sm_fonts = $this->createMock( Fonts::class );
 		$sm_fonts->method( 'get_used_cloud_font_families' )->willReturn( [] );
 
 		$cloud_fonts = $this->createMock( CloudFonts::class );
-		$cloud_fonts->method( 'get_cloud_fonts' )->willReturn( [
-			'Stale Font' => [ 'family' => 'Stale Font', 'src' => 'https://cloud.example.test/stale/stylesheet.css' ],
-		] );
+		$cloud_fonts->expects( $this->never() )->method( 'get_cloud_fonts' );
 
 		$design_assets = $this->createMock( DesignAssets::class );
 		$design_assets->method( 'get_entry' )->with( 'cloud_fonts' )->willReturn( [
 			'hash1' => [ 'font_family' => 'Stale Font', 'last_modified' => 'new' ],
 		] );
 
-		$local_font_store->expects( $this->once() )->method( 'mirror_font' )->willReturn( true );
+		Functions\expect( 'wp_next_scheduled' )
+			->once()
+			->with( LocalFonts::CRON_HOOK, [ [ 'Stale Font' ] ] )
+			->andReturn( false );
+
+		Functions\expect( 'wp_schedule_single_event' )
+			->once()
+			->with(
+				Mockery::type( 'integer' ),
+				LocalFonts::CRON_HOOK,
+				[ [ 'Stale Font' ] ]
+			)
+			->andReturn( true );
 
 		$this->make_provider( $local_font_store, $sm_fonts, $cloud_fonts, $design_assets )->maybe_refresh_mirrors();
+		$this->addToAssertionCount( 1 );
 	}
 
 	public function test_maybe_refresh_mirrors_skips_a_family_when_last_modified_is_unchanged(): void {
@@ -342,7 +416,7 @@ class LocalFontsTest extends TestCase {
 		$this->make_provider( $local_font_store, $sm_fonts, $cloud_fonts, $design_assets )->maybe_refresh_mirrors();
 	}
 
-	public function test_maybe_refresh_mirrors_bounds_inline_refreshes_to_three_and_schedules_the_rest(): void {
+	public function test_maybe_refresh_mirrors_schedules_every_stale_family_in_a_single_event_without_mirroring_inline(): void {
 		Functions\when( 'get_option' )->justReturn( 0 );
 		Functions\when( 'update_option' )->justReturn( true );
 
@@ -357,20 +431,13 @@ class LocalFontsTest extends TestCase {
 		$local_font_store->method( 'get_manifest' )->willReturn( $manifest );
 		$local_font_store->method( 'needs_refresh' )->willReturn( true );
 		$local_font_store->method( 'is_healthy' )->willReturn( true );
-		$local_font_store->expects( $this->exactly( 3 ) )->method( 'mirror_font' )->willReturn( true );
+		$local_font_store->expects( $this->never() )->method( 'mirror_font' );
 
 		$sm_fonts = $this->createMock( Fonts::class );
 		$sm_fonts->method( 'get_used_cloud_font_families' )->willReturn( [] );
 
 		$cloud_fonts = $this->createMock( CloudFonts::class );
-		$cloud_fonts->method( 'get_cloud_fonts' )->willReturnCallback( static function () use ( $stale_families ) {
-			$config = [];
-			foreach ( $stale_families as $key => $family ) {
-				$config[ $family ] = [ 'family' => $family, 'src' => 'https://cloud.example.test/font-' . $key . '/stylesheet.css' ];
-			}
-
-			return $config;
-		} );
+		$cloud_fonts->expects( $this->never() )->method( 'get_cloud_fonts' );
 
 		$design_assets = $this->createMock( DesignAssets::class );
 		$design_assets->method( 'get_entry' )->willReturn( [] );
@@ -381,7 +448,7 @@ class LocalFontsTest extends TestCase {
 			->with(
 				Mockery::type( 'integer' ),
 				LocalFonts::CRON_HOOK,
-				[ [ 'Font D', 'Font E' ] ]
+				[ $stale_families ]
 			)
 			->andReturn( true );
 
