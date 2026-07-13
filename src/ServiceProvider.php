@@ -61,6 +61,8 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['customize.cloud_fonts'] = function( $container ) {
 			return new Customize\CloudFonts(
 				$container['customize.design_assets'],
+				$container['customize.local_font_store'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
@@ -95,6 +97,11 @@ class ServiceProvider implements ServiceProviderInterface {
 		};
 		$container['customize.tweak_board_section'] = function() {
 			return new Customize\TweakBoardSection();
+		};
+		$container['customize.local_font_store'] = function( $container ) {
+			return new Customize\LocalFontStore(
+				$container['logger']
+			);
 		};
 		$container['customize.general'] = function( $container ) {
 			return new Customize\Customize(
@@ -163,6 +170,17 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['hooks.i18n'] = function() {
 			return new I18n();
+		};
+
+		$container['hooks.local_fonts'] = function( $container ) {
+			return new Provider\LocalFonts(
+				$container['customize.local_font_store'],
+				$container['customize.fonts'],
+				$container['customize.cloud_fonts'],
+				$container['customize.design_assets'],
+				$container['plugin.settings'],
+				$container['logger']
+			);
 		};
 
 		$container['hooks.rewrite_rules'] = function() {
@@ -333,6 +351,10 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['screen.general_admin'] = function( $container ) {
 			return new Screen\GeneralAdmin(
+				$container['customize.local_font_store'],
+				$container['customize.fonts'],
+				$container['hooks.local_fonts'],
+				$container['plugin.settings'],
 				$container['logger']
 			);
 		};
@@ -341,6 +363,7 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Screen\Settings(
 				$container['options'],
 				$container['plugin.settings.cfdatastore'],
+				$container['customize.local_font_store'],
 				$container['logger']
 			);
 		};

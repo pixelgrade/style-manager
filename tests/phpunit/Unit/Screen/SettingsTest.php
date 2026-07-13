@@ -6,6 +6,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Screen;
 use Brain\Monkey\Functions;
 use Carbon_Fields\Datastore\Datastore;
 use Pixelgrade\StyleManager\Capabilities;
+use Pixelgrade\StyleManager\Customize\LocalFontStore;
 use Pixelgrade\StyleManager\Provider\Options;
 use Pixelgrade\StyleManager\Screen\Settings;
 use Pixelgrade\StyleManager\Tests\Unit\TestCase;
@@ -146,6 +147,7 @@ class SettingsTest extends TestCase {
 		return new TestSettings(
 			$options ?? $this->createMock( Options::class ),
 			$this->createMock( Datastore::class ),
+			$this->createMock( LocalFontStore::class ),
 			$this->createMock( LoggerInterface::class )
 		);
 	}

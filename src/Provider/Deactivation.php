@@ -71,6 +71,11 @@ class Deactivation extends AbstractHookProvider {
 		delete_option( 'rewrite_rules' );
 		delete_option( 'pixelgrade_style_manager_flush_rewrite_rules' );
 
+		// Clear any pending local font mirror/retry cron events so they don't
+		// keep firing (and re-registering themselves as no-ops) while the
+		// plugin is deactivated.
+		wp_clear_scheduled_hook( LocalFonts::CRON_HOOK );
+
 		$this->options->invalidate_all_caches();
 	}
 }

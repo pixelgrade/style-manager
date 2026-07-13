@@ -95,6 +95,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			Functions\when( 'esc_html__' )->alias( static fn( string $text ): string => $text );
 			Functions\when( 'is_wp_error' )->alias( static fn(): bool => false );
 			Functions\when( 'rest_ensure_response' )->alias( static fn( $response ) => $response );
+			Functions\when( 'do_action' )->justReturn( null );
 		}
 
 		private function mock_plus_entitlement_bridge( bool $bridge_available, bool $entitled ): void {

@@ -981,6 +981,83 @@ class Fonts extends AbstractHookProvider {
 	}
 
 	/**
+	 * Gather the distinct cloud font families currently in use across all saved
+	 * font field values -- i.e. families whose font type resolves to a cloud font
+	 * (self-hosted/mirrored or remote) with a stylesheet `src`, as opposed to
+	 * Google or system fonts.
+	 *
+	 * Reuses the same font field value iteration as getFontsStylesheetUrls().
+	 * Side-effect free.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string[] Deduped list of font family names.
+	 */
+	public function get_used_cloud_font_families(): array {
+		$families = [];
+
+		$font_fields = [];
+		$this->get_fields_by_key( $this->options->get_details_all(), 'type', 'font', $font_fields );
+
+		if ( empty( $font_fields ) ) {
+			return $families;
+		}
+
+		// These are fields that should have no frontend impact since they are just part of the internal logic.
+		$excluded_fields = [
+			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
+			FontPalettes::SM_FONT_PALETTE_VARIATION_OPTION_KEY,
+			'sm_fonts_connected_fields_preset',
+		];
+
+		foreach ( $font_fields as $id => $font ) {
+			// Bail if this is an excluded field.
+			if ( in_array( $id, $excluded_fields ) ) {
+				continue;
+			}
+
+			// Bail without a value.
+			if ( empty( $font['value'] ) ) {
+				continue;
+			}
+
+			$value = $this->standardizeFontValue( FontsHelper::maybeDecodeValue( $font['value'] ), $font );
+
+			// In case the value is empty, try a default value if the $font['value'] is actually the font family.
+			if ( empty( $value ) && is_string( $font['value'] ) ) {
+				$value = $this->getFontDefaultsValue( str_replace( '"', '', $font['value'] ) );
+			}
+
+			// Bail if we don't have a value or the value isn't an array.
+			if ( empty( $value ) || ! is_array( $value ) ) {
+				continue;
+			}
+
+			// We can't do anything without a font family.
+			if ( empty( $value['font_family'] ) ) {
+				continue;
+			}
+			$font_family = $value['font_family'];
+
+			// We are only interested in cloud fonts with an actual stylesheet to mirror.
+			if ( 'cloud_font' !== $this->determineFontType( $font_family ) ) {
+				continue;
+			}
+
+			$font_details = $this->getFontDetails( $font_family, 'cloud_font' );
+			if ( empty( $font_details['src'] ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $font_family, $families, true ) ) {
+				$families[] = $font_family;
+			}
+		}
+
+		return $families;
+	}
+
+	/**
 	 *
 	 * @since 2.0.0
 	 *

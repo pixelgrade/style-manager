@@ -11,6 +11,10 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Screen;
 
+use Pixelgrade\StyleManager\Customize\Fonts;
+use Pixelgrade\StyleManager\Customize\LocalFontStore;
+use Pixelgrade\StyleManager\Provider\LocalFonts;
+use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
@@ -20,6 +24,41 @@ use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
  * @since 2.0.0
  */
 class GeneralAdmin extends AbstractHookProvider {
+
+	/**
+	 * The option holding whether the "host cloud fonts locally" admin notice was dismissed.
+	 *
+	 * @since 2.4.0
+	 */
+	const LOCAL_FONTS_NOTICE_DISMISSED_OPTION = 'style_manager_local_fonts_notice_dismissed';
+
+	/**
+	 * Local font store.
+	 *
+	 * @var LocalFontStore
+	 */
+	protected LocalFontStore $local_font_store;
+
+	/**
+	 * Style Manager Fonts.
+	 *
+	 * @var Fonts
+	 */
+	protected Fonts $sm_fonts;
+
+	/**
+	 * Local fonts hook provider (handles the actual mirroring).
+	 *
+	 * @var LocalFonts
+	 */
+	protected LocalFonts $local_fonts_provider;
+
+	/**
+	 * Plugin settings.
+	 *
+	 * @var PluginSettings
+	 */
+	protected PluginSettings $plugin_settings;
 
 	/**
 	 * Logger.
@@ -33,12 +72,24 @@ class GeneralAdmin extends AbstractHookProvider {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param LoggerInterface $logger       Logger.
+	 * @param LocalFontStore  $local_font_store     Local font store.
+	 * @param Fonts           $sm_fonts             Style Manager Fonts.
+	 * @param LocalFonts      $local_fonts_provider Local fonts hook provider.
+	 * @param PluginSettings  $plugin_settings      Plugin settings.
+	 * @param LoggerInterface $logger               Logger.
 	 */
 	public function __construct(
+		LocalFontStore $local_font_store,
+		Fonts $sm_fonts,
+		LocalFonts $local_fonts_provider,
+		PluginSettings $plugin_settings,
 		LoggerInterface $logger
 	) {
-		$this->logger       = $logger;
+		$this->local_font_store     = $local_font_store;
+		$this->sm_fonts             = $sm_fonts;
+		$this->local_fonts_provider = $local_fonts_provider;
+		$this->plugin_settings      = $plugin_settings;
+		$this->logger               = $logger;
 	}
 
 	/**
@@ -54,6 +105,11 @@ class GeneralAdmin extends AbstractHookProvider {
 
 		// Prevent the old Customify from being activated via the Plugins dashboard page.
 		$this->add_action( 'load-plugins.php', 'add_plugin_action_link_filters', 1 );
+
+		// Host cloud fonts locally notice + one-click migrate.
+		$this->add_action( 'admin_notices', 'local_fonts_migration_notice' );
+		$this->add_action( 'wp_ajax_style_manager_host_fonts_locally', 'host_fonts_locally' );
+		$this->add_action( 'wp_ajax_style_manager_dismiss_local_fonts_notice', 'dismiss_local_fonts_notice' );
 	}
 
 	/**
@@ -180,6 +236,250 @@ class GeneralAdmin extends AbstractHookProvider {
 		<?php
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- buffered admin notice markup; embedded strings use esc_html_e / wp_kses_post / wp_nonce_field above.
 		echo ob_get_clean();
+	}
+
+	/**
+	 * Output a dismissible notice offering to mirror in-use Pixelgrade Cloud fonts
+	 * to this site's own media folder (one-click, via AJAX).
+	 *
+	 * @since 2.4.0
+	 */
+	function local_fonts_migration_notice() {
+		if ( ! $this->should_show_local_fonts_notice() ) {
+			return;
+		}
+
+		$unhealthy_count = count( $this->get_unhealthy_used_font_families() );
+
+		ob_start(); ?>
+		<div class="style-manager-notice__container style-manager-local-fonts-notice notice notice-info is-dismissible">
+			<h3><?php esc_html_e( 'Host your fonts on your own site', '__plugin_txtd' ); ?></h3>
+			<div class="js-style-manager-local-fonts-body">
+				<p>
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: %d: number of fonts currently loaded from Pixelgrade Cloud. */
+							_n(
+								'Your site currently loads %d font from Pixelgrade Cloud for your visitors. Host them on this site — your visitors never connect to our servers, and your typography keeps working no matter what. Fonts are downloaded once to your media folder and stay up to date automatically.',
+								'Your site currently loads %d fonts from Pixelgrade Cloud for your visitors. Host them on this site — your visitors never connect to our servers, and your typography keeps working no matter what. Fonts are downloaded once to your media folder and stay up to date automatically.',
+								$unhealthy_count,
+								'__plugin_txtd'
+							),
+							$unhealthy_count
+						)
+					);
+					?>
+				</p>
+				<p>
+					<button type="button" class="style-manager-local-fonts-button button button-primary js-style-manager-host-fonts-locally">
+						<span class="style-manager-local-fonts-button__text"><?php esc_html_e( 'Host fonts locally', '__plugin_txtd' ); ?></span>
+					</button>
+					<a href="#" class="js-style-manager-dismiss-local-fonts-notice"><?php esc_html_e( 'Dismiss', '__plugin_txtd' ); ?></a>
+					&nbsp;<span class="message js-style-manager-local-fonts-message" style="font-style:italic"></span>
+				</p>
+			</div>
+			<?php wp_nonce_field( 'style_manager_host_fonts_locally', 'nonce-style_manager_host_fonts_locally' ); ?>
+			<?php wp_nonce_field( 'style_manager_dismiss_local_fonts_notice', 'nonce-style_manager_dismiss_local_fonts_notice' ); ?>
+		</div>
+		<script>
+			(function ($) {
+				$(function () {
+					let $noticeContainer = $('.style-manager-local-fonts-notice'),
+						$body = $noticeContainer.find('.js-style-manager-local-fonts-body'),
+						$button = $noticeContainer.find('.js-style-manager-host-fonts-locally'),
+						$buttonText = $noticeContainer.find('.style-manager-local-fonts-button__text'),
+						$dismissLink = $noticeContainer.find('.js-style-manager-dismiss-local-fonts-notice'),
+						$statusMessage = $noticeContainer.find('.js-style-manager-local-fonts-message');
+
+					function dismissNotice() {
+						$.ajax({
+							url: "<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>",
+							type: 'post',
+							data: {
+								action: 'style_manager_dismiss_local_fonts_notice',
+								nonce_dismiss: $noticeContainer.find('#nonce-style_manager_dismiss_local_fonts_notice').val()
+							}
+						});
+					}
+
+					$button.on('click', function (e) {
+						e.preventDefault();
+
+						$buttonText.html("<?php esc_html_e( 'Hosting fonts…', '__plugin_txtd' ); ?>");
+						$button.attr('disabled', true);
+						$dismissLink.hide();
+
+						$.ajax({
+							url: "<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>",
+							type: 'post',
+							data: {
+								action: 'style_manager_host_fonts_locally',
+								nonce_host: $noticeContainer.find('#nonce-style_manager_host_fonts_locally').val()
+							}
+						})
+							.done(function (response) {
+								if (response && response.success && response.data && response.data.message) {
+									$body.html('<p>' + response.data.message + '</p>');
+								} else {
+									$statusMessage.html("<?php esc_html_e( 'Something went wrong and we couldn\'t host the fonts locally.', '__plugin_txtd' ); ?>");
+									$buttonText.html("<?php esc_html_e( 'Host fonts locally', '__plugin_txtd' ); ?>");
+									$button.attr('disabled', false);
+									$dismissLink.show();
+								}
+							})
+							.fail(function () {
+								$statusMessage.html("<?php esc_html_e( 'Something went wrong and we couldn\'t host the fonts locally.', '__plugin_txtd' ); ?>");
+								$buttonText.html("<?php esc_html_e( 'Host fonts locally', '__plugin_txtd' ); ?>");
+								$button.attr('disabled', false);
+								$dismissLink.show();
+							})
+					})
+
+					// The "Dismiss" link.
+					$dismissLink.on('click', function (e) {
+						e.preventDefault();
+
+						dismissNotice();
+						$noticeContainer.slideUp();
+					})
+
+					// The WP-native dismiss "x" button (added because of the `is-dismissible` class).
+					$(document).on('click', '.style-manager-local-fonts-notice .notice-dismiss', function () {
+						dismissNotice();
+					})
+				})
+			})(jQuery)
+		</script>
+		<?php
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- buffered admin notice markup; embedded strings use esc_html_e / wp_kses_post / wp_nonce_field above.
+		echo ob_get_clean();
+	}
+
+	/**
+	 * Whether the "host cloud fonts locally" notice should be shown: the current
+	 * user can manage options, both the `typography_cloud_fonts` and
+	 * `typography_host_cloud_fonts_locally` settings are truthy, the notice
+	 * hasn't been dismissed, and at least one currently-used cloud font family
+	 * isn't healthy in the local font store yet.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return bool
+	 */
+	protected function should_show_local_fonts_notice(): bool {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		// Duplicate the same two reads as Provider\LocalFonts::is_enabled() -- kept
+		// protected there on purpose, so we read the settings ourselves here.
+		if ( ! $this->plugin_settings->get( 'typography_cloud_fonts', 'yes' )
+			|| ! $this->plugin_settings->get( 'typography_host_cloud_fonts_locally', 'yes' ) ) {
+
+			return false;
+		}
+
+		if ( get_option( self::LOCAL_FONTS_NOTICE_DISMISSED_OPTION ) ) {
+			return false;
+		}
+
+		return ! empty( $this->get_unhealthy_used_font_families() );
+	}
+
+	/**
+	 * Currently-used cloud font families that aren't healthy in the local font store.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string[]
+	 */
+	protected function get_unhealthy_used_font_families(): array {
+		$unhealthy = [];
+		foreach ( $this->sm_fonts->get_used_cloud_font_families() as $family ) {
+			if ( ! is_string( $family ) || '' === $family ) {
+				continue;
+			}
+			if ( ! $this->local_font_store->is_healthy( $family ) ) {
+				$unhealthy[] = $family;
+			}
+		}
+
+		return $unhealthy;
+	}
+
+	/**
+	 * Process the ajax call to mirror all currently-used cloud fonts to local storage.
+	 *
+	 * @since 2.4.0
+	 */
+	function host_fonts_locally() {
+		check_ajax_referer( 'style_manager_host_fonts_locally', 'nonce_host' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
+		$previously_unhealthy = $this->get_unhealthy_used_font_families();
+
+		$this->local_fonts_provider->mirror_used_fonts();
+
+		$mirrored = 0;
+		$failed   = 0;
+		foreach ( $previously_unhealthy as $family ) {
+			if ( $this->local_font_store->is_healthy( $family ) ) {
+				$mirrored++;
+			} else {
+				$failed++;
+			}
+		}
+
+		if ( $failed > 0 ) {
+			$message = sprintf(
+				/* translators: %d: number of fonts that could not be downloaded. */
+				_n(
+					'%d font could not be downloaded right now — a retry is scheduled.',
+					'%d fonts could not be downloaded right now — retries are scheduled.',
+					$failed,
+					'__plugin_txtd'
+				),
+				$failed
+			);
+		} else {
+			$message = sprintf(
+				/* translators: %d: number of fonts now served from this site. */
+				_n(
+					'%d font is now served from your site.',
+					'%d fonts are now served from your site.',
+					$mirrored,
+					'__plugin_txtd'
+				),
+				$mirrored
+			);
+		}
+
+		wp_send_json_success( [
+			'mirrored' => $mirrored,
+			'failed'   => $failed,
+			'message'  => $message,
+		] );
+	}
+
+	/**
+	 * Process the ajax call to dismiss the "host cloud fonts locally" notice.
+	 *
+	 * @since 2.4.0
+	 */
+	function dismiss_local_fonts_notice() {
+		check_ajax_referer( 'style_manager_dismiss_local_fonts_notice', 'nonce_dismiss' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
+		update_option( self::LOCAL_FONTS_NOTICE_DISMISSED_OPTION, 1, false );
+
+		wp_send_json_success();
 	}
 
 	/**

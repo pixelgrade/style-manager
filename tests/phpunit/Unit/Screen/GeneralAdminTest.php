@@ -4,11 +4,36 @@ declare ( strict_types = 1 );
 namespace Pixelgrade\StyleManager\Tests\Unit\Screen;
 
 use Brain\Monkey\Functions;
+use Pixelgrade\StyleManager\Customize\Fonts;
+use Pixelgrade\StyleManager\Customize\LocalFontStore;
+use Pixelgrade\StyleManager\Provider\LocalFonts;
+use Pixelgrade\StyleManager\Provider\PluginSettings;
 use Pixelgrade\StyleManager\Screen\GeneralAdmin;
 use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 class GeneralAdminTest extends TestCase {
+
+	/**
+	 * Build a GeneralAdmin instance with mocked dependencies, allowing overrides.
+	 *
+	 * @since 2.4.0
+	 */
+	private function make_general_admin(
+		?LocalFontStore $local_font_store = null,
+		?Fonts $sm_fonts = null,
+		?LocalFonts $local_fonts_provider = null,
+		?PluginSettings $plugin_settings = null
+	): GeneralAdmin {
+		return new GeneralAdmin(
+			$local_font_store ?? $this->createMock( LocalFontStore::class ),
+			$sm_fonts ?? $this->createMock( Fonts::class ),
+			$local_fonts_provider ?? $this->createMock( LocalFonts::class ),
+			$plugin_settings ?? $this->createMock( PluginSettings::class ),
+			$this->createMock( LoggerInterface::class )
+		);
+	}
+
 	public function test_child_theme_migration_ajax_denies_unauthorized_users_before_mutating_theme_mods(): void {
 		$json_error_called = false;
 
@@ -31,7 +56,7 @@ class GeneralAdminTest extends TestCase {
 		} );
 
 		try {
-			( new GeneralAdmin( $this->createMock( LoggerInterface::class ) ) )->migrate_customizations_from_parent_to_child_theme();
+			$this->make_general_admin()->migrate_customizations_from_parent_to_child_theme();
 			$this->fail( 'Denied migration request should stop at wp_send_json_error().' );
 		} catch ( \RuntimeException $e ) {
 			$this->assertSame( 'migration_ajax_denied', $e->getMessage() );
@@ -99,7 +124,7 @@ class GeneralAdminTest extends TestCase {
 		} );
 
 		try {
-			( new GeneralAdmin( $this->createMock( LoggerInterface::class ) ) )->migrate_customizations_from_parent_to_child_theme();
+			$this->make_general_admin()->migrate_customizations_from_parent_to_child_theme();
 			$this->fail( 'Successful migration request should stop at wp_send_json_success().' );
 		} catch ( \RuntimeException $e ) {
 			$this->assertSame( 'migration_ajax_success', $e->getMessage() );
@@ -142,7 +167,7 @@ class GeneralAdminTest extends TestCase {
 			return true;
 		} );
 
-		( new GeneralAdmin( $this->createMock( LoggerInterface::class ) ) )->migrate_to_advanced_dark_mode_control();
+		$this->make_general_admin()->migrate_to_advanced_dark_mode_control();
 
 		$this->assertSame( 'on', $updates['sm_dark_mode_advanced'] );
 		$this->assertSame( 'off', $updates['sm_dark_mode'] );
