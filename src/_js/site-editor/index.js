@@ -19,6 +19,7 @@ import { initDocsLinks } from './docs-links';
 import { initializePreview } from './preview';
 import { mountNativeControls, getResettableSettings, PanelResetMenu, VoiceTunerPanel } from './native-controls';
 import { mountTryAndPlay } from './try-and-play';
+import { plusUpsellUrl } from './upsell-url';
 import {
   clearNativeSaveEdits,
   filterLockedPlusChangedValues,
@@ -173,7 +174,7 @@ const getPlusTrialOptions = sectionId => {
     bannerText: plusPayload.bannerText || '',
     badge: plusPayload.badge || 'Plus',
     learnMore: plusPayload.upsellUrl
-      ? { label: plusPayload.learnMore || 'Learn more', url: plusPayload.upsellUrl }
+      ? { label: plusPayload.learnMore || 'Learn more', url: plusUpsellUrl( plusPayload, { content: sectionId } ) }
       : null,
   };
 };
@@ -532,7 +533,7 @@ const buildSectionPanel = section => {
         bannerText: fpCopy.bannerText || ( plusPayload && plusPayload.bannerText ) || '',
         badge: ( plusPayload && plusPayload.badge ) || 'Plus',
         learnMore: ( plusPayload && plusPayload.upsellUrl )
-          ? { label: ( plusPayload && plusPayload.learnMore ) || 'Learn more', url: plusPayload.upsellUrl }
+          ? { label: ( plusPayload && plusPayload.learnMore ) || 'Learn more', url: plusUpsellUrl( plusPayload, { content: 'sm_font_palettes_plus' } ) }
           : null,
         controlsEl: proCards,
       } );

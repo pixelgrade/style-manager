@@ -19,6 +19,13 @@
  * controls it covers (handled by the shipped `.sm-tap-host` helper applied here);
  * the intro is inserted as `targetEl`'s previous sibling, so it stays uncovered.
  *
+ * ONE BOUNDARY PER TAB (pixelgrade-plus/docs/plus-gating-ui-contract.md,
+ * "merged groups"): a tab must never stack several of these boundaries. SM
+ * satisfies the rule by construction — every gated surface mounts exactly ONE
+ * Try & Play per tab, and `targetEl` can already span any number of control
+ * groups. Keep it that way when adding surfaces; Nova Blocks enforces the same
+ * rule with its <TryAndPlayGroup> wrapper.
+ *
  * @since 2.4.0
  */
 

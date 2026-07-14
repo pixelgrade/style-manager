@@ -34,6 +34,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 import { filterLockedPlusChangedValues, getSignalGatedChangedValues } from './plus-save-filter';
+import { plusUpsellUrl } from './upsell-url';
 
 // The native Save button and its stable container in the unified editor header.
 const SETTINGS_CONTAINER_SELECTOR = '.editor-header__settings';
@@ -95,7 +96,8 @@ const UpsellPopover = ( { anchor, plusPayload, onClose } ) => {
     return null;
   }
 
-  const upsellUrl = ( plusPayload && plusPayload.upsellUrl ) || 'https://pixelgrade.com/plus';
+  const upsellUrl = plusUpsellUrl( plusPayload, { medium: 'save-plus', content: 'save-popover' } )
+    || 'https://pixelgrade.com/plus';
   const badge = ( plusPayload && plusPayload.badge ) || __( 'Plus', '__plugin_txtd' );
   const productName = ( plusPayload && plusPayload.productName ) || __( 'Pixelgrade Plus', '__plugin_txtd' );
 
@@ -379,7 +381,8 @@ export const initPlusSaveAffordance = ( { engine, plusPayload, getChanges, entit
     if ( ! noticesDispatch || 'function' !== typeof noticesDispatch.createNotice ) {
       return;
     }
-    const upsellUrl = plusPayload.upsellUrl || 'https://pixelgrade.com/plus';
+    const upsellUrl = plusUpsellUrl( plusPayload, { medium: 'save-plus', content: 'mixed-save-snackbar' } )
+      || 'https://pixelgrade.com/plus';
     // Qualitative, count-free copy — see UpsellPopover. Honest about what's
     // previewing vs. kept, without surfacing the engine's cascade count.
     const message = __(
