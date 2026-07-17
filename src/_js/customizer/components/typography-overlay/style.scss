@@ -24,11 +24,12 @@ $badge-font-accent: #9C9CDD;
   --theme-button-padding: calc(var(--theme-button-y-padding) - var(--theme-button-border-width)) var(--theme-button-x-padding);
 }
 
-.wp-block-button * {
+.sm-typography-preview .wp-block-button[class] .wp-block-button__link[class] {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
   font-style: inherit;
+  line-height: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
 }
