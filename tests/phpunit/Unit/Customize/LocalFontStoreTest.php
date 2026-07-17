@@ -9,6 +9,13 @@ use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 
 class LocalFontStoreTest extends TestCase {
+	public function setUp(): void {
+		parent::setUp();
+
+		Functions\when( 'wp_parse_url' )->alias(
+			static fn( string $url, int $component = -1 ) => parse_url( $url, $component )
+		);
+	}
 
 	public function tearDown(): void {
 		// The health cache is a static, per-request cache. Reset it between tests

@@ -339,7 +339,7 @@ final class DesignSystemPreviewEndpoint extends AbstractHookProvider {
 		$stylesheet_urls = [];
 		foreach ( $this->fonts->getFontsStylesheetUrls() as $url ) {
 			$url = \trim( (string) $url );
-			$scheme = (string) \parse_url( $url, PHP_URL_SCHEME );
+			$scheme = (string) \wp_parse_url( $url, PHP_URL_SCHEME );
 
 			if ( \str_starts_with( $url, '//' ) || \in_array( \strtolower( $scheme ), [ 'http', 'https' ], true ) ) {
 				$stylesheet_urls[] = $url;
@@ -548,6 +548,6 @@ final class DesignSystemPreviewEndpoint extends AbstractHookProvider {
 	 * Produces a plain display string without exposing markup.
 	 */
 	private function plain_text( $value ): string {
-		return \trim( \strip_tags( (string) $value ) );
+		return \trim( \wp_strip_all_tags( (string) $value ) );
 	}
 }

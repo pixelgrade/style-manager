@@ -115,7 +115,7 @@ class LocalFontStore {
 		foreach ( self::extract_css_urls( $css ) as $ref ) {
 			if ( $this->is_absolute_ref( $ref ) ) {
 				$file_url = $this->normalize_to_https( $ref );
-				$basename = basename( (string) parse_url( $file_url, PHP_URL_PATH ) );
+				$basename = basename( (string) wp_parse_url( $file_url, PHP_URL_PATH ) );
 				if ( '' === $basename ) {
 					return $this->handle_mirror_failure( $family, $font_config, $last_modified, $url, $slug, 'Could not resolve a filename for an absolute font URL.' );
 				}
@@ -377,7 +377,7 @@ class LocalFontStore {
 			$url = 'https:' . $url;
 		}
 
-		$path     = (string) parse_url( $url, PHP_URL_PATH );
+		$path     = (string) wp_parse_url( $url, PHP_URL_PATH );
 		$segments = array_values( array_filter( explode( '/', $path ), static fn( string $segment ): bool => '' !== $segment ) );
 
 		// Drop the filename segment (e.g. stylesheet.css); the slug is the segment before it.

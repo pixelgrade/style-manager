@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.3.2
+Stable tag: 2.4.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@ Instead of tuning isolated colors, font sizes, and spacing values by hand, you w
 
 Themes that support Style Manager apply the system across site templates and theme details. Compatible blocks can adapt to the same design decisions in context, so sections and blocks feel like part of one site rather than separate styling work.
 
-In Style Manager 2.3, the main styling flow is available in the Site Editor, with visual preview boards, editor-canvas previews, and a Live Site preview for reviewing unsaved changes before publishing.
+In Style Manager 2.4, the main styling flow is available in the Site Editor, with visual preview boards, editor-canvas previews, a searchable font picker, and a Live Site preview for reviewing unsaved changes before publishing.
 
 = Free compatible stack =
 
@@ -73,7 +73,7 @@ Use Anima for theme-level integration and Nova Blocks for compatible blocks. Bot
 
 = Where do I find the Style Manager controls? =
 
-In Style Manager 2.3, compatible themes can expose the main styling flow in Appearance > Editor. Themes that still use the Customizer workflow can expose Style Manager controls in Appearance > Customize.
+In Style Manager 2.4, compatible themes can expose the main styling flow in Appearance > Editor. Themes that still use the Customizer workflow can expose Style Manager controls in Appearance > Customize.
 
 = Do I need to write CSS? =
 
@@ -83,9 +83,9 @@ No. Style Manager is designed around visual controls and live previews. Theme an
 
 No Pixelgrade account is required for the core styling workflow. Some design assets are loaded from Pixelgrade Cloud as described in the Privacy & External Services section.
 
-= What is new in Style Manager 2.3? =
+= What is new in Style Manager 2.4? =
 
-Style Manager 2.3 brings the styling experience into the Site Editor, including preview boards, editor-canvas previews, and a Live Site preview flow for unsaved changes.
+Style Manager 2.4 makes typography more direct in the Site Editor with a native searchable font picker and a Site Title font shortcut. It also self-hosts compatible Pixelgrade Cloud fonts on your site by default, adds local-font status controls to the Pixelgrade Design hub, and improves font-palette previews.
 
 == Screenshots ==
 
@@ -111,14 +111,27 @@ Style Manager uses external services to deliver some design assets.
 
 To provide color palettes, font palettes, and curated design configurations, the plugin can fetch design assets from Pixelgrade Cloud. This request is made from the WordPress admin, not from your site's frontend, and the response is cached locally.
 
+Compatible Pixelgrade Cloud fonts used by your design are copied to your site's uploads directory and served locally by default. This keeps visitor font requests on your own site and preserves a working local copy if a font is later removed from the cloud catalog. Site owners can manage this behavior and review local font status from the Pixelgrade Design hub.
+
 When fetching design assets or submitting the plugin's existing settings statistics, the plugin sends: your site URL, whether the site uses SSL, your WordPress version and language, the site's environment type, the Style Manager version, an observed first-party service label, and your active theme's slug, name, URI, version, and text domain. Pixelgrade Cloud retains the site URL and daily aggregate service observations so Pixelgrade can understand which first-party services are in use. This does not record page views, visitor activity, site content, credentials, license data, support messages, usernames, email addresses, or IP addresses in the service registry, and the plugin does not load tracking or analytics scripts.
 
 * Service: Pixelgrade Cloud
 * Provider: Pixelgrade - https://pixelgrade.com
 * Privacy Policy: https://pixelgrade.com/privacy/
-* Web fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
+* Google Fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.4.0 =
+* New: self-host compatible Pixelgrade Cloud fonts on the WordPress site by default, with background retries, refreshes, and resilient local copies for fonts removed from the catalog.
+* New: review locally hosted font status and controls in the Pixelgrade Design hub.
+* New: choose fonts through a native searchable Site Editor picker with remembered filters and theme-reference fonts.
+* New: edit the global Site Title font directly from the Site Title block's Typography inspector, using the same setting and font catalog as Style Manager Typography.
+* New: expose a normalized design-system preview contract for companion tools.
+* Improved: load font-palette preview families and valid variants before selection, restore distinctive accent typography, and make Preview buttons inherit the selected font.
+* Improved: add semantic divider color roles across every palette variation.
+* Fix: normalize legacy font preview values and preserve Plus save behavior for direct Site Title font edits.
+* Maintenance: refresh the Google Fonts catalog and use WordPress URL and text APIs throughout release-scanned runtime code.
 
 = 2.3.2 =
 * Improved: preview boards now enter and exit smoothly, including cross-fades when switching directly between previews.

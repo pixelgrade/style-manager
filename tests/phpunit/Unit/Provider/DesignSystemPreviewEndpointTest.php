@@ -15,6 +15,12 @@ class DesignSystemPreviewEndpointTest extends TestCase {
 
 		Functions\when( '__' )->returnArg( 1 );
 		Functions\when( 'wp_unslash' )->returnArg( 1 );
+		Functions\when( 'wp_parse_url' )->alias(
+			static fn( string $url, int $component = -1 ) => parse_url( $url, $component )
+		);
+		Functions\when( 'wp_strip_all_tags' )->alias(
+			static fn( $text ): string => strip_tags( (string) $text )
+		);
 	}
 
 	public function test_endpoint_requires_edit_theme_options_capability(): void {
