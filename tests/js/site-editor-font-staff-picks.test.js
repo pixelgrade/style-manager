@@ -29,6 +29,24 @@ test( 'bundled staff picks lead with a focused Wordmarks collection', () => {
 	assert.ok( wordmarks.families.length < 30, 'keeps logo browsing deliberately curated' );
 } );
 
+test( 'Wordmarks includes the expanded display-face picks', () => {
+	installGlobals();
+
+	const wordmarks = getStaffPicksCollections().find( collection => 'wordmarks' === collection.key );
+	const additions = [
+		'MuseoModerno',
+		'Basteleur',
+		'Psychedelic Cowboy',
+		'FORTA',
+		'Jaro',
+	];
+
+	additions.forEach( family => {
+		assert.ok( wordmarks.families.includes( family ), `includes ${ family }` );
+	} );
+	assert.equal( new Set( wordmarks.families ).size, wordmarks.families.length, 'keeps every family unique' );
+} );
+
 test( 'a cloud payload remains authoritative for the Wordmarks collection', () => {
 	installGlobals( {
 		wordmarks: [ 'Cloud Wordmark One', 'Cloud Wordmark Two' ],
