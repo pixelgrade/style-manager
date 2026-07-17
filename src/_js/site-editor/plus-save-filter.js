@@ -232,6 +232,9 @@ const isPerCategoryFontOutputId = id => /^sm_font_/.test( id ) && ! TYPOGRAPHY_C
  */
 export const getSignalGatedChangedValues = ( changedValues = {}, plusPayload = null ) => {
   const gated = getGatedChangedValues( changedValues, plusPayload );
+  const directGatedSettingIds = new Set( plusPayload && Array.isArray( plusPayload.directGatedSettingIds )
+    ? plusPayload.directGatedSettingIds
+    : [] );
   const drivenByHigherLevel = TYPOGRAPHY_CASCADE_DRIVER_IDS.some( id => hasOwn( changedValues, id ) );
   const drivenByFontPalette = hasOwn( changedValues, FONT_PALETTE_SETTING_ID );
   const lockedPaletteSignal = hasLockedFontPaletteChange( changedValues, plusPayload )
@@ -242,7 +245,7 @@ export const getSignalGatedChangedValues = ( changedValues = {}, plusPayload = n
     ...lockedPaletteSignal,
     ...Object.fromEntries(
       Object.entries( gated ).filter( ( [ id ] ) => {
-        if ( isThemeFontOption( id ) ) {
+        if ( isThemeFontOption( id ) && ! directGatedSettingIds.has( id ) ) {
           return false;
         }
         if ( drivenByFontPalette && CONNECTED_FIELDS_PRESET_SETTING_ID === id ) {

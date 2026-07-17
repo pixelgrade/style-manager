@@ -1964,6 +1964,44 @@ $sm-se-board-exit-ms: 220ms;
 	}
 }
 
+// The Site Title block exposes the same global Usage picker in core's
+// Typography tools panel. This is deliberately only a layout wrapper: the
+// field itself keeps the shared native-font skin above.
+.sm-site-title-font-shortcut {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+
+	&__trial {
+		display: flex;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0;
+		font-size: 12px;
+		line-height: 1.4;
+		color: #757575;
+
+		a {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	&__badge {
+		flex: 0 0 auto;
+		padding: 2px 6px;
+		border-radius: 9px;
+		background: var(--wp-admin-theme-color, #3858e9);
+		color: #fff;
+		font-size: 9px;
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: .04em;
+		text-transform: uppercase;
+	}
+}
+
 // The font family picker popover content.
 .sm-font-picker {
 	width: 268px;

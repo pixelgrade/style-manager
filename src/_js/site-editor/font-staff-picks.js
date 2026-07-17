@@ -15,6 +15,32 @@
  */
 
 const BUNDLED_STAFF_PICKS = {
+  // Display faces with enough personality and structure to behave like a
+  // wordmark. The list deliberately mixes Pixelgrade Cloud families with
+  // broadly available Google families; the picker filters it against the
+  // catalog enabled on the current site.
+  wordmarks: [
+    'Reforma1969',
+    'Faune',
+    'Sporting Grotesque',
+    'Butler Stencil',
+    'Salome',
+    'Mondia',
+    'Restora',
+    'Cabinet Grotesk',
+    'Murmure',
+    'Prata',
+    'Cormorant',
+    'Young Serif',
+    'Syne',
+    'League Gothic',
+    'Big Shoulders',
+    'Playfair Display',
+    'DM Serif Display',
+    'Fraunces',
+    'Bodoni Moda',
+    'Cinzel',
+  ],
   headings: [
     'Cooper Hewitt',
     'League Spartan',
@@ -162,11 +188,12 @@ const THEME_FONT_REFERENCES = [
   { family: 'St. Martin', roles: [ 'headings' ] },
 ];
 
-const COLLECTION_ORDER = [ 'headings', 'body', 'handwriting' ];
+const COLLECTION_ORDER = [ 'wordmarks', 'headings', 'body', 'handwriting' ];
 
 export const getStaffPicksCollections = () => {
   const { __ } = wp.i18n;
   const labels = {
+    wordmarks: __( 'Staff Picks · Wordmarks', '__plugin_txtd' ),
     headings: __( 'Staff Picks · Headings', '__plugin_txtd' ),
     body: __( 'Staff Picks · Body', '__plugin_txtd' ),
     handwriting: __( 'Staff Picks · Handwriting', '__plugin_txtd' ),

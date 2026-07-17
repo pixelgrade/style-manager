@@ -19,6 +19,7 @@ import $ from 'jquery';
 
 import { getFontDetails, determineFontType } from '../customizer/fonts/utils';
 import { ensureFontFamilyOption } from '../customizer/fonts/native-ui';
+import { applyFontFamilySelection } from './font-setting-adapter';
 import { getStaffPicksCollections } from './font-staff-picks';
 
 const HEADER_HEIGHT = 34;
@@ -521,7 +522,7 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
 /**
  * The font family selector: a select-like button opening the picker popover.
  */
-const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
+export const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
   const { Popover } = wp.components;
   const { useState, useEffect, useRef } = wp.element;
   const [ isOpen, setIsOpen ] = useState( false );
@@ -581,6 +582,23 @@ const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
     </div>
   );
 };
+
+/**
+ * Select a family through a rendered legacy font control. Both the Usage skin
+ * and block-inspector shortcuts call this function, so normalization and live
+ * preview stay on the original engine path.
+ */
+export const pickFontFamily = ( root, settingId, family ) => applyFontFamilySelection( {
+  root,
+  settingId,
+  family,
+  ensureOption: ensureFontFamilyOption,
+  dispatchChange: ( select, picked ) => {
+    const $select = $( select );
+    $select.val( picked ).data( 'touched', true );
+    $select.trigger( 'change' );
+  },
+} );
 
 /**
  * Read the current setting value entry, unwrapping { value, unit } shapes.
@@ -682,16 +700,9 @@ export const NativeFont = ( { settingId, li } ) => {
   const familyDisplay = ( details && details.family_display ) || family;
 
   const pickFamily = picked => {
-    const select = li.querySelector( 'select.style-manager_font_family' );
-    if ( ! select ) {
-      return;
-    }
-    ensureFontFamilyOption( select, picked );
-    const $select = $( select );
-    $select.val( picked ).data( 'touched', true );
     // The legacy change pipeline refreshes the variant options, serializes the
     // value onto the setting and reaches the preview + webfont loading.
-    $select.trigger( 'change' );
+    pickFontFamily( li, settingId, picked );
   };
 
   const applySubfield = ( entry, newValue ) => {

@@ -30,6 +30,7 @@ import {
 import { initPlusSaveAffordance } from './plus-save-affordance';
 import { initializeColorTargetFeedback } from './target-feedback';
 import { playSiteEditorMotionPreview } from './motion-preview';
+import { registerSiteTitleFontShortcut } from './site-title-font-shortcut';
 import {
   getPreviewContext,
   getPreviewMode,
@@ -102,6 +103,7 @@ const ensureSmCustomizerAlias = () => {
  * and closes, never re-initialized (jQuery bindings survive DOM detachment).
  */
 let engine = null;
+let parkedEngineHost = null;
 
 /**
  * The container <li> id WP renders for a control id (brackets become dashes).
@@ -929,6 +931,44 @@ const bootEngine = eng => {
 };
 
 /**
+ * Keep the initialized legacy controls mounted while the Style Manager
+ * sidebar is closed. The Site Title inspector can therefore use the exact
+ * same setting/change pipeline without forcing the sidebar open or creating a
+ * second engine instance.
+ */
+const getParkedEngineHost = () => {
+  if ( parkedEngineHost && parkedEngineHost.isConnected ) {
+    return parkedEngineHost;
+  }
+
+  parkedEngineHost = document.createElement( 'div' );
+  parkedEngineHost.className = 'sm-site-editor-engine-host';
+  parkedEngineHost.hidden = true;
+  parkedEngineHost.setAttribute( 'aria-hidden', 'true' );
+  document.body.appendChild( parkedEngineHost );
+
+  return parkedEngineHost;
+};
+
+const parkEngine = eng => {
+  if ( eng?.root ) {
+    getParkedEngineHost().appendChild( eng.root );
+  }
+};
+
+const ensureEngineReady = () => {
+  const eng = ensureEngine();
+
+  if ( ! eng.root.parentNode ) {
+    parkEngine( eng );
+  }
+
+  bootEngine( eng );
+
+  return eng;
+};
+
+/**
  * The Customizer's preview tabs (Live Site / Typography / Colors) adapted to
  * the Site Editor: the tab bar sits in the editor top bar area and the
  * overlays (the original ColorsOverlay / TypographyOverlay components) cover
@@ -1617,18 +1657,15 @@ const registerSidebar = () => {
     const containerRef = useRef( null );
 
     useEffect( () => {
-      const eng = ensureEngine();
+      const eng = ensureEngineReady();
 
       containerRef.current.appendChild( eng.root );
-      bootEngine( eng );
 
       const previewOverlaysRoot = mountPreviewOverlays();
 
       return () => {
         unmountPreviewOverlays( previewOverlaysRoot );
-        if ( eng.root.parentNode ) {
-          eng.root.parentNode.removeChild( eng.root );
-        }
+        parkEngine( eng );
       };
     }, [] );
 
@@ -1712,6 +1749,7 @@ const handleDeepLink = () => {
 
 if ( payload && window.styleManager && wp && wp.plugins && wp.editor && wp.editor.PluginSidebar ) {
   registerSidebar();
+  registerSiteTitleFontShortcut( { ensureEngineReady, payload } );
   initDocsLinks();
   wp.domReady( handleDeepLink );
 } else if ( payload ) {

@@ -161,6 +161,23 @@ test( 'gated changed values: mixed change returns only the genuinely gated subse
 	);
 } );
 
+test( 'a directly edited theme font target can signal the Plus save affordance', () => {
+	const siteTitleSetting = 'anima_options[site_title_font]';
+	const plusWithDirectShortcut = {
+		...lockedPlusFont,
+		gatedSettingIds: [ ...lockedPlusFont.gatedSettingIds, siteTitleSetting ],
+		directGatedSettingIds: [ siteTitleSetting ],
+	};
+
+	assert.deepEqual(
+		getSignalGatedChangedValues(
+			{ [ siteTitleSetting ]: { font_family: 'Prata' } },
+			plusWithDirectShortcut
+		),
+		{ [ siteTitleSetting ]: { font_family: 'Prata' } }
+	);
+} );
+
 test( 'gated changed values: free-only change returns an empty map', () => {
 	assert.deepEqual(
 		getGatedChangedValues(
