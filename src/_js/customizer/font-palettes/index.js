@@ -1,13 +1,22 @@
+/* global WebFont */
 import $ from 'jquery';
 import { initializeVoiceTunerAccordion } from './voice-tuner-accordion';
 import { initializeVoiceTuner } from './voice-tuner';
-import { applyFontPaletteSelection } from './utils';
+import { applyFontPaletteSelection, buildFontPalettePreviewWebFontConfig } from './utils';
 
 export const initializeFontPalettes = () => {
 
   $( '.js-font-palette' ).each( function( i, obj ) {
     const $paletteSet = $( obj );
     const $labels = $paletteSet.find( 'label' );
+    const previewFontConfig = buildFontPalettePreviewWebFontConfig(
+      $paletteSet.data( 'previewFontFamilies' ) || {},
+      window.styleManager?.fonts || {}
+    );
+
+    if ( 'undefined' !== typeof WebFont && ( previewFontConfig.google || previewFontConfig.custom ) ) {
+      WebFont.load( previewFontConfig );
+    }
 
     $labels.on( 'click', function( event ) {
       const $label = $( event.currentTarget );

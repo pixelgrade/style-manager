@@ -324,7 +324,8 @@ class Preset extends BaseControl {
 				}
 				?>
 
-				<div class="js-style-manager-preset js-font-palette customize-control-font-palette">
+				<div class="js-style-manager-preset js-font-palette customize-control-font-palette"
+					data-preview-font-families="<?php echo esc_attr( wp_json_encode( $preview_font_families ) ); ?>">
 					<?php
 					foreach ( $choices as $choice_value => $choice_config ) {
 						if ( empty( $choice_config['options'] ) && empty( $choice_config['fonts_logic'] ) ) {
@@ -426,110 +427,6 @@ class Preset extends BaseControl {
 						</span>
 					<?php } ?>
 				</div>
-
-				<?php if ( ! empty( $preview_font_families ) ) { ?>
-				<script>
-				(function() {
-					// Load preview fonts using the existing font infrastructure.
-					// familyVariants maps font family => array of needed variants.
-					var familyVariants = <?php echo wp_json_encode( $preview_font_families ); ?>;
-					var sm = window.styleManager;
-					var smCustomizer = window.sm && window.sm.customizer ? window.sm.customizer : null;
-					if ( ! sm || ! sm.fonts ) return;
-
-					var googleFamilies = [];
-					var customFamilies = [];
-					var customUrls = [];
-
-					function convertVariantToFVD( variant ) {
-						if ( smCustomizer && typeof smCustomizer.convertFontVariantToFVD === 'function' ) {
-							return smCustomizer.convertFontVariantToFVD( variant );
-						}
-
-						variant = String( variant );
-						var fontStyle = 'n';
-						if ( variant.indexOf( 'italic' ) !== -1 ) {
-							fontStyle = 'i';
-							variant = variant.replace( 'italic', '' );
-						} else if ( variant.indexOf( 'oblique' ) !== -1 ) {
-							fontStyle = 'o';
-							variant = variant.replace( 'oblique', '' );
-						}
-
-						var fontWeight = '4';
-						switch ( variant ) {
-							case '100':
-								fontWeight = '1';
-								break;
-							case '200':
-								fontWeight = '2';
-								break;
-							case '300':
-								fontWeight = '3';
-								break;
-							case '500':
-								fontWeight = '5';
-								break;
-							case '600':
-								fontWeight = '6';
-								break;
-							case '700':
-							case 'bold':
-								fontWeight = '7';
-								break;
-							case '800':
-								fontWeight = '8';
-								break;
-							case '900':
-								fontWeight = '9';
-								break;
-						}
-
-						return fontStyle + fontWeight;
-					}
-
-					Object.keys( familyVariants ).forEach( function( family ) {
-						var variants = Array.isArray( familyVariants[ family ] ) ? familyVariants[ family ].filter( function( variant ) {
-							return variant !== null && typeof variant !== 'undefined' && variant !== '';
-						} ) : [];
-						var googleSpec = variants.length ? family + ':' + variants.join( ',' ) : family;
-
-						if ( sm.fonts.google_fonts && sm.fonts.google_fonts[ family ] ) {
-							googleFamilies.push( googleSpec );
-							return;
-						}
-
-						var customFontDetails = null;
-						if ( sm.fonts.cloud_fonts && sm.fonts.cloud_fonts[ family ] && sm.fonts.cloud_fonts[ family ].src ) {
-							customFontDetails = sm.fonts.cloud_fonts[ family ];
-						} else if ( sm.fonts.theme_fonts && sm.fonts.theme_fonts[ family ] && sm.fonts.theme_fonts[ family ].src ) {
-							customFontDetails = sm.fonts.theme_fonts[ family ];
-						}
-
-						if ( customFontDetails ) {
-							var customSpec = variants.length ? family + ':' + variants.map( function( variant ) {
-								return convertVariantToFVD( variant );
-							} ).join( ',' ) : family;
-
-							customFamilies.push( customSpec );
-							customUrls.push( customFontDetails.src );
-						}
-					});
-
-					if ( typeof WebFont !== 'undefined' ) {
-						var config = { classes: false, events: false };
-						if ( googleFamilies.length ) config.google = { families: Array.from( new Set( googleFamilies ) ) };
-						if ( customFamilies.length ) {
-							config.custom = {
-								families: Array.from( new Set( customFamilies ) ),
-								urls: Array.from( new Set( customUrls ) )
-							};
-						}
-						WebFont.load( config );
-					}
-				})();
-				</script>
-				<?php } ?>
 
 				<?php break;
 			}
