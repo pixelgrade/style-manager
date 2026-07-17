@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
 	applyFontFamilySelection,
+	bindFontFamilySetting,
 	findFontControl,
 	resolveThemeSettingId,
 } from '../../src/_js/site-editor/font-setting-adapter.js';
@@ -85,4 +86,37 @@ test( 'font family selection drives the existing hidden control pipeline', () =>
 		ensureOption: () => assert.fail( 'missing controls must not be mutated' ),
 		dispatchChange: () => assert.fail( 'missing controls must not dispatch changes' ),
 	} ), false );
+} );
+
+test( 'reselecting Site Title hydrates the family without clearing direct edit provenance', () => {
+	let value = { font_family: 'Prata' };
+	const callbacks = new Set();
+	const setting = () => value;
+	setting.bind = callback => callbacks.add( callback );
+	setting.unbind = callback => callbacks.delete( callback );
+
+	let directFamily = 'Prata';
+	const families = [];
+	const bind = () => bindFontFamilySetting( {
+		setting,
+		onChange: family => families.push( family ),
+		onExternalChange: () => {
+			directFamily = '';
+		},
+		isDirectMutation: () => false,
+	} );
+
+	const unbindFirstSelection = bind();
+	assert.equal( directFamily, 'Prata' );
+	unbindFirstSelection();
+
+	const unbindSecondSelection = bind();
+	assert.equal( directFamily, 'Prata' );
+	assert.deepEqual( families, [ 'Prata', 'Prata' ] );
+
+	value = { font_family: 'SUSE Mono' };
+	callbacks.forEach( callback => callback( value ) );
+	assert.equal( directFamily, '' );
+	assert.deepEqual( families, [ 'Prata', 'Prata', 'SUSE Mono' ] );
+	unbindSecondSelection();
 } );

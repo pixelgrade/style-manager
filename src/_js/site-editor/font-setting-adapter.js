@@ -31,6 +31,39 @@ export const findFontControl = ( root, settingId ) => {
 };
 
 /**
+ * Bind a font setting without treating the initial read as a new mutation.
+ * Site Title controls mount only while the block is selected, so hydration on
+ * reselect must preserve provenance for any still-unsaved direct edit.
+ */
+export const bindFontFamilySetting = ( {
+  setting,
+  onChange,
+  onExternalChange = () => {},
+  isDirectMutation = () => false,
+} ) => {
+  if (
+    'function' !== typeof setting
+    || 'function' !== typeof setting.bind
+    || 'function' !== typeof setting.unbind
+    || 'function' !== typeof onChange
+  ) {
+    return () => {};
+  }
+
+  const sync = value => {
+    if ( ! isDirectMutation() ) {
+      onExternalChange( value );
+    }
+    onChange( value?.font_family || '' );
+  };
+
+  setting.bind( sync );
+  onChange( setting()?.font_family || '' );
+
+  return () => setting.unbind( sync );
+};
+
+/**
  * Drive the existing font family control rather than writing a parallel font
  * value. The injected callbacks keep this helper DOM-library agnostic and let
  * the caller retain the legacy jQuery change pipeline.

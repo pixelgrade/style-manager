@@ -2,7 +2,7 @@
 import React from 'react';
 
 import { FontFamilyControl, pickFontFamily } from './font-control';
-import { findFontControl, resolveThemeSettingId } from './font-setting-adapter';
+import { bindFontFamilySetting, findFontControl, resolveThemeSettingId } from './font-setting-adapter';
 import { plusUpsellUrl } from './upsell-url';
 
 const SETTING_BASENAME = 'site_title_font';
@@ -73,19 +73,19 @@ const SiteTitleFontControl = ( { clientId, ensureEngineReady, payload } ) => {
     }
 
     engineRef.current = eng;
-    const sync = value => {
-      if ( ! directMutationRef.current ) {
+    const unbind = bindFontFamilySetting( {
+      setting,
+      onChange: setFamily,
+      onExternalChange: () => {
         // A palette/sizing cascade or Usage edit supersedes any earlier direct
         // shortcut provenance before the Save · Plus listener sees the event.
         clearDirectGatedEdit( settingId, payload.plus );
-      }
-      setFamily( value?.font_family || '' );
-    };
-    setting.bind( sync );
-    sync( setting() );
+      },
+      isDirectMutation: () => directMutationRef.current,
+    } );
     setReady( true );
 
-    return () => setting.unbind( sync );
+    return unbind;
   }, [ settingId ] );
 
   if ( ! ready || ! engineRef.current ) {
