@@ -166,7 +166,9 @@ test( 'a directly edited theme font target can signal the Plus save affordance',
 	const plusWithDirectShortcut = {
 		...lockedPlusFont,
 		gatedSettingIds: [ ...lockedPlusFont.gatedSettingIds, siteTitleSetting ],
-		directGatedSettingIds: [ siteTitleSetting ],
+		directGatedSettingValues: {
+			[ siteTitleSetting ]: { font_family: 'Prata' },
+		},
 	};
 
 	assert.deepEqual(
@@ -175,6 +177,28 @@ test( 'a directly edited theme font target can signal the Plus save affordance',
 			plusWithDirectShortcut
 		),
 		{ [ siteTitleSetting ]: { font_family: 'Prata' } }
+	);
+} );
+
+test( 'a stale direct font marker does not turn a later derived cascade into a Plus signal', () => {
+	const siteTitleSetting = 'anima_options[site_title_font]';
+	const plusWithStaleShortcut = {
+		...lockedPlusFont,
+		gatedSettingIds: [ ...lockedPlusFont.gatedSettingIds, siteTitleSetting ],
+		directGatedSettingValues: {
+			[ siteTitleSetting ]: { font_family: 'Prata' },
+		},
+	};
+
+	assert.deepEqual(
+		getSignalGatedChangedValues(
+			{
+				sm_font_palette: 'system',
+				[ siteTitleSetting ]: { font_family: 'SUSE Mono' },
+			},
+			plusWithStaleShortcut
+		),
+		{}
 	);
 } );
 

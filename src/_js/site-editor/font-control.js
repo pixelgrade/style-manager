@@ -554,6 +554,8 @@ export const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
         type="button"
         className="sm-native-font__family-button"
         onClick={ () => setIsOpen( ! isOpen ) }
+        aria-label={ label ? `${ label }: ${ display }` : display }
+        aria-haspopup="listbox"
         aria-expanded={ isOpen }
         ref={ buttonRef }
       >

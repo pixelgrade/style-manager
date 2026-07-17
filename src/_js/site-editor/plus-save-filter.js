@@ -207,6 +207,23 @@ export const CONNECTED_FIELDS_PRESET_SETTING_ID = 'sm_fonts_connected_fields_pre
 // re-derives. The drivers themselves are never gated, but exclude them anyway.
 const isPerCategoryFontOutputId = id => /^sm_font_/.test( id ) && ! TYPOGRAPHY_CASCADE_DRIVER_IDS.includes( id );
 
+const matchesDirectGatedSettingValue = ( id, value, plusPayload ) => {
+  const expectedValues = plusPayload && isPlainObject( plusPayload.directGatedSettingValues )
+    ? plusPayload.directGatedSettingValues
+    : {};
+
+  if ( ! hasOwn( expectedValues, id ) ) {
+    return false;
+  }
+
+  const expected = expectedValues[ id ];
+  if ( isPlainObject( expected ) && isPlainObject( value ) ) {
+    return Object.keys( expected ).every( key => isEquivalentValue( expected[ key ], value[ key ] ) );
+  }
+
+  return isEquivalentValue( expected, value );
+};
+
 /**
  * The gated changes that represent a *deliberate* premium refinement — the
  * signal that drives the "Save · Plus" affordance. Two rules narrow the raw
@@ -232,9 +249,6 @@ const isPerCategoryFontOutputId = id => /^sm_font_/.test( id ) && ! TYPOGRAPHY_C
  */
 export const getSignalGatedChangedValues = ( changedValues = {}, plusPayload = null ) => {
   const gated = getGatedChangedValues( changedValues, plusPayload );
-  const directGatedSettingIds = new Set( plusPayload && Array.isArray( plusPayload.directGatedSettingIds )
-    ? plusPayload.directGatedSettingIds
-    : [] );
   const drivenByHigherLevel = TYPOGRAPHY_CASCADE_DRIVER_IDS.some( id => hasOwn( changedValues, id ) );
   const drivenByFontPalette = hasOwn( changedValues, FONT_PALETTE_SETTING_ID );
   const lockedPaletteSignal = hasLockedFontPaletteChange( changedValues, plusPayload )
@@ -245,7 +259,7 @@ export const getSignalGatedChangedValues = ( changedValues = {}, plusPayload = n
     ...lockedPaletteSignal,
     ...Object.fromEntries(
       Object.entries( gated ).filter( ( [ id ] ) => {
-        if ( isThemeFontOption( id ) && ! directGatedSettingIds.has( id ) ) {
+        if ( isThemeFontOption( id ) && ! matchesDirectGatedSettingValue( id, changedValues[ id ], plusPayload ) ) {
           return false;
         }
         if ( drivenByFontPalette && CONNECTED_FIELDS_PRESET_SETTING_ID === id ) {

@@ -30,16 +30,23 @@ const isLockedSetting = ( settingId, plusPayload ) => !! (
   && plusPayload.gatedSettingIds.includes( settingId )
 );
 
-const markDirectGatedEdit = ( settingId, plusPayload ) => {
+const markDirectGatedEdit = ( settingId, family, plusPayload ) => {
   if ( ! isLockedSetting( settingId, plusPayload ) ) {
     return;
   }
 
-  const direct = new Set( Array.isArray( plusPayload.directGatedSettingIds )
-    ? plusPayload.directGatedSettingIds
-    : [] );
-  direct.add( settingId );
-  plusPayload.directGatedSettingIds = Array.from( direct );
+  plusPayload.directGatedSettingValues = {
+    ...( plusPayload.directGatedSettingValues || {} ),
+    [ settingId ]: { font_family: family },
+  };
+};
+
+const clearDirectGatedEdit = ( settingId, plusPayload ) => {
+  if ( ! plusPayload?.directGatedSettingValues ) {
+    return;
+  }
+
+  delete plusPayload.directGatedSettingValues[ settingId ];
 };
 
 const SiteTitleFontControl = ( { clientId, ensureEngineReady, payload } ) => {
@@ -48,6 +55,7 @@ const SiteTitleFontControl = ( { clientId, ensureEngineReady, payload } ) => {
   const [ family, setFamily ] = useState( '' );
   const [ ready, setReady ] = useState( false );
   const engineRef = useRef( null );
+  const directMutationRef = useRef( false );
   const settingId = useMemo( () => resolveThemeSettingId(
     payload?.customizeSettings?.settings || {},
     SETTING_BASENAME
@@ -65,7 +73,14 @@ const SiteTitleFontControl = ( { clientId, ensureEngineReady, payload } ) => {
     }
 
     engineRef.current = eng;
-    const sync = value => setFamily( value?.font_family || '' );
+    const sync = value => {
+      if ( ! directMutationRef.current ) {
+        // A palette/sizing cascade or Usage edit supersedes any earlier direct
+        // shortcut provenance before the Save · Plus listener sees the event.
+        clearDirectGatedEdit( settingId, payload.plus );
+      }
+      setFamily( value?.font_family || '' );
+    };
     setting.bind( sync );
     sync( setting() );
     setReady( true );
@@ -94,20 +109,28 @@ const SiteTitleFontControl = ( { clientId, ensureEngineReady, payload } ) => {
   return (
     <InspectorControls group="typography">
       <ToolsPanelItem
-        hasValue={ () => true }
+        hasValue={ () => false }
         isShownByDefault
         label={ __( 'Site Title font', '__plugin_txtd' ) }
         onDeselect={ () => {} }
+        resetAllFilter={ attributes => attributes }
         panelId={ clientId }
       >
         <div className="sm-site-title-font-shortcut">
           <FontFamilyControl
-            label={ __( 'Font', '__plugin_txtd' ) }
+            label={ __( 'Site Title font', '__plugin_txtd' ) }
             family={ family }
             recommended={ recommended }
             onPick={ picked => {
-              markDirectGatedEdit( settingId, payload.plus );
-              pickFontFamily( engineRef.current.root, settingId, picked );
+              directMutationRef.current = true;
+              markDirectGatedEdit( settingId, picked, payload.plus );
+              try {
+                if ( ! pickFontFamily( engineRef.current.root, settingId, picked ) ) {
+                  clearDirectGatedEdit( settingId, payload.plus );
+                }
+              } finally {
+                directMutationRef.current = false;
+              }
             } }
           />
           { locked && (
