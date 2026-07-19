@@ -18,6 +18,7 @@ function copyFolder() {
     'rsync',
     '-a',
     '--delete',
+    '--exclude', '.worktrees',
     '--exclude', 'node_modules',
     '--exclude', 'tests',
     '--exclude', 'tasks',
