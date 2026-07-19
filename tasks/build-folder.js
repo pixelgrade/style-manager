@@ -10,9 +10,8 @@ const slug = gulpconfig.slug;
 // -----------------------------------------------------------------------------
 // Copy plugin folder outside in a build folder.
 // -----------------------------------------------------------------------------
-function copyFolder() {
-  fs.rmSync( './../build', { recursive: true, force: true } );
-  fs.mkdirSync( './../build/' + slug, { recursive: true } );
+function copyProductionFiles( sourceDirectory, destinationDirectory ) {
+  fs.mkdirSync( destinationDirectory, { recursive: true } );
 
   const command = [
     'rsync',
@@ -23,11 +22,16 @@ function copyFolder() {
     '--exclude', 'tests',
     '--exclude', 'tasks',
     '--exclude', 'node-tasks',
-    './',
-    './../build/' + slug + '/',
+    sourceDirectory.replace( /\/$/, '' ) + '/',
+    destinationDirectory.replace( /\/$/, '' ) + '/',
   ];
 
   cp.execFileSync( command[0], command.slice(1), { stdio: 'inherit' } );
+}
+
+function copyFolder() {
+  fs.rmSync( './../build', { recursive: true, force: true } );
+  copyProductionFiles( './', './../build/' + slug + '/' );
 
   return Promise.resolve();
 }
@@ -82,3 +86,5 @@ gulp.task( 'build:folder:wporg', gulp.series(
   'build:copy-folder',
   'build:remove-unneeded-files:wporg'
 ) );
+
+module.exports = { copyProductionFiles };
