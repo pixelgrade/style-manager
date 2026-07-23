@@ -1,0 +1,85 @@
+// Segmented preset control — choices_type: 'buttons' (e.g. the Layout Rail
+// Scale presets). The native radios are visually hidden; each choice becomes an
+// equal-width chip that wraps to a second row when the sidebar is narrow, and
+// the selected chip is filled. Loaded through dist/js/customizer.css, so it
+// applies in both the Customizer and the Site Editor sidebar.
+
+.customize-control-preset-buttons {
+
+  .js-style-manager-preset.radio_buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: calc( 0.25 * var(--customizer-spacing) );
+  }
+
+  .style-manager_radio_button {
+    // Reset the fieldset wrapper.
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+
+    // Equal-width segments: ~3 per row at the sidebar width, wrapping to a
+    // second row; the trailing row grows to fill.
+    flex: 1 1 calc( 33.333% - 6px );
+    display: flex;
+  }
+
+  // Keep the radio in the DOM and focusable (arrow-key navigation) but out of
+  // sight — the label is the visual target and toggles it through for/id.
+  input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
+  }
+
+  label.button {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 2.4em;
+    padding: 0.35em 0.5em;
+    box-sizing: border-box;
+
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+
+    color: var(--sm-color-palette-accent-color-7, #006fbb);
+    background: var(--sm-color-palette-neutral-color-1, #fff);
+    border: var(--customizer-field-border-width, 2px) solid var(--sm-color-palette-accent-color-7, #006fbb);
+    border-radius: 6px;
+
+    font-size: var(--customizer-field-font-size, 13px);
+    font-weight: 600;
+    line-height: 1.1;
+
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      background: var(--sm-color-palette-accent-color-2, #edf1f6);
+    }
+  }
+
+  input[type="radio"]:checked + label.button {
+    color: var(--sm-color-palette-neutral-color-1, #fff);
+    background: var(--sm-color-palette-accent-color-7, #006fbb);
+    border-color: var(--sm-color-palette-accent-color-7, #006fbb);
+  }
+
+  input[type="radio"]:focus-visible + label.button {
+    outline: 2px solid var(--sm-color-palette-accent-color-9, #0b4889);
+    outline-offset: 1px;
+  }
+}

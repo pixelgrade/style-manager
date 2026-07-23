@@ -92,24 +92,91 @@
 		transition: width .15s ease;
 	}
 
+	// The rails + reading column occupy the container below the badges.
+	&__anatomy {
+		display: flex;
+		align-items: stretch;
+		height: 100%;
+		padding-top: 58px;
+	}
+
+	// A rail reserves its Large width on each side; the three bands (S/M/L) stack
+	// so all three widths read at once, hugging the inner (content) edge.
+	&__rail {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 8px;
+		flex-shrink: 0;
+		padding-bottom: 8px;
+		transition: width .15s ease;
+
+		&--left {
+			align-items: flex-end;
+		}
+
+		&--right {
+			align-items: flex-start;
+		}
+	}
+
+	&__rail-band {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 16px;
+		min-width: 10px;
+		border-radius: 2px;
+		transition: width .15s ease;
+
+		em {
+			font-size: 9px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 1;
+			color: #fff;
+			opacity: .9;
+		}
+
+		&--s {
+			background: var(--sm-current-accent-color, #3858e9);
+		}
+
+		&--m {
+			background: color-mix(in srgb, var(--sm-current-accent-color, #3858e9) 62%, #fff);
+		}
+
+		&--l {
+			background: color-mix(in srgb, var(--sm-current-accent-color, #3858e9) 34%, #fff);
+
+			em {
+				color: var(--sm-current-fg1-color, #1e1e1e);
+				opacity: .7;
+			}
+		}
+	}
+
 	&__content {
 		position: relative;
-		height: 100%;
-		padding-top: 64px;
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		background:
 			repeating-linear-gradient(
 				-45deg,
 				transparent 0 6px,
 				rgba(0, 0, 0, .035) 6px 7px
 			);
-		transition: margin .15s ease;
+		transition: padding .15s ease;
 	}
 
 	&__content-lines {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-		padding: 0 18px;
 
 		span {
 			display: block;
@@ -117,6 +184,47 @@
 			border-radius: 2px;
 			background: rgba(0, 0, 0, .18);
 		}
+	}
+
+	// Rail scale legend under the blueprint — the resolved Small / Medium / Large
+	// widths, updating live with the control.
+	&__rail-legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 16px;
+		margin-top: 16px;
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__rail-legend-title {
+		font-weight: 600;
+		letter-spacing: .04em;
+		text-transform: uppercase;
+		font-size: 11px;
+		opacity: .6;
+	}
+
+	&__rail-legend-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-weight: 600;
+	}
+
+	&__rail-swatch {
+		display: inline-block;
+		width: 14px;
+		height: 10px;
+		border-radius: 2px;
+	}
+
+	&__rail-legend-note {
+		flex-basis: 100%;
+		font-weight: 400;
+		font-size: 11px;
+		opacity: .6;
 	}
 
 	&__measure {

@@ -708,24 +708,13 @@ $sm-se-board-exit-ms: 220ms;
 		background-size: 18px 18px;
 	}
 
-	&[data-section="sm_spacing_section"] .sm-se-row__icon {
+	// Layout: page anatomy (content column + rail). The section absorbed the
+	// former Spacing section (2026-07-23).
+	&[data-section="sm_layout_section"] .sm-se-row__icon {
 		display: block;
-		background: linear-gradient(
-			180deg,
-			var(--sm-color-palette-accent-color-4, #7da7d9) 35%,
-			transparent 35%,
-			transparent 65%,
-			var(--sm-color-palette-accent-color-6, #3e6fb0) 65%
-		);
-	}
-	&[data-section="sm_spacing_section"]:hover .sm-se-row__icon {
-		background: linear-gradient(
-			180deg,
-			var(--sm-color-palette-accent-color-4, #7da7d9) 45%,
-			transparent 45%,
-			transparent 55%,
-			var(--sm-color-palette-accent-color-6, #3e6fb0) 55%
-		);
+		background-color: var(--sm-color-palette-accent-color-6, #3e6fb0);
+		background-image: url("../../images/section-layout.svg");
+		background-size: 18px 18px;
 	}
 
 	&[data-section="sm_tweak_board_section"] .sm-se-row__icon {

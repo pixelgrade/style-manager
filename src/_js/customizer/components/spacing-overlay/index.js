@@ -6,15 +6,28 @@ import useCustomizeSettingCallback from '../../hooks/use-customize-setting-callb
 import './style.scss';
 
 /**
- * The Spacing system board. Same principles as the Colors / Typography
- * boards: enumerate the token space, bind to the engine, show resolved values.
+ * The Layout system board. Same principles as the Colors / Typography boards:
+ * enumerate the token space, bind to the engine, show resolved values. It now
+ * covers the whole page-anatomy story (the Spacing section merged into Layout):
+ * container width, content inset, the rail scale (sidebar widths), and rhythm.
  *
  * The numbers mirror the theme's own relationships:
  *   --theme-spacing-ratio: var(--sm-spacing-level)
  *   --spacing-y1:          calc(32 * var(--theme-spacing-ratio))
+ *   --sm-rail-{small,medium,large}: derived from the rail base at fixed ratios
+ *     anchored on 288 (so base 288 → 288 / 330 / 400).
  */
 
 const BASE_STEP = 32;
+
+// Rail scale: Small = base, Medium/Large scale up at fixed ratios anchored so
+// base 288 reproduces the legacy 288 / 330 / 400 rail widths. Keep in sync with
+// sm_rail_scale_css_cb (PHP + preview JS twins).
+const RAIL_ANCHOR = 288;
+const RAIL_MEDIUM_RATIO = 330 / 288;
+const RAIL_LARGE_RATIO = 400 / 288;
+const RAIL_LEGACY_MEDIUM = 330;
+const RAIL_LEGACY_LARGE = 400;
 
 const getSettingValue = ( settingID, fallback ) => {
   if ( ! window.wp?.customize ) {
@@ -32,17 +45,18 @@ const SpacingOverlay = ( props ) => {
 
   return (
     <Overlay show={ show }>
-      <SpacingPreview key={ 'overlay_spacing_preview' } />
+      <LayoutPreview key={ 'overlay_layout_preview' } />
     </Overlay>
   );
 };
 
-const SpacingPreview = () => {
+const LayoutPreview = () => {
   const { __ } = wp.i18n;
 
   const [ containerWidth, setContainerWidth ] = useState( () => getSettingValue( 'sm_site_container_width', 75 ) );
   const [ contentInset, setContentInset ] = useState( () => getSettingValue( 'sm_content_inset', 230 ) );
   const [ spacingLevel, setSpacingLevel ] = useState( () => getSettingValue( 'sm_spacing_level', 1 ) );
+  const [ railBase, setRailBase ] = useState( () => getSettingValue( 'sm_rail_scale', 0 ) );
 
   useCustomizeSettingCallback( 'sm_site_container_width', newValue => setContainerWidth( parseFloat( newValue ) || 75 ) );
   useCustomizeSettingCallback( 'sm_content_inset', newValue => setContentInset( parseFloat( newValue ) || 230 ) );
@@ -50,8 +64,26 @@ const SpacingPreview = () => {
     const value = parseFloat( newValue );
     setSpacingLevel( isNaN( value ) ? 1 : value );
   } );
+  useCustomizeSettingCallback( 'sm_rail_scale', newValue => {
+    const value = parseFloat( newValue );
+    setRailBase( isNaN( value ) ? 0 : value );
+  } );
 
   const baseStep = Math.round( BASE_STEP * spacingLevel );
+
+  // Rail widths. Once the rail scale is touched (base > 0) all three derive from
+  // the base; until then the legacy values hold — Small tracks the content inset
+  // (the pre-token coupling), Medium 330, Large 400.
+  const railActive = railBase > 0;
+  const railSmall = railActive ? Math.round( railBase ) : Math.round( contentInset );
+  const railMedium = railActive ? Math.round( railBase * RAIL_MEDIUM_RATIO ) : RAIL_LEGACY_MEDIUM;
+  const railLarge = railActive ? Math.round( railBase * RAIL_LARGE_RATIO ) : RAIL_LEGACY_LARGE;
+
+  const rails = [
+    { key: 'l', label: __( 'L', '__plugin_txtd' ), value: railLarge },
+    { key: 'm', label: __( 'M', '__plugin_txtd' ), value: railMedium },
+    { key: 's', label: __( 'S', '__plugin_txtd' ), value: railSmall },
+  ];
 
   // The rhythm steps the theme derives from the base unit.
   const steps = [
@@ -62,15 +94,19 @@ const SpacingPreview = () => {
   ];
 
   // Blueprint scale: the schematic viewport is rendered at a fixed width and
-  // annotated with the REAL values — only the drawing is scaled.
-  const insetScale = 0.2;
+  // annotated with the REAL values — only the drawing is scaled. Rails reserve
+  // their Large width on each side, so the reading column narrows as the scale
+  // grows (the real per-container behavior, clamped in the engine at 50%).
+  const insetScale = 0.14;
+  const railScale = 0.13;
+  const railReserve = Math.round( railLarge * railScale );
 
   return (
     <div className="sm-spacing-preview">
       <div className="sm-spacing-preview__header">
-        <h1>{ __( 'Spacing & rhythm', '__plugin_txtd' ) }</h1>
+        <h1>{ __( 'Layout', '__plugin_txtd' ) }</h1>
         <p>
-          { __( 'The spacing system sets how your layout breathes: how wide the site container stretches, how far content is inset within it, and the rhythm between elements. Adjust the options and watch the resolved values.', '__plugin_txtd' ) }
+          { __( 'Layout sets your page anatomy: how wide the site container stretches, how far content is inset, how wide the sidebars and rails are, and the rhythm between elements. Adjust the options and watch the resolved values.', '__plugin_txtd' ) }
         </p>
       </div>
 
@@ -83,18 +119,51 @@ const SpacingPreview = () => {
               <div className="sm-spacing-preview__measure sm-spacing-preview__measure--container">
                 <span>{ __( 'Site Container', '__plugin_txtd' ) } · { containerWidth }%</span>
               </div>
-              <div
-                className="sm-spacing-preview__content"
-                style={ { marginLeft: `${ contentInset * insetScale }px`, marginRight: `${ contentInset * insetScale }px` } }
-              >
-                <div className="sm-spacing-preview__measure sm-spacing-preview__measure--inset">
-                  <span>{ __( 'Content Inset', '__plugin_txtd' ) } · { contentInset }</span>
+              <div className="sm-spacing-preview__measure sm-spacing-preview__measure--inset">
+                <span>{ __( 'Content Inset', '__plugin_txtd' ) } · { contentInset }</span>
+              </div>
+              <div className="sm-spacing-preview__anatomy">
+                <div className="sm-spacing-preview__rail sm-spacing-preview__rail--left" style={ { width: `${ railReserve }px` } }>
+                  { rails.map( rail => (
+                    <span
+                      key={ rail.key }
+                      className={ `sm-spacing-preview__rail-band sm-spacing-preview__rail-band--${ rail.key }` }
+                      style={ { width: `${ Math.round( rail.value * railScale ) }px` } }
+                    >
+                      <em>{ rail.label }</em>
+                    </span>
+                  ) ) }
                 </div>
-                <div className="sm-spacing-preview__content-lines">
-                  <span /><span /><span style={ { width: '60%' } } />
+                <div
+                  className="sm-spacing-preview__content"
+                  style={ { paddingLeft: `${ contentInset * insetScale }px`, paddingRight: `${ contentInset * insetScale }px` } }
+                >
+                  <div className="sm-spacing-preview__content-lines">
+                    <span /><span /><span style={ { width: '60%' } } />
+                  </div>
+                </div>
+                <div className="sm-spacing-preview__rail sm-spacing-preview__rail--right" style={ { width: `${ railReserve }px` } }>
+                  { rails.map( rail => (
+                    <span
+                      key={ rail.key }
+                      className={ `sm-spacing-preview__rail-band sm-spacing-preview__rail-band--${ rail.key }` }
+                      style={ { width: `${ Math.round( rail.value * railScale ) }px` } }
+                    >
+                      <em>{ rail.label }</em>
+                    </span>
+                  ) ) }
                 </div>
               </div>
             </div>
+          </div>
+          <div className="sm-spacing-preview__rail-legend">
+            <span className="sm-spacing-preview__rail-legend-title">{ __( 'Rail scale', '__plugin_txtd' ) }</span>
+            <span className="sm-spacing-preview__rail-legend-item"><em className="sm-spacing-preview__rail-swatch sm-spacing-preview__rail-band--s" />{ __( 'Small', '__plugin_txtd' ) } · { railSmall }</span>
+            <span className="sm-spacing-preview__rail-legend-item"><em className="sm-spacing-preview__rail-swatch sm-spacing-preview__rail-band--m" />{ __( 'Medium', '__plugin_txtd' ) } · { railMedium }</span>
+            <span className="sm-spacing-preview__rail-legend-item"><em className="sm-spacing-preview__rail-swatch sm-spacing-preview__rail-band--l" />{ __( 'Large', '__plugin_txtd' ) } · { railLarge }</span>
+            { ! railActive && (
+              <span className="sm-spacing-preview__rail-legend-note">{ __( 'Default — Small follows the content inset until you set a rail scale.', '__plugin_txtd' ) }</span>
+            ) }
           </div>
         </div>
       </div>

@@ -25,13 +25,23 @@ test( 'site editor deep links can request a section preview', () => {
 	);
 
 	assert.deepEqual(
+		parseSiteEditorDeepLink( '?sm-section=sm_layout_section&sm-preview=1' ),
+		{
+			shouldOpenSidebar: true,
+			targetSection: 'sm_layout_section',
+			previewEntry: { mode: 'spacing' },
+		},
+		'layout section links should request the page-anatomy preview overlay'
+	);
+
+	assert.deepEqual(
 		parseSiteEditorDeepLink( '?sm-section=sm_spacing_section&sm-preview=1' ),
 		{
 			shouldOpenSidebar: true,
-			targetSection: 'sm_spacing_section',
+			targetSection: 'sm_layout_section',
 			previewEntry: { mode: 'spacing' },
 		},
-		'spacing section links should request the spacing preview overlay'
+		'legacy spacing section links should alias to the merged Layout section'
 	);
 } );
 

@@ -132,7 +132,7 @@ class Preset extends BaseControl {
 			}
 
 			case 'buttons' : { ?>
-				<label>
+				<div class="customize-control-preset-buttons">
 					<?php if ( ! empty( $this->label ) ) { ?>
 						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 					<?php }
@@ -151,23 +151,27 @@ class Preset extends BaseControl {
 								$color .= ' style="border-left-color: ' . esc_attr( $choice_config['color'] ) . '; color: ' . esc_attr( $choice_config['color'] ) . ';"';
 							}
 
-							$label   = $choice_config['label'];
-							$options = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
-							$data    = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\''; ?>
+							$label     = $choice_config['label'];
+							$options   = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['options'] );
+							$data      = ' data-options=\'' . esc_attr( json_encode( $options ) ) . '\'';
+							// Unique per-choice id so the (visually hidden) radio pairs 1:1 with
+							// its label — clicking the segment checks the right radio.
+							$choice_id = $this->setting->id . '-' . $choice_value; ?>
 
 							<fieldset class="style-manager_radio_button">
 								<input <?php $this->link(); ?>
+									id="<?php echo esc_attr( $choice_id ); ?>"
 									name="<?php echo esc_attr( $this->setting->id ); ?>"
 									type="radio"
 									value="<?php echo esc_attr( $choice_value ); ?>"
 									<?php selected( $this->value(), $choice_value ); ?>
 									<?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $data is esc_attr-escaped JSON built above. ?>
 								/>
-								<label class="button" for="<?php echo esc_attr( $this->setting->id ); ?>" <?php echo $color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style color escaped at construction above. ?>><?php echo esc_html( $label ); ?></label>
+								<label class="button" for="<?php echo esc_attr( $choice_id ); ?>" <?php echo $color; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- inline style color escaped at construction above. ?>><?php echo esc_html( $label ); ?></label>
 							</fieldset>
 						<?php } ?>
 					</div>
-				</label>
+				</div>
 				<?php break;
 			}
 

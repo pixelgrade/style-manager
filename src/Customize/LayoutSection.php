@@ -2,10 +2,11 @@
 /**
  * This is the class that handles the logic for Layout.
  *
- * The Layout section is the geometry contract of the design system (the site
- * container width and the sidebar/rail scale). It is a sibling of the Spacing
- * section (which owns rhythm). Each panel section maps 1:1 to a design-system
- * contract.
+ * The Layout section is the design system's page-anatomy + rhythm contract:
+ * the site container width, the content inset (reading measure), the rail scale
+ * (sidebar widths), and the spacing level (vertical rhythm). It absorbed the
+ * former Spacing section on 2026-07-23 — container and inset are one page
+ * anatomy, so a single section reads as one coherent story.
  *
  * @since   2.4.0
  * @license GPL-2.0-or-later
@@ -119,6 +120,33 @@ class LayoutSection extends AbstractHookProvider {
 						],
 					],
 				],
+				// The reading measure: how far content is inset within the Site
+				// Container. Part of the one page-anatomy story (moved here when the
+				// Spacing section merged into Layout — config is byte-identical).
+				'sm_content_inset'        => [
+					'type'         => 'range',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_content_inset',
+					'live'         => true,
+					'label'        => esc_html__( 'Content Inset', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust how much the content is visually inset within the Site Container.', '__plugin_txtd' ),
+					'default'      => 230,
+					'input_attrs'  => [
+						'min'          => 100,
+						'max'          => 300,
+						'step'         => 10,
+						'data-preview' => true,
+					],
+					'css'          => [
+						[
+							'property' => '--sm-content-inset',
+							'selector' => ':root',
+							'unit'     => '',
+						],
+					],
+				],
 				// The rail-scale presets (the "face"): named segmented options that
 				// each write a base value into sm_rail_scale. The active preset is
 				// DERIVED from sm_rail_scale by the preset field JS (Custom off-preset,
@@ -201,6 +229,33 @@ class LayoutSection extends AbstractHookProvider {
 						],
 					],
 				],
+				// Vertical rhythm: the multiplication factor for the distance between
+				// elements. Moved here from the merged Spacing section (config is
+				// byte-identical).
+				'sm_spacing_level'        => [
+					'type'         => 'range',
+					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
+					'setting_type' => 'option',
+					// We will force this setting id preventing prefixing and other regular processing.
+					'setting_id'   => 'sm_spacing_level',
+					'live'         => true,
+					'label'        => esc_html__( 'Spacing Level', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust the multiplication factor of the distance between elements.', '__plugin_txtd' ),
+					'default'      => 1,
+					'input_attrs'  => [
+						'min'          => 0,
+						'max'          => 2,
+						'step'         => 0.1,
+						'data-preview' => true,
+					],
+					'css'          => [
+						[
+							'property' => '--sm-spacing-level',
+							'selector' => ':root',
+							'unit'     => '',
+						],
+					],
+				],
 			],
 		] );
 
@@ -219,12 +274,15 @@ class LayoutSection extends AbstractHookProvider {
 	 */
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 
-		// Order: container width, then the rail-scale presets (the face), then the
-		// rail-scale base slider (the span beneath).
+		// The page-anatomy story, top to bottom: how wide the container is, how far
+		// content is inset, how wide the rails are (presets face + base slider span),
+		// then the vertical rhythm between elements.
 		$layout_section_fields = [
 			'sm_site_container_width',
+			'sm_content_inset',
 			'sm_rail_scale_preset',
 			'sm_rail_scale',
+			'sm_spacing_level',
 		];
 
 		$layout_section_config = [

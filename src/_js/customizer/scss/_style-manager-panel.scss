@@ -1,6 +1,6 @@
 $sm-colors-id: '#accordion-section-sm_color_palettes_section';
 $sm-fonts-id: '#accordion-section-sm_font_palettes_section';
-$sm-spacing-id: '#accordion-section-sm_spacing_section';
+$sm-layout-id: '#accordion-section-sm_layout_section';
 $sm-tweak-board-id: '#accordion-section-sm_tweak_board_section';
 
 // Make icons stand out
@@ -98,26 +98,15 @@ $sm-tweak-board-id: '#accordion-section-sm_tweak_board_section';
     }
   }
 
-  #{$sm-spacing-id} {
+  // Layout: page anatomy (content column + rail). Absorbed the former Spacing
+  // section (2026-07-23).
+  #{$sm-layout-id} {
     > .accordion-section-title:before {
-      background: linear-gradient(
-        180deg,
-        var(--sm-color-palette-accent-color-4) 35%,
-        transparent 35%,
-        transparent 65%,
-        var(--sm-color-palette-accent-color-6) 65%
-      );
+      background-color: var(--sm-color-palette-accent-color-6);
+      background-image: url("../../images/section-layout.svg");
+      background-size: 20px 20px;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
     }
-
-    &:hover .accordion-section-title:before {
-      background: linear-gradient(
-        180deg,
-        var(--sm-color-palette-accent-color-4) 45%,
-        transparent 45%,
-        transparent 55%,
-        var(--sm-color-palette-accent-color-6) 55%
-      );
-    }
-
   }
 }

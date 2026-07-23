@@ -95,9 +95,6 @@ class ServiceProvider implements ServiceProviderInterface {
 		$container['customize.layout_section'] = function() {
 			return new Customize\LayoutSection();
 		};
-		$container['customize.spacing_section'] = function() {
-			return new Customize\SpacingSection();
-		};
 		$container['customize.tweak_board_section'] = function() {
 			return new Customize\TweakBoardSection();
 		};
