@@ -76,32 +76,10 @@ class SpacingSection extends AbstractHookProvider {
 		}
 
 		// The section might be already defined, thus we merge, not replace the entire section config.
+		// Note: the Site Container width control lives in the Layout section (see LayoutSection),
+		// alongside the rail scale — the geometry contract. Spacing owns rhythm.
 		$config['sections']['style_manager_section'] = ArrayHelpers::array_merge_recursive_distinct( $config['sections']['style_manager_section'], [
 			'options' => [
-				'sm_site_container_width' => [
-					'type'         => 'range',
-					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
-					'setting_type' => 'option',
-					// We will force this setting id preventing prefixing and other regular processing.
-					'setting_id'   => 'sm_site_container_width',
-					'live'         => true,
-					'label'        => esc_html__( 'Site Container', '__plugin_txtd' ),
-					'desc'         => esc_html__( 'Adjust the maximum amount of width your site content extends to.', '__plugin_txtd' ),
-					'default'      => 75,
-					'input_attrs'  => [
-						'min'          => 60,
-						'max'          => 100,
-						'step'         => 1,
-						'data-preview' => true,
-					],
-					'css'          => [
-						[
-							'property' => '--sm-site-container-width',
-							'selector' => ':root',
-							'unit'     => '',
-						],
-					],
-				],
 				'sm_content_inset'        => [
 					'type'         => 'range',
 					// We will bypass the plugin setting regarding where to store - we will store it cross-theme in wp_options
@@ -169,7 +147,6 @@ class SpacingSection extends AbstractHookProvider {
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 
 		$spacing_section_fields = [
-			'sm_site_container_width',
 			'sm_content_inset',
 			'sm_spacing_level'
 		];

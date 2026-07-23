@@ -4,7 +4,9 @@ export const handlePresets = () => {
 
   presets.forEach( preset => {
 
-    if ( preset.classList.contains( 'radio' ) ) {
+    // Both the radio list and the segmented radio_buttons variant carry
+    // radio inputs with data-options; the derive/apply logic is identical.
+    if ( preset.classList.contains( 'radio' ) || preset.classList.contains( 'radio_buttons' ) ) {
       handleRadioPreset( preset );
     }
 

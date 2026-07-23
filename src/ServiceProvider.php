@@ -92,6 +92,9 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['logger']
 			);
 		};
+		$container['customize.layout_section'] = function() {
+			return new Customize\LayoutSection();
+		};
 		$container['customize.spacing_section'] = function() {
 			return new Customize\SpacingSection();
 		};

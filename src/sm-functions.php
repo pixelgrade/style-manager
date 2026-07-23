@@ -107,6 +107,55 @@ function style_manager_color_select_darker_cb( string $value, string $selector, 
 }
 
 /**
+ * CSS callback for the rail-scale (sidebar/rail) tokens.
+ *
+ * Emits the per-side-ready Small/Medium/Large rail tokens derived from a single
+ * base value at fixed ratios anchored on 288 (so base 288 reproduces today's
+ * exact 288/330/400 rail widths). The S <= M <= L order therefore holds for
+ * every base, making scale inversion structurally impossible.
+ *
+ * Legacy-until-touched: while the rail scale is unset (empty/non-positive
+ * sentinel) this returns an empty string, emitting NO `--sm-rail-*` token so
+ * consumers keep their built-in fallbacks and rendering stays byte-identical to
+ * the pre-token behaviour. The JS twins live in
+ * `src/Screen/Customizer/Preview.php` (Customizer preview) and
+ * `src/_js/site-editor/preview.js` (Site Editor preview) — keep them in sync.
+ *
+ * @since   2.4.0
+ *
+ * @param mixed  $value    The rail-scale base value.
+ * @param string $selector The CSS selector (`:root`).
+ * @param string $property The rail token (`--sm-rail-small|medium|large`).
+ * @param string $unit     The CSS unit (empty for the unitless rail tokens).
+ *
+ * @return string
+ */
+function style_manager_rail_scale_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
+	// Legacy-until-touched: an unset base emits nothing.
+	if ( ! is_numeric( $value ) || (float) $value <= 0 ) {
+		return '';
+	}
+
+	$base = (float) $value;
+
+	switch ( $property ) {
+		case '--sm-rail-small':
+			$derived = $base;
+			break;
+		case '--sm-rail-medium':
+			$derived = $base * 330 / 288;
+			break;
+		case '--sm-rail-large':
+			$derived = $base * 400 / 288;
+			break;
+		default:
+			return '';
+	}
+
+	return $selector . ' { ' . $property . ': ' . (string) round( $derived ) . $unit . '; }' . PHP_EOL;
+}
+
+/**
  * @since   2.0.0
  *
  * @param          $label
@@ -1108,3 +1157,5 @@ function sm_get_fallback_color_value( ...$args ) { return style_manager_get_fall
 function sm_advanced_palette_output_cb( ...$args ) { return style_manager_advanced_palette_output_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- back-compat alias for style_manager_site_color_variation_cb().
 function sm_site_color_variation_cb( ...$args ) { return style_manager_site_color_variation_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_scale_css_cb().
+function sm_rail_scale_css_cb( ...$args ) { return style_manager_rail_scale_css_cb( ...$args ); }

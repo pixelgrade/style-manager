@@ -38,6 +38,7 @@ class Preview extends AbstractHookProvider {
 		$this->add_action( 'customize_preview_init', 'sm_color_select_darker_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_color_switch_dark_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_color_switch_darker_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_rail_scale_css_cb_customizer_preview', 20 );
 	}
 
 	/**
@@ -190,6 +191,33 @@ function sm_color_switch_dark_cb(value, selector, property) {
 function sm_color_switch_darker_cb(value, selector, property) {
 	var color = value === true ? 'accent' : 'fg2';
 	return selector + ' { ' + property + ': var(--sm-current-' + color + '-color); }';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
+	}
+
+	// Rail-scale tokens: JS twin of style_manager_rail_scale_css_cb(). Emits the
+	// Small/Medium/Large rail tokens derived from a single base value at fixed
+	// ratios anchored on 288. An unset (non-positive) base emits nothing so the
+	// legacy fallbacks stay in force (legacy-until-touched).
+	protected function sm_rail_scale_css_cb_customizer_preview() {
+		$js = "
+function sm_rail_scale_css_cb(value, selector, property, unit) {
+	var base = parseFloat(value);
+	if (isNaN(base) || base <= 0) {
+		return '';
+	}
+	var derived;
+	if (property === '--sm-rail-small') {
+		derived = base;
+	} else if (property === '--sm-rail-medium') {
+		derived = base * 330 / 288;
+	} else if (property === '--sm-rail-large') {
+		derived = base * 400 / 288;
+	} else {
+		return '';
+	}
+	return selector + ' { ' + property + ': ' + Math.round(derived) + (unit || '') + '; }';
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );

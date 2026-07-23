@@ -75,6 +75,31 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
     const color = true === value ? 'accent' : 'fg2';
     return `${ selector } { ${ property }: var(--sm-current-${ color }-color); }`;
   };
+
+  // Rail-scale tokens: JS twin of style_manager_rail_scale_css_cb(). Derives the
+  // Small/Medium/Large rail tokens from a single base value at fixed ratios
+  // anchored on 288. An unset (non-positive) base emits nothing so the legacy
+  // fallbacks stay in force (legacy-until-touched).
+  window.sm_rail_scale_css_cb = ( value, selector, property, unit = '' ) => {
+    const base = parseFloat( value );
+
+    if ( isNaN( base ) || base <= 0 ) {
+      return '';
+    }
+
+    let derived;
+    if ( '--sm-rail-small' === property ) {
+      derived = base;
+    } else if ( '--sm-rail-medium' === property ) {
+      derived = base * 330 / 288;
+    } else if ( '--sm-rail-large' === property ) {
+      derived = base * 400 / 288;
+    } else {
+      return '';
+    }
+
+    return `${ selector } { ${ property }: ${ Math.round( derived ) }${ unit || '' }; }`;
+  };
 };
 
 const getCanvasIframe = () => document.querySelector( 'iframe[name="editor-canvas"]' );
