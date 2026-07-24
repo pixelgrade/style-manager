@@ -107,19 +107,86 @@ function style_manager_color_select_darker_cb( string $value, string $selector, 
 }
 
 /**
+ * Rational soft-clamp used by the Base + Pitch rail scale.
+ *
+ * A smooth asymptote toward 600px (knee sharpness 12): small values pass through
+ * almost untouched, large values ease toward the ceiling instead of ballooning.
+ *
+ * @since 2.4.0
+ *
+ * @param float $x
+ *
+ * @return float
+ */
+function style_manager_rail_soft( float $x ): float {
+	$ceil  = 600.0;
+	$sharp = 12.0;
+
+	return $x / pow( 1.0 + pow( $x / $ceil, $sharp ), 1.0 / $sharp );
+}
+
+/**
+ * Resolve the Small/Medium/Large rail widths from the two rail settings.
+ *
+ * Migration contract (see also the JS twins and the standalone contract test):
+ *
+ *  - BOTH unset  -> null (emit nothing; legacy-until-touched, byte-identical).
+ *  - base set, pitch UNSET -> v1 compatibility: the shipped fixed ratios
+ *    (Medium = base*330/288, Large = base*400/288). Keeps the handful of
+ *    v1-touched sites (dev/lab only — v1 never reached starters) byte-stable.
+ *  - pitch SET (v2 owns emission): Small = base, Medium = base*mult,
+ *    Large = base*mult^2, each passed through the soft ceiling. The multiplier is
+ *    a quadratic map of pitch (0-45 deg) onto x1 .. x sqrt(3). When only pitch is
+ *    touched the base defaults to 300. mult >= 1 so S <= M <= L always holds;
+ *    inversion is structurally impossible.
+ *
+ * @since 2.4.0
+ *
+ * @param mixed $base_raw  The sm_rail_scale value.
+ * @param mixed $pitch_raw The sm_rail_pitch value.
+ *
+ * @return array|null { small, medium, large } (integers) or null when unset.
+ */
+function style_manager_rail_widths( $base_raw, $pitch_raw ): ?array {
+	$base_set  = is_numeric( $base_raw ) && (float) $base_raw > 0;
+	// Pitch 0 (Flat) is a valid, deliberate value — only '' / non-numeric is unset.
+	$pitch_set = is_numeric( $pitch_raw );
+
+	if ( ! $base_set && ! $pitch_set ) {
+		return null;
+	}
+
+	if ( $pitch_set ) {
+		$base  = $base_set ? (float) $base_raw : 300.0;
+		$f     = (float) $pitch_raw / 45.0;
+		$mult  = 1.0 + ( sqrt( 3.0 ) - 1.0 ) * $f * $f;
+		$small  = style_manager_rail_soft( $base );
+		$medium = style_manager_rail_soft( $base * $mult );
+		$large  = style_manager_rail_soft( $base * $mult * $mult );
+	} else {
+		$base   = (float) $base_raw;
+		$small  = $base;
+		$medium = $base * 330.0 / 288.0;
+		$large  = $base * 400.0 / 288.0;
+	}
+
+	return [
+		'small'  => (int) round( $small ),
+		'medium' => (int) round( $medium ),
+		'large'  => (int) round( $large ),
+	];
+}
+
+/**
  * CSS callback for the rail-scale (sidebar/rail) tokens.
  *
- * Emits the per-side-ready Small/Medium/Large rail tokens derived from a single
- * base value at fixed ratios anchored on 288 (so base 288 reproduces today's
- * exact 288/330/400 rail widths). The S <= M <= L order therefore holds for
- * every base, making scale inversion structurally impossible.
- *
- * Legacy-until-touched: while the rail scale is unset (empty/non-positive
- * sentinel) this returns an empty string, emitting NO `--sm-rail-*` token so
- * consumers keep their built-in fallbacks and rendering stays byte-identical to
- * the pre-token behaviour. The JS twins live in
+ * Emits the per-side-ready Small/Medium/Large rail tokens. The migration/compat
+ * contract lives in style_manager_rail_widths(). The JS twins live in
  * `src/Screen/Customizer/Preview.php` (Customizer preview) and
  * `src/_js/site-editor/preview.js` (Site Editor preview) — keep them in sync.
+ *
+ * The base value arrives as $value; the pitch value is read from its option so a
+ * single callback resolves the whole contract (pitch has no CSS of its own).
  *
  * @since   2.4.0
  *
@@ -131,28 +198,43 @@ function style_manager_color_select_darker_cb( string $value, string $selector, 
  * @return string
  */
 function style_manager_rail_scale_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
-	// Legacy-until-touched: an unset base emits nothing.
-	if ( ! is_numeric( $value ) || (float) $value <= 0 ) {
+	$widths = style_manager_rail_widths( $value, get_option( 'sm_rail_pitch', '' ) );
+
+	if ( null === $widths ) {
 		return '';
 	}
 
-	$base = (float) $value;
-
 	switch ( $property ) {
 		case '--sm-rail-small':
-			$derived = $base;
+			$out = $widths['small'];
 			break;
 		case '--sm-rail-medium':
-			$derived = $base * 330 / 288;
+			$out = $widths['medium'];
 			break;
 		case '--sm-rail-large':
-			$derived = $base * 400 / 288;
+			$out = $widths['large'];
 			break;
 		default:
 			return '';
 	}
 
-	return $selector . ' { ' . $property . ': ' . (string) round( $derived ) . $unit . '; }' . PHP_EOL;
+	return $selector . ' { ' . $property . ': ' . (string) $out . $unit . '; }' . PHP_EOL;
+}
+
+/**
+ * CSS callback for the rail Pitch setting.
+ *
+ * Pitch carries no CSS of its own — the Small/Medium/Large tokens are emitted by
+ * sm_rail_scale (which reads the pitch value). This exists only so the pitch
+ * setting is bound in the live preview, where its JS twin recomputes the
+ * sm_rail_scale style tag on change. On the frontend it is inert.
+ *
+ * @since 2.4.0
+ *
+ * @return string Always empty.
+ */
+function style_manager_rail_pitch_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
+	return '';
 }
 
 /**
@@ -1159,3 +1241,5 @@ function sm_advanced_palette_output_cb( ...$args ) { return style_manager_advanc
 function sm_site_color_variation_cb( ...$args ) { return style_manager_site_color_variation_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_scale_css_cb().
 function sm_rail_scale_css_cb( ...$args ) { return style_manager_rail_scale_css_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_pitch_css_cb().
+function sm_rail_pitch_css_cb( ...$args ) { return style_manager_rail_pitch_css_cb( ...$args ); }

@@ -147,35 +147,39 @@ class LayoutSection extends AbstractHookProvider {
 						],
 					],
 				],
-				// The rail-scale presets (the "face"): named segmented options that
-				// each write a base value into sm_rail_scale. The active preset is
-				// DERIVED from sm_rail_scale by the preset field JS (Custom off-preset,
-				// never stored as provenance).
+				// The rail-scale presets (the "face"): named {base, pitch} points that
+				// each write BOTH sm_rail_scale and sm_rail_pitch. The active preset is
+				// DERIVED from those two values by the preset field JS (Custom
+				// off-preset, never stored as provenance).
 				'sm_rail_scale_preset'    => [
 					'type'         => 'preset',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_rail_scale_preset',
 					'live'         => true,
 					'label'        => esc_html__( 'Rail Scale', '__plugin_txtd' ),
-					'desc'         => esc_html__( 'Choose how wide sidebars and rails are site-wide. Small, Medium, and Large rail sizes scale together from the base value.', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Choose how wide sidebars and rails are site-wide. Base sets the Small rail; Pitch sets how steeply Medium and Large rise from it.', '__plugin_txtd' ),
 					'default'      => 'custom',
 					'choices_type' => 'buttons',
 					'choices'      => [
+						'flat'      => [
+							'label'   => esc_html__( 'Flat', '__plugin_txtd' ),
+							'options' => [ 'sm_rail_scale' => 300, 'sm_rail_pitch' => 0 ],
+						],
 						'compact'   => [
 							'label'   => esc_html__( 'Compact', '__plugin_txtd' ),
-							'options' => [ 'sm_rail_scale' => 250 ],
+							'options' => [ 'sm_rail_scale' => 250, 'sm_rail_pitch' => 16 ],
 						],
 						'normal'    => [
 							'label'   => esc_html__( 'Normal', '__plugin_txtd' ),
-							'options' => [ 'sm_rail_scale' => 300 ],
+							'options' => [ 'sm_rail_scale' => 300, 'sm_rail_pitch' => 22 ],
 						],
 						'roomy'     => [
 							'label'   => esc_html__( 'Roomy', '__plugin_txtd' ),
-							'options' => [ 'sm_rail_scale' => 340 ],
+							'options' => [ 'sm_rail_scale' => 340, 'sm_rail_pitch' => 28 ],
 						],
 						'editorial' => [
 							'label'   => esc_html__( 'Editorial', '__plugin_txtd' ),
-							'options' => [ 'sm_rail_scale' => 380 ],
+							'options' => [ 'sm_rail_scale' => 380, 'sm_rail_pitch' => 36 ],
 						],
 						'custom'    => [
 							'label'   => esc_html__( 'Custom', '__plugin_txtd' ),
@@ -183,27 +187,25 @@ class LayoutSection extends AbstractHookProvider {
 						],
 					],
 				],
-				// The rail-scale base (the "span"): a continuous slider. This is the
-				// single source of truth for the rail scale. It emits the per-side-ready
-				// Small/Medium/Large tokens (derived at fixed ratios) through
-				// sm_rail_scale_css_cb.
+				// The rail-scale base (elevation): a continuous slider setting the Small
+				// rail. Source of truth that emits the per-side-ready Small/Medium/Large
+				// tokens through sm_rail_scale_css_cb (which also reads the pitch).
 				//
-				// Legacy-until-touched: the default is an empty sentinel. While the
-				// value is unset the callback emits NOTHING, so consumers keep their
-				// built-in fallbacks and rendering stays byte-identical to the
-				// pre-token behaviour (Small content-inset-derived, Medium 330,
-				// Large 400). The token model takes over the moment the value is
-				// first touched.
+				// Legacy-until-touched: the default is an empty sentinel. While BOTH
+				// base and pitch are unset the callback emits NOTHING, so consumers keep
+				// their built-in fallbacks and rendering stays byte-identical to the
+				// pre-token behaviour. See style_manager_rail_widths() for the full
+				// migration contract (both-unset / v1-compat / v2).
 				'sm_rail_scale'           => [
 					'type'         => 'range',
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_rail_scale',
 					'live'         => true,
-					'label'        => esc_html__( 'Rail Base Width', '__plugin_txtd' ),
-					'desc'         => esc_html__( 'Fine-tune the base rail width. Small equals this value; Medium and Large scale up from it.', '__plugin_txtd' ),
+					'label'        => esc_html__( 'Rail Base (Small)', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'The base rail width — the Small rail equals this value; Medium and Large rise from it according to the Pitch.', '__plugin_txtd' ),
 					'default'      => '',
 					'input_attrs'  => [
-						'min'          => 240,
+						'min'          => 100,
 						'max'          => 420,
 						'step'         => 1,
 						'data-preview' => true,
@@ -226,6 +228,37 @@ class LayoutSection extends AbstractHookProvider {
 							'selector'        => ':root',
 							'unit'            => '',
 							'callback_filter' => 'sm_rail_scale_css_cb',
+						],
+					],
+				],
+				// The rail-scale pitch (rising angle), echoing Typography's Pitch: a
+				// per-step multiplier. At 0 degrees Small = Medium = Large (no
+				// hierarchy); it rises to about x1.73 at full pitch, softly capped near
+				// 600px. Touching pitch switches emission from v1-compat to the v2 math.
+				//
+				// It carries CSS only so the live preview recomputes the rail tokens
+				// when pitch changes (sm_rail_pitch_css_cb is inert on the frontend —
+				// sm_rail_scale reads the pitch and emits).
+				'sm_rail_pitch'           => [
+					'type'         => 'range',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_rail_pitch',
+					'live'         => true,
+					'label'        => esc_html__( 'Rail Pitch', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust the rising angle of the rail sizes. A flat ‘0’ degree Pitch makes Small, Medium, and Large equal, removing the hierarchy between them.', '__plugin_txtd' ),
+					'default'      => '',
+					'input_attrs'  => [
+						'min'          => 0,
+						'max'          => 45,
+						'step'         => 1,
+						'data-preview' => true,
+					],
+					'css'          => [
+						[
+							'property'        => '--sm-rail-pitch-sync',
+							'selector'        => ':root',
+							'unit'            => '',
+							'callback_filter' => 'sm_rail_pitch_css_cb',
 						],
 					],
 				],
@@ -282,6 +315,7 @@ class LayoutSection extends AbstractHookProvider {
 			'sm_content_inset',
 			'sm_rail_scale_preset',
 			'sm_rail_scale',
+			'sm_rail_pitch',
 			'sm_spacing_level',
 		];
 

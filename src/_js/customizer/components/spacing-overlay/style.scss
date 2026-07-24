@@ -1,325 +1,395 @@
 /*------------------------------------*\
-  #SPACING SYSTEM PREVIEW
+  #LAYOUT SYSTEM PREVIEW (contract blueprint)
 \*------------------------------------*/
 
-.sm-spacing-preview {
-	max-width: 920px;
-	margin: 0 auto;
-	padding: 48px 32px 64px;
-	color: var(--sm-current-fg1-color, #1e1e1e);
+// Self-contained blueprint palette (light default + dark variant). The fg/bg
+// pairs are contrast-tuned: >= 4.5:1 for value-bearing small text, >= 3:1 for
+// structural labels, in BOTH variants (see the contrast probe in the commit).
+.sm-layout-preview {
+  --lp-panel-2: #f2f4f8;
+  --lp-line: #d3d9e2;
+  --lp-ink: #1b2029;
+  --lp-ink-dim: #444d5b;   // value-bearing small text
+  --lp-ink-faint: #565f6d; // structural labels (named grid lines)
+  --lp-accent: #7c4a0e;    // accent value text (sizes)
+  --lp-accent-line: rgba(124, 74, 14, .55);
+  --lp-tex: #b7bfca;       // content texture (non-text)
+  --lp-read: rgba(124, 74, 14, .10);
+  --lp-inset: rgba(20, 30, 60, .06);
+  --lp-band: #7c4a0e;
+  --lp-page: #ffffff;
+  --lp-page-head: #eef1f5;
+  --lp-rail-card: #e6eaf0;
+  --lp-rail-thumb: #cfd6e0;
+  --lp-rail-fill: rgba(124, 74, 14, .08);
+  --lp-grid-faint: rgba(0, 0, 0, .05);
 
-	&__header {
-		max-width: 640px;
-		margin-bottom: 40px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 28px 56px;
+  color: var(--lp-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-		h1 {
-			margin: 0 0 12px;
-			font-size: 32px;
-			line-height: 1.2;
-		}
+  &__header {
+    max-width: 720px;
+    margin-bottom: 28px;
 
-		p {
-			margin: 0;
-			font-size: 14px;
-			line-height: 1.6;
-			opacity: .75;
-		}
-	}
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
 
-	&__section {
-		margin-bottom: 40px;
+    p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--lp-ink-dim);
+    }
+  }
 
-		h2 {
-			margin: 0 0 8px;
-			font-size: 13px;
-			font-weight: 600;
-			letter-spacing: .05em;
-			text-transform: uppercase;
-			opacity: .6;
-		}
-	}
+  &__stage {
+    margin-bottom: 34px;
+  }
 
-	&__hint {
-		margin: 0 0 16px;
-		font-size: 13px;
-		line-height: 1.5;
-		opacity: .75;
-	}
+  &__stage-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
 
-	&__columns {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 48px;
+    h2 {
+      margin: 0 0 3px;
+      font-size: 15px;
+      font-weight: 650;
+    }
+  }
 
-		@media (max-width: 900px) {
-			grid-template-columns: 1fr;
-		}
-	}
+  &__stage-sub {
+    margin: 0;
+    max-width: 620px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--lp-ink-dim);
+  }
 
-	// --- Page anatomy blueprint -------------------------------------------
-	&__blueprint {
-		padding: 24px;
-		border-radius: 6px;
-		background: var(--sm-current-bg-color, #f6f6f7);
-		border: 1px solid rgba(0, 0, 0, .08);
-	}
+  // Contract / Examples toggle
+  &__toggle {
+    display: flex;
+    gap: 4px;
+    flex: 0 0 auto;
+    background: var(--lp-panel-2);
+    border: 1px solid var(--lp-line);
+    border-radius: 10px;
+    padding: 3px;
 
-	&__viewport {
-		position: relative;
-		height: 190px;
-		border: 1px dashed rgba(0, 0, 0, .3);
-		border-radius: 4px;
-		background: rgba(255, 255, 255, .6);
-	}
+    button {
+      border: 0;
+      background: transparent;
+      color: var(--lp-ink-dim);
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 13px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: .12s;
 
-	&__viewport-label {
-		position: absolute;
-		top: 6px;
-		left: 8px;
-		font-size: 10px;
-		letter-spacing: .06em;
-		text-transform: uppercase;
-		opacity: .45;
-	}
+      &:hover {
+        color: var(--lp-ink);
+      }
 
-	&__container {
-		position: relative;
-		height: 100%;
-		margin: 0 auto;
-		border-left: 1px solid var(--sm-current-accent-color, #3858e9);
-		border-right: 1px solid var(--sm-current-accent-color, #3858e9);
-		background: rgba(56, 88, 233, .04);
-		transition: width .15s ease;
-	}
+      &.is-active {
+        background: var(--lp-accent);
+        color: #fff;
+      }
+    }
+  }
 
-	// The rails + reading column occupy the container below the badges.
-	&__anatomy {
-		display: flex;
-		align-items: stretch;
-		height: 100%;
-		padding-top: 58px;
-	}
+  &__default-note {
+    margin: 0 0 10px;
+    font-size: 11.5px;
+    color: var(--lp-ink-dim);
+  }
 
-	// A rail reserves its Large width on each side; the three bands (S/M/L) stack
-	// so all three widths read at once, hugging the inner (content) edge.
-	&__rail {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 8px;
-		flex-shrink: 0;
-		padding-bottom: 8px;
-		transition: width .15s ease;
+  &__board {
+    position: relative;
+    background: var(--lp-panel-2);
+    border: 1px solid var(--lp-line);
+    border-radius: 12px;
+    padding: 14px 12px;
+    overflow: hidden;
+  }
 
-		&--left {
-			align-items: flex-end;
-		}
+  // ---------- CONTRACT DIAGRAM (blueprint) ----------
+  .cx-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .cx-svg text { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .cx-nlab { font-size: 15px; fill: var(--lp-ink-faint); }
+  .cx-txt { font-size: 15px; fill: var(--lp-ink-dim); }
+  .cx-txt-acc { font-size: 15px; fill: var(--lp-accent); }
+  .cx-txt-sm { font-size: 13px; fill: var(--lp-ink-faint); }
+  .cx-frame { fill: none; stroke: var(--lp-ink-faint); stroke-width: 1.2; }
+  .cx-fill-c { fill: var(--lp-grid-faint); }
+  .cx-fill-read { fill: var(--lp-read); }
+  .cx-fill-inset { fill: var(--lp-inset); }
+  .cx-band { fill: var(--lp-band); }
+  .cx-line { stroke: var(--lp-line); stroke-width: 1; }
+  .cx-line.faint { opacity: .55; }
+  .cx-center { stroke: var(--lp-ink-faint); stroke-width: 1.1; stroke-dasharray: 12 4 2 4; opacity: .7; }
+  .cx-dim { stroke: var(--lp-ink-faint); stroke-width: 1; }
+  .cx-tick { stroke: var(--lp-ink-faint); stroke-width: 1; }
+  .cx-step { stroke: var(--lp-accent); stroke-width: 1.6; }
+  .cx-step.clamp { stroke-dasharray: 5 4; }
+  .cx-tex { stroke: var(--lp-tex); stroke-width: 2; opacity: .7; }
+  .cx-mirror { opacity: .55; }
 
-		&--right {
-			align-items: flex-start;
-		}
-	}
+  .cx-caption {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--lp-line);
+  }
+  .cx-cap-title {
+    font-size: 12.5px;
+    font-weight: 650;
+    color: var(--lp-ink);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
 
-	&__rail-band {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 16px;
-		min-width: 10px;
-		border-radius: 2px;
-		transition: width .15s ease;
+    &::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      background: var(--lp-accent);
+    }
+  }
+  .cx-caption p {
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: var(--lp-ink-dim);
+    line-height: 1.55;
+    max-width: 660px;
+  }
+  .cx-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .cx-chips .lead {
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--lp-ink-faint);
+    margin-right: 2px;
+  }
+  .cx-chip {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--lp-ink);
+    border: 1px solid var(--lp-line);
+    border-radius: 6px;
+    padding: 3px 9px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 
-		em {
-			font-size: 9px;
-			font-style: normal;
-			font-weight: 700;
-			line-height: 1;
-			color: #fff;
-			opacity: .9;
-		}
+    i { width: 11px; height: 11px; border-radius: 2px; background: var(--lp-band); display: inline-block; }
+    b { color: var(--lp-accent); font-weight: 600; }
+  }
 
-		&--s {
-			background: var(--sm-current-accent-color, #3858e9);
-		}
+  // ---------- EXAMPLES (shipped recipes gallery) ----------
+  .ex-intro {
+    font-size: 12px;
+    color: var(--lp-ink-dim);
+    line-height: 1.5;
+    margin: 0 0 12px;
+  }
+  .lays {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 
-		&--m {
-			background: color-mix(in srgb, var(--sm-current-accent-color, #3858e9) 62%, #fff);
-		}
+    @media (max-width: 640px) { grid-template-columns: 1fr; }
+  }
+  .lay {
+    background: var(--lp-panel-2);
+    border: 1px solid var(--lp-line);
+    border-radius: 9px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .lhead {
+    height: 11px;
+    background: var(--lp-page-head);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 0 6px;
+    flex: 0 0 auto;
+    border-bottom: 1px solid var(--lp-line);
 
-		&--l {
-			background: color-mix(in srgb, var(--sm-current-accent-color, #3858e9) 34%, #fff);
+    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lp-accent); opacity: .8; }
+    .nav { height: 2px; width: 10px; border-radius: 2px; background: var(--lp-tex); }
+    .nav.c { margin-left: auto; }
+  }
+  .lviewport { background: var(--lp-panel-2); flex: 0 0 auto; padding: 0; }
+  .lcontainer {
+    height: 118px;
+    margin: 0 auto;
+    background: var(--lp-page);
+    border-left: 1px solid var(--lp-ink-faint);
+    border-right: 1px solid var(--lp-ink-faint);
+  }
+  .lpad { height: 100%; display: flex; align-items: stretch; box-sizing: border-box; }
+  .lread {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 8px 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--lp-page);
+    overflow: hidden;
 
-			em {
-				color: var(--sm-current-fg1-color, #1e1e1e);
-				opacity: .7;
-			}
-		}
-	}
+    .h { height: 6px; width: 60%; border-radius: 2px; background: var(--lp-tex); opacity: .95; margin-bottom: 1px; }
+    i { height: 3px; border-radius: 2px; background: var(--lp-tex); }
+    i.s { width: 84%; }
+    i.u { width: 44%; }
+    .img { height: 26px; border-radius: 3px; background: var(--lp-rail-thumb); opacity: .6; margin: 1px 0 3px; }
+  }
+  .lread.hive {
+    flex-direction: row;
+    gap: 8px;
 
-	&__content {
-		position: relative;
-		flex: 1 1 auto;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		background:
-			repeating-linear-gradient(
-				-45deg,
-				transparent 0 6px,
-				rgba(0, 0, 0, .035) 6px 7px
-			);
-		transition: padding .15s ease;
-	}
+    .hcol { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .hcol i { height: 2.5px; }
+    .hcol .h { height: 5px; margin-bottom: 0; }
+  }
+  .loffset {
+    flex: 0 0 auto;
+    background: transparent;
+    position: relative;
 
-	&__content-lines {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
+    &::before { content: ""; position: absolute; top: 8px; bottom: 8px; right: 0; width: 1px; background: var(--lp-line); }
+  }
+  .lread.center {
+    align-items: center;
+    justify-content: center;
 
-		span {
-			display: block;
-			height: 8px;
-			border-radius: 2px;
-			background: rgba(0, 0, 0, .18);
-		}
-	}
+    .cwrap { width: 100%; display: flex; flex-direction: column; gap: 4px; }
+  }
+  .lrail { flex: 0 0 auto; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; }
+  .lrail.right { background: var(--lp-rail-fill); border-left: 1px solid var(--lp-line); padding: 7px 5px; gap: 4px; }
+  .lrail.meta { background: transparent; border-right: 1px dashed var(--lp-ink-faint); padding: 9px 5px; gap: 6px; align-items: flex-start; }
+  .mdash { height: 3px; width: 78%; border-radius: 2px; background: var(--lp-tex); opacity: .8; }
+  .mdash.sh { width: 44%; }
+  .mdots { display: flex; gap: 3px; }
+  .mdots span { width: 4px; height: 4px; border-radius: 50%; background: var(--lp-tex); opacity: .6; }
+  .lcard {
+    background: var(--lp-rail-card);
+    border-radius: 2px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 
-	// Rail scale legend under the blueprint — the resolved Small / Medium / Large
-	// widths, updating live with the control.
-	&__rail-legend {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 8px 16px;
-		margin-top: 16px;
-		font-size: 12px;
-		font-variant-numeric: tabular-nums;
-	}
+    .thumb { height: 12px; border-radius: 2px; background: var(--lp-rail-thumb); }
+    .rl { height: 2px; border-radius: 2px; background: var(--lp-rail-thumb); opacity: .9; }
+    .rl.sh { width: 60%; }
+  }
+  .lcap {
+    padding: 7px 8px 8px;
+    border-top: 1px solid var(--lp-line);
 
-	&__rail-legend-title {
-		font-weight: 600;
-		letter-spacing: .04em;
-		text-transform: uppercase;
-		font-size: 11px;
-		opacity: .6;
-	}
+    .ln { font-size: 11px; font-weight: 600; color: var(--lp-ink); }
+    .ld { font-size: 10px; color: var(--lp-ink-dim); margin-top: 2px; line-height: 1.4; }
+    .lb { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--lp-accent); }
+    .clampflag { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--lp-accent); font-size: 9.5px; }
+    .foot { font-size: 9.5px; font-style: italic; color: var(--lp-ink-dim); margin-top: 4px; }
+  }
+  .galfoot {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--lp-ink-dim);
+    line-height: 1.5;
+    border-top: 1px dashed var(--lp-line);
+    padding-top: 10px;
+  }
 
-	&__rail-legend-item {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		font-weight: 600;
-	}
+  // ---------- Rhythm + Density (Layout's story continues) ----------
+  &__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
 
-	&__rail-swatch {
-		display: inline-block;
-		width: 14px;
-		height: 10px;
-		border-radius: 2px;
-	}
+    @media (max-width: 720px) { grid-template-columns: 1fr; }
+  }
+  &__section {
+    h2 {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--lp-ink-faint);
+    }
+  }
+  &__hint {
+    margin: 0 0 16px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--lp-ink-dim);
+  }
+  &__ladder { display: flex; flex-direction: column; gap: 12px; }
+  &__step { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+  &__step-label { width: 28px; color: var(--lp-ink-dim); }
+  &__step-bar { display: block; height: 14px; min-width: 2px; border-radius: 2px; background: var(--lp-accent); transition: width .15s ease; }
+  &__step-value { font-variant-numeric: tabular-nums; font-weight: 600; }
+  &__demo { display: flex; flex-direction: column; transition: gap .15s ease; }
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--lp-line);
+    background: var(--lp-page);
+    transition: padding .15s ease;
+  }
+  &__card-title { display: block; width: 40%; height: 10px; border-radius: 2px; background: var(--lp-tex); }
+  &__card-line { display: block; width: 100%; height: 7px; border-radius: 2px; background: var(--lp-tex); opacity: .7; }
+}
 
-	&__rail-legend-note {
-		flex-basis: 100%;
-		font-weight: 400;
-		font-size: 11px;
-		opacity: .6;
-	}
+// Dark variant — same structural roles, contrast-tuned for a dark ground.
+@media (prefers-color-scheme: dark) {
+  .sm-layout-preview {
+    --lp-panel-2: #1d212b;
+    --lp-line: #2f3644;
+    --lp-ink: #e7ebf2;
+    --lp-ink-dim: #aab3c2;   // value-bearing small text
+    --lp-ink-faint: #99a2b3; // structural labels
+    --lp-accent: #eab063;    // accent value text
+    --lp-accent-line: rgba(234, 176, 99, .55);
+    --lp-tex: #414c60;
+    --lp-read: rgba(234, 176, 99, .10);
+    --lp-inset: rgba(255, 255, 255, .05);
+    --lp-band: #eab063;
+    --lp-page: #20252f;
+    --lp-page-head: #2b323f;
+    --lp-rail-card: #333c4c;
+    --lp-rail-thumb: #414c60;
+    --lp-rail-fill: rgba(234, 176, 99, .10);
+    --lp-grid-faint: rgba(255, 255, 255, .05);
 
-	&__measure {
-		position: absolute;
-		left: 0;
-		right: 0;
-		display: flex;
-		justify-content: center;
-		font-size: 11px;
-		font-weight: 500;
-		white-space: nowrap;
-
-		span {
-			padding: 2px 8px;
-			border-radius: 10px;
-			background: var(--sm-current-accent-color, #3858e9);
-			color: #fff;
-		}
-
-		&--container {
-			top: 8px;
-		}
-
-		&--inset {
-			top: 34px;
-
-			span {
-				background: #1e1e1e;
-			}
-		}
-	}
-
-	// --- Rhythm ladder -----------------------------------------------------
-	&__ladder {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	&__step {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		font-size: 12px;
-	}
-
-	&__step-label {
-		width: 28px;
-		opacity: .6;
-	}
-
-	&__step-bar {
-		display: block;
-		height: 14px;
-		min-width: 2px;
-		border-radius: 2px;
-		background: var(--sm-current-accent-color, #3858e9);
-		transition: width .15s ease;
-	}
-
-	&__step-value {
-		font-variant-numeric: tabular-nums;
-		font-weight: 600;
-	}
-
-	// --- Density demo --------------------------------------------------------
-	&__demo {
-		display: flex;
-		flex-direction: column;
-		transition: gap .15s ease;
-	}
-
-	&__card {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		border-radius: 4px;
-		border: 1px solid rgba(0, 0, 0, .12);
-		background: rgba(255, 255, 255, .7);
-		transition: padding .15s ease;
-	}
-
-	&__card-title {
-		display: block;
-		width: 40%;
-		height: 10px;
-		border-radius: 2px;
-		background: rgba(0, 0, 0, .35);
-	}
-
-	&__card-line {
-		display: block;
-		width: 100%;
-		height: 7px;
-		border-radius: 2px;
-		background: rgba(0, 0, 0, .15);
-	}
+    .lcontainer { border-color: #4a5566; }
+    &__toggle button.is-active { color: #14140c; }
+  }
 }

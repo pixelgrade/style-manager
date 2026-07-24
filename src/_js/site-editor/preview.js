@@ -76,29 +76,66 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
     return `${ selector } { ${ property }: var(--sm-current-${ color }-color); }`;
   };
 
-  // Rail-scale tokens: JS twin of style_manager_rail_scale_css_cb(). Derives the
-  // Small/Medium/Large rail tokens from a single base value at fixed ratios
-  // anchored on 288. An unset (non-positive) base emits nothing so the legacy
-  // fallbacks stay in force (legacy-until-touched).
-  window.sm_rail_scale_css_cb = ( value, selector, property, unit = '' ) => {
-    const base = parseFloat( value );
-
-    if ( isNaN( base ) || base <= 0 ) {
-      return '';
+  // Rail-scale tokens: JS twin of style_manager_rail_scale_css_cb() +
+  // style_manager_rail_widths(). Base + Pitch soft-ceiling math, with the
+  // both-unset / v1-compat / v2 migration contract (see the PHP for the canonical
+  // definition). Both settings are read from the engine so either one recomputes.
+  const railSoft = x => x / Math.pow( 1 + Math.pow( x / 600, 12 ), 1 / 12 );
+  const railRead = id => {
+    const s = api( id );
+    return s ? s() : '';
+  };
+  const railWidths = ( baseRaw, pitchRaw ) => {
+    const baseSet = baseRaw !== '' && baseRaw != null && ! isNaN( parseFloat( baseRaw ) ) && parseFloat( baseRaw ) > 0;
+    const pitchSet = pitchRaw !== '' && pitchRaw != null && ! isNaN( parseFloat( pitchRaw ) );
+    if ( ! baseSet && ! pitchSet ) {
+      return null;
     }
-
-    let derived;
-    if ( '--sm-rail-small' === property ) {
-      derived = base;
-    } else if ( '--sm-rail-medium' === property ) {
-      derived = base * 330 / 288;
-    } else if ( '--sm-rail-large' === property ) {
-      derived = base * 400 / 288;
+    let s, m, l;
+    if ( pitchSet ) {
+      const base = baseSet ? parseFloat( baseRaw ) : 300;
+      const f = parseFloat( pitchRaw ) / 45;
+      const mult = 1 + ( Math.sqrt( 3 ) - 1 ) * f * f;
+      s = railSoft( base ); m = railSoft( base * mult ); l = railSoft( base * mult * mult );
     } else {
+      const b = parseFloat( baseRaw );
+      s = b; m = b * 330 / 288; l = b * 400 / 288;
+    }
+    return { small: Math.round( s ), medium: Math.round( m ), large: Math.round( l ) };
+  };
+
+  window.sm_rail_scale_css_cb = ( value, selector, property, unit = '' ) => {
+    const w = railWidths( railRead( 'sm_rail_scale' ), railRead( 'sm_rail_pitch' ) );
+    if ( ! w ) {
       return '';
     }
+    const v = '--sm-rail-small' === property ? w.small
+      : '--sm-rail-medium' === property ? w.medium
+      : '--sm-rail-large' === property ? w.large : null;
+    if ( null === v ) {
+      return '';
+    }
+    return `${ selector } { ${ property }: ${ v }${ unit || '' }; }`;
+  };
 
-    return `${ selector } { ${ property }: ${ Math.round( derived ) }${ unit || '' }; }`;
+  // Pitch carries no CSS of its own; on change it recomputes and rewrites the
+  // sm_rail_scale style tag(s) — top document + canvas — same pattern as
+  // sm_site_color_variation_cb.
+  window.sm_rail_pitch_css_cb = () => {
+    const w = railWidths( railRead( 'sm_rail_scale' ), railRead( 'sm_rail_pitch' ) );
+    const css = w
+      ? `:root { --sm-rail-small: ${ w.small }; }\n:root { --sm-rail-medium: ${ w.medium }; }\n:root { --sm-rail-large: ${ w.large }; }\n`
+      : '';
+    const tagId = getStyleTagID( 'sm_rail_scale' );
+    document.querySelectorAll( `#${ tagId }` ).forEach( tag => { tag.innerHTML = css; } );
+    const canvasDocument = getCanvasDocument();
+    if ( canvasDocument ) {
+      const tag = canvasDocument.getElementById( tagId );
+      if ( tag ) {
+        tag.innerHTML = css;
+      }
+    }
+    return '';
   };
 };
 

@@ -39,6 +39,7 @@ class Preview extends AbstractHookProvider {
 		$this->add_action( 'customize_preview_init', 'sm_color_switch_dark_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_color_switch_darker_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_rail_scale_css_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_rail_pitch_css_cb_customizer_preview', 20 );
 	}
 
 	/**
@@ -196,28 +197,57 @@ function sm_color_switch_darker_cb(value, selector, property) {
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
 	}
 
-	// Rail-scale tokens: JS twin of style_manager_rail_scale_css_cb(). Emits the
-	// Small/Medium/Large rail tokens derived from a single base value at fixed
-	// ratios anchored on 288. An unset (non-positive) base emits nothing so the
-	// legacy fallbacks stay in force (legacy-until-touched).
+	// Rail-scale tokens: JS twin of style_manager_rail_scale_css_cb() +
+	// style_manager_rail_widths(). Base + Pitch soft-ceiling math, with the
+	// both-unset / v1-compat / v2 migration contract. Shared helpers are defined
+	// once; the pitch callback recomputes the sm_rail_scale style tag so moving
+	// pitch previews live too.
 	protected function sm_rail_scale_css_cb_customizer_preview() {
 		$js = "
-function sm_rail_scale_css_cb(value, selector, property, unit) {
-	var base = parseFloat(value);
-	if (isNaN(base) || base <= 0) {
-		return '';
-	}
-	var derived;
-	if (property === '--sm-rail-small') {
-		derived = base;
-	} else if (property === '--sm-rail-medium') {
-		derived = base * 330 / 288;
-	} else if (property === '--sm-rail-large') {
-		derived = base * 400 / 288;
+window.__smRailSoft = function(x){ return x / Math.pow(1 + Math.pow(x/600, 12), 1/12); };
+window.__smRailWidths = function(baseRaw, pitchRaw){
+	var baseSet = baseRaw !== '' && baseRaw != null && !isNaN(parseFloat(baseRaw)) && parseFloat(baseRaw) > 0;
+	var pitchSet = pitchRaw !== '' && pitchRaw != null && !isNaN(parseFloat(pitchRaw));
+	if (!baseSet && !pitchSet) return null;
+	var s, m, l;
+	if (pitchSet) {
+		var base = baseSet ? parseFloat(baseRaw) : 300;
+		var f = parseFloat(pitchRaw) / 45;
+		var mult = 1 + (Math.sqrt(3) - 1) * f * f;
+		s = window.__smRailSoft(base); m = window.__smRailSoft(base * mult); l = window.__smRailSoft(base * mult * mult);
 	} else {
-		return '';
+		var b = parseFloat(baseRaw);
+		s = b; m = b * 330 / 288; l = b * 400 / 288;
 	}
-	return selector + ' { ' + property + ': ' + Math.round(derived) + (unit || '') + '; }';
+	return { small: Math.round(s), medium: Math.round(m), large: Math.round(l) };
+};
+window.__smRailRead = function(id){ var s = wp.customize(id); return s ? s() : ''; };
+function sm_rail_scale_css_cb(value, selector, property, unit) {
+	var w = window.__smRailWidths(window.__smRailRead('sm_rail_scale'), window.__smRailRead('sm_rail_pitch'));
+	if (!w) return '';
+	var v = property === '--sm-rail-small' ? w.small : property === '--sm-rail-medium' ? w.medium : property === '--sm-rail-large' ? w.large : null;
+	if (v == null) return '';
+	return selector + ' { ' + property + ': ' + v + (unit || '') + '; }';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
+	}
+
+	// Pitch carries no CSS of its own; on change it recomputes and rewrites the
+	// sm_rail_scale style tag (same pattern as sm_site_color_variation_cb).
+	protected function sm_rail_pitch_css_cb_customizer_preview() {
+		$js = "
+function sm_rail_pitch_css_cb(value, selector, property, unit) {
+	var w = window.__smRailWidths(window.__smRailRead('sm_rail_scale'), window.__smRailRead('sm_rail_pitch'));
+	var css = '';
+	if (w) {
+		css = ':root { --sm-rail-small: ' + w.small + '; }\\n'
+			+ ':root { --sm-rail-medium: ' + w.medium + '; }\\n'
+			+ ':root { --sm-rail-large: ' + w.large + '; }\\n';
+	}
+	var tag = document.getElementById('dynamic_style_sm_rail_scale');
+	if (tag) tag.innerHTML = css;
+	return '';
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
