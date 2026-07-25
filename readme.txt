@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 2.4.1
+Stable tag: 2.5.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,12 @@ When fetching design assets or submitting the plugin's existing settings statist
 * Google Fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.5.0 =
+* New: a Layout section that brings container width, content inset, rails, and vertical rhythm together in one place.
+* New: shape sidebar rail sizes with a Rail Scale built from a Base width and a Pitch, including named presets from flat to grand.
+* New: preview the layout blueprint contract so companion tools and themes can read the same layout decisions.
+* Improved: sites that never touch the new Layout settings render exactly as before — the new tokens stay silent until you adjust them.
 
 = 2.4.1 =
 * Improved: expand the curated Wordmarks Staff Picks collection with five expressive display faces.
