@@ -432,7 +432,6 @@ const FontFamilyList = ( { selected, recommended, onPick } ) => {
         { ( categories.length > 1 || collections.length > 0 ) && (
           <SelectControl
             __nextHasNoMarginBottom
-            __next40pxDefaultSize
             aria-label={ __( 'Filter fonts', '__plugin_txtd' ) }
             value={ effectiveCategory }
             onChange={ setCategory }
@@ -734,7 +733,6 @@ export const NativeFont = ( { settingId, li } ) => {
         <SelectControl
           key={ entry }
           __nextHasNoMarginBottom
-          __next40pxDefaultSize
           label={ __( 'Appearance', '__plugin_txtd' ) }
           value={ String( value.font_variant ?? '' ) }
           options={ [
@@ -753,7 +751,6 @@ export const NativeFont = ( { settingId, li } ) => {
         <RangeControl
           key={ entry }
           __nextHasNoMarginBottom
-          __next40pxDefaultSize
           label={ label }
           value={ current }
           min={ subfield.min }
@@ -769,7 +766,6 @@ export const NativeFont = ( { settingId, li } ) => {
       <SelectControl
         key={ entry }
         __nextHasNoMarginBottom
-        __next40pxDefaultSize
         label={ subfield.label }
         value={ String( value[ entry ] ?? subfield.input.value ?? '' ) }
         options={ subfield.options }
