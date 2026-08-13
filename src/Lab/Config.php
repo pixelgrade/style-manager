@@ -30,12 +30,12 @@ final class Config {
 	private $create_nonce;
 
 	public function __construct(
-		callable $get_palette_runtime_payload = null,
-		callable $get_sm_option = null,
-		callable $get_wp_option = null,
-		callable $admin_url = null,
-		callable $home_url = null,
-		callable $create_nonce = null
+		?callable $get_palette_runtime_payload = null,
+		?callable $get_sm_option = null,
+		?callable $get_wp_option = null,
+		?callable $admin_url = null,
+		?callable $home_url = null,
+		?callable $create_nonce = null
 	) {
 		$this->get_palette_runtime_payload = $get_palette_runtime_payload ?: static function (): array {
 			return function_exists( 'sm_get_palette_runtime_payload' )
