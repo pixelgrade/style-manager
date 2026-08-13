@@ -198,6 +198,7 @@ class EditWithBlocks extends AbstractHookProvider {
 	public function register_hooks() {
 		// Styles and scripts when editing.
 		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_style_manager_scripts', 10 );
+		$this->add_action( 'enqueue_block_assets', 'enqueue_carbon_fields_editor_styles', 10 );
 		$this->add_action( 'enqueue_block_assets', 'enqueue_editor_dynamic_css', 999 );
 
 		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
@@ -206,6 +207,41 @@ class EditWithBlocks extends AbstractHookProvider {
 		// Deregister WP Font Library collections when SM is managing fonts,
 		// to prevent duplicate font UI alongside Style Manager's font controls.
 		$this->add_action( 'init', 'maybe_deregister_font_collections', 20 );
+	}
+
+	/**
+	 * Enqueue Carbon Fields styles while WordPress resolves block iframe assets.
+	 *
+	 * Carbon Fields otherwise enqueues these styles from
+	 * `admin_print_footer_scripts`, which is too late for the WordPress 7.1
+	 * iframe asset pipeline and triggers compatibility-copy diagnostics.
+	 *
+	 * @since 2.5.1
+	 */
+	public function enqueue_carbon_fields_editor_styles() {
+		if ( ! $this->is_admin_block_editor_screen() ) {
+			return;
+		}
+
+		if ( ! defined( 'Carbon_Fields\\URL' ) || ! defined( 'Carbon_Fields\\VERSION' ) ) {
+			return;
+		}
+
+		$suffix   = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$base_url = \Carbon_Fields\URL . '/build/gutenberg/';
+
+		wp_enqueue_style(
+			'carbon-fields-core',
+			$base_url . 'core' . $suffix . '.css',
+			[],
+			\Carbon_Fields\VERSION
+		);
+		wp_enqueue_style(
+			'carbon-fields-blocks',
+			$base_url . 'blocks' . $suffix . '.css',
+			[],
+			\Carbon_Fields\VERSION
+		);
 	}
 
 	/**

@@ -27,9 +27,50 @@ class EditWithBlocksTest extends TestCase {
 			->with( Mockery::type( \Closure::class ), 10, 1 );
 		Filters\expectAdded( 'enqueue_block_assets' )
 			->once()
+			->with( Mockery::type( \Closure::class ), 10, 1 );
+		Filters\expectAdded( 'enqueue_block_assets' )
+			->once()
 			->with( Mockery::type( \Closure::class ), 999, 1 );
 
 		$this->create_edit_screen()->register_hooks();
+		$this->addToAssertionCount( 3 );
+	}
+
+	public function test_carbon_fields_styles_are_enqueued_before_iframe_assets_are_resolved(): void {
+		Functions\when( 'is_admin' )->justReturn( true );
+		Functions\when( 'get_current_screen' )->justReturn( new class() {
+			public string $id = 'post';
+
+			public function is_block_editor(): bool {
+				return true;
+			}
+		} );
+
+		if ( ! defined( 'Carbon_Fields\\URL' ) ) {
+			define( 'Carbon_Fields\\URL', 'https://example.test/carbon-fields' );
+		}
+		if ( ! defined( 'Carbon_Fields\\VERSION' ) ) {
+			define( 'Carbon_Fields\\VERSION', '3.6.9-tests' );
+		}
+
+		Functions\expect( 'wp_enqueue_style' )
+			->once()
+			->with(
+				'carbon-fields-core',
+				'https://example.test/carbon-fields/build/gutenberg/core.min.css',
+				[],
+				'3.6.9-tests'
+			);
+		Functions\expect( 'wp_enqueue_style' )
+			->once()
+			->with(
+				'carbon-fields-blocks',
+				'https://example.test/carbon-fields/build/gutenberg/blocks.min.css',
+				[],
+				'3.6.9-tests'
+			);
+
+		$this->create_edit_screen()->enqueue_carbon_fields_editor_styles();
 		$this->addToAssertionCount( 2 );
 	}
 
