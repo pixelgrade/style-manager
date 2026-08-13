@@ -9,7 +9,7 @@ const source = fs.readFileSync(
 
 test( 'Typography Preview buttons inherit the live connected font over theme button rules', () => {
 	const declarations = source.match(
-		/\.sm-typography-preview\s+\.wp-block-button\[class\]\s+\.wp-block-button__link\[class\]\s*\{([\s\S]*?)\n\}/
+		/\.sm-typography-preview\s+\[class~="wp-block-button"\]\[class\]\s+\[class~="wp-block-button__link"\]\[class\]\s*\{([\s\S]*?)\n\}/
 	)?.[ 1 ] ?? '';
 
 	assert.notEqual(

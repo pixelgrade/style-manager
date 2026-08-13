@@ -24,7 +24,7 @@ $badge-font-accent: #9C9CDD;
   --theme-button-padding: calc(var(--theme-button-y-padding) - var(--theme-button-border-width)) var(--theme-button-x-padding);
 }
 
-.sm-typography-preview .wp-block-button[class] .wp-block-button__link[class] {
+.sm-typography-preview [class~="wp-block-button"][class] [class~="wp-block-button__link"][class] {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -47,7 +47,7 @@ $badge-font-accent: #9C9CDD;
   line-height: 1.25;
 
   // Fix buttons' font-size
-  :is(.wp-block-button__link, #specific) {
+  :is([class~="wp-block-button__link"], #specific) {
     font-size: inherit;
   }
 }
