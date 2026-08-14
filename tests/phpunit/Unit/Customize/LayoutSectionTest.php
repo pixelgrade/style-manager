@@ -31,7 +31,7 @@ class LayoutSectionTest extends TestCase {
 		$this->assertSame( 'Rail Gap', $control['label'] );
 		$this->assertSame( 2, $control['default'] );
 		$this->assertSame(
-			[ 'min' => 1, 'max' => 2.5, 'step' => 0.25, 'data-preview' => true ],
+			[ 'min' => 1, 'max' => 5, 'step' => 0.25, 'data-preview' => true ],
 			$control['input_attrs']
 		);
 		$this->assertSame( '--sm-rail-gap', $control['css'][0]['property'] );

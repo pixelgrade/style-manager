@@ -277,7 +277,7 @@ class LayoutSection extends AbstractHookProvider {
 					'default'      => 2,
 					'input_attrs'  => [
 						'min'          => 1,
-						'max'          => 2.5,
+						'max'          => 5,
 						'step'         => 0.25,
 						'data-preview' => true,
 					],
