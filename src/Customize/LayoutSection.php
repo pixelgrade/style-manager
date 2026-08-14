@@ -4,8 +4,9 @@
  *
  * The Layout section is the design system's page-anatomy + rhythm contract:
  * the site container width, the content inset (reading measure), the rail scale
- * (sidebar widths), and the spacing level (vertical rhythm). It absorbed the
- * former Spacing section on 2026-07-23 — container and inset are one page
+ * (sidebar widths), the rail gap (content-to-rail gutter), and the spacing
+ * level (vertical rhythm). It absorbed the former Spacing section on
+ * 2026-07-23 — container and inset are one page
  * anatomy, so a single section reads as one coherent story.
  *
  * @since   2.4.0
@@ -262,6 +263,32 @@ class LayoutSection extends AbstractHookProvider {
 						],
 					],
 				],
+				// Content-to-rail gutter: independent from both the rail widths and
+				// the global rhythm. The value is a multiplier consumed by Nova Blocks
+				// against its fluid spacing token. A default of 2 preserves the
+				// pre-control Sidecar geometry byte-for-byte.
+				'sm_rail_gap'             => [
+					'type'         => 'range',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_rail_gap',
+					'live'         => true,
+					'label'        => esc_html__( 'Rail Gap', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Adjust the distance between the main content and adjacent sidebars without changing their widths or the site rhythm.', '__plugin_txtd' ),
+					'default'      => 2,
+					'input_attrs'  => [
+						'min'          => 1,
+						'max'          => 2.5,
+						'step'         => 0.25,
+						'data-preview' => true,
+					],
+					'css'          => [
+						[
+							'property' => '--sm-rail-gap',
+							'selector' => ':root',
+							'unit'     => '',
+						],
+					],
+				],
 				// Vertical rhythm: the multiplication factor for the distance between
 				// elements. Moved here from the merged Spacing section (config is
 				// byte-identical).
@@ -309,13 +336,14 @@ class LayoutSection extends AbstractHookProvider {
 
 		// The page-anatomy story, top to bottom: how wide the container is, how far
 		// content is inset, how wide the rails are (presets face + base slider span),
-		// then the vertical rhythm between elements.
+		// the content-to-rail gutter, then the vertical rhythm between elements.
 		$layout_section_fields = [
 			'sm_site_container_width',
 			'sm_content_inset',
 			'sm_rail_scale_preset',
 			'sm_rail_scale',
 			'sm_rail_pitch',
+			'sm_rail_gap',
 			'sm_spacing_level',
 		];
 
