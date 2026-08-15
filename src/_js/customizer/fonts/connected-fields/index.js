@@ -1,6 +1,8 @@
 import { debounce, maybeLoadFontFamily } from "../../../utils";
 import { getCallback, getSettingConfig, setCallback, unbindConnectedFields } from "../../global-service";
 import { getConnectedFieldsFontSizeInterval } from "./get-connected-fields-font-size-interval";
+import { applyFontSizeInterval, getRelativeFontSizeInterval } from "./relative-font-size-interval";
+export { applyFontSizeInterval } from "./relative-font-size-interval";
 import { standardizeNumericalValue } from "../utils";
 import { round } from '../utils/round';
 import { createConnectedFieldsBatcher } from "./batcher";
@@ -79,11 +81,14 @@ export const getConnectedFieldFontData = ( connectedSettingID, settingID, fontsL
     newFontData[ 'font_family' ] = fontsLogic.font_family;
     newFontData[ 'font_size' ] = standardizeNumericalValue( connectedSettingData.font_size );
 
-    const targetFontSizeInterval = getFontSizeInterval( settingID );
+    const targetFontSizeInterval = getFontSizeInterval( settingID, fontSizeInterval );
 
     if ( targetFontSizeInterval ) {
-      const connectedSettingConfig = getSettingConfig( connectedSettingID );
-      const fontSize = connectedSettingConfig?.default?.font_size?.value;
+      // Remap the CURRENT size (issue #203): at the neutral knob position the
+      // target interval equals the source interval, so this is an identity and
+      // font palettes stay size-neutral; moving Elevation/Pitch rescales the
+      // user's own values, preserving fine-tune relationships.
+      const fontSize = newFontData.font_size?.value;
       applyFontSizeInterval( newFontData, fontSize, fontSizeInterval, targetFontSizeInterval );
     }
 
@@ -108,64 +113,20 @@ const alterConnectedFields = ( settingID, fontsLogic ) => {
   } );
 }
 
-const getFontSizeInterval = ( settingID ) => {
-  let fontSizeInterval;
+const getFontSizeInterval = ( settingID, sourceInterval ) => {
+  let fontSizeInterval = false;
 
   wp.customize( `${ settingID }_elevation`, elevationSetting => {
     wp.customize( `${ settingID }_pitch`, pitchSetting => {
       const elevation = parseInt( elevationSetting(), 10 );
       const pitch = parseInt( pitchSetting(), 10 );
 
-      fontSizeInterval = getInterval( settingID, elevation, pitch );
+      fontSizeInterval = getRelativeFontSizeInterval( sourceInterval, elevation, pitch );
     } );
   } );
 
   return fontSizeInterval;
 }
-
-const getInterval = ( settingID, elevation, pitch ) => {
-
-  // The limits within which an element font-size can be included
-  // using the Elevation and Pitch settings.
-  const bounds = {
-    sm_font_primary: [ 16, 200 ],
-    sm_font_secondary: [ 12, 36 ],
-    sm_font_body: [ 14, 32 ]
-  }
-
-  const settingBounds = bounds[ settingID ];
-
-  // Elevation can move the minimum value only halfway to the end of the interval
-  // leaving space for the pitch control to have effect
-  const min = settingBounds[0] + ( settingBounds[1] - settingBounds[0] ) * ( elevation / 100 ) * 0.5;
-  const max = min + ( settingBounds[1] - min ) * pitch / 100;
-
-  return [ min, max ];
-}
-
-export const applyFontSizeInterval = ( fontData, fontSize, fontSizeInterval, targetFontSizeInterval ) => {
-
-  if ( ! fontSizeInterval ) {
-    return;
-  }
-
-  const ab = fontSizeInterval;
-  const cd = targetFontSizeInterval;
-
-  if ( ! Array.isArray( ab ) || ! Array.isArray( cd ) ) {
-    return;
-  }
-
-  if ( !! fontSize ) {
-
-    if ( ab[1] === ab[0] ) {
-      fontData.font_size.value = Math.max( cd[0], Math.min( cd[1], fontSize ) );
-    } else {
-      const newFontSize = ( fontSize - ab[0] ) * ( cd[1] - cd[0] ) / ( ab[1] - ab[0] ) + cd[0];
-      fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
-    }
-  }
-};
 
 // The line height is determined by getting the value of the polynomial function determined by points.
 export const applyFontStyleIntervals = ( newFontData, fontsLogic ) => {

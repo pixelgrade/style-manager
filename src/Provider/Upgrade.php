@@ -156,6 +156,18 @@ class Upgrade extends AbstractHookProvider {
 			$this->migrate_cache_options_off_autoload();
 			add_option( 'sm_perf_autoload_migrated_v1', '1', '', false );
 		}
+
+		// Reset the Font Sizing knobs to the new relative-neutral defaults (issue #203).
+		// Derived per-element font values are persisted, so nothing re-renders on upgrade;
+		// resetting the knobs makes the next palette/tuner interaction continuous with the
+		// site's current look instead of jumping through the old absolute-bounds math.
+		if ( ! get_option( 'sm_font_sizing_relative_migrated_v1', false ) ) {
+			foreach ( [ 'primary', 'secondary', 'body' ] as $master ) {
+				delete_option( "sm_font_{$master}_elevation" );
+				delete_option( "sm_font_{$master}_pitch" );
+			}
+			add_option( 'sm_font_sizing_relative_migrated_v1', '1', '', false );
+		}
 	}
 
 	/**

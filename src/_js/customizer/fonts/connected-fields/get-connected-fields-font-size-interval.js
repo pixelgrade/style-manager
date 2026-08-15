@@ -16,8 +16,11 @@ export const getConnectedFieldsFontSizeInterval = ( settingID ) => {
     wp.customize( connectedSettingID, connectedSetting => {
       const connectedSettingConfig = getSettingConfig( connectedSettingID );
       const connectedSettingValue = connectedSetting();
-      const fontSize = connectedSettingConfig?.default?.font_size?.value;
-      const unit = connectedSettingConfig?.default?.font_size?.unit;
+      // Prefer the CURRENT size so the interval describes the values being
+      // remapped — this keeps re-derivation anchored to the user's own scale
+      // and makes the neutral knob position an identity (issue #203).
+      const fontSize = connectedSettingValue?.font_size?.value ?? connectedSettingConfig?.default?.font_size?.value;
+      const unit = connectedSettingValue?.font_size?.unit ?? connectedSettingConfig?.default?.font_size?.unit;
 
       if ( fontSizeUnitSet ) {
         if ( !! unit && unit !== fontSizeUnit ) {

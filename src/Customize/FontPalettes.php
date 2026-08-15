@@ -1110,10 +1110,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_primary_elevation',
 					'label'        => esc_html__( 'Font Sizing: Elevation ↑↓', '__plugin_txtd' ),
-					'default'      => 24,
+					'default'      => 0,
 					'input_attrs'  => [
-						'min'  => 0,
-						'max'  => 100,
+						'min'  => -50,
+						'max'  => 50,
 						'step' => 1,
 					],
 				],
@@ -1125,10 +1125,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_primary_pitch',
 					'label'        => esc_html__( 'Font Sizing: Pitch', '__plugin_txtd' ),
-					'default'      => 141,
+					'default'      => 100,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 100,
+						'max'  => 200,
 						'step' => 1,
 					],
 				],
@@ -1175,10 +1175,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_secondary_elevation',
 					'label'        => esc_html__( 'Elevation ↑↓', '__plugin_txtd' ),
-					'default'      => 16,
+					'default'      => 0,
 					'input_attrs'  => [
-						'min'  => 0,
-						'max'  => 100,
+						'min'  => -50,
+						'max'  => 50,
 						'step' => 1,
 					],
 				],
@@ -1189,10 +1189,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_secondary_pitch',
 					'label'        => esc_html__( 'Pitch', '__plugin_txtd' ),
-					'default'      => 2,
+					'default'      => 100,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 100,
+						'max'  => 200,
 						'step' => 1,
 					],
 				],
@@ -1239,10 +1239,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_body_elevation',
 					'label'        => esc_html__( 'Elevation ↑↓', '__plugin_txtd' ),
-					'default'      => 17,
+					'default'      => 0,
 					'input_attrs'  => [
-						'min'  => 0,
-						'max'  => 100,
+						'min'  => -50,
+						'max'  => 50,
 						'step' => 1,
 					],
 				],
@@ -1253,10 +1253,10 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_body_pitch',
 					'label'        => esc_html__( 'Pitch', '__plugin_txtd' ),
-					'default'      => 7,
+					'default'      => 100,
 					'input_attrs'  => [
 						'min'  => 0,
-						'max'  => 100,
+						'max'  => 200,
 						'step' => 1,
 					],
 				],
@@ -2080,159 +2080,14 @@ class FontPalettes extends AbstractHookProvider {
 			$new_font_data['font_size'] = FontsHelper::standardizeNumericalValue( $connected_value['font_size'] );
 		}
 
-		$source_font_size_interval = $this->get_connected_fields_font_size_interval( $master_font_id, $options_details );
-		$target_font_size_interval = $this->get_master_font_size_interval( $master_font_id, $options_details );
-		if ( null !== $source_font_size_interval && null !== $target_font_size_interval ) {
-			$this->apply_font_size_interval( $new_font_data, $connected_field_details, $source_font_size_interval, $target_font_size_interval );
-		}
-
+		// Font palettes change the voice, never the scale (issue #203): the connected
+		// field keeps its CURRENT font size. The only size instruments a palette owns
+		// are its authored multipliers — the face-normalization corrections below.
 		$this->apply_font_size_multiplier( $new_font_data, $fonts_logic['font_size_multiplier'] ?? null );
 		$this->apply_font_style_intervals( $new_font_data, $fonts_logic );
 		$this->apply_line_height( $new_font_data, $fonts_logic );
 
 		return $new_font_data;
-	}
-
-	/**
-	 * Get the source default font-size range covered by a master font's connected fields.
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param string $master_font_id  Master Style Manager font option ID.
-	 * @param array  $options_details All Style Manager option details.
-	 *
-	 * @return array|null
-	 */
-	private function get_connected_fields_font_size_interval( string $master_font_id, array $options_details ): ?array {
-		if ( empty( $options_details[ $master_font_id ]['connected_fields'] ) || ! is_array( $options_details[ $master_font_id ]['connected_fields'] ) ) {
-			return null;
-		}
-
-		$min_font_size           = PHP_FLOAT_MAX;
-		$max_font_size           = - PHP_FLOAT_MAX;
-		$font_size_unit          = false;
-		$font_size_unit_is_set   = false;
-		$has_consistent_units    = true;
-
-		foreach ( $options_details[ $master_font_id ]['connected_fields'] as $connected_field_id ) {
-			if ( ! is_string( $connected_field_id ) || empty( $options_details[ $connected_field_id ]['default']['font_size'] ) ) {
-				continue;
-			}
-
-			$font_size = FontsHelper::standardizeNumericalValue( $options_details[ $connected_field_id ]['default']['font_size'] );
-			if ( false === $font_size['value'] || ! is_numeric( $font_size['value'] ) ) {
-				continue;
-			}
-
-			if ( $font_size_unit_is_set ) {
-				if ( ! empty( $font_size['unit'] ) && $font_size['unit'] !== $font_size_unit ) {
-					$has_consistent_units = false;
-				}
-			} elseif ( ! empty( $font_size['unit'] ) ) {
-				$font_size_unit        = $font_size['unit'];
-				$font_size_unit_is_set = true;
-			}
-
-			$min_font_size = min( $min_font_size, (float) $font_size['value'] );
-			$max_font_size = max( $max_font_size, (float) $font_size['value'] );
-		}
-
-		if ( ! $has_consistent_units || PHP_FLOAT_MAX === $min_font_size || - PHP_FLOAT_MAX === $max_font_size || $min_font_size > $max_font_size ) {
-			return null;
-		}
-
-		return [ $min_font_size, $max_font_size ];
-	}
-
-	/**
-	 * Get the target font-size interval for a master font from its elevation/pitch values.
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param string $master_font_id  Master Style Manager font option ID.
-	 * @param array  $options_details All Style Manager option details.
-	 *
-	 * @return array|null
-	 */
-	private function get_master_font_size_interval( string $master_font_id, array $options_details ): ?array {
-		$bounds = [
-			'sm_font_primary'   => [ 16, 200 ],
-			'sm_font_secondary' => [ 12, 36 ],
-			'sm_font_body'      => [ 14, 32 ],
-		];
-		if ( ! isset( $bounds[ $master_font_id ] ) ) {
-			return null;
-		}
-
-		$elevation = (float) $this->get_option_detail_value( $master_font_id . '_elevation', $options_details, 0 );
-		$pitch     = (float) $this->get_option_detail_value( $master_font_id . '_pitch', $options_details, 0 );
-		$lower     = $bounds[ $master_font_id ][0];
-		$upper     = $bounds[ $master_font_id ][1];
-		$min       = $lower + ( $upper - $lower ) * ( $elevation / 100 ) * 0.5;
-		$max       = $min + ( $upper - $min ) * $pitch / 100;
-
-		return [ $min, $max ];
-	}
-
-	/**
-	 * Get an option detail's resolved value with default fallback.
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param string $option_id       Option ID.
-	 * @param array  $options_details All Style Manager option details.
-	 * @param mixed  $fallback        Fallback when no value/default exists.
-	 *
-	 * @return mixed
-	 */
-	private function get_option_detail_value( string $option_id, array $options_details, $fallback = null ) {
-		if ( isset( $options_details[ $option_id ]['value'] ) ) {
-			return $options_details[ $option_id ]['value'];
-		}
-
-		if ( isset( $options_details[ $option_id ]['default'] ) ) {
-			return $options_details[ $option_id ]['default'];
-		}
-
-		return $fallback;
-	}
-
-	/**
-	 * Apply the source-to-target font-size interval mapping.
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param array $font_data                   Connected field font data.
-	 * @param array $connected_field_details     Connected field details.
-	 * @param array $source_font_size_interval   Source interval.
-	 * @param array $target_font_size_interval   Target interval.
-	 */
-	private function apply_font_size_interval( array &$font_data, array $connected_field_details, array $source_font_size_interval, array $target_font_size_interval ): void {
-		if ( empty( $font_data['font_size'] ) || false === $font_data['font_size']['value'] || empty( $connected_field_details['default']['font_size'] ) ) {
-			return;
-		}
-
-		$default_font_size = FontsHelper::standardizeNumericalValue( $connected_field_details['default']['font_size'] );
-		if ( false === $default_font_size['value'] || ! is_numeric( $default_font_size['value'] ) ) {
-			return;
-		}
-
-		if ( $source_font_size_interval[1] === $source_font_size_interval[0] ) {
-			$font_data['font_size']['value'] = max(
-				$target_font_size_interval[0],
-				min( $target_font_size_interval[1], (float) $default_font_size['value'] )
-			);
-			return;
-		}
-
-		$font_data['font_size']['value'] = round(
-			(
-				( (float) $default_font_size['value'] - $source_font_size_interval[0] )
-				* ( $target_font_size_interval[1] - $target_font_size_interval[0] )
-				/ ( $source_font_size_interval[1] - $source_font_size_interval[0] )
-			) + $target_font_size_interval[0],
-			1
-		);
 	}
 
 	/**
