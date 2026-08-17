@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export const PALETTE_OUTPUT_SETTING_ID = 'sm_advanced_palette_output';
 export const FONT_PALETTE_SETTING_ID = 'sm_font_palette';
+export const FONT_SIZING_BASELINE_SETTING_ID = 'sm_font_sizing_baseline_v1';
 
 export const FREE_PALETTE_SETTING_IDS = [
   'sm_advanced_palette_source',
@@ -146,6 +147,12 @@ export const filterLockedPlusChangedValues = ( changedValues = {}, plusPayload =
   gatedSettingIds.forEach( id => {
     delete filtered[ id ];
   } );
+
+  // This hidden value is client-side round-trip state, not an authority. The
+  // locked server rebuilds and mirrors a safe copy whenever the free named
+  // Font Sizing driver is saved. Suppress it even when it is the only dirty
+  // setting, otherwise WordPress attempts an empty save after server gating.
+  delete filtered[ FONT_SIZING_BASELINE_SETTING_ID ];
 
   if ( hasLockedPaletteChange ) {
     delete filtered[ FONT_PALETTE_SETTING_ID ];

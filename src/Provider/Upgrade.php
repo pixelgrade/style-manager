@@ -168,6 +168,19 @@ class Upgrade extends AbstractHookProvider {
 			}
 			add_option( 'sm_font_sizing_relative_migrated_v1', '1', '', false );
 		}
+
+		// The relative migration above neutralized the knobs but could leave a
+		// persisted named choice such as "smaller" selected. Named Font Sizing
+		// states are now absolute (issue #206), so align the label with the neutral
+		// knobs without touching the already-persisted connected font values.
+		if ( ! get_option( 'sm_font_sizing_absolute_migrated_v2', false ) ) {
+			delete_option( 'sm_font_sizing' );
+			foreach ( [ 'primary', 'secondary', 'body' ] as $master ) {
+				delete_option( "sm_font_{$master}_elevation" );
+				delete_option( "sm_font_{$master}_pitch" );
+			}
+			add_option( 'sm_font_sizing_absolute_migrated_v2', '1', '', false );
+		}
 	}
 
 	/**

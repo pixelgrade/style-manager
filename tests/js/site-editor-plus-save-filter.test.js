@@ -94,6 +94,28 @@ test( 'locked Plus strips a tier-locked font-palette selection from native save 
 	);
 } );
 
+test( 'locked Plus never sends the client-owned font sizing baseline', () => {
+	const baseline = {
+		version: 1,
+		scales: { sm_font_body: { interval: [ 14, 24 ], sizes: { body_font: 20 } } },
+	};
+
+	assert.deepEqual(
+		filterLockedPlusChangedValues(
+			{ sm_font_sizing_baseline_v1: baseline },
+			lockedPlusFont
+		),
+		{}
+	);
+	assert.deepEqual(
+		filterLockedPlusChangedValues(
+			{ sm_font_sizing: 'smaller', sm_font_sizing_baseline_v1: baseline },
+			lockedPlusFont
+		),
+		{ sm_font_sizing: 'smaller' }
+	);
+} );
+
 test( 'unlocked Plus does not filter palette output or premium tuning', () => {
 	const changed = {
 		sm_color_grades_number: 8,

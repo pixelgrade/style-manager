@@ -27,6 +27,41 @@ class FontPalettes extends AbstractHookProvider {
 	const SM_FONT_PALETTE_OPTION_KEY = 'sm_font_palette';
 	const SM_FONT_PALETTE_VARIATION_OPTION_KEY = 'sm_font_palette_variation';
 	const SM_IS_CUSTOM_FONT_PALETTE_OPTION_KEY = 'sm_is_custom_font_palette';
+	const SM_FONT_SIZING_BASELINE_OPTION_KEY = 'sm_font_sizing_baseline_v1';
+	private const SM_FONT_SIZING_TRUSTED_BASELINE_OPTION_KEY = 'sm_font_sizing_trusted_baseline_v1';
+
+	/**
+	 * Absolute Elevation/Pitch states for the free Font Sizing control.
+	 *
+	 * Keep in sync with customizer/fonts/font-sizing-presets.js.
+	 */
+	private const FONT_SIZING_PRESETS = [
+		'smallest' => [
+			'sm_font_primary'   => [ 0, 34 ],
+			'sm_font_secondary' => [ 5, 30 ],
+			'sm_font_body'      => [ 0, 10 ],
+		],
+		'smaller'  => [
+			'sm_font_primary'   => [ 6, 40 ],
+			'sm_font_secondary' => [ 16, 16 ],
+			'sm_font_body'      => [ 0, 45 ],
+		],
+		'normal'   => [
+			'sm_font_primary'   => [ 0, 100 ],
+			'sm_font_secondary' => [ 0, 100 ],
+			'sm_font_body'      => [ 0, 100 ],
+		],
+		'larger'   => [
+			'sm_font_primary'   => [ 12, 100 ],
+			'sm_font_secondary' => [ 20, 30 ],
+			'sm_font_body'      => [ 50, 30 ],
+		],
+		'largest'  => [
+			'sm_font_primary'   => [ 18, 100 ],
+			'sm_font_secondary' => [ 20, 45 ],
+			'sm_font_body'      => [ 70, 30 ],
+		],
+	];
 
 	/**
 	 * The Fine-tune font section field ids, in display order.
@@ -148,6 +183,7 @@ class FontPalettes extends AbstractHookProvider {
 		 * Handle the logic on settings update/save.
 		 */
 		$this->add_action( 'customize_save_after', 'update_custom_palette_in_use', 10, 1 );
+		$this->add_action( 'customize_save_after', 'trust_customizer_font_sizing_baseline', 20, 0 );
 
 		/**
 		 * Add font palettes usage to site data.
@@ -1030,6 +1066,13 @@ class FontPalettes extends AbstractHookProvider {
 						'largest'  => esc_html__( 'Largest', '__plugin_txtd' ),
 					],
 				],
+				self::SM_FONT_SIZING_BASELINE_OPTION_KEY => [
+					'type'         => 'hidden_control',
+					'setting_type' => 'option',
+					'setting_id'   => self::SM_FONT_SIZING_BASELINE_OPTION_KEY,
+					'default'      => [],
+					'live'         => true,
+				],
 				'sm_separator_0_0' => [ 'type' => 'html', 'html' => '', 'priority' => 4 ],
 				self::SM_FONT_PALETTE_OPTION_KEY => [
 					'type'         => 'preset',
@@ -1329,6 +1372,7 @@ class FontPalettes extends AbstractHookProvider {
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 		$font_palettes_fields = [
 			'sm_font_sizing',
+			self::SM_FONT_SIZING_BASELINE_OPTION_KEY,
 			'sm_separator_0_0',
 			'sm_current_font_palette',
 			'sm_fine_tune_intro',
@@ -1957,8 +2001,9 @@ class FontPalettes extends AbstractHookProvider {
 	 * Apply the selected font palette to its connected theme font fields.
 	 *
 	 * This mirrors the Customizer palette-selection path for headless option
-	 * updates: write palette master fonts, apply the connected-fields preset,
-	 * rebuild option details, then persist the derived connected field values.
+	 * updates: write palette master fonts, rebuild option details, then persist
+	 * the derived connected field values. A palette owns voice, not the site's
+	 * connected-field anatomy or numeric type scale (issue #206).
 	 *
 	 * @since 2.3.0
 	 *
@@ -1979,10 +2024,8 @@ class FontPalettes extends AbstractHookProvider {
 			return [];
 		}
 
-		$fonts_logic              = $font_palettes[ $current_palette ]['fonts_logic'];
-		$connected_fields_preset = '';
+		$fonts_logic = $font_palettes[ $current_palette ]['fonts_logic'];
 		if ( ! empty( $fonts_logic['connected_fields_preset'] ) ) {
-			$connected_fields_preset = (string) $fonts_logic['connected_fields_preset'];
 			unset( $fonts_logic['connected_fields_preset'] );
 		}
 
@@ -1993,10 +2036,6 @@ class FontPalettes extends AbstractHookProvider {
 
 		foreach ( $fonts_logic as $master_font_id => $font_logic ) {
 			update_option( (string) $master_font_id, $font_logic );
-		}
-
-		if ( '' !== $connected_fields_preset ) {
-			update_option( 'sm_fonts_connected_fields_preset', $connected_fields_preset );
 		}
 
 		$this->options->invalidate_all_caches();
@@ -2044,6 +2083,199 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	/**
+	 * Build a server-owned neutral baseline from already-persisted font values.
+	 *
+	 * Locked clients may preview premium font outputs, so their submitted public
+	 * baseline is never trusted. This method reconciles only persisted values
+	 * against the previous trusted baseline, then stores the result separately.
+	 *
+	 * @since 2.5.0
+	 */
+	public function prepare_locked_font_sizing_baseline(): array {
+		if ( ! $this->is_supported() ) {
+			return [];
+		}
+
+		$this->options->invalidate_all_caches();
+		$options_details = $this->options->get_details_all( false, true );
+		if ( empty( $options_details ) ) {
+			return [];
+		}
+
+		$trusted = $this->normalize_font_sizing_baseline(
+			get_option( self::SM_FONT_SIZING_TRUSTED_BASELINE_OPTION_KEY, [] )
+		);
+		$next = [ 'version' => 1, 'scales' => [] ];
+
+		foreach ( self::FONT_SIZING_PRESETS['normal'] as $master_font_id => $unused_state ) {
+			$current_sizes = $this->get_font_size_scale_from_details( $master_font_id, $options_details );
+			$fallback_sizes = $this->get_font_size_scale_from_details( $master_font_id, $options_details, true );
+			$elevation = $this->get_persisted_font_size_knob( $master_font_id . '_elevation', $options_details, 0 );
+			$pitch = $this->get_persisted_font_size_knob( $master_font_id . '_pitch', $options_details, 100 );
+			$entry = $trusted['scales'][ $master_font_id ] ?? [];
+
+			if ( $this->is_font_sizing_baseline_entry( $entry ) ) {
+				$entry = $this->reconcile_font_sizing_baseline_entry( $entry, $current_sizes, $elevation, $pitch );
+			} else {
+				$entry = $this->create_font_sizing_baseline_entry(
+					$current_sizes,
+					$elevation,
+					$pitch,
+					$fallback_sizes
+				);
+			}
+
+			if ( $this->is_font_sizing_baseline_entry( $entry ) ) {
+				$next['scales'][ $master_font_id ] = $entry;
+			}
+		}
+
+		if ( empty( $next['scales'] ) ) {
+			return [];
+		}
+
+		update_option( self::SM_FONT_SIZING_TRUSTED_BASELINE_OPTION_KEY, $next, false );
+
+		return $next;
+	}
+
+	/**
+	 * Remember an entitled client's baseline for a future locked session.
+	 *
+	 * @since 2.5.0
+	 */
+	public function trust_current_font_sizing_baseline(): void {
+		$baseline = $this->normalize_font_sizing_baseline(
+			get_option( self::SM_FONT_SIZING_BASELINE_OPTION_KEY, [] )
+		);
+
+		if ( ! empty( $baseline['scales'] ) ) {
+			update_option( self::SM_FONT_SIZING_TRUSTED_BASELINE_OPTION_KEY, $baseline, false );
+		}
+	}
+
+	/**
+	 * Mirror an entitled Customizer save into the server-owned baseline.
+	 *
+	 * Direct Elevation/Pitch edits can update the public baseline without
+	 * changing the named Font Sizing driver. Persist the trusted copy after any
+	 * successful Customizer save so a later locked session can still recover a
+	 * flat Pitch=0 scale without falling back to theme defaults.
+	 *
+	 * @since 2.5.0
+	 */
+	public function trust_customizer_font_sizing_baseline(): void {
+		if ( \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
+			return;
+		}
+
+		$this->trust_current_font_sizing_baseline();
+	}
+
+	/**
+	 * Rebuild Font Sizing's derived values after the locked-Plus save gate.
+	 *
+	 * Font Sizing is a free high-level control. Its Elevation/Pitch knobs and
+	 * connected theme-font values live in the premium layer, so the REST gate
+	 * strips the submitted derivatives and this trusted server path recreates
+	 * them from the persisted neutral baseline.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return array Updated connected field option IDs.
+	 */
+	public function apply_current_font_sizing_to_connected_fields(): array {
+		if ( ! $this->is_supported() ) {
+			return [];
+		}
+
+		$preset_id = (string) get_option( 'sm_font_sizing', 'normal' );
+		if ( ! isset( self::FONT_SIZING_PRESETS[ $preset_id ] ) ) {
+			return [];
+		}
+
+		$preset = self::FONT_SIZING_PRESETS[ $preset_id ];
+		foreach ( $preset as $master_font_id => $state ) {
+			update_option( $master_font_id . '_elevation', $state[0] );
+			update_option( $master_font_id . '_pitch', $state[1] );
+		}
+
+		$baseline = $this->normalize_font_sizing_baseline(
+			get_option( self::SM_FONT_SIZING_TRUSTED_BASELINE_OPTION_KEY, [] )
+		);
+		if ( empty( $baseline['scales'] ) || ! is_array( $baseline['scales'] ) ) {
+			return [];
+		}
+
+		$this->options->invalidate_all_caches();
+		$options_details = $this->options->get_details_all( false, true );
+		if ( empty( $options_details ) ) {
+			return [];
+		}
+
+		$updated_fields = [];
+		foreach ( $preset as $master_font_id => $state ) {
+			$baseline_entry = $baseline['scales'][ $master_font_id ] ?? [];
+			$source_interval = $baseline_entry['interval'] ?? [];
+			$source_sizes = $baseline_entry['sizes'] ?? [];
+			if ( ! $this->is_numeric_interval( $source_interval ) || ! is_array( $source_sizes ) ) {
+				continue;
+			}
+
+			$font_logic = get_option( $master_font_id, $options_details[ $master_font_id ]['value'] ?? [] );
+			if ( ! is_array( $font_logic ) || empty( $font_logic['font_family'] ) ) {
+				continue;
+			}
+
+			$connected_fields = $options_details[ $master_font_id ]['connected_fields'] ?? [];
+			if ( ! is_array( $connected_fields ) ) {
+				continue;
+			}
+
+			$target_interval = $this->get_relative_font_size_interval(
+				$source_interval,
+				(float) $state[0],
+				(float) $state[1]
+			);
+
+			foreach ( $connected_fields as $connected_field_id ) {
+				if ( ! is_string( $connected_field_id ) || ! isset( $source_sizes[ $connected_field_id ] ) || ! is_numeric( $source_sizes[ $connected_field_id ] ) ) {
+					continue;
+				}
+
+				$font_size = $this->remap_font_size(
+					(float) $source_sizes[ $connected_field_id ],
+					$source_interval,
+					$target_interval
+				);
+				$connected_font_data = $this->get_connected_field_font_data(
+					$connected_field_id,
+					(string) $master_font_id,
+					$font_logic,
+					$options_details,
+					$font_size
+				);
+				if ( null === $connected_font_data ) {
+					continue;
+				}
+
+				$this->persist_option_value(
+					$connected_field_id,
+					$connected_font_data,
+					$options_details[ $connected_field_id ] ?? []
+				);
+				$updated_fields[] = $connected_field_id;
+			}
+		}
+
+		if ( ! empty( $updated_fields ) ) {
+			$this->options->invalidate_all_caches();
+		}
+
+		return array_values( array_unique( $updated_fields ) );
+	}
+
+	/**
 	 * Builds the value for a connected font field from a master font logic entry.
 	 *
 	 * @since 2.3.0
@@ -2055,7 +2287,7 @@ class FontPalettes extends AbstractHookProvider {
 	 *
 	 * @return array|null
 	 */
-	private function get_connected_field_font_data( string $connected_field_id, string $master_font_id, array $fonts_logic, array $options_details ): ?array {
+	private function get_connected_field_font_data( string $connected_field_id, string $master_font_id, array $fonts_logic, array $options_details, ?float $font_size_override = null ): ?array {
 		$connected_field_details = $options_details[ $connected_field_id ] ?? [];
 		if ( ! empty( $fonts_logic['reset'] ) ) {
 			return isset( $connected_field_details['default'] ) && is_array( $connected_field_details['default'] )
@@ -2079,36 +2311,276 @@ class FontPalettes extends AbstractHookProvider {
 		if ( isset( $connected_value['font_size'] ) ) {
 			$new_font_data['font_size'] = FontsHelper::standardizeNumericalValue( $connected_value['font_size'] );
 		}
+		$current_font_size = $new_font_data['font_size']['value'] ?? null;
+		if ( null !== $font_size_override && false !== $current_font_size && '' !== $current_font_size && is_numeric( $current_font_size ) ) {
+			$new_font_data['font_size']['value'] = $font_size_override;
+		}
 
-		// Font palettes change the voice, never the scale (issue #203): the connected
-		// field keeps its CURRENT font size. The only size instruments a palette owns
-		// are its authored multipliers — the face-normalization corrections below.
-		$this->apply_font_size_multiplier( $new_font_data, $fonts_logic['font_size_multiplier'] ?? null );
+		// Font palettes change the voice, never the scale (issues #203 and #206):
+		// numeric sizes remain user-owned, including when catalog data contains a
+		// legacy face-normalization multiplier.
 		$this->apply_font_style_intervals( $new_font_data, $fonts_logic );
 		$this->apply_line_height( $new_font_data, $fonts_logic );
 
 		return $new_font_data;
 	}
 
+	private function is_numeric_interval( $interval ): bool {
+		return is_array( $interval )
+			&& 2 === count( $interval )
+			&& is_numeric( $interval[0] )
+			&& is_numeric( $interval[1] );
+	}
+
+	private function get_relative_font_size_interval( array $source_interval, float $elevation, float $pitch ): array {
+		$minimum = (float) $source_interval[0];
+		$maximum = (float) $source_interval[1];
+		$span    = max( $maximum - $minimum, 0 );
+		$target_minimum = $minimum + $span * ( $elevation / 100 );
+
+		return [ $target_minimum, $target_minimum + $span * ( $pitch / 100 ) ];
+	}
+
+	private function remap_font_size( float $font_size, array $source_interval, array $target_interval ): float {
+		$source_minimum = (float) $source_interval[0];
+		$source_maximum = (float) $source_interval[1];
+		$target_minimum = (float) $target_interval[0];
+		$target_maximum = (float) $target_interval[1];
+
+		if ( $source_maximum === $source_minimum ) {
+			return round( max( $target_minimum, min( $target_maximum, $font_size ) ), FontsHelper::FLOAT_PRECISION );
+		}
+
+		$mapped = ( $font_size - $source_minimum )
+			* ( $target_maximum - $target_minimum )
+			/ ( $source_maximum - $source_minimum )
+			+ $target_minimum;
+
+		return round( $mapped, FontsHelper::FLOAT_PRECISION );
+	}
+
 	/**
-	 * Apply a font-size multiplier to connected field data.
+	 * Normalize a persisted font-sizing baseline document.
 	 *
-	 * @since 2.3.0
-	 *
-	 * @param array $font_data Font data.
-	 * @param mixed $multiplier Multiplier value.
+	 * @param mixed $value Persisted option value.
 	 */
-	private function apply_font_size_multiplier( array &$font_data, $multiplier ): void {
-		if ( ! isset( $multiplier ) || empty( $font_data['font_size']['value'] ) || ! is_numeric( $font_data['font_size']['value'] ) ) {
-			return;
+	private function normalize_font_sizing_baseline( $value ): array {
+		if ( is_string( $value ) ) {
+			$value = json_decode( $value, true );
 		}
 
-		$multiplier = (float) $multiplier;
-		if ( $multiplier <= 0 ) {
-			$multiplier = 1.0;
+		$normalized = [
+			'version' => 1,
+			'scales'  => [],
+		];
+		if ( ! is_array( $value ) || empty( $value['scales'] ) || ! is_array( $value['scales'] ) ) {
+			return $normalized;
 		}
 
-		$font_data['font_size']['value'] = round( (float) $font_data['font_size']['value'] * $multiplier, FontsHelper::FLOAT_PRECISION );
+		foreach ( $value['scales'] as $master_font_id => $entry ) {
+			if ( ! is_string( $master_font_id ) || ! is_array( $entry ) ) {
+				continue;
+			}
+
+			$interval = $entry['interval'] ?? [];
+			$sizes    = $entry['sizes'] ?? [];
+			if ( ! $this->is_numeric_interval( $interval ) || ! is_array( $sizes ) ) {
+				continue;
+			}
+
+			$normalized_sizes = [];
+			foreach ( $sizes as $field_id => $font_size ) {
+				if ( is_string( $field_id ) && is_numeric( $font_size ) ) {
+					$normalized_sizes[ $field_id ] = round( (float) $font_size, FontsHelper::FLOAT_PRECISION );
+				}
+			}
+
+			if ( empty( $normalized_sizes ) ) {
+				continue;
+			}
+
+			$normalized['scales'][ $master_font_id ] = [
+				'interval' => [ (float) $interval[0], (float) $interval[1] ],
+				'sizes'    => $normalized_sizes,
+			];
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Read a master's numeric connected-font scale from option details.
+	 */
+	private function get_font_size_scale_from_details( string $master_font_id, array $options_details, bool $use_defaults = false ): array {
+		$connected_fields = $options_details[ $master_font_id ]['connected_fields'] ?? [];
+		if ( ! is_array( $connected_fields ) ) {
+			return [ 'interval' => false, 'sizes' => [], 'field_ids' => [] ];
+		}
+
+		$sizes                     = [];
+		$field_ids                 = [];
+		$font_size_unit            = false;
+		$font_size_unit_set        = false;
+		$has_consistent_font_sizes = true;
+		foreach ( $connected_fields as $connected_field_id ) {
+			if ( ! is_string( $connected_field_id ) || empty( $options_details[ $connected_field_id ] ) ) {
+				continue;
+			}
+			$field_ids[] = $connected_field_id;
+
+			$field_details  = $options_details[ $connected_field_id ];
+			$font_data      = $use_defaults
+				? ( $field_details['default'] ?? [] )
+				: ( $field_details['value'] ?? $field_details['default'] ?? [] );
+			$font_size_data = is_array( $font_data ) ? ( $font_data['font_size'] ?? null ) : null;
+			$font_size      = is_array( $font_size_data ) ? ( $font_size_data['value'] ?? null ) : $font_size_data;
+			$unit           = is_array( $font_size_data ) ? ( $font_size_data['unit'] ?? false ) : false;
+
+			if ( null === $font_size && ! $use_defaults ) {
+				$default_font_data = $field_details['default'] ?? [];
+				$font_size_data = is_array( $default_font_data ) ? ( $default_font_data['font_size'] ?? null ) : null;
+				$font_size = is_array( $font_size_data ) ? ( $font_size_data['value'] ?? null ) : $font_size_data;
+				$unit = is_array( $font_size_data ) ? ( $font_size_data['unit'] ?? false ) : false;
+			}
+
+			if ( false === $font_size || '' === $font_size || ! is_numeric( $font_size ) ) {
+				continue;
+			}
+
+			$has_unit = false !== $unit && null !== $unit && '' !== $unit;
+			if ( $font_size_unit_set && $has_unit && $unit !== $font_size_unit ) {
+				$has_consistent_font_sizes = false;
+				break;
+			}
+			if ( ! $font_size_unit_set && $has_unit ) {
+				$font_size_unit     = $unit;
+				$font_size_unit_set = true;
+			}
+
+			$sizes[ $connected_field_id ] = round( (float) $font_size, FontsHelper::FLOAT_PRECISION );
+		}
+
+		if ( ! $has_consistent_font_sizes || empty( $sizes ) ) {
+			return [ 'interval' => false, 'sizes' => [], 'field_ids' => $field_ids ];
+		}
+
+		return [
+			'interval' => [ min( $sizes ), max( $sizes ) ],
+			'sizes'    => $sizes,
+			'field_ids' => $field_ids,
+		];
+	}
+
+	/**
+	 * Read an already-persisted Elevation/Pitch knob, with config fallback.
+	 */
+	private function get_persisted_font_size_knob( string $setting_id, array $options_details, float $fallback ): float {
+		$missing = new \stdClass();
+		$value   = get_option( $setting_id, $missing );
+		if ( $missing === $value ) {
+			$value = $options_details[ $setting_id ]['value']
+				?? $options_details[ $setting_id ]['default']
+				?? $fallback;
+		}
+
+		return is_numeric( $value ) ? (float) $value : $fallback;
+	}
+
+	private function is_font_sizing_baseline_entry( $entry ): bool {
+		return is_array( $entry )
+			&& $this->is_numeric_interval( $entry['interval'] ?? [] )
+			&& ! empty( $entry['sizes'] )
+			&& is_array( $entry['sizes'] );
+	}
+
+	/**
+	 * Reconcile server-persisted fine tuning into a trusted neutral baseline.
+	 */
+	private function reconcile_font_sizing_baseline_entry( array $entry, array $current_scale, float $elevation, float $pitch ): array {
+		if ( ! $this->is_font_sizing_baseline_entry( $entry ) ) {
+			return $entry;
+		}
+
+		$current_sizes     = $current_scale['sizes'] ?? [];
+		$current_field_ids = $current_scale['field_ids'] ?? array_keys( $current_sizes );
+		foreach ( array_keys( $entry['sizes'] ) as $field_id ) {
+			if ( in_array( $field_id, $current_field_ids, true ) && ! array_key_exists( $field_id, $current_sizes ) ) {
+				unset( $entry['sizes'][ $field_id ] );
+			}
+		}
+
+		if ( empty( $current_sizes ) || 0.0 === $pitch ) {
+			return $entry;
+		}
+
+		$neutral_interval = $entry['interval'];
+		$current_interval = $this->get_relative_font_size_interval( $neutral_interval, $elevation, $pitch );
+		foreach ( $current_sizes as $field_id => $current_size ) {
+			if ( ! isset( $entry['sizes'][ $field_id ] ) || ! is_numeric( $entry['sizes'][ $field_id ] ) ) {
+				$entry['sizes'][ $field_id ] = $this->remap_font_size(
+					(float) $current_size,
+					$current_interval,
+					$neutral_interval
+				);
+				continue;
+			}
+
+			$expected_size = $this->remap_font_size(
+				(float) $entry['sizes'][ $field_id ],
+				$neutral_interval,
+				$current_interval
+			);
+			if ( round( $expected_size, FontsHelper::FLOAT_PRECISION ) === round( (float) $current_size, FontsHelper::FLOAT_PRECISION ) ) {
+				continue;
+			}
+
+			$entry['sizes'][ $field_id ] = $this->remap_font_size(
+				(float) $current_size,
+				$current_interval,
+				$neutral_interval
+			);
+		}
+
+		return $entry;
+	}
+
+	/**
+	 * Infer a neutral baseline from the current persisted knob state.
+	 */
+	private function create_font_sizing_baseline_entry( array $current_scale, float $elevation, float $pitch, array $fallback_scale ): array {
+		$current_interval = $current_scale['interval'] ?? [];
+		$current_sizes    = $current_scale['sizes'] ?? [];
+		if ( ! $this->is_numeric_interval( $current_interval ) ) {
+			return $this->is_numeric_interval( $fallback_scale['interval'] ?? [] )
+				? [ 'interval' => $fallback_scale['interval'], 'sizes' => $fallback_scale['sizes'] ?? [] ]
+				: [];
+		}
+
+		if ( 0.0 === $pitch ) {
+			return $this->is_numeric_interval( $fallback_scale['interval'] ?? [] )
+				? [ 'interval' => $fallback_scale['interval'], 'sizes' => $fallback_scale['sizes'] ?? [] ]
+				: [ 'interval' => $current_interval, 'sizes' => $current_sizes ];
+		}
+
+		$current_span     = max( (float) $current_interval[1] - (float) $current_interval[0], 0 );
+		$neutral_span     = $current_span / ( $pitch / 100 );
+		$neutral_minimum  = (float) $current_interval[0] - $neutral_span * ( $elevation / 100 );
+		$neutral_interval = [ $neutral_minimum, $neutral_minimum + $neutral_span ];
+		$neutral_sizes    = [];
+		foreach ( $current_sizes as $field_id => $current_size ) {
+			if ( is_string( $field_id ) && is_numeric( $current_size ) ) {
+				$neutral_sizes[ $field_id ] = $this->remap_font_size(
+					(float) $current_size,
+					$current_interval,
+					$neutral_interval
+				);
+			}
+		}
+
+		return [
+			'interval' => $neutral_interval,
+			'sizes'    => $neutral_sizes,
+		];
 	}
 
 	/**
@@ -2144,8 +2616,6 @@ class FontPalettes extends AbstractHookProvider {
 		if ( ! empty( $interval['text_transform'] ) ) {
 			$font_data['text_transform'] = $interval['text_transform'];
 		}
-
-		$this->apply_font_size_multiplier( $font_data, $interval['font_size_multiplier'] ?? null );
 	}
 
 	/**

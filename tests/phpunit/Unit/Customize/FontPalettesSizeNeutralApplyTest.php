@@ -14,8 +14,8 @@ use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
  * Font palettes change the voice; sizes belong to the user (issue #203).
  *
  * Palette application must be size-neutral: connected fields keep their
- * current font sizes unless the palette itself authors explicit size logic
- * (a font_size_multiplier — the face-normalization instrument).
+ * current font sizes even when legacy catalog data carries a multiplier.
+ * Font Sizing owns scale; a palette owns typographic voice.
  */
 class FontPalettesSizeNeutralApplyTest extends TestCase {
 
@@ -152,7 +152,7 @@ class FontPalettesSizeNeutralApplyTest extends TestCase {
 		);
 	}
 
-	public function test_authored_font_size_multiplier_still_adjusts_sizes(): void {
+	public function test_authored_font_size_multiplier_does_not_change_the_user_scale(): void {
 		$this->mock_wp_state(
 			[ FontPalettes::SM_FONT_PALETTE_OPTION_KEY => 'normalized-voice' ],
 			[
@@ -182,10 +182,253 @@ class FontPalettesSizeNeutralApplyTest extends TestCase {
 		$font_palettes->apply_current_font_palette_to_connected_fields();
 
 		$this->assertEquals(
-			19.0,
+			20,
 			$this->theme_mods['anima_options']['body_font']['font_size']['value'] ?? null,
-			'An authored multiplier applies to the CURRENT size — the face-normalization instrument.'
+			'Font palettes may change voice properties, but numeric size remains user-owned and round-trippable.'
 		);
+	}
+
+	public function test_palette_does_not_apply_size_dependent_styles_to_an_inherited_size(): void {
+		$this->mock_wp_state(
+			[ FontPalettes::SM_FONT_PALETTE_OPTION_KEY => 'inherit-safe' ],
+			[
+				'anima_options' => [
+					'body_font' => [
+						'font_family' => 'System Sans-Serif Clear',
+						'font_size'   => [ 'value' => false, 'unit' => false ],
+					],
+				],
+			]
+		);
+
+		$font_palettes = $this->make_font_palettes(
+			[
+				'inherit-safe' => [
+					'fonts_logic' => [
+						'sm_font_body' => [
+							'font_family'                  => 'Reforma1969',
+							'font_styles_intervals'        => [
+								[
+									'start'          => 0,
+									'font_variant'   => '700',
+									'letter_spacing' => [ 'value' => 0.1, 'unit' => 'em' ],
+									'text_transform' => 'uppercase',
+								],
+							],
+							'font_size_to_line_height_points' => [ [ 16, 1.5 ], [ 32, 1.2 ] ],
+						],
+					],
+				],
+			],
+			$this->body_details( [ 'value' => false, 'unit' => false ] )
+		);
+
+		$font_palettes->apply_current_font_palette_to_connected_fields();
+
+		$body = $this->theme_mods['anima_options']['body_font'];
+		$this->assertSame( false, $body['font_size']['value'] );
+		$this->assertArrayNotHasKey( 'font_variant', $body );
+		$this->assertArrayNotHasKey( 'letter_spacing', $body );
+		$this->assertArrayNotHasKey( 'text_transform', $body );
+		$this->assertArrayNotHasKey( 'line_height', $body );
+	}
+
+	public function test_font_sizing_rebuilds_the_locked_plus_outputs_from_the_persisted_baseline(): void {
+		$this->mock_wp_state(
+			[
+				'sm_font_sizing' => 'smaller',
+				FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => [
+					'version' => 1,
+					'scales'  => [
+						'sm_font_body' => [
+							'interval' => [ 1, 1000 ],
+							'sizes'    => [ 'body_font' => 999 ],
+						],
+					],
+				],
+				'sm_font_sizing_trusted_baseline_v1' => [
+					'version' => 1,
+					'scales'  => [
+						'sm_font_body' => [
+							'interval' => [ 14, 24 ],
+							'sizes'    => [ 'body_font' => 20 ],
+						],
+					],
+				],
+				'sm_font_body' => [ 'font_family' => 'Reforma1969' ],
+			],
+			[
+				'anima_options' => [
+					'body_font' => [
+						'font_family' => 'Reforma1969',
+						'font_size'   => [ 'value' => 20, 'unit' => 'px' ],
+					],
+				],
+			]
+		);
+
+		$font_palettes = $this->make_font_palettes(
+			[],
+			$this->body_details( [ 'value' => 20, 'unit' => 'px' ] )
+		);
+
+		$updated = $font_palettes->apply_current_font_sizing_to_connected_fields();
+
+		$this->assertSame( [ 'body_font' ], $updated );
+		$this->assertSame( 6, $this->updated_options['sm_font_primary_elevation'] ?? null );
+		$this->assertSame( 40, $this->updated_options['sm_font_primary_pitch'] ?? null );
+		$this->assertSame( 0, $this->updated_options['sm_font_body_elevation'] ?? null );
+		$this->assertSame( 45, $this->updated_options['sm_font_body_pitch'] ?? null );
+		$this->assertEquals( 16.7, $this->theme_mods['anima_options']['body_font']['font_size']['value'] ?? null );
+	}
+
+	public function test_locked_font_sizing_prepares_a_server_owned_baseline_and_ignores_the_public_copy(): void {
+		$this->mock_wp_state(
+			[
+				FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => [
+					'version' => 1,
+					'scales'  => [
+						'sm_font_body' => [
+							'interval' => [ 1, 1000 ],
+							'sizes'    => [ 'body_font' => 999 ],
+						],
+					],
+				],
+				'sm_font_body_elevation' => 0,
+				'sm_font_body_pitch'     => 100,
+			],
+			[]
+		);
+
+		$font_palettes = $this->make_font_palettes(
+			[],
+			$this->body_details( [ 'value' => 20, 'unit' => 'px' ] )
+		);
+
+		$baseline = $font_palettes->prepare_locked_font_sizing_baseline();
+
+		$this->assertSame( [ 20.0, 20.0 ], $baseline['scales']['sm_font_body']['interval'] ?? null );
+		$this->assertSame( 20.0, $baseline['scales']['sm_font_body']['sizes']['body_font'] ?? null );
+		$this->assertSame( $baseline, $this->updated_options['sm_font_sizing_trusted_baseline_v1'] ?? null );
+	}
+
+	public function test_locked_font_sizing_adds_new_connected_fields_to_the_trusted_baseline(): void {
+		$this->mock_wp_state(
+			[
+				'sm_font_sizing_trusted_baseline_v1' => [
+					'version' => 1,
+					'scales'  => [
+						'sm_font_body' => [
+							'interval' => [ 10, 20 ],
+							'sizes'    => [
+								'body_font'           => 15,
+								'inherited_body_font' => 17,
+							],
+						],
+					],
+				],
+				'sm_font_body_elevation' => 0,
+				'sm_font_body_pitch'     => 100,
+			],
+			[]
+		);
+
+		$details = [
+			'sm_font_body' => [
+				'type'             => 'font',
+				'value'            => [ 'font_family' => 'System Sans-Serif Clear' ],
+				'connected_fields' => [ 'body_font', 'new_body_font', 'inherited_body_font' ],
+			],
+			'body_font' => [
+				'type'    => 'font',
+				'default' => [ 'font_size' => [ 'value' => 15, 'unit' => 'px' ] ],
+				'value'   => [ 'font_size' => [ 'value' => 15, 'unit' => 'px' ] ],
+			],
+			'new_body_font' => [
+				'type'    => 'font',
+				'default' => [ 'font_size' => [ 'value' => 18, 'unit' => 'px' ] ],
+				'value'   => [ 'font_size' => [ 'value' => 18, 'unit' => 'px' ] ],
+			],
+			'inherited_body_font' => [
+				'type'    => 'font',
+				'default' => [ 'font_size' => [ 'value' => 17, 'unit' => 'px' ] ],
+				'value'   => [ 'font_size' => [ 'value' => false, 'unit' => false ] ],
+			],
+		];
+
+		$baseline = $this->make_font_palettes( [], $details )->prepare_locked_font_sizing_baseline();
+
+		$this->assertSame( 15.0, $baseline['scales']['sm_font_body']['sizes']['body_font'] ?? null );
+		$this->assertSame( 18.0, $baseline['scales']['sm_font_body']['sizes']['new_body_font'] ?? null );
+		$this->assertArrayNotHasKey( 'inherited_body_font', $baseline['scales']['sm_font_body']['sizes'] ?? [] );
+	}
+
+	public function test_locked_font_sizing_does_not_resurrect_an_inherited_size_from_a_stale_baseline(): void {
+		$this->mock_wp_state(
+			[
+				'sm_font_sizing' => 'smaller',
+				'sm_font_sizing_trusted_baseline_v1' => [
+					'version' => 1,
+					'scales'  => [
+						'sm_font_body' => [
+							'interval' => [ 14, 24 ],
+							'sizes'    => [ 'body_font' => 20 ],
+						],
+					],
+				],
+				'sm_font_body' => [ 'font_family' => 'Reforma1969' ],
+			],
+			[
+				'anima_options' => [
+					'body_font' => [
+						'font_family' => 'Reforma1969',
+						'font_size'   => [ 'value' => false, 'unit' => false ],
+					],
+				],
+			]
+		);
+
+		$font_palettes = $this->make_font_palettes(
+			[],
+			$this->body_details( [ 'value' => false, 'unit' => false ] )
+		);
+
+		$font_palettes->apply_current_font_sizing_to_connected_fields();
+
+		$this->assertSame( false, $this->theme_mods['anima_options']['body_font']['font_size']['value'] ?? null );
+	}
+
+	public function test_locked_font_sizing_rejects_a_mixed_unit_scale_like_the_client(): void {
+		$this->mock_wp_state(
+			[
+				'sm_font_body_elevation' => 0,
+				'sm_font_body_pitch'     => 100,
+			],
+			[]
+		);
+
+		$details = [
+			'sm_font_body' => [
+				'type'             => 'font',
+				'value'            => [ 'font_family' => 'System Sans-Serif Clear' ],
+				'connected_fields' => [ 'body_font', 'lead_font' ],
+			],
+			'body_font' => [
+				'type'    => 'font',
+				'default' => [ 'font_size' => [ 'value' => 16, 'unit' => 'px' ] ],
+				'value'   => [ 'font_size' => [ 'value' => 16, 'unit' => 'px' ] ],
+			],
+			'lead_font' => [
+				'type'    => 'font',
+				'default' => [ 'font_size' => [ 'value' => 1.5, 'unit' => 'rem' ] ],
+				'value'   => [ 'font_size' => [ 'value' => 1.5, 'unit' => 'rem' ] ],
+			],
+		];
+
+		$baseline = $this->make_font_palettes( [], $details )->prepare_locked_font_sizing_baseline();
+
+		$this->assertSame( [], $baseline );
+		$this->assertArrayNotHasKey( 'sm_font_sizing_trusted_baseline_v1', $this->updated_options );
 	}
 
 	public function test_font_sizing_knob_defaults_stay_within_their_declared_ranges(): void {
@@ -237,6 +480,51 @@ class FontPalettesSizeNeutralApplyTest extends TestCase {
 		$this->assertGreaterThanOrEqual( 6, $checked, 'Expected elevation/pitch knobs for primary/secondary/body.' );
 	}
 
+	public function test_entitled_customizer_save_trusts_the_public_font_sizing_baseline(): void {
+		$baseline = [
+			'version' => 1,
+			'scales'  => [
+				'sm_font_body' => [
+					'interval' => [ 14.0, 24.0 ],
+					'sizes'    => [ 'body_font' => 18.0 ],
+				],
+			],
+		];
+		$this->mock_wp_state(
+			[ FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => $baseline ],
+			[]
+		);
+		$this->mock_plus_entitlement_bridge( true, true );
+
+		$font_palettes = $this->make_font_palettes( [], [] );
+		$font_palettes->trust_customizer_font_sizing_baseline();
+
+		$this->assertSame( $baseline, $this->updated_options['sm_font_sizing_trusted_baseline_v1'] ?? null );
+	}
+
+	public function test_locked_customizer_save_does_not_trust_the_public_font_sizing_baseline(): void {
+		$this->mock_wp_state(
+			[
+				FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => [
+					'version' => 1,
+					'scales'  => [
+						'sm_font_body' => [
+							'interval' => [ 1, 1000 ],
+							'sizes'    => [ 'body_font' => 999 ],
+						],
+					],
+				],
+			],
+			[]
+		);
+		$this->mock_plus_entitlement_bridge( true, false );
+
+		$font_palettes = $this->make_font_palettes( [], [] );
+		$font_palettes->trust_customizer_font_sizing_baseline();
+
+		$this->assertArrayNotHasKey( 'sm_font_sizing_trusted_baseline_v1', $this->updated_options );
+	}
+
 	private function body_details( array $current_font_size ): array {
 		$body_default = [
 			'font_family' => 'System Sans-Serif Clear',
@@ -255,6 +543,24 @@ class FontPalettesSizeNeutralApplyTest extends TestCase {
 			'sm_font_body_pitch'     => [ 'value' => 45, 'default' => 45 ],
 			'body_font'              => [ 'type' => 'font', 'default' => $body_default, 'value' => $body_current ],
 		];
+	}
+
+	private function mock_plus_entitlement_bridge( bool $bridge_available, bool $entitled ): void {
+		Functions\when( 'has_filter' )->alias( static function( string $hook ) use ( $bridge_available ) {
+			if ( 'pixelgrade/has_entitlement' === $hook ) {
+				return $bridge_available ? 10 : false;
+			}
+
+			return false;
+		} );
+
+		Functions\when( 'apply_filters' )->alias( static function( string $hook, $value, ...$args ) use ( $entitled ) {
+			if ( 'pixelgrade/has_entitlement' === $hook ) {
+				return $entitled;
+			}
+
+			return $value;
+		} );
 	}
 }
 

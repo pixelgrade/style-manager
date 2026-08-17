@@ -21,7 +21,63 @@ export const getRelativeFontSizeInterval = ( sourceInterval, elevation, pitch ) 
   return [ min, max ];
 };
 
-export const applyFontSizeInterval = ( fontData, fontSize, fontSizeInterval, targetFontSizeInterval ) => {
+/**
+ * Move an already-derived interval from one absolute Elevation/Pitch state to
+ * another. The previous state is first inverted back to its neutral interval,
+ * then the next state is applied. This makes named Font Sizing choices
+ * idempotent instead of compounding each other (issue #206).
+ */
+export const getTransitionFontSizeInterval = ( currentInterval, previousState, nextState ) => {
+  if ( ! Array.isArray( currentInterval ) || currentInterval.length !== 2 ) {
+    return false;
+  }
+
+  const previousElevation = Number( previousState?.elevation );
+  const previousPitch = Number( previousState?.pitch );
+  const nextElevation = Number( nextState?.elevation );
+  const nextPitch = Number( nextState?.pitch );
+
+  if ( ! Number.isFinite( previousElevation ) ||
+       ! Number.isFinite( previousPitch ) ||
+       ! Number.isFinite( nextElevation ) ||
+       ! Number.isFinite( nextPitch ) ||
+       previousPitch === 0 ) {
+    return false;
+  }
+
+  const currentSpan = Math.max( currentInterval[ 1 ] - currentInterval[ 0 ], 0 );
+  const neutralSpan = currentSpan / ( previousPitch / 100 );
+  const neutralMin = currentInterval[ 0 ] - neutralSpan * ( previousElevation / 100 );
+  const neutralInterval = [ neutralMin, neutralMin + neutralSpan ];
+  const targetInterval = getRelativeFontSizeInterval( neutralInterval, nextElevation, nextPitch );
+
+  return targetInterval.map( value => Number( value.toFixed( 6 ) ) );
+};
+
+export const remapFontSize = ( fontSize, sourceInterval, targetInterval, precision = 2 ) => {
+  const numericFontSize = Number( fontSize );
+
+  if ( ! Number.isFinite( numericFontSize ) ||
+       ! Array.isArray( sourceInterval ) ||
+       ! Array.isArray( targetInterval ) ||
+       sourceInterval.length !== 2 ||
+       targetInterval.length !== 2 ) {
+    return null;
+  }
+
+  if ( sourceInterval[ 1 ] === sourceInterval[ 0 ] ) {
+    return Math.max( targetInterval[ 0 ], Math.min( targetInterval[ 1 ], numericFontSize ) );
+  }
+
+  const mapped = ( numericFontSize - sourceInterval[ 0 ] ) *
+    ( targetInterval[ 1 ] - targetInterval[ 0 ] ) /
+    ( sourceInterval[ 1 ] - sourceInterval[ 0 ] ) +
+    targetInterval[ 0 ];
+
+  return Number( mapped.toFixed( precision ) );
+};
+
+export const applyFontSizeInterval = ( fontData, fontSize, fontSizeInterval, targetFontSizeInterval, precision = 2 ) => {
 
   if ( ! fontSizeInterval ) {
     return;
@@ -34,13 +90,9 @@ export const applyFontSizeInterval = ( fontData, fontSize, fontSizeInterval, tar
     return;
   }
 
-  if ( !! fontSize ) {
+  const mappedFontSize = remapFontSize( fontSize, ab, cd, precision );
 
-    if ( ab[1] === ab[0] ) {
-      fontData.font_size.value = Math.max( cd[0], Math.min( cd[1], fontSize ) );
-    } else {
-      const newFontSize = ( fontSize - ab[0] ) * ( cd[1] - cd[0] ) / ( ab[1] - ab[0] ) + cd[0];
-      fontData.font_size.value = Math.round( newFontSize * 10 ) / 10;
-    }
+  if ( mappedFontSize !== null ) {
+    fontData.font_size.value = mappedFontSize;
   }
 };

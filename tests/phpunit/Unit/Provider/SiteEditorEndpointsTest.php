@@ -86,6 +86,71 @@ class SiteEditorEndpointsTest extends TestCase {
 		);
 	}
 
+	public function test_locked_plus_keeps_font_sizing_state_but_strips_its_client_derivatives(): void {
+		$this->mock_plus_entitlement_bridge( true, false );
+
+		$safe_baseline = [
+			'version' => 1,
+			'scales'  => [
+				'sm_font_body' => [
+					'interval' => [ 14, 24 ],
+					'sizes'    => [ 'body_font' => 20 ],
+				],
+			],
+		];
+		$submitted_baseline = [
+			'version' => 1,
+			'scales'  => [
+				'sm_font_body' => [
+					'interval' => [ 1, 1000 ],
+					'sizes'    => [ 'body_font' => 999 ],
+				],
+			],
+		];
+		$font_palettes = $this->createMock( FontPalettes::class );
+		$font_palettes
+			->expects( $this->once() )
+			->method( 'prepare_locked_font_sizing_baseline' )
+			->willReturn( $safe_baseline );
+
+		$this->assertSame(
+			[
+				'sm_font_sizing'                                 => 'smaller',
+				FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => $safe_baseline,
+			],
+			$this->create_endpoints( $font_palettes )->expose_strip_locked_premium_settings(
+				[
+					'sm_font_sizing'                                 => 'smaller',
+					FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => $submitted_baseline,
+					'sm_font_body_pitch'                              => 45,
+				]
+			)
+		);
+	}
+
+	public function test_locked_plus_rejects_font_sizing_when_no_server_baseline_can_be_prepared(): void {
+		$this->mock_plus_entitlement_bridge( true, false );
+
+		$font_palettes = $this->createMock( FontPalettes::class );
+		$font_palettes
+			->expects( $this->once() )
+			->method( 'prepare_locked_font_sizing_baseline' )
+			->willReturn( [] );
+
+		$this->assertSame(
+			[],
+			$this->create_endpoints( $font_palettes )->expose_strip_locked_premium_settings(
+				[
+					'sm_font_sizing'                                 => 'smaller',
+					FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY => [
+						'version' => 1,
+						'scales'  => [ 'sm_font_body' => [ 'interval' => [ 1, 1000 ], 'sizes' => [ 'body_font' => 999 ] ] ],
+					],
+				]
+			)
+		);
+	}
+
 	public function test_saving_font_palette_applies_connected_font_fields(): void {
 		$font_palettes = $this->createMock( FontPalettes::class );
 		$font_palettes
@@ -102,6 +167,71 @@ class SiteEditorEndpointsTest extends TestCase {
 
 		$endpoints->expose_apply_post_save_side_effects(
 			[ FontPalettes::SM_FONT_PALETTE_OPTION_KEY ]
+		);
+	}
+
+	public function test_saving_font_sizing_rebuilds_its_stripped_connected_outputs(): void {
+		$this->mock_plus_entitlement_bridge( true, false );
+
+		$font_palettes = $this->createMock( FontPalettes::class );
+		$font_palettes
+			->expects( $this->once() )
+			->method( 'apply_current_font_sizing_to_connected_fields' );
+
+		$endpoints = new TestSiteEditorEndpoints(
+			$this->createMock( HeadlessCustomizer::class ),
+			$this->createMock( EditWithBlocks::class ),
+			$this->createMock( Fonts::class ),
+			$font_palettes,
+			$this->createMock( FrontendOutput::class )
+		);
+
+		$endpoints->expose_apply_post_save_side_effects( [ 'sm_font_sizing' ] );
+	}
+
+	public function test_unlocked_font_sizing_keeps_the_client_saved_outputs(): void {
+		$this->mock_plus_entitlement_bridge( true, true );
+
+		$font_palettes = $this->createMock( FontPalettes::class );
+		$font_palettes
+			->expects( $this->never() )
+			->method( 'apply_current_font_sizing_to_connected_fields' );
+		$font_palettes
+			->expects( $this->once() )
+			->method( 'trust_current_font_sizing_baseline' );
+
+		$endpoints = new TestSiteEditorEndpoints(
+			$this->createMock( HeadlessCustomizer::class ),
+			$this->createMock( EditWithBlocks::class ),
+			$this->createMock( Fonts::class ),
+			$font_palettes,
+			$this->createMock( FrontendOutput::class )
+		);
+
+		$endpoints->expose_apply_post_save_side_effects( [ 'sm_font_sizing' ] );
+	}
+
+	public function test_unlocked_direct_pitch_save_trusts_the_saved_public_baseline(): void {
+		$this->mock_plus_entitlement_bridge( true, true );
+
+		$font_palettes = $this->createMock( FontPalettes::class );
+		$font_palettes
+			->expects( $this->once() )
+			->method( 'trust_current_font_sizing_baseline' );
+
+		$endpoints = new TestSiteEditorEndpoints(
+			$this->createMock( HeadlessCustomizer::class ),
+			$this->createMock( EditWithBlocks::class ),
+			$this->createMock( Fonts::class ),
+			$font_palettes,
+			$this->createMock( FrontendOutput::class )
+		);
+
+		$endpoints->expose_apply_post_save_side_effects(
+			[
+				FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY,
+				'sm_font_body_pitch',
+			]
 		);
 	}
 

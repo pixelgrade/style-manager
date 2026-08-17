@@ -25,17 +25,11 @@ export const initializeFontPalettes = () => {
       applyFontPaletteSelection(
         {
           fontsLogic: $input.data( 'fonts_logic' ) || {},
-          connectedFieldsPreset: $input.data( 'connected_fields_preset' ) || '',
         },
         {
           setFontSetting: ( settingID, config ) => {
             wp.customize( settingID, setting => {
               setting.set( config );
-            } );
-          },
-          setConnectedFieldsPreset: preset => {
-            wp.customize( 'sm_fonts_connected_fields_preset', setting => {
-              setting.set( preset );
             } );
           },
         }

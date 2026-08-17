@@ -95,6 +95,7 @@ class FontPalettesServerApplyTest extends TestCase {
 					'fonts_logic' => [
 						'sm_font_body'                 => [
 							'font_family'                  => 'Reforma1969',
+							'font_size_multiplier'         => 0.75,
 							'font_styles_intervals'        => [
 								[
 									'start'        => 0,
@@ -115,9 +116,14 @@ class FontPalettesServerApplyTest extends TestCase {
 		$applied = $font_palettes->apply_current_font_palette_to_connected_fields();
 
 		$this->assertSame( [ 'body_font' ], $applied );
-		$this->assertSame( 'preset-2', $updated_options['sm_fonts_connected_fields_preset'] ?? null );
+		$this->assertArrayNotHasKey( 'sm_fonts_connected_fields_preset', $updated_options );
 		$this->assertSame( 'Reforma1969', $updated_options['sm_font_body']['font_family'] ?? null );
 		$this->assertSame( 'Reforma1969', $theme_mods['anima_options']['body_font']['font_family'] ?? null );
+		$this->assertEquals(
+			16,
+			$theme_mods['anima_options']['body_font']['font_size']['value'] ?? null,
+			'Palette-authored multipliers must not compound into the user-owned typography scale.'
+		);
 		$this->assertNotSame(
 			'System Sans-Serif Clear',
 			$theme_mods['anima_options']['body_font']['font_family'] ?? null

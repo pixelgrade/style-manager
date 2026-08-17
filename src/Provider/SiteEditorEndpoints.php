@@ -268,6 +268,20 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 			unset( $values[ $premium_id ] );
 		}
 
+		// The public baseline is editable client state. A locked client may have
+		// previewed premium fine tuning, so never persist that submitted copy.
+		// Rebuild it from pre-save server state before allowing the free named
+		// Font Sizing choice to persist.
+		unset( $values[ FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY ] );
+		if ( array_key_exists( 'sm_font_sizing', $original_values ) ) {
+			$safe_baseline = $this->font_palettes->prepare_locked_font_sizing_baseline();
+			if ( ! empty( $safe_baseline['scales'] ) ) {
+				$values[ FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY ] = $safe_baseline;
+			} else {
+				unset( $values['sm_font_sizing'] );
+			}
+		}
+
 		if ( array_key_exists( self::PALETTE_OUTPUT_SETTING_ID, $values )
 			&& ( $has_premium_setting_change || ! $this->has_free_palette_setting_change( $original_values ) ) ) {
 			unset( $values[ self::PALETTE_OUTPUT_SETTING_ID ] );
@@ -326,11 +340,19 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 * @param string[] $saved_setting_ids Setting IDs saved by the Site Editor endpoint.
 	 */
 	protected function apply_post_save_side_effects( array $saved_setting_ids ): void {
-		if ( ! in_array( FontPalettes::SM_FONT_PALETTE_OPTION_KEY, $saved_setting_ids, true ) ) {
-			return;
+		if ( in_array( FontPalettes::SM_FONT_PALETTE_OPTION_KEY, $saved_setting_ids, true ) ) {
+			$this->font_palettes->apply_current_font_palette_to_connected_fields();
 		}
 
-		$this->font_palettes->apply_current_font_palette_to_connected_fields();
+		$font_sizing_saved = in_array( 'sm_font_sizing', $saved_setting_ids, true );
+		$baseline_saved = in_array( FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY, $saved_setting_ids, true );
+		if ( $font_sizing_saved || $baseline_saved ) {
+			if ( $font_sizing_saved && \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
+				$this->font_palettes->apply_current_font_sizing_to_connected_fields();
+			} elseif ( ! \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
+				$this->font_palettes->trust_current_font_sizing_baseline();
+			}
+		}
 	}
 
 	/**
