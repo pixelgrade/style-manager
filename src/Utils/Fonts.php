@@ -352,10 +352,17 @@ class Fonts {
 				$standard_value['value'] = $value[0];
 			}
 
-			if ( isset( $value['unit'] ) ) {
+			if ( isset( $value['unit'] ) && ! self::isFalsy( $value['unit'] ) ) {
 				$standard_value['unit'] = $value['unit'];
-			} elseif ( isset( $value[1] ) ) {
+			} elseif ( isset( $value[1] ) && ! self::isFalsy( $value[1] ) ) {
 				$standard_value['unit'] = $value[1];
+			} else {
+				// No usable unit was provided. Deduce it from the field config exactly as the
+				// numeric branch above does, so that {value: 0.04, unit: false} behaves like a
+				// bare 0.04 instead of emitting a unitless CSS value the browser discards.
+				// Fields configured without a unit (font-size, line-height) still resolve to
+				// false and are unaffected; letter-spacing resolves to its configured em.
+				$standard_value['unit'] = self::getSubFieldUnit( $field, $font );
 			}
 		} elseif ( is_string( $value ) ) {
 			// We will get everything in front that is a valid part of a number (float including).
