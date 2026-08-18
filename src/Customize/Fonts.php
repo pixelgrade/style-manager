@@ -1193,7 +1193,7 @@ class Fonts extends AbstractHookProvider {
 				$letter_spacing             = FontsHelper::standardizeNumericalValue( $value['letter_spacing'], 'letter-spacing', $fontConfig );
 				$cssValue['letter-spacing'] = $letter_spacing['value'];
 			}
-			foreach ( $fontConfig['fields'] as $fieldKey => $fieldValue ) {
+			foreach ( $fontConfig['fields'] ?? [] as $fieldKey => $fieldValue ) {
 				if ( isset( $fieldValue['unit'] ) && $fieldKey !== 'font-size' && $fieldKey !== 'letter-spacing' ) {
 					$fontConfig['fields'][ $fieldKey ]['unit'] = false;
 				}
@@ -1224,7 +1224,7 @@ class Fonts extends AbstractHookProvider {
 		}
 
 		// The general CSS allowed properties.
-		$subFieldsCSSAllowedProperties = FontsHelper::extractAllowedCSSPropertiesFromFontFields( $fontConfig['fields'] );
+		$subFieldsCSSAllowedProperties = FontsHelper::extractAllowedCSSPropertiesFromFontFields( $fontConfig['fields'] ?? [] );
 
 		// Since we might have simple CSS selectors and complex ones (with special details),
 		// for cleanliness we will group the simple ones under a single CSS rule,
