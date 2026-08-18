@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,14 @@ When fetching design assets or submitting the plugin's existing settings statist
 * Google Fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.5.2 =
+* Fix: Prevent a fatal error when a Customizer text or textarea control receives a list of live-preview selectors instead of a boolean.
+* Fix: Prevent a fatal error when a font field is configured without sub-fields.
+* Fix: Applying a font palette now changes the typographic voice only. Connected font sizes, fine-tune values and the Usage preset are preserved instead of being rescaled and overwritten.
+* Fix: Typography presets no longer compound the scale, so switching between them round-trips back to the original sizes.
+* Fix: Honour a font sub-field's configured unit when the stored value supplies none, so letter-spacing and similar roles no longer fall back to their browser default.
+* New: Add an independent Rail Gap control to the Sidecar anatomy, with a range that extends to 5x for editorial layouts.
 
 = 2.5.1 =
 * Fix: Load Carbon Fields editor styles through WordPress 7.1's iframe asset pipeline so controls remain styled inside the editor canvas.
