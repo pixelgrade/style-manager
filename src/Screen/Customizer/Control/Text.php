@@ -26,7 +26,18 @@ class Text extends BaseControl {
 	 */
 	public $type = 'text';
 
-	public bool $live = false;
+	/**
+	 * Live preview configuration.
+	 *
+	 * Controls may be registered with either a boolean or an array of live
+	 * preview selectors, so this property must not be strictly typed:
+	 * WP_Customize_Control::__construct() assigns constructor args directly
+	 * onto matching properties, and a typed property would fatal instead of
+	 * coercing the value.
+	 *
+	 * @var bool|array
+	 */
+	public $live = false;
 
 	/**
 	 * Render the control's content.
