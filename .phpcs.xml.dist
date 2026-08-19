@@ -16,6 +16,9 @@
 	<exclude-pattern>tests/</exclude-pattern>
 	<exclude-pattern>vendor/</exclude-pattern>
 	<exclude-pattern>vendor_prefixed/</exclude-pattern>
+	<!-- Tooling and scratch space, neither authored here nor shipped. -->
+	<exclude-pattern>php-scoper/</exclude-pattern>
+	<exclude-pattern>tmp/</exclude-pattern>
 
 	<!-- How to scan -->
 	<arg value="sp"/> <!-- Show sniff and progress -->
@@ -29,7 +32,7 @@
 	<rule ref="PHPCompatibilityWP"/>
 	<!-- For help in understanding this testVersion:
 		https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="7.1-"/>
+	<config name="testVersion" value="8.1-"/>
 
 	<!-- Rules: WordPress Coding Standards - see
 		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
@@ -37,11 +40,12 @@
 	<rule ref="WordPress-Docs"/>
 	<!-- For help in understanding these custom sniff properties:
 		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
-	<config name="minimum_supported_wp_version" value="4.9"/>
+	<config name="minimum_supported_wp_version" value="6.5"/>
 
+	<!-- WPCS 3.0 renamed `use_default_whitelist` to `usePHPFunctionsList`. -->
 	<rule ref="WordPress.PHP.NoSilencedErrors">
 		<properties>
-			<property name="use_default_whitelist" value="true"/>
+			<property name="usePHPFunctionsList" value="true"/>
 		</properties>
 	</rule>
 
@@ -55,7 +59,9 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="pixelgradelt-records"/>
+				<element value="style_manager"/>
+				<element value="sm_"/>
+				<element value="Pixelgrade\StyleManager"/>
 			</property>
 		</properties>
 		<exclude-pattern>views/</exclude-pattern>
@@ -64,7 +70,10 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="pixelgradelt-records"/>
+				<!-- Source carries the placeholder; tasks/build-translate.js swaps it
+					for the real domain at package time, so both are valid here. -->
+				<element value="__plugin_txtd"/>
+				<element value="style-manager"/>
 			</property>
 		</properties>
 	</rule>
