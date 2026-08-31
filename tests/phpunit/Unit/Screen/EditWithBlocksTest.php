@@ -135,6 +135,7 @@ class EditWithBlocksTest extends TestCase {
 				return true;
 			}
 		} );
+		$this->mock_wp_strip_all_tags();
 
 		$fonts = $this->createMock( Fonts::class );
 		$fonts
@@ -162,6 +163,50 @@ class EditWithBlocksTest extends TestCase {
 			->with( 'style-manager-editor-dynamic', ':root { --sm-current-accent-color: #123456; }body { font-family: serif; }' );
 
 		$this->create_edit_screen( $fonts, $frontend_output )->enqueue_editor_dynamic_css();
+	}
+
+	/**
+	 * Sink hardening (internal maintenance pass): a hostile stored palette
+	 * value must not be able to break out of the `<style>` context that
+	 * `wp_add_inline_style()` prints into inside the admin `<head>`, the
+	 * same way the frontend sink is already protected.
+	 */
+	public function test_dynamic_css_neutralizes_a_hostile_stored_value_before_the_inline_style_sink(): void {
+		Functions\when( 'is_admin' )->justReturn( true );
+		Functions\when( 'get_current_screen' )->justReturn( new class() {
+			public string $id = 'post';
+
+			public function is_block_editor(): bool {
+				return true;
+			}
+		} );
+		$this->mock_wp_strip_all_tags();
+
+		$fonts = $this->createMock( Fonts::class );
+		$fonts->method( 'enqueue_frontend_scripts_styles' );
+		$fonts->method( 'getFontsDynamicStyle' )->willReturn( '' );
+
+		$frontend_output = $this->createMock( FrontendOutput::class );
+		$frontend_output
+			->method( 'get_dynamic_style' )
+			->willReturn( '--sm-bg-color-1: red;} </style><script>alert(1)</script><style>.x{color:' );
+
+		$captured = null;
+		Functions\when( 'wp_register_style' )->justReturn( true );
+		Functions\when( 'wp_enqueue_style' )->justReturn( true );
+		Functions\when( 'wp_add_inline_style' )->alias(
+			static function( string $handle, string $css ) use ( &$captured ): bool {
+				$captured = $css;
+
+				return true;
+			}
+		);
+
+		$this->create_edit_screen( $fonts, $frontend_output )->enqueue_editor_dynamic_css();
+
+		$this->assertNotNull( $captured );
+		$this->assertStringNotContainsStringIgnoringCase( '</style', $captured );
+		$this->assertStringNotContainsStringIgnoringCase( '<script', $captured );
 	}
 
 	public function test_launcher_target_url_points_to_current_site_editor_editable_entry(): void {
@@ -441,6 +486,10 @@ class EditWithBlocksTest extends TestCase {
 			$this->createMock( LoggerInterface::class ),
 			$available_template_ids
 		);
+	}
+
+	private function mock_wp_strip_all_tags(): void {
+		Functions\when( 'wp_strip_all_tags' )->alias( static fn( $text ): string => strip_tags( (string) $text ) );
 	}
 
 	private function mock_admin_url(): void {

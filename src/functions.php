@@ -437,3 +437,43 @@ function get_options_key( bool $skip_cache = false ): string {
 function get_customizer_config( $key = false ) {
 	return plugin()->get_container()->get('options')->get_customizer_config( $key );
 }
+
+/**
+ * Sanitize dynamic CSS immediately before it is echoed inside a `<style>`
+ * element, on the frontend and in the block editor alike.
+ *
+ * This is a last-line-of-defense, HTML-context escape — not a CSS validator.
+ * Persisted option values (e.g. a palette's per-variation color pairs) are
+ * expected to already be shape-checked at write time; this function's job is
+ * only to guarantee that whatever string ends up here cannot break out of
+ * the surrounding `<style>` tag, regardless of which code path produced it.
+ * It intentionally does not touch CSS syntax: `var(--sm-*)` references,
+ * quoted font-family names, and any other well-formed CSS text pass through
+ * unchanged.
+ *
+ * @since 2.5.3
+ *
+ * @param string $css Raw dynamic CSS.
+ *
+ * @return string CSS safe to echo inside a `<style>` tag.
+ */
+function sanitize_dynamic_style_css( string $css ): string {
+	// Strip HTML/script/style tags and their content (matches the
+	// frontend's historical behavior; stronger than plain strip_tags()
+	// because it also drops <script>/<style> block content, not just tags).
+	$css = wp_strip_all_tags( $css );
+
+	// Belt-and-braces: neutralize any "</style" sequence that could still
+	// close the surrounding <style> element (case-insensitive, tolerant of
+	// stray whitespace between the characters) even if it somehow survived
+	// tag stripping above. This never fires on legitimate CSS.
+	$css = (string) preg_replace( '#</\s*style#i', '<\\/style', $css );
+
+	// Drop control characters (everything except tab \x09 and newline
+	// \x0A, which are harmless formatting whitespace) that have no
+	// legitimate place in CSS text and only serve to obfuscate a payload
+	// past naive filters.
+	$css = (string) preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $css );
+
+	return $css;
+}

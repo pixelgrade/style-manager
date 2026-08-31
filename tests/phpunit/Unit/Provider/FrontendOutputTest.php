@@ -139,6 +139,50 @@ class FrontendOutputTest extends TestCase {
 		$this->assertStringContainsString( '.container { max-width: 960px; }', $css );
 	}
 
+	/**
+	 * Sink hardening (internal maintenance pass): a hostile stored value
+	 * reaching the frontend `<style>` sink must not be able to break out of
+	 * it, even beyond what wp_strip_all_tags() alone removes.
+	 */
+	public function test_output_dynamic_style_neutralizes_a_hostile_stored_value(): void {
+		$this->mock_wordpress_functions();
+
+		$options = $this->createMock( Options::class );
+		$options
+			->method( 'get_details_all' )
+			->with( true )
+			->willReturn(
+				[
+					'hostile_value' => [
+						'value' => 'irrelevant',
+						'css'   => [
+							[
+								'property'        => 'color',
+								'selector'        => '.x',
+								'callback_filter'  => static fn( string $value, string $selector, string $property ): string =>
+									'--sm-bg-color-1: red;} </style><script>alert(document.cookie)</script><style>.y{color:',
+							],
+						],
+					],
+				]
+			);
+
+		$frontend_output = new FrontendOutput(
+			$options,
+			$this->createMock( PluginSettings::class ),
+			$this->createMock( LoggerInterface::class )
+		);
+
+		ob_start();
+		$frontend_output->output_dynamic_style();
+		$output = ob_get_clean();
+
+		// Exactly one legitimate closing </style> (the wrapper's own) survives;
+		// the attacker-controlled one is neutralized, and no <script tag survives.
+		$this->assertSame( 1, preg_match_all( '/<\/style/i', $output ) );
+		$this->assertStringNotContainsStringIgnoringCase( '<script', $output );
+	}
+
 	public static function format_color_token( string $value ): string {
 		return 'var(--sm-current-' . $value . '-color)';
 	}

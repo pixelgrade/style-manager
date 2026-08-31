@@ -13,6 +13,7 @@ namespace Pixelgrade\StyleManager\Provider;
 
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
+use function Pixelgrade\StyleManager\sanitize_dynamic_style_css;
 
 /**
  * Provides the frontend output logic.
@@ -163,7 +164,7 @@ class FrontendOutput extends AbstractHookProvider {
 	 */
 	public function output_dynamic_style() { ?>
 		<style id="style-manager_output_style">
-			<?php echo wp_strip_all_tags( $this->get_dynamic_style() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag; HTML-escaping would corrupt valid CSS. ?>
+			<?php echo sanitize_dynamic_style_css( $this->get_dynamic_style() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag, tag-stripped and </style-neutralized by sanitize_dynamic_style_css(); HTML-escaping would corrupt valid CSS. ?>
 		</style>
 		<?php
 
@@ -183,10 +184,10 @@ class FrontendOutput extends AbstractHookProvider {
 					<?php
 					if ( ! empty( $custom_background_output )) {
 						// CSS assembled from per-value-sanitized parts (esc_url / sanitize_text_field
-						// in process_custom_background_field_output); strip tags so nothing can break
+						// in process_custom_background_field_output); sanitized so nothing can break
 						// out of the <style> block, matching output_dynamic_style above.
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag; HTML-escaping would corrupt valid CSS.
-						echo wp_strip_all_tags( $custom_background_output );
+						echo sanitize_dynamic_style_css( $custom_background_output );
 					} ?>
 				</style>
 			<?php }

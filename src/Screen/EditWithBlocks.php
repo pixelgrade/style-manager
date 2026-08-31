@@ -19,6 +19,7 @@ use Pixelgrade\StyleManager\Utils\ScriptsEnqueue;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 use function Pixelgrade\StyleManager\is_sm_supported;
+use function Pixelgrade\StyleManager\sanitize_dynamic_style_css;
 use const Pixelgrade\StyleManager\VERSION;
 
 /**
@@ -295,6 +296,11 @@ class EditWithBlocks extends AbstractHookProvider {
 		if ( empty( trim( $css ) ) ) {
 			return;
 		}
+
+		// wp_add_inline_style() prints this verbatim inside a <style> tag in
+		// the admin <head>; sanitize it the same way the frontend sink does
+		// so a hostile stored value can't break out of that context.
+		$css = sanitize_dynamic_style_css( $css );
 
 		wp_register_style( 'style-manager-editor-dynamic', false, [], \Pixelgrade\StyleManager\VERSION );
 		wp_enqueue_style( 'style-manager-editor-dynamic' );
