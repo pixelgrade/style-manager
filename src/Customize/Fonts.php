@@ -17,6 +17,7 @@ use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 use \Pixelgrade\StyleManager\Utils\Fonts as FontsHelper;
 use function Pixelgrade\StyleManager\is_customizer;
+use function Pixelgrade\StyleManager\sanitize_dynamic_style_css;
 
 /**
  * Provides the fonts logic.
@@ -1103,7 +1104,7 @@ class Fonts extends AbstractHookProvider {
 			// If we are in a Customizer context we will output CSS rules grouped, so we can target them individually.
 			if ( is_customize_preview() ) { ?>
 				<style id="style-manager_font_output_for_<?php echo sanitize_html_class( $key ); ?>">
-					<?php echo $font_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag; HTML-escaping would corrupt valid CSS. ?>
+					<?php echo sanitize_dynamic_style_css( $font_output ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag, sanitized by sanitize_dynamic_style_css(); HTML-escaping would corrupt valid CSS. ?>
 				</style>
 				<?php
 			}
@@ -1111,7 +1112,7 @@ class Fonts extends AbstractHookProvider {
 
 		// In the front-end we need to print CSS rules in bulk. ?>
 		<style id="style-manager_fonts_output">
-			<?php echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag; HTML-escaping would corrupt valid CSS. ?>
+			<?php echo sanitize_dynamic_style_css( $output ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS in a <style> tag, sanitized by sanitize_dynamic_style_css(); HTML-escaping would corrupt valid CSS. ?>
 		</style>
 		<?php
 	}
