@@ -62,6 +62,12 @@ class SettingsWriter {
 	public const REASON_TIER_LOCKED_PALETTE = 'tier_locked_palette';
 
 	/**
+	 * The only letter-spacing unit the type system emits (§3.4). Every other unit —
+	 * missing, `false`, or anything else — normalizes to this on write.
+	 */
+	public const LETTER_SPACING_UNIT = 'em';
+
+	/**
 	 * Headless Customizer.
 	 *
 	 * @var HeadlessCustomizer
@@ -571,14 +577,19 @@ class SettingsWriter {
 	 * Apply §3.4's letter-spacing rule to a value map.
 	 *
 	 * A unitless letter-spacing emits a CSS var that computes `letter-spacing: normal`
-	 * silently (laws #7). But a blanket `unit:false` rejection makes the plugin's own
-	 * shipped state un-round-trippable — Anima LT persists
-	 * `anima_options[body_font].letter_spacing = {value: 0, unit: false}`. So:
+	 * silently (laws #7), so the unit must be repaired. Rejecting instead of repairing does
+	 * not work: the browser-authored state this stack is meant to reproduce carries unitless
+	 * letter-spacing at *any* value — the P1-a grist fixture has `{value: -0.04, unit: false}`
+	 * on `super_display_font` and the same shape on 6 more of its 17 roles, and Anima LT's
+	 * own shipped defaults use `{value: 0, unit: false}`. Rejecting those would make both the
+	 * reference fixture and the plugin's own state un-round-trippable. So (v0.3.6):
 	 *
-	 * - `value === 0` with no usable unit → **normalized** to `{value: 0, unit: 'em'}`
-	 *   (at zero the unit is semantically irrelevant, and normalizing removes the hazard).
-	 * - a **nonzero** value with no usable unit → the setting is **stripped**,
-	 *   `reason:"invalid_value"` (exit 2 at the CLI), never silently written.
+	 * - **Unit normalization is unconditional.** Missing, `false` or otherwise invalid unit
+	 *   becomes `'em'` at **any** value — repaired on write, never stripped, never rejected.
+	 *   `em` is the only unit the type system emits, so this is render-identical to what the
+	 *   browser produced.
+	 * - **A non-numeric `value`** is the one real error: nothing sensible can be written, so
+	 *   the setting is stripped with `reason:"invalid_value"` (exit 2 at the CLI).
 	 *
 	 * `export` does not run this — it reports what is on disk (§3.4).
 	 *
@@ -617,7 +628,7 @@ class SettingsWriter {
 	 * Recursively normalize every `letter_spacing` sub-field of a setting value.
 	 *
 	 * @param mixed $value   Setting value.
-	 * @param bool  $invalid Set to true when a nonzero letter-spacing carries no usable unit.
+	 * @param bool  $invalid Set to true when a letter-spacing carries a non-numeric value.
 	 *
 	 * @return mixed The normalized value.
 	 */
@@ -642,19 +653,21 @@ class SettingsWriter {
 				continue;
 			}
 
-			if ( 'em' === ( $letter_spacing['unit'] ?? null ) ) {
+			// The only real error: no number to write.
+			if ( array_key_exists( 'value', $letter_spacing ) && ! is_numeric( $letter_spacing['value'] ) ) {
+				$invalid = true;
 				continue;
 			}
 
-			// A zero letter-spacing means the same thing in every unit, so adopt the
-			// canonical one rather than refusing the plugin's own shipped state.
-			if ( 0.0 === (float) ( $letter_spacing['value'] ?? 0 ) ) {
-				$letter_spacing['unit'] = 'em';
-				$value[ $key ]          = is_object( $item ) ? (object) $letter_spacing : $letter_spacing;
+			if ( self::LETTER_SPACING_UNIT === ( $letter_spacing['unit'] ?? null ) ) {
 				continue;
 			}
 
-			$invalid = true;
+			// Unconditional: `em` is the only unit the type system emits, so repairing the
+			// unit at any value is render-identical to the browser-authored state and keeps
+			// the P1 fixtures round-trippable.
+			$letter_spacing['unit'] = self::LETTER_SPACING_UNIT;
+			$value[ $key ]          = is_object( $item ) ? (object) $letter_spacing : $letter_spacing;
 		}
 
 		return $was_object ? (object) $value : $value;

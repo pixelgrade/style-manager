@@ -349,9 +349,10 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'ok', $envelope['code'] );
 		}
 
-		public function test_a_nonzero_unitless_letter_spacing_is_a_strip_not_a_hard_failure(): void {
-			// The rule moved into SettingsWriter (v0.3.3): the CLI no longer pre-rejects,
-			// it reports the writer's invalid_value strip as exit 2.
+		public function test_an_invalid_value_strip_is_reported_as_exit_two_not_a_hard_failure(): void {
+			// The rule lives in SettingsWriter: the CLI no longer pre-rejects, it reports the
+			// writer's invalid_value strip as exit 2. (v0.3.6: only a non-numeric VALUE gets
+			// here — a bad unit is normalized, never stripped.)
 			$writer = $this->createMock( SettingsWriter::class );
 			$writer->method( 'save' )->willReturn(
 				[
@@ -373,7 +374,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 
 			[ $exit, $envelope ] = $this->invoke(
 				fn( CliCommands $c ) => $c->set(
-					[ 'anima_options[body_font]={"font_family":"Lato","letter_spacing":{"value":0.02,"unit":false}}' ],
+					[ 'anima_options[body_font]={"font_family":"Lato","letter_spacing":{"value":"wide","unit":false}}' ],
 					[ 'format' => 'json' ]
 				),
 				null,

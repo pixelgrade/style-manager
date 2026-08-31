@@ -602,11 +602,71 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			);
 		}
 
-		public function test_a_nonzero_unitless_letter_spacing_is_stripped_as_invalid_value(): void {
+		/**
+		 * v0.3.6: unit normalization is UNCONDITIONAL. The P1-a grist fixture — real
+		 * browser-authored state — carries nonzero unitless letter-spacing on 7 of its 17
+		 * roles, so rejecting that shape made the reference fixture unreproducible.
+		 *
+		 * @dataProvider nonzero_unitless_letter_spacings
+		 */
+		public function test_a_nonzero_unitless_letter_spacing_is_normalized_not_stripped( $value ): void {
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy(
+				[
+					'anima_options[super_display_font]' => [
+						'font_family'    => 'DM Sans',
+						'letter_spacing' => [ 'value' => $value, 'unit' => false ],
+					],
+				]
+			);
+
+			$this->assertSame( [], $stripped );
+			$this->assertSame(
+				[ 'value' => $value, 'unit' => 'em' ],
+				$normalized['anima_options[super_display_font]']['letter_spacing']
+			);
+		}
+
+		public static function nonzero_unitless_letter_spacings(): array {
+			// Every distinct letter-spacing value the grist fixture actually carries.
+			return [
+				'super_display -0.04' => [ -0.04 ],
+				'display -0.02'       => [ -0.02 ],
+				'heading_2 -0.01'     => [ -0.01 ],
+				'heading_5 0.02'      => [ 0.02 ],
+			];
+		}
+
+		public function test_an_unrecognised_unit_is_normalized_to_em(): void {
 			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy(
 				[
 					'anima_options[body_font]' => [
-						'letter_spacing' => [ 'value' => 0.02, 'unit' => false ],
+						'letter_spacing' => [ 'value' => 0.5, 'unit' => 'px' ],
+					],
+				]
+			);
+
+			$this->assertSame( [], $stripped );
+			$this->assertSame( 'em', $normalized['anima_options[body_font]']['letter_spacing']['unit'] );
+		}
+
+		public function test_a_missing_unit_key_is_normalized_to_em(): void {
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy(
+				[
+					'anima_options[body_font]' => [
+						'letter_spacing' => [ 'value' => -0.03 ],
+					],
+				]
+			);
+
+			$this->assertSame( [], $stripped );
+			$this->assertSame( [ 'value' => -0.03, 'unit' => 'em' ], $normalized['anima_options[body_font]']['letter_spacing'] );
+		}
+
+		public function test_a_non_numeric_letter_spacing_value_is_still_stripped_as_invalid_value(): void {
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy(
+				[
+					'anima_options[body_font]' => [
+						'letter_spacing' => [ 'value' => 'wide', 'unit' => false ],
 					],
 					'sm_font_sizing'           => 'smaller',
 				]
@@ -616,6 +676,34 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertCount( 1, $stripped );
 			$this->assertSame( 'anima_options[body_font]', $stripped[0]['id'] );
 			$this->assertSame( SettingsWriter::REASON_INVALID_VALUE, $stripped[0]['reason'] );
+		}
+
+		public function test_the_whole_grist_letter_spacing_table_survives_normalization(): void {
+			// The exact shapes of P1-a's 17-role table: 10 zero-unitless, 7 nonzero-unitless.
+			$roles = [
+				'body_font' => 0, 'lead_font' => 0, 'small_body_font' => 0, 'heading_3_font' => 0,
+				'heading_4_font' => 0, 'navigation_font' => 0, 'buttons_font' => 0, 'input_font' => 0,
+				'meta_font' => 0,
+				'super_display_font' => -0.04, 'display_font' => -0.02, 'heading_1_font' => -0.02,
+				'heading_2_font' => -0.01, 'heading_5_font' => 0.02, 'heading_6_font' => 0.02,
+				'site_title_font' => -0.02,
+			];
+
+			$values = [];
+			foreach ( $roles as $role => $spacing ) {
+				$values[ 'anima_options[' . $role . ']' ] = [
+					'font_family'    => 'DM Sans',
+					'letter_spacing' => [ 'value' => $spacing, 'unit' => false ],
+				];
+			}
+
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy( $values );
+
+			$this->assertSame( [], $stripped, 'No grist role may be stripped — they are all real browser output.' );
+			$this->assertCount( count( $roles ), $normalized );
+			foreach ( $normalized as $id => $value ) {
+				$this->assertSame( 'em', $value['letter_spacing']['unit'], $id );
+			}
 		}
 
 		public function test_a_valid_em_letter_spacing_passes_through_untouched(): void {
