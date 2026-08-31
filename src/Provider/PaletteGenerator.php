@@ -423,33 +423,37 @@ class PaletteGenerator {
 	}
 
 	/**
-	 * Assert the generator returned a usable palette output before anything is persisted.
+	 * Assert a palette output can actually be rendered, before anything is persisted.
 	 *
-	 * The point is that a malformed blob must never reach `sm_advanced_palette_output`: PHP's
-	 * CSS generation reads `variations` / `darkVariations` / `sourceIndex` and would render a
-	 * broken site rather than fail loudly.
+	 * The bar is exactly what PHP's CSS generation consumes — `variations`, `darkVariations`,
+	 * `sourceIndex` (`src/sm-functions.php`) — and deliberately nothing more. The remaining keys
+	 * (`options`, `darkOptions`, `colors`, `darkColors`) are echoes the Customizer previews read;
+	 * a hand-authored blob from a gene-migration run carries none of them and still renders
+	 * correctly, so demanding them here would reject the very artifacts `--generator=none` exists
+	 * to apply. What must never happen is a malformed blob reaching the option and rendering a
+	 * broken site instead of failing loudly.
 	 *
-	 * @param string $json Raw generator STDOUT.
+	 * @param string $json Raw palette output JSON.
 	 *
-	 * @return array|\WP_Error
+	 * @return array|\WP_Error { @type string $json The raw JSON. @type array $palettes Decoded. }
 	 */
-	protected function validate_output( string $json ) {
+	public static function validate_renderable( string $json ) {
 		$palettes = json_decode( $json, true );
 
 		if ( ! is_array( $palettes ) || empty( $palettes ) || ! array_is_list( $palettes ) ) {
 			return new \WP_Error(
-				'style_manager_generator_output_invalid',
-				__( 'The generator did not return a non-empty array of palettes.', '__plugin_txtd' )
+				'style_manager_palette_output_invalid',
+				__( 'The palette output must be a non-empty JSON array of palettes.', '__plugin_txtd' )
 			);
 		}
 
 		foreach ( $palettes as $index => $palette ) {
 			if ( ! is_array( $palette ) ) {
 				return new \WP_Error(
-					'style_manager_generator_output_invalid',
+					'style_manager_palette_output_invalid',
 					sprintf(
 						/* translators: %d: palette index. */
-						__( 'Generated palette %d is not an object.', '__plugin_txtd' ),
+						__( 'Palette %d is not an object.', '__plugin_txtd' ),
 						$index
 					)
 				);
@@ -458,10 +462,10 @@ class PaletteGenerator {
 			foreach ( [ 'variations', 'darkVariations' ] as $key ) {
 				if ( empty( $palette[ $key ] ) || ! is_array( $palette[ $key ] ) || 12 !== count( $palette[ $key ] ) ) {
 					return new \WP_Error(
-						'style_manager_generator_output_invalid',
+						'style_manager_palette_output_invalid',
 						sprintf(
 							/* translators: 1: palette index, 2: the missing key. */
-							__( 'Generated palette %1$d does not carry 12 `%2$s`.', '__plugin_txtd' ),
+							__( 'Palette %1$d does not carry 12 `%2$s`.', '__plugin_txtd' ),
 							$index,
 							$key
 						)
@@ -471,15 +475,37 @@ class PaletteGenerator {
 
 			if ( ! array_key_exists( 'sourceIndex', $palette ) || ! is_int( $palette['sourceIndex'] ) ) {
 				return new \WP_Error(
-					'style_manager_generator_output_invalid',
+					'style_manager_palette_output_invalid',
 					sprintf(
 						/* translators: %d: palette index. */
-						__( 'Generated palette %d has no integer `sourceIndex`.', '__plugin_txtd' ),
+						__( 'Palette %d has no integer `sourceIndex`.', '__plugin_txtd' ),
 						$index
 					)
 				);
 			}
+		}
 
+		return [
+			'json'     => $json,
+			'palettes' => $palettes,
+		];
+	}
+
+	/**
+	 * Validate the generator's own STDOUT: renderable, plus the color ramp only a real
+	 * generator run produces. A missing ramp here means the artifact misbehaved.
+	 *
+	 * @param string $json Raw generator STDOUT.
+	 *
+	 * @return array|\WP_Error
+	 */
+	protected function validate_output( string $json ) {
+		$validated = self::validate_renderable( $json );
+		if ( is_wp_error( $validated ) ) {
+			return $validated;
+		}
+
+		foreach ( $validated['palettes'] as $index => $palette ) {
 			if ( empty( $palette['colors'] ) || ! is_array( $palette['colors'] ) ) {
 				return new \WP_Error(
 					'style_manager_generator_output_invalid',
@@ -492,10 +518,7 @@ class PaletteGenerator {
 			}
 		}
 
-		return [
-			'json'     => $json,
-			'palettes' => $palettes,
-		];
+		return $validated;
 	}
 
 	/*

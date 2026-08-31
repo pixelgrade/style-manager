@@ -760,7 +760,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 				);
 
 			[ $exit, $envelope ] = $this->invoke(
-				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'custom' => true ] ),
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE ] ),
 				null,
 				$writer,
 				null,
@@ -776,6 +776,8 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 				[ 'sm_advanced_palette_source', 'sm_advanced_palette_output', 'sm_is_custom_color_palette' ],
 				array_keys( (array) $captured )
 			);
+			// Applying an arbitrary source IS what makes a palette custom, so this is
+			// unconditional — there is no flag to forget (contract v0.3.10).
 			$this->assertTrue( $captured['sm_is_custom_color_palette'] );
 		}
 
@@ -896,7 +898,105 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'confirmation_required', $envelope['code'] );
 		}
 
-		public function test_apply_color_palette_with_generator_none_refuses_rather_than_writing_a_stale_output(): void {
+		/**
+		 * `--generator=none` is the sanctioned path for a browser-exported or hand-authored
+		 * blob (contract v0.3.10). It must apply the given bytes EXACTLY and never reach Node —
+		 * the grist fixture is a real gene-migration artifact with no `colors` ramp and no
+		 * echoed `options`, so a generator-shaped validation would reject it.
+		 */
+		public function test_generator_none_applies_the_provided_output_verbatim_without_node(): void {
+			$fixtures = __DIR__ . '/../../fixtures/palette-parity';
+			$source   = (string) file_get_contents( $fixtures . '/footer-grist.source.json' );
+			$path     = $fixtures . '/footer-grist.applied-output.json';
+			$expected = (string) file_get_contents( $path );
+
+			$captured = null;
+			$writer   = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->once() )->method( 'save' )->willReturnCallback(
+				function ( array $values ) use ( &$captured ) {
+					$captured = $values;
+
+					return $this->write_result( $values );
+				}
+			);
+
+			// Node is never consulted on this path.
+			$generator = $this->createMock( PaletteGenerator::class );
+			$generator->expects( $this->never() )->method( 'generate' );
+			$generator->expects( $this->never() )->method( 'is_available' );
+			$generator->expects( $this->never() )->method( 'resolve_options' );
+			$generator->method( 'current_value' )->willReturn( null );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette(
+					[],
+					[ 'format' => 'json', 'yes' => true, 'source' => $source, 'generator' => 'none', 'output' => '@' . $path ]
+				),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$generator
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertSame( $expected, $captured['sm_advanced_palette_output'], 'The provided output must be persisted byte for byte.' );
+			$this->assertTrue( $captured['sm_is_custom_color_palette'] );
+			$this->assertSame( 'none', $envelope['data']['generator'] );
+			$this->assertTrue( $envelope['data']['verbatim'] );
+			$this->assertSame( 2, $envelope['data']['palettes'] );
+			// A hand-authored blob carries no ramp, so the honest grade count is zero — that
+			// zero IS the signal, not a failure.
+			$this->assertSame( 0, $envelope['data']['grades'] );
+			$this->assertArrayNotHasKey( 'options', $envelope['data'] );
+		}
+
+		public function test_generator_none_supports_dry_run(): void {
+			$fixtures = __DIR__ . '/../../fixtures/palette-parity';
+
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+			$writer->method( 'preview' )->willReturn(
+				[
+					'saved'     => [],
+					'stripped'  => [],
+					'persisted' => [],
+					'unchanged' => [],
+				]
+			);
+
+			$generator = $this->createMock( PaletteGenerator::class );
+			$generator->expects( $this->never() )->method( 'generate' );
+			$generator->method( 'current_value' )->willReturn( null );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette(
+					[],
+					[
+						'format'    => 'json',
+						'source'    => (string) file_get_contents( $fixtures . '/footer-grist.source.json' ),
+						'generator' => 'none',
+						'output'    => '@' . $fixtures . '/footer-grist.applied-output.json',
+						'dry-run'   => true,
+					]
+				),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$generator
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertTrue( $envelope['data']['dry_run'] );
+			$this->assertStringContainsString( 'Nothing was written', $envelope['summary'] );
+		}
+
+		public function test_generator_none_without_output_is_rejected(): void {
 			$writer = $this->createMock( SettingsWriter::class );
 			$writer->expects( $this->never() )->method( 'save' );
 
@@ -912,8 +1012,42 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			);
 
 			$this->assertSame( 1, $exit );
-			$this->assertSame( 'generator_unavailable', $envelope['code'] );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+			$this->assertStringContainsString( '--output', $envelope['summary'] );
 			$this->assertStringContainsString( 'Nothing was written', $envelope['summary'] );
+		}
+
+		public function test_generator_none_rejects_an_unrenderable_output(): void {
+			// Nothing malformed may reach the option: PHP's CSS generation would render a
+			// broken site rather than fail loudly.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette(
+					[],
+					[ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'generator' => 'none', 'output' => '[{"id":1,"variations":[]}]' ]
+				),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+		}
+
+		public function test_an_unknown_generator_is_rejected(): void {
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'generator' => 'php' ] )
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
 		}
 
 		public function test_apply_color_palette_can_write_the_generated_output_to_a_file(): void {

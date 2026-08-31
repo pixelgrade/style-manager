@@ -700,8 +700,16 @@ class CliCommands extends AbstractHookProvider {
 	 * hand-authored `sm_advanced_palette_output` that regeneration would silently overwrite.
 	 * `--dry-run` reports whether the stored blob is generator-produced before you commit.
 	 *
+	 * `--generator=none` is the sanctioned path for applying an **already-produced** palette
+	 * output — a browser-exported blob, or one hand-authored by a gene-migration run. It takes
+	 * the output from `--output`, applies it **verbatim**, and never touches Node. That is why
+	 * a hand-authored blob is not validated as generator-shaped: it legitimately carries no
+	 * `colors` ramp and no echoed `options`, only the keys PHP's CSS generation reads.
+	 *
 	 * All settings are written in ONE `SettingsWriter::save()` (§3.12 — the Customizer
 	 * manager holds a single changeset uuid, so a second publish in the same process fails).
+	 * Applying any source makes the palette custom, so `sm_is_custom_color_palette` is always
+	 * written as true.
 	 *
 	 * ## OPTIONS
 	 *
@@ -709,20 +717,19 @@ class CliCommands extends AbstractHookProvider {
 	 * : The `sm_advanced_palette_source` JSON, `@<file>`, or `-` for STDIN. Required.
 	 *
 	 * [--output=<output>]
-	 * : `json` to include the generated output in the envelope's `data.output`, or `@<file>`
-	 * to write it to a file. It is persisted either way.
+	 * : With `--generator=node` this is a DESTINATION for the generated output: `json` echoes it
+	 * into the envelope's `data.output`, `@<file>` writes it to that file. It is persisted either
+	 * way. With `--generator=none` this is the INPUT instead — the pre-generated palette output
+	 * to apply verbatim, as raw JSON or `@<file>` — and it is REQUIRED.
 	 *
 	 * [--variation=<n>]
 	 * : Set `sm_site_color_variation` (1-12) and generate against it. Omit to keep the stored
 	 * value. Note this setting is Pixelgrade Plus-gated, so passing it on a free site is
 	 * reported as `stripped[].reason: "plus_locked"`, exit 2.
 	 *
-	 * [--custom]
-	 * : Set `sm_is_custom_color_palette` to true. Omit to keep the stored value.
-	 *
 	 * [--generator=<generator>]
-	 * : `node` (default) runs the bundled artifact; `none` refuses to generate and exits with
-	 * `generator_unavailable` without writing, so a caller can probe the write path safely.
+	 * : `node` (default) runs the bundled artifact against `--source`. `none` skips Node entirely
+	 * and applies the pre-generated output given in `--output` verbatim.
 	 * ---
 	 * default: node
 	 * options:
@@ -755,6 +762,7 @@ class CliCommands extends AbstractHookProvider {
 	 *
 	 *     wp pixelgrade sm apply-color-palette --source=@palette-source.json --yes --format=json --user=admin
 	 *     wp pixelgrade sm apply-color-palette --source=- --dry-run --format=json --user=admin < source.json
+	 *     wp pixelgrade sm apply-color-palette --source=@source.json --generator=none --output=@palette-output.json --yes --user=admin
 	 *
 	 * @when after_wp_load
 	 *
@@ -770,19 +778,70 @@ class CliCommands extends AbstractHookProvider {
 			$this->fail( $assoc_args, 1, 'invalid_params', (string) $groups->get_error_message() );
 		}
 
-		$generator = $this->flag( $assoc_args, 'generator', 'node' );
-		$generator = is_string( $generator ) ? strtolower( $generator ) : 'node';
-
-		if ( 'none' === $generator ) {
+		$mode = $this->flag( $assoc_args, 'generator', 'node' );
+		$mode = is_string( $mode ) ? strtolower( trim( $mode ) ) : 'node';
+		if ( ! in_array( $mode, [ 'node', 'none' ], true ) ) {
 			$this->fail(
 				$assoc_args,
 				1,
-				'generator_unavailable',
-				__( 'The palette generator was disabled with --generator=none, and there is no other way to produce the palette output. Nothing was written.', '__plugin_txtd' ),
-				[ 'looked_for' => [] ]
+				'invalid_params',
+				__( '--generator must be `node` or `none`.', '__plugin_txtd' )
 			);
 		}
 
+		$overrides = $this->palette_option_overrides( $assoc_args );
+
+		$options = null;
+		if ( 'none' === $mode ) {
+			$applied = $this->collect_applied_palette_output( $assoc_args );
+		} else {
+			$options = $this->palette_generator->resolve_options( $overrides );
+			$applied = $this->generate_palette_output( $assoc_args, $source_json, $options );
+		}
+
+		$values  = $this->palette_write_payload( $source_json, $applied['json'], $overrides );
+		$dry_run = $this->bool_flag( $assoc_args, 'dry-run' );
+
+		if ( $dry_run ) {
+			$result = $this->settings_writer->preview( $values );
+		} else {
+			$this->confirm_destructive(
+				$assoc_args,
+				__( 'Applying a color palette replaces the whole generated ramp, including any hand-authored palette output stored on this site.', '__plugin_txtd' )
+			);
+
+			$result = $this->settings_writer->save( $values, true );
+			if ( is_wp_error( $result ) ) {
+				$this->fail_from_wp_error( $assoc_args, $result, $values );
+			}
+		}
+
+		$extra = [
+			'grades'    => PaletteGenerator::grade_count( $applied['palettes'] ),
+			'palettes'  => count( $applied['palettes'] ),
+			'generator' => $mode,
+			'verbatim'  => ( 'none' === $mode ),
+			'diff'      => $this->palette_output_diff( $applied['json'] ),
+		];
+
+		if ( null !== $options ) {
+			$extra['options'] = $options;
+			$extra            = array_merge( $extra, $this->emit_palette_output( $assoc_args, $applied['json'] ) );
+		}
+
+		$this->emit_write_result( $assoc_args, $result, array_keys( $values ), $dry_run, $extra );
+	}
+
+	/**
+	 * Run the Node generator, or fail with an envelope that never leaves a stale output behind.
+	 *
+	 * @param array  $assoc_args  Associative arguments.
+	 * @param string $source_json The palette source.
+	 * @param array  $options     Resolved generator options.
+	 *
+	 * @return array{json: string, palettes: array}
+	 */
+	protected function generate_palette_output( array $assoc_args, string $source_json, array $options ): array {
 		if ( ! $this->palette_generator->is_available() ) {
 			$looked_for = $this->palette_generator->looked_for();
 
@@ -799,29 +858,13 @@ class CliCommands extends AbstractHookProvider {
 			);
 		}
 
-		$overrides = [];
-		$variation = $this->flag( $assoc_args, 'variation' );
-		if ( null !== $variation && '' !== $variation ) {
-			if ( ! is_numeric( $variation ) || (int) $variation < 1 || (int) $variation > 12 ) {
-				$this->fail(
-					$assoc_args,
-					1,
-					'invalid_params',
-					__( '--variation must be a whole number between 1 and 12.', '__plugin_txtd' )
-				);
-			}
-
-			$overrides[ PaletteGenerator::VARIATION_SETTING_ID ] = (int) $variation;
-		}
-
-		$options  = $this->palette_generator->resolve_options( $overrides );
 		$generated = $this->palette_generator->generate( $source_json, $options );
 		if ( is_wp_error( $generated ) ) {
 			$code = 'style_manager_generator_unavailable' === $generated->get_error_code()
 				? 'generator_unavailable'
 				: 'invalid_params';
 
-			$data = (array) $generated->get_error_data();
+			$data               = (array) $generated->get_error_data();
 			$data['error_code'] = (string) $generated->get_error_code();
 
 			$this->fail(
@@ -833,35 +876,106 @@ class CliCommands extends AbstractHookProvider {
 			);
 		}
 
-		$values = $this->palette_write_payload( $source_json, $generated['json'], $assoc_args, $overrides );
+		return $generated;
+	}
 
-		$dry_run = $this->bool_flag( $assoc_args, 'dry-run' );
+	/**
+	 * Read the pre-generated palette output `--generator=none` applies verbatim.
+	 *
+	 * Validated against what PHP's CSS generation actually consumes — `variations`,
+	 * `darkVariations`, `sourceIndex` — and nothing more. A hand-authored blob from a
+	 * gene-migration run carries no `colors` ramp and no echoed `options`, and demanding those
+	 * would reject exactly the artifacts this path exists to apply.
+	 *
+	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @return array{json: string, palettes: array}
+	 */
+	protected function collect_applied_palette_output( array $assoc_args ): array {
+		$output = $this->flag( $assoc_args, 'output' );
 
-		if ( $dry_run ) {
-			$result = $this->settings_writer->preview( $values );
-		} else {
-			$this->confirm_destructive(
+		if ( ! is_string( $output ) || '' === trim( $output ) ) {
+			$this->fail(
 				$assoc_args,
-				__( 'Regenerating the color palette replaces the whole generated ramp, including any hand-authored palette output stored on this site.', '__plugin_txtd' )
+				1,
+				'invalid_params',
+				__( '--generator=none applies a pre-generated palette output, so --output=<json|@file> is required. Nothing was written.', '__plugin_txtd' )
 			);
-
-			$result = $this->settings_writer->save( $values, true );
-			if ( is_wp_error( $result ) ) {
-				$this->fail_from_wp_error( $assoc_args, $result, $values );
-			}
 		}
 
-		$extra = [
-			'grades'    => PaletteGenerator::grade_count( $generated['palettes'] ),
-			'palettes'  => count( $generated['palettes'] ),
-			'generator' => 'node',
-			'options'   => $options,
-			'diff'      => $this->palette_output_diff( $generated['json'] ),
-		];
+		$output = trim( $output );
 
-		$extra = array_merge( $extra, $this->emit_palette_output( $assoc_args, $generated['json'] ) );
+		if ( 0 === strpos( $output, '@' ) ) {
+			$path = substr( $output, 1 );
+			$size = is_readable( $path ) ? filesize( $path ) : false;
+			$raw  = ( false !== $size ) ? file_get_contents( $path, false, null, 0, self::MAX_DOCUMENT_BYTES + 1 ) : false;
 
-		$this->emit_write_result( $assoc_args, $result, array_keys( $values ), $dry_run, $extra );
+			if ( false === $raw ) {
+				$this->fail(
+					$assoc_args,
+					1,
+					'invalid_params',
+					sprintf(
+						/* translators: %s: file path. */
+						__( 'Cannot read the palette output file: %s.', '__plugin_txtd' ),
+						$path
+					)
+				);
+			}
+		} else {
+			$raw = $output;
+		}
+
+		if ( strlen( (string) $raw ) > self::MAX_DOCUMENT_BYTES ) {
+			$this->fail(
+				$assoc_args,
+				1,
+				'invalid_params',
+				sprintf(
+					/* translators: %d: size limit in bytes. */
+					__( 'The palette output exceeds the %d byte limit.', '__plugin_txtd' ),
+					self::MAX_DOCUMENT_BYTES
+				)
+			);
+		}
+
+		$applied = PaletteGenerator::validate_renderable( (string) $raw );
+		if ( is_wp_error( $applied ) ) {
+			$this->fail(
+				$assoc_args,
+				1,
+				'invalid_params',
+				(string) $applied->get_error_message() . ' ' . __( 'Nothing was written.', '__plugin_txtd' )
+			);
+		}
+
+		return $applied;
+	}
+
+	/**
+	 * Read and validate `--variation`.
+	 *
+	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @return array setting_id => value.
+	 */
+	protected function palette_option_overrides( array $assoc_args ): array {
+		$variation = $this->flag( $assoc_args, 'variation' );
+
+		if ( null === $variation || '' === $variation ) {
+			return [];
+		}
+
+		if ( ! is_numeric( $variation ) || (int) $variation < 1 || (int) $variation > 12 ) {
+			$this->fail(
+				$assoc_args,
+				1,
+				'invalid_params',
+				__( '--variation must be a whole number between 1 and 12.', '__plugin_txtd' )
+			);
+		}
+
+		return [ PaletteGenerator::VARIATION_SETTING_ID => (int) $variation ];
 	}
 
 	/**
@@ -874,25 +988,21 @@ class CliCommands extends AbstractHookProvider {
 	 * whenever a premium id is present in the same payload. Sending it unconditionally would
 	 * therefore make the command strip its own output on every site without Plus.
 	 *
-	 * @param string $source_json    The palette source as given.
-	 * @param string $generated_json The generated palette output.
-	 * @param array  $assoc_args     Associative arguments.
-	 * @param array  $overrides      Resolved option overrides (`--variation`).
+	 * `sm_is_custom_color_palette` is always true: applying an arbitrary source *is* what makes
+	 * a palette custom, whichever way its output was produced.
+	 *
+	 * @param string $source_json  The palette source as given.
+	 * @param string $output_json  The palette output being persisted.
+	 * @param array  $overrides    Resolved option overrides (`--variation`).
 	 *
 	 * @return array setting_id => value.
 	 */
-	protected function palette_write_payload( string $source_json, string $generated_json, array $assoc_args, array $overrides ): array {
+	protected function palette_write_payload( string $source_json, string $output_json, array $overrides ): array {
 		$values = [
-			PaletteGenerator::SOURCE_SETTING_ID => trim( $source_json ),
-			PaletteGenerator::OUTPUT_SETTING_ID => $generated_json,
+			PaletteGenerator::SOURCE_SETTING_ID    => trim( $source_json ),
+			PaletteGenerator::OUTPUT_SETTING_ID    => $output_json,
+			PaletteGenerator::IS_CUSTOM_SETTING_ID => true,
 		];
-
-		if ( $this->bool_flag( $assoc_args, 'custom' ) ) {
-			$values[ PaletteGenerator::IS_CUSTOM_SETTING_ID ] = true;
-		} else {
-			$current = $this->palette_generator->current_value( PaletteGenerator::IS_CUSTOM_SETTING_ID );
-			$values[ PaletteGenerator::IS_CUSTOM_SETTING_ID ] = null === $current ? false : $current;
-		}
 
 		if ( array_key_exists( PaletteGenerator::VARIATION_SETTING_ID, $overrides ) ) {
 			$values[ PaletteGenerator::VARIATION_SETTING_ID ] = $overrides[ PaletteGenerator::VARIATION_SETTING_ID ];

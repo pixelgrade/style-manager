@@ -218,6 +218,43 @@ class PaletteGeneratorTest extends TestCase {
 		$this->assertSame( 11, PaletteGenerator::grade_count( $palettes ) );
 	}
 
+	/**
+	 * The `--generator=none` bar is exactly what PHP's CSS generation consumes. The grist run
+	 * wrote its palette output by hand: 2 palettes, 12 variations each, no `colors` ramp and no
+	 * echoed `options`. It renders correctly, so it must validate — a generator-shaped check
+	 * would reject the very artifact that path exists to apply.
+	 */
+	public function test_a_hand_authored_blob_is_renderable_even_without_a_ramp(): void {
+		$json = (string) file_get_contents( __DIR__ . '/../../fixtures/palette-parity/footer-grist.applied-output.json' );
+
+		$validated = PaletteGenerator::validate_renderable( $json );
+
+		$this->assertIsArray( $validated );
+		$this->assertCount( 2, $validated['palettes'] );
+		$this->assertSame( $json, $validated['json'] );
+		$this->assertArrayNotHasKey( 'colors', $validated['palettes'][0] );
+		// No ramp means no grades. Zero is the honest answer, and the signal.
+		$this->assertSame( 0, PaletteGenerator::grade_count( $validated['palettes'] ) );
+	}
+
+	/**
+	 * @dataProvider provide_unrenderable_outputs
+	 */
+	public function test_an_unrenderable_output_is_rejected( string $json ): void {
+		$this->assertInstanceOf( \WP_Error::class, PaletteGenerator::validate_renderable( $json ) );
+	}
+
+	public static function provide_unrenderable_outputs(): array {
+		return [
+			'not json'             => [ 'not json' ],
+			'empty list'           => [ '[]' ],
+			'an object'            => [ '{"id":1}' ],
+			'no variations'        => [ '[{"id":1,"sourceIndex":0,"darkVariations":[]}]' ],
+			'wrong variation count' => [ '[{"id":1,"sourceIndex":0,"variations":[{}],"darkVariations":[{}]}]' ],
+			'no sourceIndex'       => [ '[{"id":1,"variations":[{},{},{},{},{},{},{},{},{},{},{},{}],"darkVariations":[{},{},{},{},{},{},{},{},{},{},{},{}]}]' ],
+		];
+	}
+
 	public function test_a_hand_authored_palette_blob_is_recognised(): void {
 		// Some gene-migration runs write sm_advanced_palette_output directly: bespoke labels,
 		// no `options` block. Regenerating over one silently replaces hand-authored work,

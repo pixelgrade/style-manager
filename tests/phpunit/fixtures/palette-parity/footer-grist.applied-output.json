@@ -1,0 +1,70 @@
+[
+  {
+    "sourceIndex": 0,
+    "id": 1,
+    "label": "Neutral study base",
+    "source": ["#FFFFFF", "#352F2A"],
+    "variations": [
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"}
+    ],
+    "darkVariations": [
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#FFFFFF","accent":"#352F2A","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"}
+    ]
+  },
+  {
+    "sourceIndex": 0,
+    "id": 2,
+    "label": "Grist study",
+    "source": ["#E6FFA0", "#F04F5F", "#352F2A"],
+    "variations": [
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"}
+    ],
+    "darkVariations": [
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"},
+      {"bg":"#E6FFA0","accent":"#F04F5F","fg1":"#352F2A","fg2":"#352F2A","accent2":"#352F2A"}
+    ]
+  }
+]
