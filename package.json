@@ -17,7 +17,7 @@
     },
     "scripts": {
         "gulp": "node ./node_modules/gulp/bin/gulp.js",
-        "dev": "cross-env webpack --mode=development --watch && gulp dev",
+        "dev": "cross-env webpack --mode=development --watch --config-name browser && gulp dev",
         "compile:production": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles",
         "zip": "npm run zip:wporg",
         "zip:wporg": "cross-env NODE_ENV=production webpack --mode=production && gulp compile:styles && composer run zip:wporg",

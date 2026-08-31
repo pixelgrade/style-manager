@@ -58,10 +58,47 @@ class PaletteGenerator {
 	public const BRAND_PROMOTION_SETTING_ID = 'sm_color_promotion_brand';
 
 	/**
-	 * How long the Node process may run before we give up on it, in seconds. The spike
-	 * measured ~450ms end to end including cold start; anything near this ceiling is a hang.
+	 * How long the Node process may run before we kill it, in seconds. The spike measured
+	 * ~450ms end to end including cold start; anything near this ceiling is a hang.
+	 *
+	 * Enforced with a real wall-clock deadline and `proc_terminate()` — not with
+	 * `stream_set_timeout()`, which does not bound a blocking `stream_get_contents()` on a
+	 * `proc_open` pipe and would leave this constant promising a ceiling the code never applies.
 	 */
 	public const TIMEOUT_SECONDS = 30;
+
+	/**
+	 * The color grammar every persisted variation value must match.
+	 *
+	 * Palette output is printed **raw and unescaped** into a stylesheet by
+	 * `sm_get_variation_css_variables()` (`src/sm-functions.php`), and the block-editor sink
+	 * (`Screen\EditWithBlocks::enqueue_editor_dynamic_css()`) does not even strip tags. A value
+	 * is therefore a CSS-injection sink, so anything that could not possibly be a color is
+	 * refused at the persistence boundary — `red } html{display:none}` and `</style><script>`
+	 * both fail this pattern. Every one of the 549 distinct values in the lab corpus is a plain
+	 * `#rrggbb`; the functional forms are allowed only so a browser export using them still
+	 * round-trips. No `var()`, no `url()`, no bare keywords.
+	 */
+	public const COLOR_PATTERN = '/^(?:#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|(?:rgb|rgba|hsl|hsla)\(\s*[0-9eE.,%\/+\- ]+\))$/';
+
+	/**
+	 * The grammar a variation key must match: it is interpolated into a custom-property NAME
+	 * (`--sm-<key>-color-N`), so it is a sink of its own.
+	 */
+	public const VARIATION_KEY_PATTERN = '/^[A-Za-z][A-Za-z0-9_-]*$/';
+
+	/**
+	 * The grammar a palette id must match: it is interpolated into a CSS **selector**
+	 * (`.sm-palette-<id>`), which is the most direct injection point in the whole blob.
+	 * The generator emits `1`, `_info`, `_error`, `_warning`, `_success`.
+	 */
+	public const PALETTE_ID_PATTERN = '/^[A-Za-z0-9_-]+$/';
+
+	/**
+	 * The color keys `sm-functions.php` reads out of every variation. A blob missing any of
+	 * them renders broken custom properties, which is exactly what validation exists to stop.
+	 */
+	public const REQUIRED_VARIATION_KEYS = [ 'bg', 'accent', 'fg1', 'fg2' ];
 
 	/**
 	 * Filter name for pointing the plugin at a Node binary (contract §3.11).
@@ -393,18 +430,104 @@ class PaletteGenerator {
 			);
 		}
 
-		fwrite( $pipes[0], $request );
-		fclose( $pipes[0] );
+		/*
+		 * Every pipe is non-blocking and pumped from one `stream_select()` loop against a real
+		 * wall-clock deadline. Both halves matter: a child that never reads would deadlock a
+		 * blocking write of a multi-megabyte request long before we got to read anything, and a
+		 * child that never closes stdout would hang a blocking read forever. `stream_set_timeout()`
+		 * does not bound `stream_get_contents()` on a proc pipe, so the only honest ceiling is
+		 * this loop plus `proc_terminate()`.
+		 */
+		foreach ( $pipes as $pipe ) {
+			stream_set_blocking( $pipe, false );
+		}
 
-		stream_set_timeout( $pipes[1], self::TIMEOUT_SECONDS );
-		stream_set_timeout( $pipes[2], self::TIMEOUT_SECONDS );
+		$deadline = microtime( true ) + self::TIMEOUT_SECONDS;
+		$stdout   = '';
+		$stderr   = '';
+		$pending  = $request;
+		$timed_out = false;
 
-		$stdout = (string) stream_get_contents( $pipes[1] );
-		fclose( $pipes[1] );
-		$stderr = trim( (string) stream_get_contents( $pipes[2] ) );
-		fclose( $pipes[2] );
+		while ( true ) {
+			$read  = array_filter( [ $pipes[1], $pipes[2] ], 'is_resource' );
+			$write = ( is_resource( $pipes[0] ) && '' !== $pending ) ? [ $pipes[0] ] : [];
+
+			if ( empty( $read ) && empty( $write ) ) {
+				break;
+			}
+
+			$remaining = $deadline - microtime( true );
+			if ( $remaining <= 0 ) {
+				$timed_out = true;
+				break;
+			}
+
+			$except = null;
+			$ready  = @stream_select( $read, $write, $except, (int) $remaining, 0 );
+
+			if ( false === $ready ) {
+				break;
+			}
+
+			foreach ( $write as $pipe ) {
+				$written = @fwrite( $pipe, $pending );
+				if ( false === $written ) {
+					$pending = '';
+				} else {
+					$pending = substr( $pending, $written );
+				}
+
+				if ( '' === $pending ) {
+					fclose( $pipes[0] );
+					$pipes[0] = null;
+				}
+			}
+
+			foreach ( $read as $pipe ) {
+				$chunk = fread( $pipe, 65536 );
+
+				if ( '' === $chunk || false === $chunk ) {
+					if ( feof( $pipe ) ) {
+						$index = ( $pipe === $pipes[1] ) ? 1 : 2;
+						fclose( $pipe );
+						$pipes[ $index ] = null;
+					}
+					continue;
+				}
+
+				if ( $pipe === $pipes[1] ) {
+					$stdout .= $chunk;
+				} else {
+					$stderr .= $chunk;
+				}
+			}
+		}
+
+		foreach ( $pipes as $pipe ) {
+			if ( is_resource( $pipe ) ) {
+				fclose( $pipe );
+			}
+		}
+
+		if ( $timed_out ) {
+			// SIGKILL, not SIGTERM: proc_close() below blocks until the child is gone, and the
+			// case this exists for is a child that is not responding to anything.
+			proc_terminate( $process, 9 );
+			proc_close( $process );
+
+			return new \WP_Error(
+				'style_manager_generator_timeout',
+				sprintf(
+					/* translators: %d: timeout in seconds. */
+					__( 'The Node palette generator did not finish within %d seconds and was terminated.', '__plugin_txtd' ),
+					self::TIMEOUT_SECONDS
+				),
+				[ 'timeout' => self::TIMEOUT_SECONDS ]
+			);
+		}
 
 		$exit_code = proc_close( $process );
+		$stderr    = trim( $stderr );
 
 		if ( 0 !== $exit_code || '' === trim( $stdout ) ) {
 			return new \WP_Error(
@@ -425,13 +548,18 @@ class PaletteGenerator {
 	/**
 	 * Assert a palette output can actually be rendered, before anything is persisted.
 	 *
-	 * The bar is exactly what PHP's CSS generation consumes — `variations`, `darkVariations`,
-	 * `sourceIndex` (`src/sm-functions.php`) — and deliberately nothing more. The remaining keys
-	 * (`options`, `darkOptions`, `colors`, `darkColors`) are echoes the Customizer previews read;
-	 * a hand-authored blob from a gene-migration run carries none of them and still renders
-	 * correctly, so demanding them here would reject the very artifacts `--generator=none` exists
-	 * to apply. What must never happen is a malformed blob reaching the option and rendering a
-	 * broken site instead of failing loudly.
+	 * The bar is exactly what PHP's CSS generation consumes — the palette `id` (which becomes a
+	 * CSS **selector**), `sourceIndex`, and 12 `variations` / `darkVariations` whose `bg`,
+	 * `accent`, `fg1` and `fg2` become custom-property names and values — and deliberately
+	 * nothing more. The remaining keys (`options`, `darkOptions`, `colors`, `darkColors`) are
+	 * echoes the Customizer previews read; a hand-authored blob from a gene-migration run
+	 * carries none of them and still renders correctly, so demanding those would reject the
+	 * very artifacts `--generator=none` exists to apply.
+	 *
+	 * Everything that IS consumed is validated for **shape and grammar**, because
+	 * `sm_get_variation_css_variables()` interpolates all three of id, key and value into a
+	 * stylesheet raw and unescaped, and the block-editor sink does not strip tags. A blob whose
+	 * provenance is a pipeline rather than a person is exactly where that belongs.
 	 *
 	 * @param string $json Raw palette output JSON.
 	 *
@@ -441,16 +569,12 @@ class PaletteGenerator {
 		$palettes = json_decode( $json, true );
 
 		if ( ! is_array( $palettes ) || empty( $palettes ) || ! array_is_list( $palettes ) ) {
-			return new \WP_Error(
-				'style_manager_palette_output_invalid',
-				__( 'The palette output must be a non-empty JSON array of palettes.', '__plugin_txtd' )
-			);
+			return self::invalid( __( 'The palette output must be a non-empty JSON array of palettes.', '__plugin_txtd' ) );
 		}
 
 		foreach ( $palettes as $index => $palette ) {
-			if ( ! is_array( $palette ) ) {
-				return new \WP_Error(
-					'style_manager_palette_output_invalid',
+			if ( ! is_array( $palette ) || array_is_list( $palette ) ) {
+				return self::invalid(
 					sprintf(
 						/* translators: %d: palette index. */
 						__( 'Palette %d is not an object.', '__plugin_txtd' ),
@@ -459,10 +583,31 @@ class PaletteGenerator {
 				);
 			}
 
+			// `.sm-palette-<id>` — a selector, so the most direct injection point in the blob.
+			$id = $palette['id'] ?? null;
+			if ( ! is_int( $id ) && ( ! is_string( $id ) || 1 !== preg_match( self::PALETTE_ID_PATTERN, $id ) ) ) {
+				return self::invalid(
+					sprintf(
+						/* translators: %d: palette index. */
+						__( 'Palette %d has no usable `id` (an integer, or letters, digits, `-` and `_` only).', '__plugin_txtd' ),
+						$index
+					)
+				);
+			}
+
+			if ( ! array_key_exists( 'sourceIndex', $palette ) || ! is_int( $palette['sourceIndex'] ) ) {
+				return self::invalid(
+					sprintf(
+						/* translators: %d: palette index. */
+						__( 'Palette %d has no integer `sourceIndex`.', '__plugin_txtd' ),
+						$index
+					)
+				);
+			}
+
 			foreach ( [ 'variations', 'darkVariations' ] as $key ) {
 				if ( empty( $palette[ $key ] ) || ! is_array( $palette[ $key ] ) || 12 !== count( $palette[ $key ] ) ) {
-					return new \WP_Error(
-						'style_manager_palette_output_invalid',
+					return self::invalid(
 						sprintf(
 							/* translators: 1: palette index, 2: the missing key. */
 							__( 'Palette %1$d does not carry 12 `%2$s`.', '__plugin_txtd' ),
@@ -471,17 +616,11 @@ class PaletteGenerator {
 						)
 					);
 				}
-			}
 
-			if ( ! array_key_exists( 'sourceIndex', $palette ) || ! is_int( $palette['sourceIndex'] ) ) {
-				return new \WP_Error(
-					'style_manager_palette_output_invalid',
-					sprintf(
-						/* translators: %d: palette index. */
-						__( 'Palette %d has no integer `sourceIndex`.', '__plugin_txtd' ),
-						$index
-					)
-				);
+				$error = self::validate_variations( $palette[ $key ], $index, $key );
+				if ( null !== $error ) {
+					return $error;
+				}
 			}
 		}
 
@@ -489,6 +628,86 @@ class PaletteGenerator {
 			'json'     => $json,
 			'palettes' => $palettes,
 		];
+	}
+
+	/**
+	 * Validate the 12 variation objects of one ramp.
+	 *
+	 * @param array  $variations The variation list.
+	 * @param int    $index      Palette index, for the message.
+	 * @param string $key        `variations` or `darkVariations`, for the message.
+	 *
+	 * @return \WP_Error|null
+	 */
+	protected static function validate_variations( array $variations, int $index, string $key ): ?\WP_Error {
+		foreach ( $variations as $position => $variation ) {
+			if ( ! is_array( $variation ) || empty( $variation ) || array_is_list( $variation ) ) {
+				return self::invalid(
+					sprintf(
+						/* translators: 1: palette index, 2: `variations` or `darkVariations`, 3: position. */
+						__( 'Palette %1$d `%2$s`[%3$d] is not a color object.', '__plugin_txtd' ),
+						$index,
+						$key,
+						$position
+					)
+				);
+			}
+
+			foreach ( self::REQUIRED_VARIATION_KEYS as $required ) {
+				if ( ! array_key_exists( $required, $variation ) ) {
+					return self::invalid(
+						sprintf(
+							/* translators: 1: palette index, 2: `variations` or `darkVariations`, 3: position, 4: the missing color key. */
+							__( 'Palette %1$d `%2$s`[%3$d] is missing the `%4$s` color.', '__plugin_txtd' ),
+							$index,
+							$key,
+							$position,
+							$required
+						)
+					);
+				}
+			}
+
+			foreach ( $variation as $color_key => $value ) {
+				if ( ! is_string( $color_key ) || 1 !== preg_match( self::VARIATION_KEY_PATTERN, $color_key ) ) {
+					return self::invalid(
+						sprintf(
+							/* translators: 1: palette index, 2: `variations` or `darkVariations`, 3: position. */
+							__( 'Palette %1$d `%2$s`[%3$d] has a color name that is not a plain identifier.', '__plugin_txtd' ),
+							$index,
+							$key,
+							$position
+						)
+					);
+				}
+
+				if ( ! is_string( $value ) || 1 !== preg_match( self::COLOR_PATTERN, $value ) ) {
+					return self::invalid(
+						sprintf(
+							/* translators: 1: palette index, 2: `variations` or `darkVariations`, 3: position, 4: the color key. */
+							__( 'Palette %1$d `%2$s`[%3$d] `%4$s` is not a color. Values are written straight into a stylesheet, so only #hex, rgb(), rgba(), hsl() and hsla() are accepted.', '__plugin_txtd' ),
+							$index,
+							$key,
+							$position,
+							$color_key
+						)
+					);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * A palette-output rejection.
+	 *
+	 * @param string $message Human message.
+	 *
+	 * @return \WP_Error
+	 */
+	protected static function invalid( string $message ): \WP_Error {
+		return new \WP_Error( 'style_manager_palette_output_invalid', $message );
 	}
 
 	/**

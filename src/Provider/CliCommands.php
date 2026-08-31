@@ -717,10 +717,11 @@ class CliCommands extends AbstractHookProvider {
 	 * : The `sm_advanced_palette_source` JSON, `@<file>`, or `-` for STDIN. Required.
 	 *
 	 * [--output=<output>]
-	 * : With `--generator=node` this is a DESTINATION for the generated output: `json` echoes it
-	 * into the envelope's `data.output`, `@<file>` writes it to that file. It is persisted either
-	 * way. With `--generator=none` this is the INPUT instead — the pre-generated palette output
-	 * to apply verbatim, as raw JSON or `@<file>` — and it is REQUIRED.
+	 * : With `--generator=node` this is a DESTINATION for the generated output, and takes exactly
+	 * `json` (echo it into the envelope's `data.output`) or `@<file>` (write it there). It is
+	 * persisted either way, and under `--dry-run` no file is written — `--dry-run` has no side
+	 * effects at all. With `--generator=none` this is the INPUT instead — the pre-generated
+	 * palette output to apply verbatim, as `@<file>` or an inline JSON array — and it is REQUIRED.
 	 *
 	 * [--variation=<n>]
 	 * : Set `sm_site_color_variation` (1-12) and generate against it. Omit to keep the stored
@@ -728,17 +729,13 @@ class CliCommands extends AbstractHookProvider {
 	 * reported as `stripped[].reason: "plus_locked"`, exit 2.
 	 *
 	 * [--generator=<generator>]
-	 * : `node` (default) runs the bundled artifact against `--source`. `none` skips Node entirely
-	 * and applies the pre-generated output given in `--output` verbatim.
-	 * ---
-	 * default: node
-	 * options:
-	 *   - node
-	 *   - none
-	 * ---
+	 * : `node` (the default) runs the bundled artifact against `--source`. `none` skips Node
+	 * entirely and applies the pre-generated output given in `--output` verbatim. Any other value
+	 * is `invalid_params`, exit 1 — validated in the command so the caller still gets an envelope.
 	 *
 	 * [--dry-run]
-	 * : Generate and report the predicted diff without writing. Never prompts, never needs --yes.
+	 * : Report the predicted diff without writing anything — no settings, no `--output` file.
+	 * Never prompts, never needs --yes.
 	 *
 	 * [--yes]
 	 * : Confirm the destructive regeneration. Strictly required under --format=json|yaml.
@@ -755,8 +752,8 @@ class CliCommands extends AbstractHookProvider {
 	 *
 	 * ## EXIT CODES
 	 *
-	 * 0 ok|noop · 2 plus_stripped · 1 generator_unavailable|invalid_params|confirmation_required ·
-	 * 3 permission_denied
+	 * 0 ok|noop · 2 plus_stripped · 3 permission_denied · 1 for
+	 * generator_unavailable|generator_timeout|invalid_params|confirmation_required
 	 *
 	 * ## EXAMPLES
 	 *
@@ -790,17 +787,29 @@ class CliCommands extends AbstractHookProvider {
 		}
 
 		$overrides = $this->palette_option_overrides( $assoc_args );
+		$dry_run   = $this->bool_flag( $assoc_args, 'dry-run' );
 
 		$options = null;
 		if ( 'none' === $mode ) {
-			$applied = $this->collect_applied_palette_output( $assoc_args );
+			$destination = [ 'kind' => 'none' ];
+			$applied     = $this->collect_applied_palette_output( $assoc_args );
 		} else {
-			$options = $this->palette_generator->resolve_options( $overrides );
-			$applied = $this->generate_palette_output( $assoc_args, $source_json, $options );
+			// Parsed before the subprocess runs, so a malformed --output costs nothing and, more
+			// to the point, can never fail *after* the palette has been persisted.
+			$destination = $this->resolve_output_destination( $assoc_args );
+			$options     = $this->palette_generator->resolve_options( $overrides );
+			$applied     = $this->generate_palette_output( $assoc_args, $source_json, $options );
 		}
 
-		$values  = $this->palette_write_payload( $source_json, $applied['json'], $overrides );
-		$dry_run = $this->bool_flag( $assoc_args, 'dry-run' );
+		$values = $this->palette_write_payload( $source_json, $applied['json'], $overrides );
+
+		/*
+		 * Read the diff BEFORE the write. Computing it afterwards would compare the new blob with
+		 * itself — `changed` always false, `stored_generator_produced` describing what we just
+		 * wrote — and the hand-authored-overwrite signal would exist only under --dry-run, which
+		 * is the one run that cannot destroy anything.
+		 */
+		$diff = $this->palette_output_diff( $applied['json'] );
 
 		if ( $dry_run ) {
 			$result = $this->settings_writer->preview( $values );
@@ -809,6 +818,11 @@ class CliCommands extends AbstractHookProvider {
 				$assoc_args,
 				__( 'Applying a color palette replaces the whole generated ramp, including any hand-authored palette output stored on this site.', '__plugin_txtd' )
 			);
+
+			// Written before the save, so a failing file write fails the whole command with
+			// nothing persisted — rather than reporting exit 1 "nothing was done" over a site
+			// whose palette has in fact already changed.
+			$this->write_output_file( $assoc_args, $destination, $applied['json'] );
 
 			$result = $this->settings_writer->save( $values, true );
 			if ( is_wp_error( $result ) ) {
@@ -821,15 +835,102 @@ class CliCommands extends AbstractHookProvider {
 			'palettes'  => count( $applied['palettes'] ),
 			'generator' => $mode,
 			'verbatim'  => ( 'none' === $mode ),
-			'diff'      => $this->palette_output_diff( $applied['json'] ),
+			'diff'      => $diff,
 		];
 
 		if ( null !== $options ) {
 			$extra['options'] = $options;
-			$extra            = array_merge( $extra, $this->emit_palette_output( $assoc_args, $applied['json'] ) );
+		}
+
+		if ( 'json' === $destination['kind'] ) {
+			$extra['output'] = $applied['palettes'];
+		} elseif ( 'file' === $destination['kind'] && ! $dry_run ) {
+			$extra['output_file'] = $destination['path'];
 		}
 
 		$this->emit_write_result( $assoc_args, $result, array_keys( $values ), $dry_run, $extra );
+	}
+
+	/**
+	 * Parse `--output` in its DESTINATION sense (the `--generator=node` path).
+	 *
+	 * Exactly two forms, per contract §1.1's `--output=<json|@file>`: the literal `json`, or
+	 * `@<path>`. A bare path used to be silently accepted as a file, which made the same flag
+	 * mean "a path" here and "inline JSON" on the verbatim path — an asymmetry nobody documented.
+	 *
+	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @return array{kind: string, path: string}
+	 */
+	protected function resolve_output_destination( array $assoc_args ): array {
+		$output = $this->flag( $assoc_args, 'output' );
+
+		if ( ! is_string( $output ) || '' === trim( $output ) ) {
+			return [
+				'kind' => 'none',
+				'path' => '',
+			];
+		}
+
+		$output = trim( $output );
+
+		if ( 'json' === strtolower( $output ) ) {
+			return [
+				'kind' => 'json',
+				'path' => '',
+			];
+		}
+
+		if ( 0 === strpos( $output, '@' ) && '' !== substr( $output, 1 ) ) {
+			return [
+				'kind' => 'file',
+				'path' => substr( $output, 1 ),
+			];
+		}
+
+		$this->fail(
+			$assoc_args,
+			1,
+			'invalid_params',
+			__( '--output takes `json` (echo the generated output into the envelope) or `@<file>` (write it there). Nothing was written.', '__plugin_txtd' )
+		);
+
+		return [
+			'kind' => 'none',
+			'path' => '',
+		];
+	}
+
+	/**
+	 * Write the generated output to `--output=@<file>`, before anything is persisted.
+	 *
+	 * @param array  $assoc_args     Associative arguments.
+	 * @param array  $destination    Resolved `--output` destination.
+	 * @param string $generated_json The generated palette output.
+	 */
+	protected function write_output_file( array $assoc_args, array $destination, string $generated_json ): void {
+		if ( 'file' !== $destination['kind'] ) {
+			return;
+		}
+
+		$written = @file_put_contents( $destination['path'], $generated_json );
+		if ( false !== $written ) {
+			return;
+		}
+
+		$last = error_get_last();
+
+		$this->fail(
+			$assoc_args,
+			1,
+			'invalid_params',
+			sprintf(
+				/* translators: 1: file path, 2: underlying error message. */
+				__( 'Could not write the generated palette output to %1$s: %2$s Nothing was written.', '__plugin_txtd' ),
+				$destination['path'],
+				! empty( $last['message'] ) ? (string) $last['message'] : __( 'unknown error.', '__plugin_txtd' )
+			)
+		);
 	}
 
 	/**
@@ -860,9 +961,10 @@ class CliCommands extends AbstractHookProvider {
 
 		$generated = $this->palette_generator->generate( $source_json, $options );
 		if ( is_wp_error( $generated ) ) {
-			$code = 'style_manager_generator_unavailable' === $generated->get_error_code()
-				? 'generator_unavailable'
-				: 'invalid_params';
+			$code = [
+				'style_manager_generator_unavailable' => 'generator_unavailable',
+				'style_manager_generator_timeout'     => 'generator_timeout',
+			][ $generated->get_error_code() ] ?? 'invalid_params';
 
 			$data               = (array) $generated->get_error_data();
 			$data['error_code'] = (string) $generated->get_error_code();
@@ -989,7 +1091,10 @@ class CliCommands extends AbstractHookProvider {
 	 * therefore make the command strip its own output on every site without Plus.
 	 *
 	 * `sm_is_custom_color_palette` is always true: applying an arbitrary source *is* what makes
-	 * a palette custom, whichever way its output was produced.
+	 * a palette custom, whichever way its output was produced. It is written as the integer `1`
+	 * rather than boolean `true` because that is the representation the option round-trips as —
+	 * the Customizer reads it back as the string `'1'`, and a boolean would therefore never
+	 * compare equal to what is on disk, costing the command its `noop` on every re-run (§3.5).
 	 *
 	 * @param string $source_json  The palette source as given.
 	 * @param string $output_json  The palette output being persisted.
@@ -1001,7 +1106,7 @@ class CliCommands extends AbstractHookProvider {
 		$values = [
 			PaletteGenerator::SOURCE_SETTING_ID    => trim( $source_json ),
 			PaletteGenerator::OUTPUT_SETTING_ID    => $output_json,
-			PaletteGenerator::IS_CUSTOM_SETTING_ID => true,
+			PaletteGenerator::IS_CUSTOM_SETTING_ID => 1,
 		];
 
 		if ( array_key_exists( PaletteGenerator::VARIATION_SETTING_ID, $overrides ) ) {
@@ -1093,48 +1198,6 @@ class CliCommands extends AbstractHookProvider {
 			'stored_generator_produced' => PaletteGenerator::is_generator_produced( $stored ),
 			'changed'                   => PaletteGenerator::canonical_json( $stored ) !== PaletteGenerator::canonical_json( $generated_json ),
 		];
-	}
-
-	/**
-	 * Honour `--output=json|@<file>`.
-	 *
-	 * @param array  $assoc_args     Associative arguments.
-	 * @param string $generated_json The generated palette output.
-	 *
-	 * @return array Extra `data` keys.
-	 */
-	protected function emit_palette_output( array $assoc_args, string $generated_json ): array {
-		$output = $this->flag( $assoc_args, 'output' );
-		if ( ! is_string( $output ) || '' === trim( $output ) ) {
-			return [];
-		}
-
-		$output = trim( $output );
-
-		if ( 'json' === strtolower( $output ) ) {
-			return [ 'output' => json_decode( $generated_json, true ) ];
-		}
-
-		$path    = 0 === strpos( $output, '@' ) ? substr( $output, 1 ) : $output;
-		$written = @file_put_contents( $path, $generated_json );
-
-		if ( false === $written ) {
-			$last = error_get_last();
-
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				sprintf(
-					/* translators: 1: file path, 2: underlying error message. */
-					__( 'Could not write the generated palette output to %1$s: %2$s', '__plugin_txtd' ),
-					$path,
-					! empty( $last['message'] ) ? (string) $last['message'] : __( 'unknown error', '__plugin_txtd' )
-				)
-			);
-		}
-
-		return [ 'output_file' => $path ];
 	}
 
 	/**

@@ -777,8 +777,9 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 				array_keys( (array) $captured )
 			);
 			// Applying an arbitrary source IS what makes a palette custom, so this is
-			// unconditional — there is no flag to forget (contract v0.3.10).
-			$this->assertTrue( $captured['sm_is_custom_color_palette'] );
+			// unconditional — there is no flag to forget (contract v0.3.10). Written as `1`,
+			// the representation the option round-trips as, so a re-run can still report noop.
+			$this->assertSame( 1, $captured['sm_is_custom_color_palette'] );
 		}
 
 		public function test_apply_color_palette_only_writes_the_plus_gated_variation_when_asked(): void {
@@ -943,7 +944,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 
 			$this->assertSame( 0, $exit );
 			$this->assertSame( $expected, $captured['sm_advanced_palette_output'], 'The provided output must be persisted byte for byte.' );
-			$this->assertTrue( $captured['sm_is_custom_color_palette'] );
+			$this->assertSame( 1, $captured['sm_is_custom_color_palette'] );
 			$this->assertSame( 'none', $envelope['data']['generator'] );
 			$this->assertTrue( $envelope['data']['verbatim'] );
 			$this->assertSame( 2, $envelope['data']['palettes'] );
@@ -1048,6 +1049,151 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 
 			$this->assertSame( 1, $exit );
 			$this->assertSame( 'invalid_params', $envelope['code'] );
+		}
+
+		/**
+		 * H3: the `--output` file is written BEFORE the save, so a failing write fails the whole
+		 * command with nothing persisted — rather than reporting exit 1 ("nothing was done") over
+		 * a site whose palette has in fact already changed.
+		 */
+		public function test_a_failing_output_file_write_leaves_the_palette_unpersisted(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette(
+					[],
+					[ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'output' => '@/nonexistent-directory/palette.json' ]
+				),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+			$this->assertStringContainsString( 'Nothing was written', $envelope['summary'] );
+		}
+
+		/**
+		 * M2 (ruling): --dry-run is fully side-effect-free — it does not write the --output file
+		 * either, not just the settings.
+		 */
+		public function test_dry_run_writes_no_output_file(): void {
+			$path = sys_get_temp_dir() . '/sm-palette-dry-run-' . uniqid() . '.json';
+
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+			$writer->method( 'preview' )->willReturn(
+				[ 'saved' => [], 'stripped' => [], 'persisted' => [], 'unchanged' => [] ]
+			);
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette(
+					[],
+					[ 'format' => 'json', 'source' => self::SOURCE, 'dry-run' => true, 'output' => '@' . $path ]
+				),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertFileDoesNotExist( $path );
+			$this->assertArrayNotHasKey( 'output_file', $envelope['data'] );
+		}
+
+		public function test_output_json_echoes_the_generated_palette_into_the_envelope(): void {
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'output' => 'json' ] ),
+				null,
+				$this->passthrough_writer(),
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertIsArray( $envelope['data']['output'] );
+			$this->assertSame( 1, $envelope['data']['output'][0]['id'] );
+		}
+
+		public function test_a_bare_output_path_is_rejected_rather_than_silently_treated_as_a_file(): void {
+			// The same flag used to mean "a path" here and "inline JSON" on the verbatim path.
+			// Contract §1.1 says `--output=<json|@file>`; anything else is a caller mistake.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'output' => 'palette.json' ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+		}
+
+		/**
+		 * M1: `data.diff` must describe the blob being REPLACED. Computed after the save it would
+		 * compare the new blob with itself, so the hand-authored-overwrite warning would exist
+		 * only under --dry-run — the one run that cannot destroy anything.
+		 *
+		 * The generator mock is stateful: `current_value` returns a hand-authored blob until the
+		 * writer runs, then the generated one. Only a pre-save read can still see the former.
+		 */
+		public function test_the_diff_describes_the_blob_being_replaced_not_the_one_just_written(): void {
+			$hand_authored = '[{"id":1,"label":"Neutral study base","sourceIndex":0,"variations":[],"darkVariations":[]}]';
+			$saved         = false;
+
+			$generator = $this->available_palette_generator(
+				12,
+				static function () use ( &$saved, $hand_authored ) {
+					return $saved ? '[{"id":1,"options":{}}]' : $hand_authored;
+				}
+			);
+
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->method( 'save' )->willReturnCallback(
+				function ( array $values ) use ( &$saved ) {
+					$saved = true;
+
+					return $this->write_result( $values );
+				}
+			);
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$generator
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertFalse(
+				$envelope['data']['diff']['stored_generator_produced'],
+				'The diff described the blob just written instead of the hand-authored one it replaced.'
+			);
+			$this->assertTrue( $envelope['data']['diff']['changed'] );
 		}
 
 		public function test_apply_color_palette_can_write_the_generated_output_to_a_file(): void {
@@ -1194,7 +1340,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 		 *
 		 * @param int $grades How many ramp entries the brand palette should carry.
 		 */
-		private function available_palette_generator( int $grades = 12 ): PaletteGenerator {
+		private function available_palette_generator( int $grades = 12, ?callable $current_value = null ): PaletteGenerator {
 			$palettes = [
 				[
 					'id'             => 1,
@@ -1222,7 +1368,12 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 					);
 				}
 			);
-			$generator->method( 'current_value' )->willReturn( null );
+			// Configured once: a second ->method('current_value') on the same mock would be
+			// ignored (the first matcher wins), which is how a stateful stub silently becomes
+			// a constant one and a test passes vacuously.
+			$generator->method( 'current_value' )->willReturnCallback(
+				$current_value ?: static fn() => null
+			);
 			$generator->method( 'generate' )->willReturn(
 				[
 					'json'     => (string) json_encode( $palettes ),

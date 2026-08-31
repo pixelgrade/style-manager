@@ -36,6 +36,7 @@ const entries = files.reduce( ( acc, curr ) => {
 }, {} );
 
 const browserConfig = {
+  name: 'browser',
   mode: 'production',
   entry: entries,
   output: {

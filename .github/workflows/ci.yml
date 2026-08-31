@@ -27,6 +27,18 @@ jobs:
       - name: Compile production assets
         run: npm run compile:production
 
+      # The Node palette generator is a COMMITTED build artifact that the WP-CLI palette
+      # command executes at runtime, so a stale one is invisible: the parity suite would
+      # still pass, because a stale artifact still reproduces the same static fixtures.
+      # Rebuilding and diffing is the only thing that catches "changed the shared module,
+      # forgot the build". It is deliberately unminified, so a failure is readable.
+      - name: Verify the committed Node palette generator matches its source
+        run: |
+          if ! git diff --exit-code -- dist/node/; then
+            echo "::error::dist/node/palette-generator.js is out of date. Run 'npm run compile:production' and commit the result."
+            exit 1
+          fi
+
       - name: List gulp tasks
         run: npm run gulp -- --tasks-simple
 
@@ -57,12 +69,48 @@ jobs:
       - name: Build optimized autoloader (no-dev)
         run: composer dump-autoload --no-dev --optimize
 
+  php-tests:
+    name: PHP Unit Suite (PHP ${{ matrix.php }}, Node 22)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.1", "8.2"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      # The palette parity guard shells out to `node` and runs the COMMITTED artifact.
+      # Without a Node runtime it would markTestSkipped and the suite would pass green
+      # while proving nothing — which is the whole failure mode it exists to prevent.
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-scripts
+
+      - name: Run the Unit suite
+        run: composer run tests-unit
+
+      - name: Assert the palette parity guard actually ran
+        run: vendor/bin/phpunit --testsuite=Unit --filter 'PaletteGeneratorParity|PaletteGeneratorLockstep' --fail-on-skipped --colors=never
+
   zip-build:
     name: Zip Build Artifact
     runs-on: ubuntu-latest
     needs:
       - js-build
       - php-checks
+      - php-tests
     steps:
       - name: Checkout
         uses: actions/checkout@v4
