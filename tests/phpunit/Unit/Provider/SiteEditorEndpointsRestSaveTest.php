@@ -19,15 +19,24 @@ namespace {
 
 namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 
+	use Brain\Monkey\Actions;
 	use Brain\Monkey\Functions;
 	use Pixelgrade\StyleManager\Customize\FontPalettes;
 	use Pixelgrade\StyleManager\Customize\Fonts;
 	use Pixelgrade\StyleManager\Provider\FrontendOutput;
 	use Pixelgrade\StyleManager\Provider\HeadlessCustomizer;
+	use Pixelgrade\StyleManager\Provider\SettingsWriter;
+	use Pixelgrade\StyleManager\Provider\SiteEditorEndpoints;
 	use Pixelgrade\StyleManager\Screen\EditWithBlocks;
 	use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 
+	/**
+	 * Delegation-equivalence: the REST save path must behave exactly as it did before
+	 * the gate moved into Provider\SettingsWriter, so this drives the endpoint with a
+	 * REAL writer and asserts on the values that reach HeadlessCustomizer::save().
+	 */
 	class SiteEditorEndpointsRestSaveTest extends TestCase {
+
 		public function test_locked_plus_save_endpoint_strips_premium_values_before_saving_mixed_payload(): void {
 			$this->mock_wordpress_functions();
 			$this->mock_plus_entitlement_bridge( true, false );
@@ -60,12 +69,17 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 				->method( 'get_dynamic_style' )
 				->willReturn( '' );
 
-			$endpoints = new \Pixelgrade\StyleManager\Tests\Unit\Provider\TestSiteEditorEndpoints(
+			// Fires exactly once, and now from inside SettingsWriter::save().
+			Actions\expectDone( 'style_manager/settings_saved' )
+				->once()
+				->with( array_keys( $persistable_values ) );
+
+			$endpoints = new SiteEditorEndpoints(
 				$headless_customizer,
 				$this->createMock( EditWithBlocks::class ),
 				$sm_fonts,
-				$this->createMock( FontPalettes::class ),
-				$frontend_output
+				$frontend_output,
+				new SettingsWriter( $headless_customizer, $this->createMock( FontPalettes::class ) )
 			);
 
 			$response = $endpoints->handle_save_settings_record(
@@ -95,11 +109,10 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			Functions\when( 'esc_html__' )->alias( static fn( string $text ): string => $text );
 			Functions\when( 'is_wp_error' )->alias( static fn(): bool => false );
 			Functions\when( 'rest_ensure_response' )->alias( static fn( $response ) => $response );
-			Functions\when( 'do_action' )->justReturn( null );
 		}
 
 		private function mock_plus_entitlement_bridge( bool $bridge_available, bool $entitled ): void {
-			Functions\when( 'has_filter' )->alias( static function( string $hook ) use ( $bridge_available ) {
+			Functions\when( 'has_filter' )->alias( static function ( string $hook ) use ( $bridge_available ) {
 				if ( 'pixelgrade/has_entitlement' === $hook ) {
 					return $bridge_available ? 10 : false;
 				}
@@ -107,7 +120,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 				return false;
 			} );
 
-			Functions\when( 'apply_filters' )->alias( static function( string $hook, $value ) use ( $entitled ) {
+			Functions\when( 'apply_filters' )->alias( static function ( string $hook, $value ) use ( $entitled ) {
 				if ( 'pixelgrade/has_entitlement' === $hook ) {
 					return $entitled;
 				}

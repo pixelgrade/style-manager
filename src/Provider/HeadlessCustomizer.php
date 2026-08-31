@@ -284,6 +284,23 @@ class HeadlessCustomizer {
 	}
 
 	/**
+	 * The persisted setting ids attached to the controls of any single Customizer section.
+	 *
+	 * The public read seam behind `wp pixelgrade sm get --section=<id>` and
+	 * `structure --section=<id>`: same theme-agnostic derivation the per-element color/font
+	 * target lists use, so a section filter can never disagree with the gate.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param string $section_id Full registered Customizer section id.
+	 *
+	 * @return string[]
+	 */
+	public function get_section_setting_ids( string $section_id ): array {
+		return $this->get_section_target_setting_ids( $section_id );
+	}
+
+	/**
 	 * Collect every genuine (non-presentational) persisted setting id attached to a control in the
 	 * given Customizer section. Shared by the theme color/font per-element target derivations so both
 	 * stay theme-agnostic and skip the `html` separators/intros that carry no real setting.

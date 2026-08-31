@@ -11,8 +11,6 @@ declare ( strict_types=1 );
 
 namespace Pixelgrade\StyleManager\Provider;
 
-use Pixelgrade\StyleManager\Customize\ColorPalettes;
-use Pixelgrade\StyleManager\Customize\FontPalettes;
 use Pixelgrade\StyleManager\Customize\Fonts;
 use Pixelgrade\StyleManager\Screen\EditWithBlocks;
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
@@ -46,13 +44,6 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	protected Fonts $sm_fonts;
 
 	/**
-	 * Font palettes.
-	 *
-	 * @var FontPalettes
-	 */
-	protected FontPalettes $font_palettes;
-
-	/**
 	 * Frontend output provider.
 	 *
 	 * @var FrontendOutput
@@ -60,38 +51,31 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	protected FrontendOutput $frontend_output;
 
 	/**
-	 * The generated palette output setting produced by the Color System builder.
+	 * The shared settings write path (Plus gate + post-save fan-out + `settings_saved`).
+	 *
+	 * @var SettingsWriter
 	 */
-	protected const PALETTE_OUTPUT_SETTING_ID = 'sm_advanced_palette_output';
-
-	/**
-	 * Free Color System settings that justify saving a generated palette output.
-	 */
-	protected const FREE_PALETTE_SETTING_IDS = [
-		'sm_advanced_palette_source',
-		ColorPalettes::SM_COLOR_PALETTE_OPTION_KEY,
-		ColorPalettes::SM_IS_CUSTOM_COLOR_PALETTE_OPTION_KEY,
-	];
+	protected SettingsWriter $settings_writer;
 
 	/**
 	 * @param HeadlessCustomizer $headless_customizer Headless Customizer.
 	 * @param EditWithBlocks     $edit_with_blocks    Edit with blocks screen.
 	 * @param Fonts              $sm_fonts            Style Manager Fonts.
-	 * @param FontPalettes       $font_palettes       Font palettes.
 	 * @param FrontendOutput     $frontend_output     Frontend output.
+	 * @param SettingsWriter     $settings_writer     Settings writer.
 	 */
 	public function __construct(
 		HeadlessCustomizer $headless_customizer,
 		EditWithBlocks $edit_with_blocks,
 		Fonts $sm_fonts,
-		FontPalettes $font_palettes,
-		FrontendOutput $frontend_output
+		FrontendOutput $frontend_output,
+		SettingsWriter $settings_writer
 	) {
 		$this->headless_customizer = $headless_customizer;
 		$this->edit_with_blocks    = $edit_with_blocks;
 		$this->sm_fonts            = $sm_fonts;
-		$this->font_palettes       = $font_palettes;
 		$this->frontend_output     = $frontend_output;
+		$this->settings_writer     = $settings_writer;
 	}
 
 	/**
@@ -199,29 +183,24 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function handle_save_settings_record( \WP_REST_Request $request ) {
-		$values = $this->strip_locked_premium_settings( (array) $request->get_param( 'settings' ) );
-		$values = $this->strip_locked_premium_font_palette( $values );
-
-		$result = $this->headless_customizer->save( $values );
+		// The Plus gate, the changeset publish, the post-save fan-out and the
+		// `style_manager/settings_saved` action all live in SettingsWriter now, so
+		// WP-CLI and abilities cannot bypass them (see Provider\SettingsWriter).
+		$result = $this->settings_writer->save( (array) $request->get_param( 'settings' ) );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		$this->apply_post_save_side_effects( $result['saved'] );
-
-		/**
-		 * Fires after Site Editor settings have been successfully saved.
-		 *
-		 * Mirrors the Customizer's `customize_save_after` for consumers that need
-		 * a "settings were just saved" signal outside the Customizer (e.g. local
-		 * font mirroring, see Provider\LocalFonts).
-		 *
-		 * @since 2.4.0
-		 *
-		 * @param string[] $saved_setting_ids Setting IDs saved by the Site Editor endpoint.
-		 */
-		do_action( 'style_manager/settings_saved', $result['saved'] );
+		// The gate removed every submitted id, so nothing reached the changeset.
+		// Preserve the response this endpoint has always produced in that case.
+		if ( empty( $result['saved'] ) ) {
+			return new \WP_Error(
+				'style_manager_site_editor_nothing_to_save',
+				esc_html__( 'None of the provided settings could be saved.', '__plugin_txtd' ),
+				[ 'skipped' => $result['skipped'] ]
+			);
+		}
 
 		$record          = $this->get_settings_record( (string) $request->get_param( 'id' ) );
 		$record['saved'] = $result['saved'];
@@ -235,124 +214,6 @@ class SiteEditorEndpoints extends AbstractHookProvider {
 		}
 
 		return rest_ensure_response( $record );
-	}
-
-	/**
-	 * The real Plus gate: when the advanced controls are locked (no Pixelgrade Plus entitlement),
-	 * strip the premium palette-structure settings from what gets persisted, keeping every other
-	 * setting. Free users can fully USE the controls as a live trial — they just can't SAVE the
-	 * premium settings, so trial changes revert to last-saved on reload.
-	 *
-	 * Server-side enforcement is intrinsic — never client-trusted. The premium id list is the single
-	 * source of truth shared with the UI gating (\Pixelgrade\StyleManager\plus_gated_setting_ids()).
-	 *
-	 * @since 2.2.15
-	 *
-	 * @param array $values Setting id => value map submitted by the editor.
-	 *
-	 * @return array The filtered values to persist.
-	 */
-	protected function strip_locked_premium_settings( array $values ): array {
-		if ( ! \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
-			return $values;
-		}
-
-		$original_values             = $values;
-		$premium_ids                 = \Pixelgrade\StyleManager\plus_gated_setting_ids();
-		$has_premium_setting_change = false;
-
-		foreach ( $premium_ids as $premium_id ) {
-			if ( array_key_exists( $premium_id, $values ) ) {
-				$has_premium_setting_change = true;
-			}
-			unset( $values[ $premium_id ] );
-		}
-
-		// The public baseline is editable client state. A locked client may have
-		// previewed premium fine tuning, so never persist that submitted copy.
-		// Rebuild it from pre-save server state before allowing the free named
-		// Font Sizing choice to persist.
-		unset( $values[ FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY ] );
-		if ( array_key_exists( 'sm_font_sizing', $original_values ) ) {
-			$safe_baseline = $this->font_palettes->prepare_locked_font_sizing_baseline();
-			if ( ! empty( $safe_baseline['scales'] ) ) {
-				$values[ FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY ] = $safe_baseline;
-			} else {
-				unset( $values['sm_font_sizing'] );
-			}
-		}
-
-		if ( array_key_exists( self::PALETTE_OUTPUT_SETTING_ID, $values )
-			&& ( $has_premium_setting_change || ! $this->has_free_palette_setting_change( $original_values ) ) ) {
-			unset( $values[ self::PALETTE_OUTPUT_SETTING_ID ] );
-		}
-
-		return $values;
-	}
-
-	protected function has_free_palette_setting_change( array $values ): bool {
-		foreach ( self::FREE_PALETTE_SETTING_IDS as $setting_id ) {
-			if ( array_key_exists( $setting_id, $values ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * The save gate for pro font palettes: the control lets free users SELECT a
-	 * pro palette and watch the live preview change, but the selection must not
-	 * persist. When the submitted `sm_font_palette` pointer is a tier-locked
-	 * (pro) palette, drop the pointer so the pick reverts to last-saved on reload.
-	 *
-	 * Dropping the pointer alone is sufficient: the per-element font values a
-	 * palette diffuses into are already in plus_gated_setting_ids() and stripped
-	 * by strip_locked_premium_settings(), and apply_post_save_side_effects()
-	 * only re-applies a palette when its pointer is in the saved ids — which it
-	 * no longer is here. Intrinsic server-side enforcement, never client-trusted.
-	 *
-	 * @since 2.4.0
-	 *
-	 * @param array $values Setting id => value map submitted by the editor.
-	 *
-	 * @return array The filtered values to persist.
-	 */
-	protected function strip_locked_premium_font_palette( array $values ): array {
-		$key = FontPalettes::SM_FONT_PALETTE_OPTION_KEY;
-
-		if ( ! array_key_exists( $key, $values ) ) {
-			return $values;
-		}
-
-		if ( $this->font_palettes->is_palette_tier_locked( (string) $values[ $key ] ) ) {
-			unset( $values[ $key ] );
-		}
-
-		return $values;
-	}
-
-	/**
-	 * Applies server-side effects that the Customizer UI used to perform.
-	 *
-	 * @since 2.3.0
-	 *
-	 * @param string[] $saved_setting_ids Setting IDs saved by the Site Editor endpoint.
-	 */
-	protected function apply_post_save_side_effects( array $saved_setting_ids ): void {
-		if ( in_array( FontPalettes::SM_FONT_PALETTE_OPTION_KEY, $saved_setting_ids, true ) ) {
-			$this->font_palettes->apply_current_font_palette_to_connected_fields();
-		}
-
-		$font_sizing_saved = in_array( 'sm_font_sizing', $saved_setting_ids, true );
-		$baseline_saved = in_array( FontPalettes::SM_FONT_SIZING_BASELINE_OPTION_KEY, $saved_setting_ids, true );
-		if ( $font_sizing_saved || $baseline_saved ) {
-			if ( $font_sizing_saved && \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
-				$this->font_palettes->apply_current_font_sizing_to_connected_fields();
-			} elseif ( ! \Pixelgrade\StyleManager\plus_advanced_controls_locked() ) {
-				$this->font_palettes->trust_current_font_sizing_baseline();
-			}
-		}
 	}
 
 	/**

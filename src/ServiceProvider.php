@@ -134,7 +134,10 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['hooks.cli_commands'] = function( $container ) {
 			return new Provider\CliCommands(
-				$container['options']
+				$container['options'],
+				$container['provider.headless_customizer'],
+				$container['provider.settings_writer'],
+				$container['customize.font_palettes']
 			);
 		};
 
@@ -315,13 +318,19 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['screen.customizer']
 			);
 		};
+		$container['provider.settings_writer'] = function( $container ) {
+			return new Provider\SettingsWriter(
+				$container['provider.headless_customizer'],
+				$container['customize.font_palettes']
+			);
+		};
 		$container['provider.site_editor_endpoints'] = function( $container ) {
 			return new Provider\SiteEditorEndpoints(
 				$container['provider.headless_customizer'],
 				$container['screen.edit_with_blocks'],
 				$container['customize.fonts'],
-				$container['customize.font_palettes'],
-				$container['hooks.frontend_output']
+				$container['hooks.frontend_output'],
+				$container['provider.settings_writer']
 			);
 		};
 		$container['provider.design_system_preview_endpoint'] = function( $container ) {
