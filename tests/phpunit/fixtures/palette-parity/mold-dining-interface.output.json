@@ -1,0 +1,1138 @@
+[
+  {
+    "sourceIndex": 7,
+    "id": 1,
+    "label": "MOLD Burgundy",
+    "source": [
+      "#722F37"
+    ],
+    "options": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 1,
+      "sm_color_grade_balancer": 0,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": "",
+      "sm_color_promotion_white": true,
+      "sm_color_promotion_black": true
+    },
+    "darkOptions": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 0.25,
+      "sm_color_grade_balancer": 1,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": true,
+      "sm_color_promotion_white": false,
+      "sm_color_promotion_black": true
+    },
+    "colors": [
+      "#ffffff",
+      "#f8f5f5",
+      "#e9dfe0",
+      "#c9b0b3",
+      "#ae888c",
+      "#936066",
+      "#844a51",
+      "#76343c",
+      "#5d262d",
+      "#421b20",
+      "#261013",
+      "#000000"
+    ],
+    "darkColors": [
+      "#1d0c0e",
+      "#1c0b0d",
+      "#1a0b0d",
+      "#16090b",
+      "#130809",
+      "#0f0607",
+      "#0d0506",
+      "#0a0405",
+      "#080304",
+      "#050203",
+      "#020101",
+      "#000000"
+    ],
+    "variations": [
+      {
+        "bg": "#ffffff",
+        "accent": "#722F37",
+        "fg1": "#301d1f",
+        "fg2": "#4c2e31"
+      },
+      {
+        "bg": "#f8f5f5",
+        "accent": "#722F37",
+        "fg1": "#301d1f",
+        "fg2": "#4c2e31"
+      },
+      {
+        "bg": "#e9dfe0",
+        "accent": "#722F37",
+        "fg1": "#301d1f",
+        "fg2": "#4c2e31"
+      },
+      {
+        "bg": "#c9b0b3",
+        "accent": "#722F37",
+        "fg1": "#301d1f",
+        "fg2": "#4c2e31"
+      },
+      {
+        "bg": "#ae888c",
+        "accent": "#722F37",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#936066",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#844a51",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#76343c",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#5d262d",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#421b20",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#261013",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      }
+    ],
+    "darkVariations": [
+      {
+        "bg": "#1d0c0e",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#1c0b0d",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#1a0b0d",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#16090b",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#130809",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#0f0607",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#0d0506",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#0a0405",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#080304",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#050203",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#020101",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff"
+      }
+    ]
+  },
+  {
+    "sourceIndex": 5,
+    "id": "_info",
+    "label": "Info",
+    "source": [
+      "#4671bb"
+    ],
+    "options": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 1,
+      "sm_color_grade_balancer": 0,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": "",
+      "sm_color_promotion_white": true,
+      "sm_color_promotion_black": true
+    },
+    "darkOptions": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 0.25,
+      "sm_color_grade_balancer": 1,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": true,
+      "sm_color_promotion_white": false,
+      "sm_color_promotion_black": true
+    },
+    "colors": [
+      "#ffffff",
+      "#f3f6fa",
+      "#d9e2f1",
+      "#a2b7dd",
+      "#7192cb",
+      "#446db5",
+      "#385a95",
+      "#2d4978",
+      "#23385c",
+      "#192842",
+      "#0e1726",
+      "#000000"
+    ],
+    "darkColors": [
+      "#121c2f",
+      "#111c2e",
+      "#101a2b",
+      "#0e1726",
+      "#0c1421",
+      "#0a101b",
+      "#090e17",
+      "#070c14",
+      "#06090f",
+      "#04060a",
+      "#020305",
+      "#000000"
+    ],
+    "variations": [
+      {
+        "bg": "#ffffff",
+        "accent": "#4671bb",
+        "fg1": "#1d222f",
+        "fg2": "#2e364a",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#f3f6fa",
+        "accent": "#4671bb",
+        "fg1": "#1d222f",
+        "fg2": "#2e364a",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#d9e2f1",
+        "accent": "#4671bb",
+        "fg1": "#1d222f",
+        "fg2": "#2e364a",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#a2b7dd",
+        "accent": "#446db5",
+        "fg1": "#1d222e",
+        "fg2": "#2e364a",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#7192cb",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#446db5",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#385a95",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#2d4978",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#23385c",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#192842",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0e1726",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ],
+    "darkVariations": [
+      {
+        "bg": "#121c2f",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#111c2e",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#101a2b",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0e1726",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0c1421",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0a101b",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#090e17",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#070c14",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#06090f",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#04060a",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#020305",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#4671bb",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ]
+  },
+  {
+    "sourceIndex": 5,
+    "id": "_error",
+    "label": "Error",
+    "source": [
+      "#ad4738"
+    ],
+    "options": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 1,
+      "sm_color_grade_balancer": 0,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": "",
+      "sm_color_promotion_white": true,
+      "sm_color_promotion_black": true
+    },
+    "darkOptions": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 0.25,
+      "sm_color_grade_balancer": 1,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": true,
+      "sm_color_promotion_white": false,
+      "sm_color_promotion_black": true
+    },
+    "colors": [
+      "#ffffff",
+      "#faf4f3",
+      "#f0ddda",
+      "#daaba4",
+      "#c67f74",
+      "#b15142",
+      "#983e31",
+      "#7b3228",
+      "#5e271f",
+      "#431c16",
+      "#27100d",
+      "#000000"
+    ],
+    "darkColors": [
+      "#2b120e",
+      "#2a110e",
+      "#28110d",
+      "#230f0b",
+      "#1f0d0a",
+      "#190a08",
+      "#160907",
+      "#120706",
+      "#0e0605",
+      "#0a0403",
+      "#050201",
+      "#000000"
+    ],
+    "variations": [
+      {
+        "bg": "#ffffff",
+        "accent": "#ad4738",
+        "fg1": "#2e1e1c",
+        "fg2": "#49302d",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#faf4f3",
+        "accent": "#ad4738",
+        "fg1": "#2e1e1c",
+        "fg2": "#49302d",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#f0ddda",
+        "accent": "#ad4738",
+        "fg1": "#2e1e1c",
+        "fg2": "#49302d",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#daaba4",
+        "accent": "#ad4738",
+        "fg1": "#2e1e1c",
+        "fg2": "#49302d",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#c67f74",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#b15142",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#983e31",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#7b3228",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#5e271f",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#431c16",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#27100d",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ],
+    "darkVariations": [
+      {
+        "bg": "#2b120e",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#2a110e",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#28110d",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#230f0b",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#1f0d0a",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#190a08",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#160907",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#120706",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0e0605",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0a0403",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#050201",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#ad4738",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ]
+  },
+  {
+    "sourceIndex": 3,
+    "id": "_warning",
+    "label": "Warning",
+    "source": [
+      "#e2b924"
+    ],
+    "options": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 1,
+      "sm_color_grade_balancer": 0,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": "",
+      "sm_color_promotion_white": true,
+      "sm_color_promotion_black": true
+    },
+    "darkOptions": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 0.25,
+      "sm_color_grade_balancer": 1,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": true,
+      "sm_color_promotion_white": false,
+      "sm_color_promotion_black": true
+    },
+    "colors": [
+      "#ffffff",
+      "#fbf5e1",
+      "#f3e1a1",
+      "#d9b223",
+      "#ae8e1c",
+      "#846c15",
+      "#6c5911",
+      "#57470e",
+      "#43370b",
+      "#302708",
+      "#1b1604",
+      "#000000"
+    ],
+    "darkColors": [
+      "#392e09",
+      "#372d09",
+      "#332a08",
+      "#2c2407",
+      "#251e06",
+      "#1f1905",
+      "#1b1604",
+      "#171304",
+      "#131003",
+      "#0e0b02",
+      "#070501",
+      "#000000"
+    ],
+    "variations": [
+      {
+        "bg": "#ffffff",
+        "accent": "#ae8e1c",
+        "fg1": "#272213",
+        "fg2": "#3e351e",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#fbf5e1",
+        "accent": "#ae8e1c",
+        "fg1": "#272213",
+        "fg2": "#3e351e",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#f3e1a1",
+        "accent": "#846c15",
+        "fg1": "#272212",
+        "fg2": "#3e351d",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#d9b223",
+        "accent": "#846c15",
+        "fg1": "#272212",
+        "fg2": "#3e351d",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#ae8e1c",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#846c15",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#6c5911",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#57470e",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#43370b",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#302708",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#1b1604",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ],
+    "darkVariations": [
+      {
+        "bg": "#392e09",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#372d09",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#332a08",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#2c2407",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#251e06",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#1f1905",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#1b1604",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#171304",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#131003",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0e0b02",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#070501",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#e2b924",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ]
+  },
+  {
+    "sourceIndex": 6,
+    "id": "_success",
+    "label": "Success",
+    "source": [
+      "#18733a"
+    ],
+    "options": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 1,
+      "sm_color_grade_balancer": 0,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": "",
+      "sm_color_promotion_white": true,
+      "sm_color_promotion_black": true
+    },
+    "darkOptions": {
+      "mode": "lch",
+      "bezierInterpolation": false,
+      "sm_color_grades_number": 12,
+      "sm_potential_color_contrast": 0.25,
+      "sm_color_grade_balancer": 1,
+      "sm_site_color_variation": 1,
+      "sm_elements_color_contrast": "normal",
+      "sm_color_promotion_brand": true,
+      "sm_color_promotion_white": false,
+      "sm_color_promotion_black": true
+    },
+    "colors": [
+      "#ffffff",
+      "#f1f7f3",
+      "#d4e5db",
+      "#96c0a6",
+      "#609e77",
+      "#297d48",
+      "#166835",
+      "#12542a",
+      "#0d4121",
+      "#0a2e17",
+      "#061b0d",
+      "#000000"
+    ],
+    "darkColors": [
+      "#061d0f",
+      "#061c0e",
+      "#061b0e",
+      "#05180c",
+      "#04140a",
+      "#041108",
+      "#030e07",
+      "#020c06",
+      "#020905",
+      "#010603",
+      "#010301",
+      "#000000"
+    ],
+    "variations": [
+      {
+        "bg": "#ffffff",
+        "accent": "#18733a",
+        "fg1": "#142619",
+        "fg2": "#203c28",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#f1f7f3",
+        "accent": "#18733a",
+        "fg1": "#142619",
+        "fg2": "#203c28",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#d4e5db",
+        "accent": "#18733a",
+        "fg1": "#142619",
+        "fg2": "#203c28",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#96c0a6",
+        "accent": "#18733a",
+        "fg1": "#142619",
+        "fg2": "#203c28",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#609e77",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#722F37"
+      },
+      {
+        "bg": "#297d48",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#166835",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#12542a",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0d4121",
+        "accent": "#ffffff",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#0a2e17",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#061b0d",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ],
+    "darkVariations": [
+      {
+        "bg": "#061d0f",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#061c0e",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#061b0e",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#05180c",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#04140a",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#041108",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#030e07",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#020c06",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#020905",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#010603",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#010301",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      },
+      {
+        "bg": "#000000",
+        "accent": "#18733a",
+        "fg1": "#ffffff",
+        "fg2": "#ffffff",
+        "accent2": "#ffffff"
+      }
+    ]
+  }
+]

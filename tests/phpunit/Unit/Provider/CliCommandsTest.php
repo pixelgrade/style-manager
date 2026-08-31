@@ -51,6 +51,7 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 	use Pixelgrade\StyleManager\Provider\CliCommands;
 	use Pixelgrade\StyleManager\Provider\HeadlessCustomizer;
 	use Pixelgrade\StyleManager\Provider\Options;
+	use Pixelgrade\StyleManager\Provider\PaletteGenerator;
 	use Pixelgrade\StyleManager\Provider\SettingsWriter;
 	use Pixelgrade\StyleManager\Tests\Unit\TestCase;
 
@@ -687,11 +688,23 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'tier_locked_palette', $envelope['stripped'][0]['reason'] );
 		}
 
-		public function test_apply_color_palette_fails_gracefully_while_the_generator_is_missing(): void {
-			Functions\when( 'apply_filters' )->returnArg( 2 );
+		/*
+		 * ------------------------------------------------------------------
+		 * apply-color-palette (contract §1.1, §3.11, §3.12).
+		 * ------------------------------------------------------------------
+		 */
+
+		private const SOURCE = '[{"uid":"color_group_1","sources":[{"uid":"color_11","label":"MOLD Burgundy","value":"#722F37"}]}]';
+
+		public function test_apply_color_palette_fails_gracefully_when_the_runtime_is_absent(): void {
+			// §3.11: a missing shim or binary is never fatal and never writes a stale output.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
 
 			[ $exit, $envelope ] = $this->invoke(
-				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => '[]' ] )
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE ] ),
+				null,
+				$writer
 			);
 
 			$this->assertSame( 1, $exit );
@@ -699,6 +712,226 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'generator_unavailable', $envelope['code'] );
 			$this->assertNotEmpty( $envelope['data']['looked_for'] );
 			$this->assertStringContainsString( 'Nothing was written', $envelope['summary'] );
+		}
+
+		public function test_apply_color_palette_requires_a_source(): void {
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true ] )
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+			$this->assertStringContainsString( '--source', $envelope['summary'] );
+		}
+
+		public function test_apply_color_palette_rejects_a_malformed_source_before_probing_anything(): void {
+			$generator = $this->createMock( PaletteGenerator::class );
+			$generator->expects( $this->never() )->method( 'generate' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => '[]' ] ),
+				null,
+				null,
+				null,
+				null,
+				false,
+				false,
+				$generator
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+		}
+
+		public function test_apply_color_palette_batches_every_setting_into_one_save(): void {
+			// §3.12: the Customizer manager holds ONE changeset uuid, so a verb that writes
+			// settings and then writes more settings is invalid by construction.
+			$captured = null;
+
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->once() )
+				->method( 'save' )
+				->willReturnCallback(
+					function ( array $values ) use ( &$captured ) {
+						$captured = $values;
+
+						return $this->write_result( $values );
+					}
+				);
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'custom' => true ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertTrue( $envelope['ok'] );
+			$this->assertSame(
+				[ 'sm_advanced_palette_source', 'sm_advanced_palette_output', 'sm_is_custom_color_palette' ],
+				array_keys( (array) $captured )
+			);
+			$this->assertTrue( $captured['sm_is_custom_color_palette'] );
+		}
+
+		public function test_apply_color_palette_only_writes_the_plus_gated_variation_when_asked(): void {
+			// sm_site_color_variation is a Fine-tune (Plus-gated) setting, and the save gate
+			// drops sm_advanced_palette_output whenever a premium id rides along — so sending
+			// it unconditionally would make the command strip its own output on a free site.
+			$captured = null;
+
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->method( 'save' )->willReturnCallback(
+				function ( array $values ) use ( &$captured ) {
+					$captured = $values;
+
+					return $this->write_result( $values );
+				}
+			);
+
+			$this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'variation' => '8' ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertArrayHasKey( 'sm_site_color_variation', (array) $captured );
+			$this->assertSame( 8, $captured['sm_site_color_variation'] );
+		}
+
+		public function test_apply_color_palette_rejects_an_out_of_range_variation(): void {
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'variation' => '99' ] ),
+				null,
+				null,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'invalid_params', $envelope['code'] );
+		}
+
+		public function test_apply_color_palette_reports_the_produced_grade_count(): void {
+			// laws #9: promoting brand colors can leave 11 grades where the option says 12,
+			// so data.grades is counted off the produced ramp, never echoed from the option.
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE ] ),
+				null,
+				$this->passthrough_writer(),
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator( 11 )
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertSame( 11, $envelope['data']['grades'] );
+			$this->assertSame( 'node', $envelope['data']['generator'] );
+		}
+
+		public function test_apply_color_palette_dry_run_writes_nothing_and_reports_the_output_diff(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+			$writer->method( 'preview' )->willReturn(
+				[
+					'saved'     => [ 'sm_advanced_palette_output' ],
+					'stripped'  => [],
+					'persisted' => [ 'sm_advanced_palette_output' => '[]' ],
+					'unchanged' => [],
+				]
+			);
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'source' => self::SOURCE, 'dry-run' => true ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertTrue( $envelope['data']['dry_run'] );
+			$this->assertTrue( $envelope['data']['diff']['changed'] );
+			// A hand-authored blob (no `options` key) is what the operator must see before
+			// committing — regeneration would silently replace it.
+			$this->assertFalse( $envelope['data']['diff']['stored_generator_produced'] );
+			$this->assertStringContainsString( 'Nothing was written', $envelope['summary'] );
+		}
+
+		public function test_apply_color_palette_requires_yes_under_json(): void {
+			// §3.6: destructive, and a prompt would corrupt the machine contract.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'source' => self::SOURCE ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'confirmation_required', $envelope['code'] );
+		}
+
+		public function test_apply_color_palette_with_generator_none_refuses_rather_than_writing_a_stale_output(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'generator' => 'none' ] ),
+				null,
+				$writer,
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertSame( 'generator_unavailable', $envelope['code'] );
+			$this->assertStringContainsString( 'Nothing was written', $envelope['summary'] );
+		}
+
+		public function test_apply_color_palette_can_write_the_generated_output_to_a_file(): void {
+			$path = tempnam( sys_get_temp_dir(), 'sm-palette-' );
+
+			$this->invoke(
+				fn( CliCommands $c ) => $c->apply_color_palette( [], [ 'format' => 'json', 'yes' => true, 'source' => self::SOURCE, 'output' => '@' . $path ] ),
+				null,
+				$this->passthrough_writer(),
+				null,
+				null,
+				false,
+				false,
+				$this->available_palette_generator()
+			);
+
+			$this->assertJson( (string) file_get_contents( $path ) );
+			unlink( $path );
 		}
 
 		/*
@@ -771,9 +1004,10 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			?FontPalettes $font_palettes = null,
 			?Options $options = null,
 			bool $interactive = false,
-			bool $prompt_answer = false
+			bool $prompt_answer = false,
+			?PaletteGenerator $palette_generator = null
 		): array {
-			$commands = $this->create_commands( $headless, $writer, $font_palettes, $options );
+			$commands = $this->create_commands( $headless, $writer, $font_palettes, $options, $palette_generator );
 			$commands->interactive   = $interactive;
 			$commands->prompt_answer = $prompt_answer;
 
@@ -796,14 +1030,73 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			?HeadlessCustomizer $headless = null,
 			?SettingsWriter $writer = null,
 			?FontPalettes $font_palettes = null,
-			?Options $options = null
+			?Options $options = null,
+			?PaletteGenerator $palette_generator = null
 		): TestCliCommands {
 			return new TestCliCommands(
 				$options ?: $this->createMock( Options::class ),
 				$headless ?: $this->createMock( HeadlessCustomizer::class ),
 				$writer ?: $this->createMock( SettingsWriter::class ),
-				$font_palettes ?: $this->createMock( FontPalettes::class )
+				$font_palettes ?: $this->createMock( FontPalettes::class ),
+				$palette_generator ?: $this->unavailable_palette_generator()
 			);
+		}
+
+		/**
+		 * A generator that reports itself absent — the default for every command test that
+		 * is not specifically about apply-color-palette, so the suite never shells out to
+		 * Node by accident.
+		 */
+		private function unavailable_palette_generator(): PaletteGenerator {
+			$generator = $this->createMock( PaletteGenerator::class );
+			$generator->method( 'is_available' )->willReturn( false );
+			$generator->method( 'looked_for' )->willReturn( [ '/plugin/dist/node/palette-generator.js', 'node' ] );
+
+			return $generator;
+		}
+
+		/**
+		 * A generator that is present and returns a minimal but structurally valid output.
+		 *
+		 * @param int $grades How many ramp entries the brand palette should carry.
+		 */
+		private function available_palette_generator( int $grades = 12 ): PaletteGenerator {
+			$palettes = [
+				[
+					'id'             => 1,
+					'label'          => 'Brand',
+					'sourceIndex'    => 4,
+					'source'         => [ '#722F37' ],
+					'options'        => [ 'mode' => 'lch' ],
+					'colors'         => array_fill( 0, $grades, '#722F37' ),
+					'variations'     => array_fill( 0, 12, [ 'bg' => '#ffffff' ] ),
+					'darkVariations' => array_fill( 0, 12, [ 'bg' => '#000000' ] ),
+				],
+			];
+
+			$generator = $this->createMock( PaletteGenerator::class );
+			$generator->method( 'is_available' )->willReturn( true );
+			$generator->method( 'resolve_options' )->willReturnCallback(
+				static function ( array $overrides = [] ): array {
+					return array_merge(
+						[
+							'sm_color_grades_number'   => 12,
+							'sm_site_color_variation'  => 1,
+							'sm_color_promotion_brand' => '',
+						],
+						$overrides
+					);
+				}
+			);
+			$generator->method( 'current_value' )->willReturn( null );
+			$generator->method( 'generate' )->willReturn(
+				[
+					'json'     => (string) json_encode( $palettes ),
+					'palettes' => $palettes,
+				]
+			);
+
+			return $generator;
 		}
 
 		private function headless_with_a_mixed_surface(): HeadlessCustomizer {
@@ -820,6 +1113,17 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$headless->method( 'get_section_setting_ids' )->willReturn( [ 'anima_options[body_font]' ] );
 
 			return $headless;
+		}
+
+		/**
+		 * A writer that persists whatever it is handed — for the tests that are about the
+		 * command's reporting rather than about the gate.
+		 */
+		private function passthrough_writer(): SettingsWriter {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->method( 'save' )->willReturnCallback( fn( array $values ) => $this->write_result( $values ) );
+
+			return $writer;
 		}
 
 		private function write_result( array $persisted ): array {

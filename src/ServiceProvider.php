@@ -137,7 +137,8 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['options'],
 				$container['provider.headless_customizer'],
 				$container['provider.settings_writer'],
-				$container['customize.font_palettes']
+				$container['customize.font_palettes'],
+				$container['provider.palette_generator']
 			);
 		};
 
@@ -317,6 +318,9 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['options'],
 				$container['screen.customizer']
 			);
+		};
+		$container['provider.palette_generator'] = function( $container ) {
+			return new Provider\PaletteGenerator( $container['options'] );
 		};
 		$container['provider.settings_writer'] = function( $container ) {
 			return new Provider\SettingsWriter(
