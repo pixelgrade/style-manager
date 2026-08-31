@@ -8,6 +8,19 @@
  * through Provider\SettingsWriter so the Pixelgrade Plus gate and the post-save
  * fan-out can never be bypassed.
  *
+ * The commands themselves are thin: parse the flags, STDIN and `--file` paths, run
+ * §3.0's user check and §3.6's confirmation gate, then hand off to the SHARED
+ * Provider\AgentCommands cores and print what comes back. Everything that decides an
+ * outcome — the export scoping, the F6 all-or-nothing read, the F10 palette catalog
+ * check, the §3.4 ordering law, the palette write payload, and the classification of a
+ * write into ok/noop/plus_stripped — lives there, so `Provider\Abilities` reaches the
+ * same rulings through the same code rather than a second copy of it (contract §4).
+ *
+ * What stays here is genuinely CLI-only: `--format`, `--quiet`, `--yes`, every
+ * filesystem path flag (`--file`, `--from-file`, `--output=@file`, `--source=@file`,
+ * `-` for STDIN), the table renderer, and the deprecated `wp style-manager flush-cache`
+ * alias. An MCP client has no filesystem on the server and must not be handed one.
+ *
  * @package Style Manager
  * @license GPL-2.0-or-later
  * @since 2.3.0
@@ -48,39 +61,15 @@ class CliCommands extends AbstractHookProvider {
 	protected bool $stdin_consumed = false;
 
 	/**
-	 * Options provider.
+	 * The shared command cores — the SAME object the `pixelgrade/*` abilities call.
 	 *
-	 * @var Options
-	 */
-	protected Options $options;
-
-	/**
-	 * Headless Customizer.
+	 * This is the CLI's ONLY collaborator. Options, the headless Customizer, the settings
+	 * writer, the font palettes and the palette generator are reached exclusively through
+	 * it, so a command and an ability cannot classify the same outcome differently.
 	 *
-	 * @var HeadlessCustomizer
+	 * @var AgentCommands
 	 */
-	protected HeadlessCustomizer $headless_customizer;
-
-	/**
-	 * The one settings write path.
-	 *
-	 * @var SettingsWriter
-	 */
-	protected SettingsWriter $settings_writer;
-
-	/**
-	 * Font palettes.
-	 *
-	 * @var FontPalettes
-	 */
-	protected FontPalettes $font_palettes;
-
-	/**
-	 * The headless Color System palette generator.
-	 *
-	 * @var PaletteGenerator
-	 */
-	protected PaletteGenerator $palette_generator;
+	protected AgentCommands $agent_commands;
 
 	/**
 	 * Create the WP-CLI commands provider.
@@ -92,19 +81,25 @@ class CliCommands extends AbstractHookProvider {
 	 * @param SettingsWriter     $settings_writer     Settings writer.
 	 * @param FontPalettes       $font_palettes       Font palettes.
 	 * @param PaletteGenerator   $palette_generator   Palette generator.
+	 * @param AgentCommands|null $agent_commands      Shared command cores. Built from the same
+	 *                                                collaborators when omitted, so the CLI is
+	 *                                                constructible without the container.
 	 */
 	public function __construct(
 		Options $options,
 		HeadlessCustomizer $headless_customizer,
 		SettingsWriter $settings_writer,
 		FontPalettes $font_palettes,
-		PaletteGenerator $palette_generator
+		PaletteGenerator $palette_generator,
+		?AgentCommands $agent_commands = null
 	) {
-		$this->options             = $options;
-		$this->headless_customizer = $headless_customizer;
-		$this->settings_writer     = $settings_writer;
-		$this->font_palettes       = $font_palettes;
-		$this->palette_generator   = $palette_generator;
+		$this->agent_commands = $agent_commands ?: new AgentCommands(
+			$options,
+			$headless_customizer,
+			$settings_writer,
+			$font_palettes,
+			$palette_generator
+		);
 	}
 
 	/**
@@ -187,70 +182,16 @@ class CliCommands extends AbstractHookProvider {
 	public function get( $args, $assoc_args ) {
 		$this->require_user( $assoc_args );
 
-		$details = $this->bool_flag( $assoc_args, 'details' );
 		$section = $this->flag( $assoc_args, 'section' );
-		$all     = $this->bool_flag( $assoc_args, 'all' );
 
-		$source = $details
-			? $this->headless_customizer->get_settings_data()
-			: $this->headless_customizer->get_settings_values();
-
-		$ids = array_map( 'strval', (array) $args );
-		if ( is_string( $section ) && '' !== $section ) {
-			$ids = array_merge( $ids, $this->headless_customizer->get_section_setting_ids( $section ) );
-		}
-		$ids = array_values( array_unique( $ids ) );
-
-		if ( empty( $ids ) && ! $all ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				__( 'Nothing to read: pass one or more setting ids, --section=<id>, or --all.', '__plugin_txtd' )
-			);
-		}
-
-		if ( $all && empty( $ids ) ) {
-			$settings = $source;
-		} else {
-			$settings = [];
-			$missing  = [];
-			foreach ( $ids as $id ) {
-				if ( array_key_exists( $id, $source ) ) {
-					$settings[ $id ] = $source[ $id ];
-				} else {
-					$missing[] = $id;
-				}
-			}
-
-			if ( ! empty( $missing ) ) {
-				$this->fail(
-					$assoc_args,
-					1,
-					'invalid_params',
-					sprintf(
-						/* translators: %s: comma separated list of setting ids. */
-						__( 'Unknown or capability-denied setting ids: %s.', '__plugin_txtd' ),
-						implode( ', ', $missing )
-					),
-					[ 'unknown' => $missing ]
-				);
-			}
-		}
-
-		$this->emit(
+		$this->emit_core(
 			$assoc_args,
-			0,
-			'ok',
-			sprintf(
-				/* translators: %d: number of settings. */
-				_n( 'Read %d setting.', 'Read %d settings.', count( $settings ), '__plugin_txtd' ),
-				count( $settings )
-			),
-			[
-				'details'  => $details,
-				'settings' => $settings,
-			]
+			$this->agent_commands->get_settings(
+				array_map( 'strval', (array) $args ),
+				$this->bool_flag( $assoc_args, 'all' ),
+				is_string( $section ) ? $section : null,
+				$this->bool_flag( $assoc_args, 'details' )
+			)
 		);
 	}
 
@@ -311,38 +252,14 @@ class CliCommands extends AbstractHookProvider {
 	public function set( $args, $assoc_args ) {
 		$this->require_user( $assoc_args );
 
-		$values = $this->collect_set_payload( (array) $args, $assoc_args );
-
-		if ( empty( $values ) ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				__( 'Nothing to write: pass <id>=<value> pairs, --from-file=<path>, or `-` for STDIN.', '__plugin_txtd' )
-			);
-		}
-
-		$this->assert_no_ordering_conflict( $values, $assoc_args );
-
-		$dry_run = $this->bool_flag( $assoc_args, 'dry-run' );
-
-		if ( $dry_run ) {
-			$result = $this->settings_writer->preview( $values );
-		} else {
-			if ( SettingsWriter::master_font_slots_in( $values ) ) {
-				$this->confirm_destructive(
-					$assoc_args,
-					__( 'This payload carries a master font slot; saving it regenerates the entire per-element font defaults table and clobbers per-element overrides.', '__plugin_txtd' )
-				);
-			}
-
-			$result = $this->settings_writer->save( $values, true );
-			if ( is_wp_error( $result ) ) {
-				$this->fail_from_wp_error( $assoc_args, $result, $values );
-			}
-		}
-
-		$this->emit_write_result( $assoc_args, $result, array_keys( $values ), $dry_run );
+		$this->emit_core(
+			$assoc_args,
+			$this->agent_commands->set_settings(
+				$this->collect_set_payload( (array) $args, $assoc_args ),
+				$this->bool_flag( $assoc_args, 'dry-run' ),
+				$this->confirmation_gate( $assoc_args )
+			)
+		);
 	}
 
 	/**
@@ -399,98 +316,62 @@ class CliCommands extends AbstractHookProvider {
 	public function export( $args, $assoc_args ) {
 		$this->require_user( $assoc_args );
 
-		$settings = $this->headless_customizer->get_settings_values();
-		$scope    = $this->bool_flag( $assoc_args, 'all' ) ? 'all' : 'style_manager';
-
-		if ( 'style_manager' === $scope ) {
-			$surface  = array_flip( $this->style_manager_surface_ids( $settings ) );
-			$settings = array_intersect_key( $settings, $surface );
-		}
-
 		$include = $this->flag( $assoc_args, 'include' );
-		if ( is_string( $include ) && '' !== $include ) {
-			$wanted   = array_filter( array_map( 'trim', explode( ',', $include ) ) );
-			$filtered = [];
-			$missing  = [];
-			foreach ( $wanted as $id ) {
-				if ( array_key_exists( $id, $settings ) ) {
-					$filtered[ $id ] = $settings[ $id ];
-				} else {
-					$missing[] = $id;
-				}
-			}
+		$include = ( is_string( $include ) && '' !== $include )
+			? array_values( array_filter( array_map( 'trim', explode( ',', $include ) ) ) )
+			: null;
 
-			if ( ! empty( $missing ) ) {
-				$this->fail(
-					$assoc_args,
-					1,
-					'invalid_params',
-					sprintf(
-						/* translators: %s: comma separated list of setting ids. */
-						__( 'Unknown or capability-denied setting ids: %s.', '__plugin_txtd' ),
-						implode( ', ', $missing )
-					),
-					[ 'unknown' => $missing ]
-				);
-			}
-
-			$settings = $filtered;
-		}
-
-		$theme   = function_exists( 'wp_get_theme' ) ? wp_get_theme() : null;
-		$payload = [
-			'meta'     => [
-				'plugin_version' => defined( '\Pixelgrade\StyleManager\VERSION' ) ? \Pixelgrade\StyleManager\VERSION : '',
-				'theme'          => function_exists( 'get_stylesheet' ) ? (string) get_stylesheet() : '',
-				'theme_version'  => $theme ? (string) $theme->get( 'Version' ) : '',
-				'exported_at'    => gmdate( 'c' ),
-			],
-			'settings' => $settings,
-		];
-
-		// The file payload stays exactly the pinned `{meta, settings}` shape; `scope` is
-		// envelope-only reporting so `set --from-file` never sees an unpinned key.
-		$data          = $payload;
-		$data['scope'] = $scope;
+		$core = $this->agent_commands->export( $include, $this->bool_flag( $assoc_args, 'all' ) );
 
 		$file = $this->flag( $assoc_args, 'file' );
-		if ( is_string( $file ) && '' !== $file ) {
-			$json_flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-			if ( $this->bool_flag( $assoc_args, 'pretty' ) ) {
-				$json_flags |= JSON_PRETTY_PRINT;
-			}
+		if ( 0 === $core['exit'] && is_string( $file ) && '' !== $file ) {
+			$this->write_export_file( $assoc_args, $file, $core['data'] );
 
-			$written = @file_put_contents( $file, (string) wp_json_encode( $payload, $json_flags ) . "\n" );
-			if ( false === $written ) {
-				$last  = error_get_last();
-				$why   = ! empty( $last['message'] ) ? (string) $last['message'] : __( 'unknown error', '__plugin_txtd' );
-
-				$this->fail(
-					$assoc_args,
-					1,
-					'invalid_params',
-					sprintf(
-						/* translators: 1: file path, 2: underlying error message. */
-						__( 'Could not write the export to %1$s: %2$s', '__plugin_txtd' ),
-						$file,
-						$why
-					)
-				);
-			}
-
-			$data['file'] = $file;
+			$core['data']['file'] = $file;
 		}
 
-		$this->emit(
+		$this->emit_core( $assoc_args, $core );
+	}
+
+	/**
+	 * Write the re-importable export payload to `--file`.
+	 *
+	 * Only the pinned `{meta, settings}` shape is written — `scope` is envelope-only
+	 * reporting, so `set --from-file` never sees an unpinned key.
+	 *
+	 * @param array  $assoc_args Associative arguments.
+	 * @param string $file       Destination path.
+	 * @param array  $data       The export core's data payload.
+	 */
+	protected function write_export_file( array $assoc_args, string $file, array $data ): void {
+		$payload = [
+			'meta'     => $data['meta'] ?? [],
+			'settings' => $data['settings'] ?? [],
+		];
+
+		$json_flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+		if ( $this->bool_flag( $assoc_args, 'pretty' ) ) {
+			$json_flags |= JSON_PRETTY_PRINT;
+		}
+
+		$written = @file_put_contents( $file, (string) wp_json_encode( $payload, $json_flags ) . "\n" );
+		if ( false !== $written ) {
+			return;
+		}
+
+		$last = error_get_last();
+		$why  = ! empty( $last['message'] ) ? (string) $last['message'] : __( 'unknown error', '__plugin_txtd' );
+
+		$this->fail(
 			$assoc_args,
-			0,
-			'ok',
+			1,
+			'invalid_params',
 			sprintf(
-				/* translators: %d: number of settings. */
-				_n( 'Exported %d setting.', 'Exported %d settings.', count( $settings ), '__plugin_txtd' ),
-				count( $settings )
-			),
-			$data
+				/* translators: 1: file path, 2: underlying error message. */
+				__( 'Could not write the export to %1$s: %2$s', '__plugin_txtd' ),
+				$file,
+				$why
+			)
 		);
 	}
 
@@ -535,51 +416,14 @@ class CliCommands extends AbstractHookProvider {
 	public function structure( $args, $assoc_args ) {
 		$this->require_user( $assoc_args );
 
-		$structure = $this->headless_customizer->get_structure();
-		$section   = $this->flag( $assoc_args, 'section' );
+		$section = $this->flag( $assoc_args, 'section' );
 
-		if ( is_string( $section ) && '' !== $section ) {
-			$structure['sections'] = array_values(
-				array_filter(
-					$structure['sections'],
-					static function ( $item ) use ( $section ) {
-						return isset( $item['id'] ) && (string) $item['id'] === $section;
-					}
-				)
-			);
-
-			if ( empty( $structure['sections'] ) ) {
-				$this->fail(
-					$assoc_args,
-					1,
-					'invalid_params',
-					sprintf(
-						/* translators: %s: Customizer section id. */
-						__( 'Unknown Style Manager section: %s.', '__plugin_txtd' ),
-						$section
-					)
-				);
-			}
-		}
-
-		if ( ! $this->bool_flag( $assoc_args, 'with-html' ) ) {
-			foreach ( $structure['sections'] as $section_index => $section_data ) {
-				foreach ( (array) ( $section_data['controls'] ?? [] ) as $control_index => $control ) {
-					unset( $structure['sections'][ $section_index ]['controls'][ $control_index ]['html'] );
-				}
-			}
-		}
-
-		$this->emit(
+		$this->emit_core(
 			$assoc_args,
-			0,
-			'ok',
-			sprintf(
-				/* translators: %d: number of sections. */
-				_n( 'Described %d section.', 'Described %d sections.', count( $structure['sections'] ), '__plugin_txtd' ),
-				count( $structure['sections'] )
-			),
-			$structure
+			$this->agent_commands->get_structure(
+				is_string( $section ) ? $section : null,
+				$this->bool_flag( $assoc_args, 'with-html' )
+			)
 		);
 	}
 
@@ -629,56 +473,13 @@ class CliCommands extends AbstractHookProvider {
 	public function apply_font_palette( $args, $assoc_args ) {
 		$this->require_user( $assoc_args );
 
-		$palette_id = isset( $args[0] ) ? (string) $args[0] : '';
-		if ( '' === $palette_id ) {
-			$this->fail( $assoc_args, 1, 'invalid_params', __( 'Pass a font palette id.', '__plugin_txtd' ) );
-		}
-
-		$palettes = $this->font_palettes->get_palettes_for_control();
-		if ( ! isset( $palettes[ $palette_id ] ) ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				sprintf(
-					/* translators: 1: requested palette id, 2: comma separated list of known ids. */
-					__( 'Unknown font palette "%1$s". Known palettes: %2$s.', '__plugin_txtd' ),
-					$palette_id,
-					implode( ', ', array_keys( $palettes ) )
-				)
-			);
-		}
-
-		$values  = [ FontPalettes::SM_FONT_PALETTE_OPTION_KEY => $palette_id ];
-		$dry_run = $this->bool_flag( $assoc_args, 'dry-run' );
-
-		if ( $dry_run ) {
-			$result = $this->settings_writer->preview( $values );
-		} else {
-			$this->confirm_destructive(
-				$assoc_args,
-				sprintf(
-					/* translators: %s: font palette id. */
-					__( 'Applying the "%s" font palette rewrites every connected per-element font field.', '__plugin_txtd' ),
-					$palette_id
-				)
-			);
-
-			$result = $this->settings_writer->save( $values, true );
-			if ( is_wp_error( $result ) ) {
-				$this->fail_from_wp_error( $assoc_args, $result, $values );
-			}
-		}
-
-		$this->emit_write_result(
+		$this->emit_core(
 			$assoc_args,
-			$result,
-			array_keys( $values ),
-			$dry_run,
-			[
-				'palette'          => $palette_id,
-				'connected_fields' => $result['connected_fields'] ?? [],
-			]
+			$this->agent_commands->apply_font_palette(
+				isset( $args[0] ) ? (string) $args[0] : '',
+				$this->bool_flag( $assoc_args, 'dry-run' ),
+				$this->confirmation_gate( $assoc_args )
+			)
 		);
 	}
 
@@ -769,86 +570,56 @@ class CliCommands extends AbstractHookProvider {
 	public function apply_color_palette( $args, $assoc_args ) {
 		$this->require_user( $assoc_args );
 
-		$source_json = $this->collect_palette_source( $assoc_args );
-		$groups      = PaletteGenerator::parse_source( $source_json );
-		if ( is_wp_error( $groups ) ) {
-			$this->fail( $assoc_args, 1, 'invalid_params', (string) $groups->get_error_message() );
-		}
-
-		$mode = $this->flag( $assoc_args, 'generator', 'node' );
-		$mode = is_string( $mode ) ? strtolower( trim( $mode ) ) : 'node';
-		if ( ! in_array( $mode, [ 'node', 'none' ], true ) ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				__( '--generator must be `node` or `none`.', '__plugin_txtd' )
-			);
-		}
-
-		$overrides = $this->palette_option_overrides( $assoc_args );
-		$dry_run   = $this->bool_flag( $assoc_args, 'dry-run' );
-
-		$options = null;
-		if ( 'none' === $mode ) {
-			$destination = [ 'kind' => 'none' ];
-			$applied     = $this->collect_applied_palette_output( $assoc_args );
-		} else {
-			// Parsed before the subprocess runs, so a malformed --output costs nothing and, more
-			// to the point, can never fail *after* the palette has been persisted.
-			$destination = $this->resolve_output_destination( $assoc_args );
-			$options     = $this->palette_generator->resolve_options( $overrides );
-			$applied     = $this->generate_palette_output( $assoc_args, $source_json, $options );
-		}
-
-		$values = $this->palette_write_payload( $source_json, $applied['json'], $overrides );
-
-		/*
-		 * Read the diff BEFORE the write. Computing it afterwards would compare the new blob with
-		 * itself — `changed` always false, `stored_generator_produced` describing what we just
-		 * wrote — and the hand-authored-overwrite signal would exist only under --dry-run, which
-		 * is the one run that cannot destroy anything.
-		 */
-		$diff = $this->palette_output_diff( $applied['json'] );
-
-		if ( $dry_run ) {
-			$result = $this->settings_writer->preview( $values );
-		} else {
-			$this->confirm_destructive(
-				$assoc_args,
-				__( 'Applying a color palette replaces the whole generated ramp, including any hand-authored palette output stored on this site.', '__plugin_txtd' )
-			);
-
-			// Written before the save, so a failing file write fails the whole command with
-			// nothing persisted — rather than reporting exit 1 "nothing was done" over a site
-			// whose palette has in fact already changed.
-			$this->write_output_file( $assoc_args, $destination, $applied['json'] );
-
-			$result = $this->settings_writer->save( $values, true );
-			if ( is_wp_error( $result ) ) {
-				$this->fail_from_wp_error( $assoc_args, $result, $values );
-			}
-		}
-
-		$extra = [
-			'grades'    => PaletteGenerator::grade_count( $applied['palettes'] ),
-			'palettes'  => count( $applied['palettes'] ),
-			'generator' => $mode,
-			'verbatim'  => ( 'none' === $mode ),
-			'diff'      => $diff,
+		// Captured by both closures below: the `--output` destination the core resolves at the
+		// point the flag matters, and the one the file write consults just before the save.
+		$destination = [
+			'kind' => 'none',
+			'path' => '',
 		];
 
-		if ( null !== $options ) {
-			$extra['options'] = $options;
-		}
+		$this->emit_core(
+			$assoc_args,
+			$this->agent_commands->apply_color_palette(
+				[
+					'source'         => $this->collect_palette_source( $assoc_args ),
+					'generator'      => $this->flag( $assoc_args, 'generator', 'node' ),
+					'variation'      => $this->flag( $assoc_args, 'variation' ),
+					'dry_run'        => $this->bool_flag( $assoc_args, 'dry-run' ),
+					'confirm'        => $this->confirmation_gate( $assoc_args ),
 
-		if ( 'json' === $destination['kind'] ) {
-			$extra['output'] = $applied['palettes'];
-		} elseif ( 'file' === $destination['kind'] && ! $dry_run ) {
-			$extra['output_file'] = $destination['path'];
-		}
+					/*
+					 * Parsed before the subprocess runs, so a malformed --output costs nothing and,
+					 * more to the point, can never fail *after* the palette has been persisted.
+					 */
+					'resolve_output' => function ( string $mode ) use ( $assoc_args, &$destination ): array {
+						if ( 'none' === $mode ) {
+							return [
+								'raw'  => $this->read_applied_palette_output( $assoc_args ),
+								'echo' => false,
+								'file' => '',
+							];
+						}
 
-		$this->emit_write_result( $assoc_args, $result, array_keys( $values ), $dry_run, $extra );
+						$destination = $this->resolve_output_destination( $assoc_args );
+
+						return [
+							'raw'  => null,
+							'echo' => 'json' === $destination['kind'],
+							'file' => 'file' === $destination['kind'] ? $destination['path'] : '',
+						];
+					},
+
+					/*
+					 * Written before the save, so a failing file write fails the whole command with
+					 * nothing persisted — rather than reporting exit 1 "nothing was done" over a
+					 * site whose palette has in fact already changed.
+					 */
+					'before_save'    => function ( string $generated_json ) use ( $assoc_args, &$destination ): void {
+						$this->write_output_file( $assoc_args, $destination, $generated_json );
+					},
+				]
+			)
+		);
 	}
 
 	/**
@@ -934,75 +705,21 @@ class CliCommands extends AbstractHookProvider {
 	}
 
 	/**
-	 * Run the Node generator, or fail with an envelope that never leaves a stale output behind.
+	 * Read the bytes `--generator=none` applies verbatim: inline JSON or `@<path>`.
 	 *
-	 * @param array  $assoc_args  Associative arguments.
-	 * @param string $source_json The palette source.
-	 * @param array  $options     Resolved generator options.
-	 *
-	 * @return array{json: string, palettes: array}
-	 */
-	protected function generate_palette_output( array $assoc_args, string $source_json, array $options ): array {
-		if ( ! $this->palette_generator->is_available() ) {
-			$looked_for = $this->palette_generator->looked_for();
-
-			$this->fail(
-				$assoc_args,
-				1,
-				'generator_unavailable',
-				sprintf(
-					/* translators: %s: comma separated list of paths that were probed. */
-					__( 'The bundled Node palette generator is not available; looked for: %s. Nothing was written.', '__plugin_txtd' ),
-					implode( ', ', $looked_for )
-				),
-				[ 'looked_for' => $looked_for ]
-			);
-		}
-
-		$generated = $this->palette_generator->generate( $source_json, $options );
-		if ( is_wp_error( $generated ) ) {
-			$code = [
-				'style_manager_generator_unavailable' => 'generator_unavailable',
-				'style_manager_generator_timeout'     => 'generator_timeout',
-			][ $generated->get_error_code() ] ?? 'invalid_params';
-
-			$data               = (array) $generated->get_error_data();
-			$data['error_code'] = (string) $generated->get_error_code();
-
-			$this->fail(
-				$assoc_args,
-				1,
-				$code,
-				(string) $generated->get_error_message() . ' ' . __( 'Nothing was written.', '__plugin_txtd' ),
-				$data
-			);
-		}
-
-		return $generated;
-	}
-
-	/**
-	 * Read the pre-generated palette output `--generator=none` applies verbatim.
-	 *
-	 * Validated against what PHP's CSS generation actually consumes — `variations`,
-	 * `darkVariations`, `sourceIndex` — and nothing more. A hand-authored blob from a
-	 * gene-migration run carries no `colors` ramp and no echoed `options`, and demanding those
-	 * would reject exactly the artifacts this path exists to apply.
+	 * Only the reading is CLI work. Whether the output is *required* and whether it is
+	 * renderable are shared policy, and live in `AgentCommands::apply_color_palette()` —
+	 * so returning `null` here is how "the caller gave us nothing" reaches that ruling.
 	 *
 	 * @param array $assoc_args Associative arguments.
 	 *
-	 * @return array{json: string, palettes: array}
+	 * @return string|null
 	 */
-	protected function collect_applied_palette_output( array $assoc_args ): array {
+	protected function read_applied_palette_output( array $assoc_args ): ?string {
 		$output = $this->flag( $assoc_args, 'output' );
 
 		if ( ! is_string( $output ) || '' === trim( $output ) ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				__( '--generator=none applies a pre-generated palette output, so --output=<json|@file> is required. Nothing was written.', '__plugin_txtd' )
-			);
+			return null;
 		}
 
 		$output = trim( $output );
@@ -1041,79 +758,7 @@ class CliCommands extends AbstractHookProvider {
 			);
 		}
 
-		$applied = PaletteGenerator::validate_renderable( (string) $raw );
-		if ( is_wp_error( $applied ) ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				(string) $applied->get_error_message() . ' ' . __( 'Nothing was written.', '__plugin_txtd' )
-			);
-		}
-
-		return $applied;
-	}
-
-	/**
-	 * Read and validate `--variation`.
-	 *
-	 * @param array $assoc_args Associative arguments.
-	 *
-	 * @return array setting_id => value.
-	 */
-	protected function palette_option_overrides( array $assoc_args ): array {
-		$variation = $this->flag( $assoc_args, 'variation' );
-
-		if ( null === $variation || '' === $variation ) {
-			return [];
-		}
-
-		if ( ! is_numeric( $variation ) || (int) $variation < 1 || (int) $variation > 12 ) {
-			$this->fail(
-				$assoc_args,
-				1,
-				'invalid_params',
-				__( '--variation must be a whole number between 1 and 12.', '__plugin_txtd' )
-			);
-		}
-
-		return [ PaletteGenerator::VARIATION_SETTING_ID => (int) $variation ];
-	}
-
-	/**
-	 * Assemble the one batched write (§3.12 — one publish per process).
-	 *
-	 * Contract §1.1 names four settings. `sm_site_color_variation` is included **only when
-	 * `--variation` asks for it**, and that is deliberate: the setting is a member of
-	 * `ColorPalettes::FINE_TUNE_PALETTE_FIELDS`, hence Pixelgrade Plus-gated, and
-	 * `SettingsWriter::strip_locked_premium_settings()` drops `sm_advanced_palette_output`
-	 * whenever a premium id is present in the same payload. Sending it unconditionally would
-	 * therefore make the command strip its own output on every site without Plus.
-	 *
-	 * `sm_is_custom_color_palette` is always true: applying an arbitrary source *is* what makes
-	 * a palette custom, whichever way its output was produced. It is written as the integer `1`
-	 * rather than boolean `true` because that is the representation the option round-trips as —
-	 * the Customizer reads it back as the string `'1'`, and a boolean would therefore never
-	 * compare equal to what is on disk, costing the command its `noop` on every re-run (§3.5).
-	 *
-	 * @param string $source_json  The palette source as given.
-	 * @param string $output_json  The palette output being persisted.
-	 * @param array  $overrides    Resolved option overrides (`--variation`).
-	 *
-	 * @return array setting_id => value.
-	 */
-	protected function palette_write_payload( string $source_json, string $output_json, array $overrides ): array {
-		$values = [
-			PaletteGenerator::SOURCE_SETTING_ID    => trim( $source_json ),
-			PaletteGenerator::OUTPUT_SETTING_ID    => $output_json,
-			PaletteGenerator::IS_CUSTOM_SETTING_ID => 1,
-		];
-
-		if ( array_key_exists( PaletteGenerator::VARIATION_SETTING_ID, $overrides ) ) {
-			$values[ PaletteGenerator::VARIATION_SETTING_ID ] = $overrides[ PaletteGenerator::VARIATION_SETTING_ID ];
-		}
-
-		return $values;
+		return (string) $raw;
 	}
 
 	/**
@@ -1178,29 +823,6 @@ class CliCommands extends AbstractHookProvider {
 	}
 
 	/**
-	 * What regenerating would do to the stored `sm_advanced_palette_output`.
-	 *
-	 * `stored_generator_produced` is the one an operator must read before a real run: a
-	 * `false` there means the site carries a hand-authored palette blob (some gene-migration
-	 * runs write the option directly) and this command is about to replace it.
-	 *
-	 * @param string $generated_json The generated palette output.
-	 *
-	 * @return array
-	 */
-	protected function palette_output_diff( string $generated_json ): array {
-		$stored = $this->palette_generator->current_value( PaletteGenerator::OUTPUT_SETTING_ID );
-		$stored = is_string( $stored ) ? $stored : (string) wp_json_encode( $stored );
-
-		return [
-			'stored_bytes'              => strlen( $stored ),
-			'generated_bytes'           => strlen( $generated_json ),
-			'stored_generator_produced' => PaletteGenerator::is_generator_produced( $stored ),
-			'changed'                   => PaletteGenerator::canonical_json( $stored ) !== PaletteGenerator::canonical_json( $generated_json ),
-		];
-	}
-
-	/**
 	 * Flush Style Manager's cached Customizer config and option details.
 	 *
 	 * Use after changing option or section definitions in code so the cached
@@ -1238,14 +860,7 @@ class CliCommands extends AbstractHookProvider {
 	public function flush_cache( $args, $assoc_args ) {
 		$this->require_user( $assoc_args, self::CAPABILITY, true );
 
-		$this->options->invalidate_all_caches();
-
-		$this->emit(
-			$assoc_args,
-			0,
-			'ok',
-			__( 'Style Manager caches flushed (Customizer config, option details, opt-name).', '__plugin_txtd' )
-		);
+		$this->emit_core( $assoc_args, $this->agent_commands->flush_cache() );
 	}
 
 	/**
@@ -1338,34 +953,23 @@ class CliCommands extends AbstractHookProvider {
 	}
 
 	/**
-	 * Contract §3.4 — a single `set` invocation may not carry both a master font slot and
-	 * a connected per-element font field: the slot regenerates the whole defaults table and
-	 * would clobber the per-element value written in the same breath.
+	 * The §3.6 confirmation gate, as the shared cores expect it.
 	 *
-	 * The detection itself lives in `SettingsWriter::find_ordering_conflict()` so W7's
-	 * abilities enforce the identical law; this only translates the verdict to an envelope.
+	 * `confirm_destructive()` halts on a refusal, so this only ever returns `true`. The
+	 * closure exists so the core can run the gate at exactly the point the command did —
+	 * after `invalid_params` and `ordering_conflict`, before the save — which is what keeps
+	 * the CLI and the abilities reporting the same code for the same mistake.
 	 *
-	 * @param array $values     Requested id => value map.
 	 * @param array $assoc_args Associative arguments.
+	 *
+	 * @return callable
 	 */
-	protected function assert_no_ordering_conflict( array $values, array $assoc_args ): void {
-		$conflict = $this->settings_writer->find_ordering_conflict( $values );
-		if ( null === $conflict ) {
-			return;
-		}
+	protected function confirmation_gate( array $assoc_args ): callable {
+		return function ( string $question ) use ( $assoc_args ): bool {
+			$this->confirm_destructive( $assoc_args, $question );
 
-		$this->fail(
-			$assoc_args,
-			1,
-			'ordering_conflict',
-			sprintf(
-				/* translators: 1: master slot ids, 2: per-element field ids. */
-				__( 'Ordering conflict: writing the master slot(s) %1$s regenerates the whole per-element font defaults table and would clobber %2$s. Do it in two steps: first `set` the master slot(s), then `set` the per-element field(s).', '__plugin_txtd' ),
-				implode( ', ', $conflict['master_slots'] ),
-				implode( ', ', $conflict['per_element_fields'] )
-			),
-			$conflict
-		);
+			return true;
+		};
 	}
 
 	/**
@@ -1442,34 +1046,6 @@ class CliCommands extends AbstractHookProvider {
 		}
 
 		return function_exists( 'posix_isatty' ) && defined( 'STDIN' ) && @posix_isatty( STDIN );
-	}
-
-	/**
-	 * The Style Manager-owned surface: every `sm_*` id plus every setting attached to a
-	 * control in an SM section (which is where the theme's connected color/font targets
-	 * live). Derived from the live registry, so it follows whatever the active theme
-	 * registers rather than a hardcoded list.
-	 *
-	 * @param array $known The full id => value map to narrow.
-	 *
-	 * @return string[]
-	 */
-	protected function style_manager_surface_ids( array $known ): array {
-		$ids = [];
-
-		foreach ( array_keys( $known ) as $setting_id ) {
-			if ( 0 === strpos( (string) $setting_id, 'sm_' ) ) {
-				$ids[] = (string) $setting_id;
-			}
-		}
-
-		foreach ( $this->headless_customizer->get_sm_section_ids() as $section_id ) {
-			foreach ( $this->headless_customizer->get_section_setting_ids( (string) $section_id ) as $setting_id ) {
-				$ids[] = (string) $setting_id;
-			}
-		}
-
-		return array_values( array_unique( $ids ) );
 	}
 
 	/**
@@ -1613,132 +1189,27 @@ class CliCommands extends AbstractHookProvider {
 	}
 
 	/**
-	 * Turn a SettingsWriter result into the envelope of contract §2.
+	 * Emit a core result as the shared envelope (contract §2) and halt.
 	 *
-	 * @param array    $assoc_args     Associative arguments.
-	 * @param array    $result         SettingsWriter::save()/preview() result.
-	 * @param string[] $requested_ids  Ids the caller asked to write.
-	 * @param bool     $dry_run        Whether this was a dry run.
-	 * @param array    $extra_data     Extra `data` keys.
+	 * This is the whole of the CLI's job once the flags are parsed: the exit code, the closed
+	 * machine token, the summary, the payload, the warnings and the write diff all come from
+	 * `AgentCommands`, so an ability and a command can never classify the same outcome
+	 * differently.
+	 *
+	 * @param array $assoc_args Associative arguments.
+	 * @param array $core       An `AgentCommands` result.
 	 */
-	protected function emit_write_result( array $assoc_args, array $result, array $requested_ids, bool $dry_run, array $extra_data = [] ): void {
-		$stripped  = array_values( (array) ( $result['stripped'] ?? [] ) );
-		$persisted = (array) ( $result['persisted'] ?? [] );
-		$unchanged = array_values( (array) ( $result['unchanged'] ?? [] ) );
-
-		$warnings = [];
-		$exit     = 0;
-		$code     = 'ok';
-
-		if ( ! empty( $stripped ) ) {
-			$exit = 2;
-			$code = 'plus_stripped';
-
-			$reasons = array_values( array_unique( array_column( $stripped, 'reason' ) ) );
-			$ids     = array_values( array_unique( array_column( $stripped, 'id' ) ) );
-
-			$warnings[] = [
-				'code'    => 'plus_stripped',
-				'message' => sprintf(
-					/* translators: 1: comma separated setting ids, 2: comma separated reasons. */
-					__( 'Requested but not persisted: %1$s (%2$s).', '__plugin_txtd' ),
-					implode( ', ', $ids ),
-					implode( ', ', $reasons )
-				),
-				'ids'     => $ids,
-			];
-		} elseif ( ! empty( $requested_ids ) && count( array_intersect( $requested_ids, $unchanged ) ) === count( $requested_ids ) ) {
-			$code = 'noop';
-		}
-
-		$summary = $dry_run
-			? sprintf(
-				/* translators: 1: number of settings that would persist, 2: number stripped. */
-				__( 'Dry run: %1$d setting(s) would persist, %2$d stripped. Nothing was written.', '__plugin_txtd' ),
-				count( $persisted ),
-				count( $stripped )
-			)
-			: sprintf(
-				/* translators: 1: number persisted, 2: number unchanged, 3: number stripped. */
-				__( '%1$d persisted, %2$d unchanged, %3$d stripped.', '__plugin_txtd' ),
-				count( $persisted ),
-				count( $unchanged ),
-				count( $stripped )
-			);
-
-		$data = array_merge(
-			[
-				'dry_run'   => $dry_run,
-				'requested' => array_values( $requested_ids ),
-				'saved'     => array_values( (array) ( $result['saved'] ?? [] ) ),
-			],
-			$extra_data
-		);
+	protected function emit_core( array $assoc_args, array $core ): void {
+		$write = $core['write'] ?? null;
 
 		$this->emit(
 			$assoc_args,
-			$exit,
-			$code,
-			$summary,
-			$data,
-			$warnings,
-			[
-				'persisted' => $persisted,
-				'unchanged' => $unchanged,
-				'stripped'  => $stripped,
-			]
-		);
-	}
-
-	/**
-	 * Convert a WP_Error from the write path into an envelope.
-	 *
-	 * `style_manager_site_editor_nothing_to_save` means every id was unknown or
-	 * capability-denied. Contract §2 makes that a finding, not an error: `unknown_setting`
-	 * strips, exit 2 — never a silent drop and never exit 1.
-	 *
-	 * @param array     $assoc_args Associative arguments.
-	 * @param \WP_Error $error      The error.
-	 * @param array     $values     The requested id => value map.
-	 */
-	protected function fail_from_wp_error( array $assoc_args, \WP_Error $error, array $values ): void {
-		if ( 'style_manager_site_editor_nothing_to_save' === $error->get_error_code() ) {
-			$data    = (array) $error->get_error_data();
-			$skipped = ! empty( $data['skipped'] ) ? array_map( 'strval', (array) $data['skipped'] ) : array_map( 'strval', array_keys( $values ) );
-
-			$stripped = [];
-			foreach ( $skipped as $setting_id ) {
-				$stripped[] = [
-					'id'        => $setting_id,
-					'reason'    => SettingsWriter::REASON_UNKNOWN_SETTING,
-					'requested' => $values[ $setting_id ] ?? null,
-					'current'   => null,
-				];
-			}
-
-			$this->emit_write_result(
-				$assoc_args,
-				[
-					'saved'     => [],
-					'stripped'  => $stripped,
-					'persisted' => [],
-					'unchanged' => [],
-				],
-				array_keys( $values ),
-				false
-			);
-
-			// emit_write_result() halts, but never rely on that for control flow: a second
-			// envelope on STDOUT would break the machine contract.
-			return;
-		}
-
-		$this->fail(
-			$assoc_args,
-			1,
-			'invalid_params',
-			(string) $error->get_error_message(),
-			[ 'error_code' => (string) $error->get_error_code() ]
+			(int) $core['exit'],
+			(string) $core['code'],
+			(string) $core['summary'],
+			(array) $core['data'],
+			(array) $core['warnings'],
+			is_array( $write ) ? $write : []
 		);
 	}
 

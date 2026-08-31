@@ -132,13 +132,20 @@ class ServiceProvider implements ServiceProviderInterface {
 			return new Provider\Capabilities();
 		};
 
+		$container['hooks.abilities'] = function( $container ) {
+			return new Provider\Abilities(
+				$container['provider.agent_commands']
+			);
+		};
+
 		$container['hooks.cli_commands'] = function( $container ) {
 			return new Provider\CliCommands(
 				$container['options'],
 				$container['provider.headless_customizer'],
 				$container['provider.settings_writer'],
 				$container['customize.font_palettes'],
-				$container['provider.palette_generator']
+				$container['provider.palette_generator'],
+				$container['provider.agent_commands']
 			);
 		};
 
@@ -321,6 +328,18 @@ class ServiceProvider implements ServiceProviderInterface {
 		};
 		$container['provider.palette_generator'] = function( $container ) {
 			return new Provider\PaletteGenerator( $container['options'] );
+		};
+		// The one implementation of every agent-surface verb. Both `wp pixelgrade sm` and the
+		// `pixelgrade/*` abilities call THIS object; neither owns a copy of the logic.
+		$container['provider.agent_commands'] = function( $container ) {
+			return new Provider\AgentCommands(
+				$container['options'],
+				$container['provider.headless_customizer'],
+				$container['provider.settings_writer'],
+				$container['customize.font_palettes'],
+				$container['provider.palette_generator'],
+				$container['provider.design_system_preview_endpoint']
+			);
 		};
 		$container['provider.settings_writer'] = function( $container ) {
 			return new Provider\SettingsWriter(

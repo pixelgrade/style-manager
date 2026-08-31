@@ -70,6 +70,10 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'provider.site_editor_endpoints' ) )
 			->register_hooks( $container->get( 'provider.design_system_preview_endpoint' ) );
 
+		// Abilities are NOT a CLI concern: they must register on any request, WP-CLI or not.
+		// The provider itself no-ops when the Abilities API (WordPress 6.9+) is absent.
+		$this->register_hooks( $container->get( 'hooks.abilities' ) );
+
 		// WP-CLI commands (e.g. `wp style-manager flush-cache`).
 		if ( \defined( 'WP_CLI' ) && \WP_CLI ) {
 			$this->register_hooks( $container->get( 'hooks.cli_commands' ) );
