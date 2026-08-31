@@ -148,14 +148,16 @@ class AgentCommands {
 	 *
 	 * @since 2.5.3
 	 *
-	 * @param string[]    $ids     Setting ids to read.
-	 * @param bool        $all     Return every readable setting.
-	 * @param string|null $section Restrict to this Customizer section's controls.
-	 * @param bool        $details Return the full settings data instead of an id => value map.
+	 * @param string[]    $ids      Setting ids to read.
+	 * @param bool        $all      Return every readable setting.
+	 * @param string|null $section  Restrict to this Customizer section's controls.
+	 * @param bool        $details  Return the full settings data instead of an id => value map.
+	 * @param array       $messages Surface-supplied wording overrides, see `message()`.
+	 *                              Recognized key: `nothing_to_read`.
 	 *
 	 * @return array The core result.
 	 */
-	public function get_settings( array $ids, bool $all = false, ?string $section = null, bool $details = false ): array {
+	public function get_settings( array $ids, bool $all = false, ?string $section = null, bool $details = false, array $messages = [] ): array {
 		$source = $details
 			? $this->headless_customizer->get_settings_data()
 			: $this->headless_customizer->get_settings_values();
@@ -170,7 +172,7 @@ class AgentCommands {
 			return $this->result(
 				1,
 				'invalid_params',
-				__( 'Nothing to read: pass one or more setting ids, --section=<id>, or --all.', '__plugin_txtd' )
+				$this->message( $messages, 'nothing_to_read' )
 			);
 		}
 
@@ -416,21 +418,23 @@ class AgentCommands {
 	 *
 	 * @since 2.5.3
 	 *
-	 * @param array         $values  Requested id => value map, typed.
-	 * @param bool          $dry_run Report the predicted diff without writing.
-	 * @param callable|null $confirm §3.6 gate, `fn( string $question ): bool`. It may halt
-	 *                               (the CLI does); returning anything but `true` produces
-	 *                               a `confirmation_required` result. `null` means the
-	 *                               caller has already satisfied the gate.
+	 * @param array         $values   Requested id => value map, typed.
+	 * @param bool          $dry_run  Report the predicted diff without writing.
+	 * @param callable|null $confirm  §3.6 gate, `fn( string $question ): bool`. It may halt
+	 *                                (the CLI does); returning anything but `true` produces
+	 *                                a `confirmation_required` result. `null` means the
+	 *                                caller has already satisfied the gate.
+	 * @param array         $messages Surface-supplied wording overrides, see `message()`.
+	 *                                Recognized key: `nothing_to_write`.
 	 *
 	 * @return array The core result.
 	 */
-	public function set_settings( array $values, bool $dry_run = false, ?callable $confirm = null ): array {
+	public function set_settings( array $values, bool $dry_run = false, ?callable $confirm = null, array $messages = [] ): array {
 		if ( empty( $values ) ) {
 			return $this->result(
 				1,
 				'invalid_params',
-				__( 'Nothing to write: pass <id>=<value> pairs, --from-file=<path>, or `-` for STDIN.', '__plugin_txtd' )
+				$this->message( $messages, 'nothing_to_write' )
 			);
 		}
 
@@ -564,11 +568,17 @@ class AgentCommands {
 	 *                                         confirmation and before the save. The CLI writes
 	 *                                         its `--output=@file` here so a failing file write
 	 *                                         leaves the palette unpersisted.
+	 *     @type array         $messages       Surface-supplied wording overrides, see
+	 *                                         `message()`. Recognized keys: `source_required`,
+	 *                                         `invalid_generator`, `invalid_variation`,
+	 *                                         `output_required`.
 	 * }
 	 *
 	 * @return array The core result.
 	 */
 	public function apply_color_palette( array $params ): array {
+		$messages = (array) ( $params['messages'] ?? [] );
+
 		$source_json = ( array_key_exists( 'source', $params ) && null !== $params['source'] )
 			? (string) $params['source']
 			: null;
@@ -577,7 +587,7 @@ class AgentCommands {
 			return $this->result(
 				1,
 				'invalid_params',
-				__( '--source is required: pass the palette source JSON, @<file>, or `-` for STDIN.', '__plugin_txtd' )
+				$this->message( $messages, 'source_required' )
 			);
 		}
 
@@ -592,7 +602,7 @@ class AgentCommands {
 			return $this->result(
 				1,
 				'invalid_params',
-				__( '--generator must be `node` or `none`.', '__plugin_txtd' )
+				$this->message( $messages, 'invalid_generator' )
 			);
 		}
 
@@ -603,7 +613,7 @@ class AgentCommands {
 				return $this->result(
 					1,
 					'invalid_params',
-					__( '--variation must be a whole number between 1 and 12.', '__plugin_txtd' )
+					$this->message( $messages, 'invalid_variation' )
 				);
 			}
 
@@ -624,7 +634,7 @@ class AgentCommands {
 				return $this->result(
 					1,
 					'invalid_params',
-					__( '--generator=none applies a pre-generated palette output, so --output=<json|@file> is required. Nothing was written.', '__plugin_txtd' )
+					$this->message( $messages, 'output_required' )
 				);
 			}
 
@@ -871,6 +881,45 @@ class AgentCommands {
 		}
 
 		return [ 'applied' => $generated ];
+	}
+
+	/**
+	 * The CLI's own wording for the handful of core error messages that name what the
+	 * caller should have passed instead.
+	 *
+	 * This IS the CLI vocabulary — `Provider\CliCommands` never overrides these keys, so
+	 * `CliCommandsTest` pins these strings byte-for-byte. An ability names its own typed
+	 * parameters instead (`ids`, `settings`, `source`, `generator`, `variation`, `output`)
+	 * because it has no `--flags`, no `@file`, and no STDIN: `Provider\Abilities` passes a
+	 * `messages` override for every key below that it uses. The validation itself — which
+	 * key fires, and the machine `code` it produces — is identical on both surfaces; only
+	 * this prose differs. See `message()`.
+	 *
+	 * @return array<string, string>
+	 */
+	protected function default_messages(): array {
+		return [
+			'nothing_to_read'   => __( 'Nothing to read: pass one or more setting ids, --section=<id>, or --all.', '__plugin_txtd' ),
+			'nothing_to_write'  => __( 'Nothing to write: pass <id>=<value> pairs, --from-file=<path>, or `-` for STDIN.', '__plugin_txtd' ),
+			'source_required'   => __( '--source is required: pass the palette source JSON, @<file>, or `-` for STDIN.', '__plugin_txtd' ),
+			'invalid_generator' => __( '--generator must be `node` or `none`.', '__plugin_txtd' ),
+			'invalid_variation' => __( '--variation must be a whole number between 1 and 12.', '__plugin_txtd' ),
+			'output_required'   => __( '--generator=none applies a pre-generated palette output, so --output=<json|@file> is required. Nothing was written.', '__plugin_txtd' ),
+		];
+	}
+
+	/**
+	 * Resolve one surface-supplied message, falling back to the CLI's own wording.
+	 *
+	 * @param array  $messages Overrides passed in by the caller (see `default_messages()`).
+	 * @param string $key      Which message.
+	 *
+	 * @return string
+	 */
+	protected function message( array $messages, string $key ): string {
+		return isset( $messages[ $key ] ) && is_string( $messages[ $key ] ) && '' !== $messages[ $key ]
+			? $messages[ $key ]
+			: $this->default_messages()[ $key ];
 	}
 
 	/**

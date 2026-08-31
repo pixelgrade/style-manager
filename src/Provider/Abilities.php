@@ -297,7 +297,12 @@ class Abilities extends AbstractHookProvider {
 							array_map( 'strval', (array) ( $input['ids'] ?? [] ) ),
 							! empty( $input['all'] ),
 							is_string( $section ) && '' !== $section ? $section : null,
-							! empty( $input['details'] )
+							! empty( $input['details'] ),
+							[
+								// M4: this surface has no `--flags`, so the message names its
+								// own typed parameters rather than the CLI's.
+								'nothing_to_read' => __( 'Nothing to read: pass one or more setting ids in `ids`, restrict with `section`, or pass `all: true`.', '__plugin_txtd' ),
+							]
 						)
 					);
 				},
@@ -438,7 +443,11 @@ class Abilities extends AbstractHookProvider {
 						$this->agent_commands->set_settings(
 							(array) ( $input['settings'] ?? [] ),
 							! empty( $input['dry_run'] ),
-							$this->confirmation_gate( $input )
+							$this->confirmation_gate( $input ),
+							[
+								// M4: no `--from-file`/STDIN on this surface — name the parameter.
+								'nothing_to_write' => __( 'Nothing to write: pass a `settings` object with at least one id => value pair.', '__plugin_txtd' ),
+							]
 						)
 					);
 				},
@@ -574,6 +583,16 @@ class Abilities extends AbstractHookProvider {
 										'file' => '',
 									];
 								},
+
+								// M4: none of these four names a `--flag`, `@file` or STDIN — this
+								// surface has no filesystem and no flags, only the typed parameters
+								// named in the input_schema above.
+								'messages'       => [
+									'source_required'   => __( 'The `source` parameter is required: pass the palette source as inline JSON.', '__plugin_txtd' ),
+									'invalid_generator' => __( 'The `generator` parameter must be `node` or `none`.', '__plugin_txtd' ),
+									'invalid_variation' => __( 'The `variation` parameter must be a whole number between 1 and 12.', '__plugin_txtd' ),
+									'output_required'   => __( 'generator: "none" applies a pre-generated palette output, so the `output` parameter is required. Nothing was written.', '__plugin_txtd' ),
+								],
 							]
 						)
 					);

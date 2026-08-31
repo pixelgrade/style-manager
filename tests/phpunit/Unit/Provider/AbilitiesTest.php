@@ -658,6 +658,13 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertInstanceOf( \WP_Error::class, $result );
 			$this->assertSame( 'invalid_params', $result->get_error_code() );
 			$this->assertStringContainsString( 'Nothing was written', $result->get_error_message() );
+
+			// M4: no `--output` flag, no `@file`, no STDIN — this surface has none of them;
+			// the message must name the `output` parameter instead.
+			$this->assertStringNotContainsString( '--', $result->get_error_message() );
+			$this->assertStringNotContainsString( '@file', $result->get_error_message() );
+			$this->assertStringNotContainsString( 'STDIN', $result->get_error_message() );
+			$this->assertStringContainsString( '`output`', $result->get_error_message() );
 		}
 
 		public function test_generator_none_applies_an_inline_output_verbatim(): void {
@@ -726,6 +733,10 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'invalid_params', $result->get_error_code() );
 			$this->assertStringContainsString( 'node', $result->get_error_message() );
 			$this->assertStringContainsString( 'none', $result->get_error_message() );
+
+			// M4: names the `generator` parameter, never a `--generator` flag.
+			$this->assertStringNotContainsString( '--', $result->get_error_message() );
+			$this->assertStringContainsString( '`generator`', $result->get_error_message() );
 		}
 
 		public function test_an_out_of_range_variation_reaches_the_core_and_names_the_valid_range(): void {
@@ -749,6 +760,10 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'invalid_params', $result->get_error_code() );
 			$this->assertStringContainsString( '1', $result->get_error_message() );
 			$this->assertStringContainsString( '12', $result->get_error_message() );
+
+			// M4: names the `variation` parameter, never a `--variation` flag.
+			$this->assertStringNotContainsString( '--', $result->get_error_message() );
+			$this->assertStringContainsString( '`variation`', $result->get_error_message() );
 		}
 
 		public function test_a_missing_generator_fails_without_writing_a_stale_ramp(): void {
@@ -771,6 +786,88 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertInstanceOf( \WP_Error::class, $result );
 			$this->assertSame( 'generator_unavailable', $result->get_error_code() );
 			$this->assertNotEmpty( $result->get_error_data()['data']['looked_for'] );
+		}
+
+		/*
+		 * ------------------------------------------------------------------
+		 * M4 — an ability has no `--flags`, `@file` or STDIN, so its wording
+		 * must never tell a caller to use one. The core is shared; only the
+		 * prose differs between the two surfaces (`code` never does).
+		 * ------------------------------------------------------------------
+		 */
+
+		public function test_get_design_settings_with_nothing_to_read_names_ability_parameters_not_cli_flags(): void {
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->method( 'get_settings_values' )->willReturn( [] );
+
+			$core = $this->core( $headless );
+
+			$ability = $this->execute( $core, 'pixelgrade/get-design-settings', [] );
+			$command = $this->run_command( $core, $headless, static fn( CliCommands $c ) => $c->get( [], [ 'format' => 'json' ] ) );
+
+			$this->assertInstanceOf( \WP_Error::class, $ability );
+			$this->assertSame( 'invalid_params', $ability->get_error_code() );
+			// The machine contract is identical on both surfaces; only the prose differs.
+			$this->assertSame( $command['envelope']['code'], $ability->get_error_code() );
+
+			$message = $ability->get_error_message();
+			$this->assertStringNotContainsString( '--', $message );
+			$this->assertStringNotContainsString( '@file', $message );
+			$this->assertStringNotContainsString( 'STDIN', $message );
+			$this->assertStringContainsString( 'ids', $message );
+			$this->assertStringContainsString( 'section', $message );
+			$this->assertStringContainsString( 'all', $message );
+
+			// The CLI keeps its own flag-shaped wording, unchanged — `CliCommandsTest` pins it.
+			$this->assertStringContainsString( '--section', $command['envelope']['summary'] );
+			$this->assertStringContainsString( '--all', $command['envelope']['summary'] );
+		}
+
+		public function test_set_design_settings_with_nothing_to_write_names_the_settings_parameter(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			$core = $this->core( null, $writer );
+
+			$ability = $this->execute( $core, 'pixelgrade/set-design-settings', [ 'settings' => [] ] );
+			$command = $this->run_command( $core, null, static fn( CliCommands $c ) => $c->set( [], [ 'format' => 'json' ] ), $writer );
+
+			$this->assertInstanceOf( \WP_Error::class, $ability );
+			$this->assertSame( 'invalid_params', $ability->get_error_code() );
+			$this->assertSame( $command['envelope']['code'], $ability->get_error_code() );
+
+			$message = $ability->get_error_message();
+			$this->assertStringNotContainsString( '--', $message );
+			$this->assertStringNotContainsString( '@file', $message );
+			$this->assertStringNotContainsString( 'STDIN', $message );
+			$this->assertStringContainsString( 'settings', $message );
+
+			$this->assertStringContainsString( '--from-file', $command['envelope']['summary'] );
+			$this->assertStringContainsString( 'STDIN', $command['envelope']['summary'] );
+		}
+
+		public function test_apply_color_palette_source_required_names_the_source_parameter(): void {
+			// Unreachable through the wired ability today — its `source` value is always
+			// JSON-encoded before it reaches the core, never PHP null — so this exercises
+			// the shared core directly with the exact wording `Abilities` injects, the same
+			// way the CLI's own `--source is required` case is pinned at the core level.
+			$core = $this->core( null, $this->createMock( SettingsWriter::class ) );
+
+			$result = $core->apply_color_palette(
+				[
+					'messages' => [
+						'source_required' => 'The `source` parameter is required: pass the palette source as inline JSON.',
+					],
+				]
+			);
+
+			$this->assertSame( 1, $result['exit'] );
+			// Same code the CLI's own `--source is required` rejection produces.
+			$this->assertSame( 'invalid_params', $result['code'] );
+			$this->assertStringNotContainsString( '--', $result['summary'] );
+			$this->assertStringNotContainsString( '@file', $result['summary'] );
+			$this->assertStringNotContainsString( 'STDIN', $result['summary'] );
+			$this->assertStringContainsString( 'source', $result['summary'] );
 		}
 
 		/*
