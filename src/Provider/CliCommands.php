@@ -33,16 +33,19 @@ class CliCommands extends AbstractHookProvider {
 	public const CAPABILITY = 'edit_theme_options';
 
 	/**
-	 * Master font slots. Writing any of them regenerates the entire per-element
-	 * defaults table, so they carry destructive semantics (contract §3.4/§3.6).
+	 * Size ceiling for a `--from-file` / STDIN settings document (4 MB). A design system is
+	 * kilobytes; anything larger is a mistake, and reading it unbounded would trade a clean
+	 * envelope for a PHP memory fatal.
 	 */
-	public const MASTER_FONT_SLOT_IDS = [
-		'sm_font_primary',
-		'sm_font_secondary',
-		'sm_font_body',
-		'sm_font_accent',
-		FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
-	];
+	public const MAX_DOCUMENT_BYTES = 4194304;
+
+	/**
+	 * Whether STDIN has already been drained for a settings payload — if so there is no
+	 * operator left to prompt for confirmation.
+	 *
+	 * @var bool
+	 */
+	protected bool $stdin_consumed = false;
 
 	/**
 	 * Options provider.
@@ -310,14 +313,13 @@ class CliCommands extends AbstractHookProvider {
 		}
 
 		$this->assert_no_ordering_conflict( $values, $assoc_args );
-		$this->assert_letter_spacing_units( $values, $assoc_args );
 
 		$dry_run = $this->bool_flag( $assoc_args, 'dry-run' );
 
 		if ( $dry_run ) {
 			$result = $this->settings_writer->preview( $values );
 		} else {
-			if ( array_intersect( array_keys( $values ), self::MASTER_FONT_SLOT_IDS ) ) {
+			if ( SettingsWriter::master_font_slots_in( $values ) ) {
 				$this->confirm_destructive(
 					$assoc_args,
 					__( 'This payload carries a master font slot; saving it regenerates the entire per-element font defaults table and clobbers per-element overrides.', '__plugin_txtd' )
@@ -340,13 +342,23 @@ class CliCommands extends AbstractHookProvider {
 	 * "settings": { "<id>": <value> } }`. Feed it straight back to
 	 * `wp pixelgrade sm set --from-file=<path>` — that is the whole import story.
 	 *
+	 * Scope: **Style Manager-owned settings only** by default — the `sm_*` ids plus the
+	 * theme's connected fields, as resolved from the SM structure. An agent restoring a
+	 * design system should not silently rewrite the site title, so core Customizer settings
+	 * are out unless `--all` asks for them. Values are reported exactly as stored (§3.4:
+	 * export passes shipped state through unmodified).
+	 *
 	 * ## OPTIONS
 	 *
 	 * [--file=<path>]
 	 * : Write the payload to this file instead of only returning it.
 	 *
 	 * [--include=<ids>]
-	 * : Comma-separated setting ids to include. Default: every readable setting.
+	 * : Comma-separated setting ids to include. Narrows whichever scope is in effect.
+	 *
+	 * [--all]
+	 * : Export the full Customizer settings map (152+ ids on a stock site, including core
+	 * settings like blogname/blogdescription) instead of the Style Manager surface.
 	 *
 	 * [--pretty]
 	 * : Pretty-print the payload written to --file.
@@ -378,6 +390,12 @@ class CliCommands extends AbstractHookProvider {
 		$this->require_user( $assoc_args );
 
 		$settings = $this->headless_customizer->get_settings_values();
+		$scope    = $this->bool_flag( $assoc_args, 'all' ) ? 'all' : 'style_manager';
+
+		if ( 'style_manager' === $scope ) {
+			$surface  = array_flip( $this->style_manager_surface_ids( $settings ) );
+			$settings = array_intersect_key( $settings, $surface );
+		}
 
 		$include = $this->flag( $assoc_args, 'include' );
 		if ( is_string( $include ) && '' !== $include ) {
@@ -420,7 +438,11 @@ class CliCommands extends AbstractHookProvider {
 			'settings' => $settings,
 		];
 
-		$data = $payload;
+		// The file payload stays exactly the pinned `{meta, settings}` shape; `scope` is
+		// envelope-only reporting so `set --from-file` never sees an unpinned key.
+		$data          = $payload;
+		$data['scope'] = $scope;
+
 		$file = $this->flag( $assoc_args, 'file' );
 		if ( is_string( $file ) && '' !== $file ) {
 			$json_flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
@@ -430,14 +452,18 @@ class CliCommands extends AbstractHookProvider {
 
 			$written = @file_put_contents( $file, (string) wp_json_encode( $payload, $json_flags ) . "\n" );
 			if ( false === $written ) {
+				$last  = error_get_last();
+				$why   = ! empty( $last['message'] ) ? (string) $last['message'] : __( 'unknown error', '__plugin_txtd' );
+
 				$this->fail(
 					$assoc_args,
 					1,
 					'invalid_params',
 					sprintf(
-						/* translators: %s: file path. */
-						__( 'Could not write the export to %s.', '__plugin_txtd' ),
-						$file
+						/* translators: 1: file path, 2: underlying error message. */
+						__( 'Could not write the export to %1$s: %2$s', '__plugin_txtd' ),
+						$file,
+						$why
 					)
 				);
 			}
@@ -733,13 +759,16 @@ class CliCommands extends AbstractHookProvider {
 	 *   - yaml
 	 * ---
 	 *
+	 * Exempt from §3.0's user rule (contract v0.3.3): it runs without `--user`, exactly as
+	 * it has since 2.3.0. When a user *is* resolved it must still hold `edit_theme_options`.
+	 *
 	 * ## EXIT CODES
 	 *
-	 * 0 ok · 3 permission_denied
+	 * 0 ok · 3 permission_denied (only when a user is resolved and lacks the capability)
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp pixelgrade sm flush-cache --user=admin
+	 *     wp pixelgrade sm flush-cache
 	 *
 	 * @when after_wp_load
 	 *
@@ -747,7 +776,7 @@ class CliCommands extends AbstractHookProvider {
 	 * @param array $assoc_args Associative arguments.
 	 */
 	public function flush_cache( $args, $assoc_args ) {
-		$this->require_user( $assoc_args );
+		$this->require_user( $assoc_args, self::CAPABILITY, true );
 
 		$this->options->invalidate_all_caches();
 
@@ -799,13 +828,23 @@ class CliCommands extends AbstractHookProvider {
 	 * fail silently: an anonymous `get` returns an empty map that looks like success.
 	 * So refuse loudly instead, naming the capability and the fix.
 	 *
-	 * @param array  $assoc_args Associative arguments.
-	 * @param string $capability Required capability.
+	 * One exemption (v0.3.3, §3.0): `flush-cache` keeps its historic no-user behavior —
+	 * cache invalidation discloses nothing and writes no state a visitor can observe, so
+	 * enforcing §3.0 there would break a shipped command for no security gain. Its
+	 * `edit_theme_options` row still applies once a user *is* resolved.
+	 *
+	 * @param array  $assoc_args      Associative arguments.
+	 * @param string $capability      Required capability.
+	 * @param bool   $allow_anonymous Whether a user-less invocation is permitted (flush-cache only).
 	 */
-	protected function require_user( array $assoc_args, string $capability = self::CAPABILITY ): void {
+	protected function require_user( array $assoc_args, string $capability = self::CAPABILITY, bool $allow_anonymous = false ): void {
 		$user_id = (int) get_current_user_id();
 
 		if ( $user_id <= 0 ) {
+			if ( $allow_anonymous ) {
+				return;
+			}
+
 			$this->fail(
 				$assoc_args,
 				3,
@@ -839,31 +878,19 @@ class CliCommands extends AbstractHookProvider {
 	}
 
 	/**
-	 * Contract §3.4 — a single write may not carry both a master font slot and a
-	 * connected per-element font field: the slot regenerates the whole defaults table
-	 * and would clobber the per-element value written in the same breath.
+	 * Contract §3.4 — a single `set` invocation may not carry both a master font slot and
+	 * a connected per-element font field: the slot regenerates the whole defaults table and
+	 * would clobber the per-element value written in the same breath.
+	 *
+	 * The detection itself lives in `SettingsWriter::find_ordering_conflict()` so W7's
+	 * abilities enforce the identical law; this only translates the verdict to an envelope.
 	 *
 	 * @param array $values     Requested id => value map.
 	 * @param array $assoc_args Associative arguments.
 	 */
 	protected function assert_no_ordering_conflict( array $values, array $assoc_args ): void {
-		$ids = array_map( 'strval', array_keys( $values ) );
-
-		$slots = array_values( array_intersect( $ids, self::MASTER_FONT_SLOT_IDS ) );
-		if ( empty( $slots ) ) {
-			return;
-		}
-
-		$per_element = array_values(
-			array_filter(
-				$ids,
-				static function ( $id ) {
-					return 1 === preg_match( '/\[[A-Za-z0-9_-]*_font\]$/', $id );
-				}
-			)
-		);
-
-		if ( empty( $per_element ) ) {
+		$conflict = $this->settings_writer->find_ordering_conflict( $values );
+		if ( null === $conflict ) {
 			return;
 		}
 
@@ -874,88 +901,23 @@ class CliCommands extends AbstractHookProvider {
 			sprintf(
 				/* translators: 1: master slot ids, 2: per-element field ids. */
 				__( 'Ordering conflict: writing the master slot(s) %1$s regenerates the whole per-element font defaults table and would clobber %2$s. Do it in two steps: first `set` the master slot(s), then `set` the per-element field(s).', '__plugin_txtd' ),
-				implode( ', ', $slots ),
-				implode( ', ', $per_element )
+				implode( ', ', $conflict['master_slots'] ),
+				implode( ', ', $conflict['per_element_fields'] )
 			),
-			[
-				'master_slots'        => $slots,
-				'per_element_fields'  => $per_element,
-			]
+			$conflict
 		);
-	}
-
-	/**
-	 * Contract §3.4 — a `letter_spacing` sub-field must carry `unit: 'em'`. A
-	 * `unit: false` letter-spacing is rejected, not silently written.
-	 *
-	 * @param array $values     Requested id => value map.
-	 * @param array $assoc_args Associative arguments.
-	 */
-	protected function assert_letter_spacing_units( array $values, array $assoc_args ): void {
-		$offenders = [];
-
-		foreach ( $values as $setting_id => $value ) {
-			foreach ( $this->collect_letter_spacings( $value ) as $letter_spacing ) {
-				if ( ! is_array( $letter_spacing ) ) {
-					continue;
-				}
-
-				$unit = $letter_spacing['unit'] ?? null;
-				if ( 'em' !== $unit ) {
-					$offenders[] = (string) $setting_id;
-					break;
-				}
-			}
-		}
-
-		if ( empty( $offenders ) ) {
-			return;
-		}
-
-		$this->fail(
-			$assoc_args,
-			1,
-			'invalid_params',
-			sprintf(
-				/* translators: %s: comma separated list of setting ids. */
-				__( 'letter_spacing must carry unit "em"; rejected in: %s.', '__plugin_txtd' ),
-				implode( ', ', array_unique( $offenders ) )
-			),
-			[ 'invalid_letter_spacing' => array_values( array_unique( $offenders ) ) ]
-		);
-	}
-
-	/**
-	 * Walk a setting value collecting every `letter_spacing` sub-field.
-	 *
-	 * @param mixed $value Setting value.
-	 *
-	 * @return array
-	 */
-	protected function collect_letter_spacings( $value ): array {
-		if ( is_object( $value ) ) {
-			$value = (array) $value;
-		}
-
-		if ( ! is_array( $value ) ) {
-			return [];
-		}
-
-		$found = [];
-		foreach ( $value as $key => $item ) {
-			if ( 'letter_spacing' === $key ) {
-				$found[] = is_object( $item ) ? (array) $item : $item;
-				continue;
-			}
-
-			$found = array_merge( $found, $this->collect_letter_spacings( $item ) );
-		}
-
-		return $found;
 	}
 
 	/**
 	 * Contract §3.6 — destructive verbs require `--yes`; `--dry-run` never prompts.
+	 *
+	 * **Confirmation is bound to the output format, not to TTY detection.** Under
+	 * `--format=json|yaml` a prompt would corrupt the machine contract, so `--yes` is
+	 * strictly required and its absence emits `code:"confirmation_required"`, exit 1, with
+	 * STDOUT still carrying nothing but the envelope. Only `--format=table` may prompt —
+	 * and a *declined* prompt must not exit 0 silently (WP_CLI::confirm()'s stock `exit;`
+	 * would report a refused destructive operation as success), so the prompt is handled
+	 * here and a decline emits the same `confirmation_required` envelope, exit 1.
 	 *
 	 * @param array  $assoc_args Associative arguments.
 	 * @param string $question   What the caller is about to do.
@@ -965,27 +927,89 @@ class CliCommands extends AbstractHookProvider {
 			return;
 		}
 
-		if ( $this->is_interactive() ) {
-			\WP_CLI::confirm( $question . ' ' . __( 'Continue?', '__plugin_txtd' ), $assoc_args );
+		if ( 'table' === $this->format( $assoc_args ) && $this->is_interactive() ) {
+			if ( $this->prompt_for_confirmation( $question . ' ' . __( 'Continue?', '__plugin_txtd' ) ) ) {
+				return;
+			}
 
-			return;
+			$this->fail(
+				$assoc_args,
+				1,
+				'confirmation_required',
+				__( 'Declined at the confirmation prompt. Nothing was written.', '__plugin_txtd' )
+			);
 		}
 
 		$this->fail(
 			$assoc_args,
 			1,
-			'invalid_params',
-			$question . ' ' . __( 'Re-run with --yes (mandatory in a non-interactive context) or --dry-run.', '__plugin_txtd' )
+			'confirmation_required',
+			$question . ' ' . __( 'Re-run with --yes (strictly required under --format=json|yaml) or --dry-run.', '__plugin_txtd' )
 		);
 	}
 
 	/**
-	 * Whether STDIN is an interactive terminal.
+	 * Ask for confirmation on an interactive terminal.
+	 *
+	 * Deliberately not `WP_CLI::confirm()`: that exits 0 on a decline, which would report a
+	 * refused destructive operation as success to any caller reading exit codes.
+	 *
+	 * @param string $question The question.
+	 *
+	 * @return bool Whether the operator confirmed.
+	 */
+	protected function prompt_for_confirmation( string $question ): bool {
+		fwrite( STDOUT, $question . ' [y/n] ' );
+
+		$answer = fgets( STDIN );
+		if ( false === $answer ) {
+			return false;
+		}
+
+		return 'y' === strtolower( trim( $answer ) );
+	}
+
+	/**
+	 * Whether STDIN is an interactive terminal. Consulted only inside table mode — the
+	 * primary binding is the output format, never the TTY.
 	 *
 	 * @return bool
 	 */
 	protected function is_interactive(): bool {
+		if ( $this->stdin_consumed ) {
+			// STDIN already carried the payload; there is nobody left to ask.
+			return false;
+		}
+
 		return function_exists( 'posix_isatty' ) && defined( 'STDIN' ) && @posix_isatty( STDIN );
+	}
+
+	/**
+	 * The Style Manager-owned surface: every `sm_*` id plus every setting attached to a
+	 * control in an SM section (which is where the theme's connected color/font targets
+	 * live). Derived from the live registry, so it follows whatever the active theme
+	 * registers rather than a hardcoded list.
+	 *
+	 * @param array $known The full id => value map to narrow.
+	 *
+	 * @return string[]
+	 */
+	protected function style_manager_surface_ids( array $known ): array {
+		$ids = [];
+
+		foreach ( array_keys( $known ) as $setting_id ) {
+			if ( 0 === strpos( (string) $setting_id, 'sm_' ) ) {
+				$ids[] = (string) $setting_id;
+			}
+		}
+
+		foreach ( $this->headless_customizer->get_sm_section_ids() as $section_id ) {
+			foreach ( $this->headless_customizer->get_section_setting_ids( (string) $section_id ) as $setting_id ) {
+				$ids[] = (string) $setting_id;
+			}
+		}
+
+		return array_values( array_unique( $ids ) );
 	}
 
 	/**
@@ -1049,9 +1073,13 @@ class CliCommands extends AbstractHookProvider {
 	 */
 	protected function read_settings_document( string $path, array $assoc_args ): array {
 		if ( '-' === $path ) {
-			$raw = defined( 'STDIN' ) ? stream_get_contents( STDIN ) : '';
+			$this->stdin_consumed = true;
+			// Bounded: a runaway pipe must produce a clean envelope, never a PHP OOM fatal
+			// on STDERR that no `| jq` caller can parse.
+			$raw = defined( 'STDIN' ) ? stream_get_contents( STDIN, self::MAX_DOCUMENT_BYTES + 1 ) : '';
 		} else {
-			$raw = is_readable( $path ) ? file_get_contents( $path ) : false;
+			$size = is_readable( $path ) ? filesize( $path ) : false;
+			$raw  = ( false !== $size ) ? file_get_contents( $path, false, null, 0, self::MAX_DOCUMENT_BYTES + 1 ) : false;
 			if ( false === $raw ) {
 				$this->fail(
 					$assoc_args,
@@ -1066,15 +1094,30 @@ class CliCommands extends AbstractHookProvider {
 			}
 		}
 
+		if ( strlen( (string) $raw ) > self::MAX_DOCUMENT_BYTES ) {
+			$this->fail(
+				$assoc_args,
+				1,
+				'invalid_params',
+				sprintf(
+					/* translators: 1: file path or `-`, 2: size limit in bytes. */
+					__( 'The settings document %1$s exceeds the %2$d byte limit.', '__plugin_txtd' ),
+					$path,
+					self::MAX_DOCUMENT_BYTES
+				)
+			);
+		}
+
 		$decoded = json_decode( (string) $raw, true );
-		if ( ! is_array( $decoded ) ) {
+		// A JSON list ([1,2,3]) would silently become settings "0","1","2".
+		if ( ! is_array( $decoded ) || ( ! empty( $decoded ) && array_is_list( $decoded ) ) ) {
 			$this->fail(
 				$assoc_args,
 				1,
 				'invalid_params',
 				sprintf(
 					/* translators: %s: file path. */
-					__( 'The settings document is not a JSON object: %s.', '__plugin_txtd' ),
+					__( 'The settings document is not a JSON object of setting ids: %s.', '__plugin_txtd' ),
 					$path
 				)
 			);
@@ -1248,6 +1291,10 @@ class CliCommands extends AbstractHookProvider {
 				array_keys( $values ),
 				false
 			);
+
+			// emit_write_result() halts, but never rely on that for control flow: a second
+			// envelope on STDOUT would break the machine contract.
+			return;
 		}
 
 		$this->fail(
@@ -1365,7 +1412,13 @@ class CliCommands extends AbstractHookProvider {
 		}
 
 		if ( ! empty( $data['connected_fields'] ) && is_array( $data['connected_fields'] ) ) {
-			\WP_CLI::log( sprintf( 'connected_fields: %s', implode( ', ', array_map( 'strval', $data['connected_fields'] ) ) ) );
+			\WP_CLI::log(
+				sprintf(
+					/* translators: %s: comma separated list of connected field ids. */
+					__( 'connected_fields: %s', '__plugin_txtd' ),
+					implode( ', ', array_map( 'strval', $data['connected_fields'] ) )
+				)
+			);
 		}
 
 		if ( isset( $payload['persisted'] ) && is_array( $payload['persisted'] ) && ! empty( $payload['persisted'] ) ) {
@@ -1373,7 +1426,13 @@ class CliCommands extends AbstractHookProvider {
 		}
 
 		if ( ! empty( $payload['unchanged'] ) ) {
-			\WP_CLI::log( sprintf( 'unchanged: %s', implode( ', ', array_map( 'strval', $payload['unchanged'] ) ) ) );
+			\WP_CLI::log(
+				sprintf(
+					/* translators: %s: comma separated list of setting ids. */
+					__( 'unchanged: %s', '__plugin_txtd' ),
+					implode( ', ', array_map( 'strval', $payload['unchanged'] ) )
+				)
+			);
 		}
 
 		if ( ! empty( $payload['stripped'] ) ) {

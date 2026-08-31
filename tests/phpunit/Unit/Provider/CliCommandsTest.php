@@ -79,6 +79,8 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			Functions\when( 'is_wp_error' )->alias( static fn( $thing ): bool => $thing instanceof \WP_Error );
 			Functions\when( 'get_current_user_id' )->justReturn( 1 );
 			Functions\when( 'current_user_can' )->justReturn( true );
+			Functions\when( 'get_stylesheet' )->justReturn( 'anima-lt' );
+			Functions\when( 'wp_get_theme' )->justReturn( new FakeTheme() );
 		}
 
 		/*
@@ -131,11 +133,66 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 		public function test_user_without_the_capability_exits_three(): void {
 			Functions\when( 'current_user_can' )->justReturn( false );
 
-			[ $exit, $envelope ] = $this->invoke( fn( CliCommands $c ) => $c->flush_cache( [], [ 'format' => 'json' ] ) );
+			[ $exit, $envelope ] = $this->invoke( fn( CliCommands $c ) => $c->set( [ 'sm_font_sizing=smaller' ], [ 'format' => 'json' ] ) );
 
 			$this->assertSame( 3, $exit );
 			$this->assertSame( 'permission_denied', $envelope['code'] );
 			$this->assertStringContainsString( 'edit_theme_options', $envelope['summary'] );
+		}
+
+		public function test_flush_cache_is_exempt_from_the_user_rule(): void {
+			// Contract v0.3.3 §3.0: flush-cache keeps its historic no-user behavior; it is
+			// a shipped command and cache invalidation discloses nothing.
+			Functions\when( 'get_current_user_id' )->justReturn( 0 );
+
+			$options = $this->createMock( Options::class );
+			$options->expects( $this->once() )->method( 'invalidate_all_caches' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->flush_cache( [], [ 'format' => 'json' ] ),
+				null,
+				null,
+				null,
+				$options
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertSame( 'ok', $envelope['code'] );
+		}
+
+		public function test_flush_cache_still_denies_a_resolved_user_lacking_the_capability(): void {
+			Functions\when( 'current_user_can' )->justReturn( false );
+
+			$options = $this->createMock( Options::class );
+			$options->expects( $this->never() )->method( 'invalidate_all_caches' );
+
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->flush_cache( [], [ 'format' => 'json' ] ),
+				null,
+				null,
+				null,
+				$options
+			);
+
+			$this->assertSame( 3, $exit );
+			$this->assertSame( 'permission_denied', $envelope['code'] );
+		}
+
+		public function test_the_deprecated_alias_is_exempt_from_the_user_rule_too(): void {
+			Functions\when( 'get_current_user_id' )->justReturn( 0 );
+
+			$options = $this->createMock( Options::class );
+			$options->expects( $this->once() )->method( 'invalidate_all_caches' );
+
+			[ $exit ] = $this->invoke(
+				fn( CliCommands $c ) => $c->flush_cache_deprecated( [], [ 'format' => 'json' ] ),
+				null,
+				null,
+				null,
+				$options
+			);
+
+			$this->assertSame( 0, $exit );
 		}
 
 		/*
@@ -196,16 +253,75 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 
 		/*
 		 * ------------------------------------------------------------------
-		 * §3.4 — ordering conflict + letter-spacing units.
+		 * §1.1 v0.3.3 — export scope.
+		 * ------------------------------------------------------------------
+		 */
+
+		public function test_export_defaults_to_the_style_manager_surface(): void {
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->export( [], [ 'format' => 'json' ] ),
+				$this->headless_with_a_mixed_surface()
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertSame( 'style_manager', $envelope['data']['scope'] );
+			$this->assertSame(
+				[ 'sm_font_sizing', 'anima_options[body_font]' ],
+				array_keys( $envelope['data']['settings'] ),
+				'Core Customizer settings must not ride along in a design-system export.'
+			);
+		}
+
+		public function test_export_all_returns_the_full_customizer_map(): void {
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->export( [], [ 'format' => 'json', 'all' => true ] ),
+				$this->headless_with_a_mixed_surface()
+			);
+
+			$this->assertSame( 0, $exit );
+			$this->assertSame( 'all', $envelope['data']['scope'] );
+			$this->assertArrayHasKey( 'blogname', $envelope['data']['settings'] );
+		}
+
+		public function test_export_payload_written_to_file_carries_no_unpinned_keys(): void {
+			$file = tempnam( sys_get_temp_dir(), 'w1export' );
+
+			$this->invoke(
+				fn( CliCommands $c ) => $c->export( [], [ 'format' => 'json', 'file' => $file ] ),
+				$this->headless_with_a_mixed_surface()
+			);
+
+			$written = json_decode( (string) file_get_contents( $file ), true );
+			@unlink( $file );
+
+			$this->assertSame( [ 'meta', 'settings' ], array_keys( $written ) );
+		}
+
+		/*
+		 * ------------------------------------------------------------------
+		 * §3.4 — ordering conflict.
 		 * ------------------------------------------------------------------
 		 */
 
 		public function test_master_slot_and_connected_field_in_one_write_is_an_ordering_conflict(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+			$writer
+				->method( 'find_ordering_conflict' )
+				->willReturn(
+					[
+						'master_slots'       => [ 'sm_font_primary' ],
+						'per_element_fields' => [ 'anima_options[body_font]' ],
+					]
+				);
+
 			[ $exit, $envelope ] = $this->invoke(
 				fn( CliCommands $c ) => $c->set(
 					[ 'sm_font_primary={"font_family":"Lato"}', 'anima_options[body_font]={"font_family":"Lato"}' ],
 					[ 'format' => 'json', 'yes' => true ]
-				)
+				),
+				null,
+				$writer
 			);
 
 			$this->assertSame( 1, $exit );
@@ -233,33 +349,40 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( 'ok', $envelope['code'] );
 		}
 
-		public function test_letter_spacing_without_em_units_is_rejected(): void {
+		public function test_a_nonzero_unitless_letter_spacing_is_a_strip_not_a_hard_failure(): void {
+			// The rule moved into SettingsWriter (v0.3.3): the CLI no longer pre-rejects,
+			// it reports the writer's invalid_value strip as exit 2.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->method( 'save' )->willReturn(
+				[
+					'saved'            => [],
+					'skipped'          => [],
+					'stripped'         => [
+						[
+							'id'        => 'anima_options[body_font]',
+							'reason'    => SettingsWriter::REASON_INVALID_VALUE,
+							'requested' => [ 'font_family' => 'Lato' ],
+							'current'   => null,
+						],
+					],
+					'connected_fields' => [],
+					'persisted'        => [],
+					'unchanged'        => [],
+				]
+			);
+
 			[ $exit, $envelope ] = $this->invoke(
 				fn( CliCommands $c ) => $c->set(
 					[ 'anima_options[body_font]={"font_family":"Lato","letter_spacing":{"value":0.02,"unit":false}}' ],
-					[ 'format' => 'json' ]
-				)
-			);
-
-			$this->assertSame( 1, $exit );
-			$this->assertSame( 'invalid_params', $envelope['code'] );
-			$this->assertSame( [ 'anima_options[body_font]' ], $envelope['data']['invalid_letter_spacing'] );
-		}
-
-		public function test_letter_spacing_with_em_units_passes_validation(): void {
-			$writer = $this->createMock( SettingsWriter::class );
-			$writer->method( 'save' )->willReturn( $this->write_result( [ 'anima_options[body_font]' => [ 'font_family' => 'Lato' ] ] ) );
-
-			[ $exit ] = $this->invoke(
-				fn( CliCommands $c ) => $c->set(
-					[ 'anima_options[body_font]={"font_family":"Lato","letter_spacing":{"value":0.02,"unit":"em"}}' ],
 					[ 'format' => 'json' ]
 				),
 				null,
 				$writer
 			);
 
-			$this->assertSame( 0, $exit );
+			$this->assertSame( 2, $exit );
+			$this->assertTrue( $envelope['ok'] );
+			$this->assertSame( 'invalid_value', $envelope['stripped'][0]['reason'] );
 		}
 
 		/*
@@ -355,19 +478,96 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 		 * ------------------------------------------------------------------
 		 */
 
-		public function test_a_master_slot_write_without_yes_is_refused_in_a_non_interactive_context(): void {
+		public function test_json_format_strictly_requires_yes_even_on_an_interactive_terminal(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			// Interactive terminal — but the binding is the FORMAT, not the TTY: a prompt
+			// here would corrupt the envelope-only STDOUT guarantee.
+			[ $exit, $envelope ] = $this->invoke(
+				fn( CliCommands $c ) => $c->set( [ 'sm_font_body={"font_family":"Lato"}' ], [ 'format' => 'json' ] ),
+				null,
+				$writer,
+				null,
+				null,
+				true,
+				true
+			);
+
+			$this->assertSame( 1, $exit );
+			$this->assertFalse( $envelope['ok'] );
+			$this->assertSame( 'confirmation_required', $envelope['code'] );
+			$this->assertStringContainsString( '--yes', $envelope['summary'] );
+			$this->assertCount( 1, \WP_CLI::$lines, 'STDOUT must carry the envelope and nothing else.' );
+		}
+
+		public function test_yaml_format_strictly_requires_yes_too(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit ] = $this->invoke(
+				fn( CliCommands $c ) => $c->set( [ 'sm_font_body={"font_family":"Lato"}' ], [ 'format' => 'yaml' ] ),
+				null,
+				$writer,
+				null,
+				null,
+				true,
+				true
+			);
+
+			$this->assertSame( 1, $exit );
+		}
+
+		public function test_table_format_may_prompt_and_proceeds_when_confirmed(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer
+				->expects( $this->once() )
+				->method( 'save' )
+				->willReturn( $this->write_result( [ 'sm_font_body' => [ 'font_family' => 'Lato' ] ] ) );
+
+			[ $exit ] = $this->invoke(
+				fn( CliCommands $c ) => $c->set( [ 'sm_font_body={"font_family":"Lato"}' ], [] ),
+				null,
+				$writer,
+				null,
+				null,
+				true,
+				true
+			);
+
+			$this->assertSame( 0, $exit );
+		}
+
+		public function test_a_declined_table_confirm_never_exits_zero_silently(): void {
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			[ $exit ] = $this->invoke(
+				fn( CliCommands $c ) => $c->set( [ 'sm_font_body={"font_family":"Lato"}' ], [ 'format' => 'json' ] ),
+				null,
+				$writer,
+				null,
+				null,
+				true,
+				false
+			);
+
+			$this->assertSame( 1, $exit, 'A refused destructive operation must never report success.' );
+		}
+
+		public function test_table_format_without_a_terminal_still_requires_yes(): void {
 			$writer = $this->createMock( SettingsWriter::class );
 			$writer->expects( $this->never() )->method( 'save' );
 
 			[ $exit, $envelope ] = $this->invoke(
-				fn( CliCommands $c ) => $c->set( [ 'sm_font_body={"font_family":"Lato"}' ], [ 'format' => 'json' ] ),
+				fn( CliCommands $c ) => $c->set( [ 'sm_font_body={"font_family":"Lato"}' ], [] ),
 				null,
 				$writer
 			);
 
 			$this->assertSame( 1, $exit );
-			$this->assertSame( 'invalid_params', $envelope['code'] );
-			$this->assertStringContainsString( '--yes', $envelope['summary'] );
+			$this->assertSame( [], \WP_CLI::$lines );
+			$this->assertNotEmpty( \WP_CLI::$warnings );
 		}
 
 		public function test_dry_run_never_writes_and_never_needs_yes(): void {
@@ -568,9 +768,13 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			?HeadlessCustomizer $headless = null,
 			?SettingsWriter $writer = null,
 			?FontPalettes $font_palettes = null,
-			?Options $options = null
+			?Options $options = null,
+			bool $interactive = false,
+			bool $prompt_answer = false
 		): array {
 			$commands = $this->create_commands( $headless, $writer, $font_palettes, $options );
+			$commands->interactive   = $interactive;
+			$commands->prompt_answer = $prompt_answer;
 
 			$exit = 0;
 			try {
@@ -592,13 +796,29 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			?SettingsWriter $writer = null,
 			?FontPalettes $font_palettes = null,
 			?Options $options = null
-		): CliCommands {
+		): TestCliCommands {
 			return new TestCliCommands(
 				$options ?: $this->createMock( Options::class ),
 				$headless ?: $this->createMock( HeadlessCustomizer::class ),
 				$writer ?: $this->createMock( SettingsWriter::class ),
 				$font_palettes ?: $this->createMock( FontPalettes::class )
 			);
+		}
+
+		private function headless_with_a_mixed_surface(): HeadlessCustomizer {
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->method( 'get_settings_values' )->willReturn(
+				[
+					'sm_font_sizing'           => 'normal',
+					'anima_options[body_font]' => [ 'font_family' => 'Lato' ],
+					'blogname'                 => 'A site',
+					'blogdescription'          => 'A tagline',
+				]
+			);
+			$headless->method( 'get_sm_section_ids' )->willReturn( [ 'anima_options[fonts_section]' ] );
+			$headless->method( 'get_section_setting_ids' )->willReturn( [ 'anima_options[body_font]' ] );
+
+			return $headless;
 		}
 
 		private function write_result( array $persisted ): array {
@@ -614,12 +834,31 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 	}
 
 	/**
+	 * Stands in for WP_Theme in the export stamp — the Unit suite never loads WordPress.
+	 */
+	class FakeTheme {
+		public function get( string $header ) {
+			return 'Version' === $header ? '2.0.49' : '';
+		}
+	}
+
+	/**
 	 * Pins the non-interactive branch of §3.6 so the suite never depends on whether
 	 * the runner happens to have a TTY on STDIN.
 	 */
 	class TestCliCommands extends CliCommands {
+		public bool $interactive = false;
+		public bool $prompt_answer = false;
+		public array $prompts = [];
+
 		protected function is_interactive(): bool {
-			return false;
+			return $this->interactive;
+		}
+
+		protected function prompt_for_confirmation( string $question ): bool {
+			$this->prompts[] = $question;
+
+			return $this->prompt_answer;
 		}
 	}
 }

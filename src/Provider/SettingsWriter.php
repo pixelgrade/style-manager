@@ -22,6 +22,19 @@ use Pixelgrade\StyleManager\Customize\FontPalettes;
 /**
  * Style Manager settings writer.
  *
+ * §3.4 write policy lives here — `master_font_slot_ids()`, `find_ordering_conflict()` and
+ * `apply_letter_spacing_policy()` — so the CLI, the REST endpoint and W7's abilities read the
+ * font-order law from one place instead of each re-deriving it.
+ *
+ * Two of the three are enforced inside `save()`; the ordering-conflict check is **offered, not
+ * enforced**, and that asymmetry is deliberate. The letter-spacing policy can only ever fix a
+ * value or drop a single id, so every caller can inherit it safely. An ordering conflict, by
+ * contrast, rejects the *whole* write — and the Site Editor legitimately produces that payload:
+ * `pushEdits()` (src/_js/site-editor/index.js) PUTs the entire dirty set, so a user who picks a
+ * font palette and also nudges one per-element font in the same session would have their save
+ * refused. §3.4 scopes the law to "a single `set` invocation", so `Provider\CliCommands` (and any
+ * future ability) calls `find_ordering_conflict()` explicitly; `save()` does not.
+ *
  * @since 2.6.0
  */
 class SettingsWriter {
@@ -108,6 +121,12 @@ class SettingsWriter {
 
 		$stripped = $this->map_gate_strips( $requested, $gated );
 
+		// §3.4: normalize zero-valued unitless letter-spacings, strip the nonzero
+		// ones that carry no usable unit. Runs after the gate so a premium id is
+		// reported with the more actionable `plus_locked` reason.
+		[ $gated, $letter_spacing_strips ] = $this->apply_letter_spacing_policy( $gated );
+		$stripped                          = array_merge( $stripped, $letter_spacing_strips );
+
 		$before = [];
 		if ( $capture_diff ) {
 			$before = $this->read_values( array_keys( $requested ) );
@@ -175,6 +194,11 @@ class SettingsWriter {
 	 *
 	 * @since 2.6.0
 	 *
+	 * Note on `saved`: a dry run reports **requested ids only**. A real `save()` can also
+	 * list gate-injected derivatives the caller never asked for (e.g. the server-rebuilt
+	 * `sm_font_sizing_baseline_v1` on a locked site), because those genuinely reach the
+	 * changeset. That asymmetry is intentional, not drift.
+	 *
 	 * @param array $values setting_id => raw JS value.
 	 *
 	 * @return array Same shape as save(), plus `dry_run => true`.
@@ -183,6 +207,9 @@ class SettingsWriter {
 		$gated    = $this->strip_locked_premium_settings( $values );
 		$gated    = $this->strip_locked_premium_font_palette( $gated );
 		$stripped = $this->map_gate_strips( $values, $gated );
+
+		[ $gated, $letter_spacing_strips ] = $this->apply_letter_spacing_policy( $gated );
+		$stripped                          = array_merge( $stripped, $letter_spacing_strips );
 
 		// get_settings_values() already honours check_capabilities(), so an id that is
 		// missing here is either unregistered or capability-denied — `unknown_setting`.
@@ -252,8 +279,25 @@ class SettingsWriter {
 		$persisted = [];
 		$unchanged = [];
 
+		/*
+		 * `persisted`, `unchanged` and `stripped` are DISJOINT. A stripped id was never
+		 * written, so "before == after" is trivially true for it — reporting it as
+		 * `unchanged` would tell an agent "already applied" about a value the gate
+		 * refused. An id can also appear in both `saved` and `stripped`
+		 * (HeadlessCustomizer::save() lists an id in `saved` even when its own validation
+		 * later reports it invalid), so the stripped set wins over both.
+		 */
+		$stripped_ids = array_flip( array_column( $result['stripped'], 'id' ) );
+		foreach ( (array) ( $result['skipped'] ?? [] ) as $skipped_id ) {
+			$stripped_ids[ (string) $skipped_id ] = true;
+		}
+
 		foreach ( array_keys( $requested ) as $setting_id ) {
 			$setting_id = (string) $setting_id;
+
+			if ( isset( $stripped_ids[ $setting_id ] ) ) {
+				continue;
+			}
 
 			if ( in_array( $setting_id, $result['saved'], true ) ) {
 				$persisted[ $setting_id ] = $after[ $setting_id ] ?? null;
@@ -384,6 +428,14 @@ class SettingsWriter {
 
 		foreach ( (array) ( $result['skipped'] ?? [] ) as $setting_id ) {
 			$setting_id = (string) $setting_id;
+
+			// Only report ids the caller actually asked for. The gate can inject a
+			// server-rebuilt derivative; a stripped entry for an id nobody requested
+			// would be noise the caller cannot act on.
+			if ( ! array_key_exists( $setting_id, $requested ) ) {
+				continue;
+			}
+
 			$stripped[] = [
 				'id'        => $setting_id,
 				'reason'    => self::REASON_UNKNOWN_SETTING,
@@ -405,6 +457,207 @@ class SettingsWriter {
 		}
 
 		return $stripped;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| §3.4 write policy — shared so the CLI, the REST endpoint and W7's
+	| abilities all read the font-order law from one place instead of
+	| re-deriving it.
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * The master font slots. Writing any of them regenerates the **entire** per-element
+	 * font defaults table, clobbering per-element overrides — which is what makes such a
+	 * write destructive (§3.4/§3.6) and what the ordering law guards.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @return string[]
+	 */
+	public static function master_font_slot_ids(): array {
+		return [
+			'sm_font_primary',
+			'sm_font_secondary',
+			'sm_font_body',
+			'sm_font_accent',
+			FontPalettes::SM_FONT_PALETTE_OPTION_KEY,
+		];
+	}
+
+	/**
+	 * Whether a payload carries a master font slot — i.e. whether it inherits destructive
+	 * semantics and therefore §3.6's `--yes`.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array $values setting_id => value map.
+	 *
+	 * @return string[] The master slot ids present, empty when none.
+	 */
+	public static function master_font_slots_in( array $values ): array {
+		return array_values( array_intersect( array_map( 'strval', array_keys( $values ) ), self::master_font_slot_ids() ) );
+	}
+
+	/**
+	 * The theme's connected per-element font field ids.
+	 *
+	 * Derived from the live Customize registry (the theme's Style Manager `fonts_section`),
+	 * never from a name pattern: a `_font]`-suffix regex misses real members of the set —
+	 * `anima_options[headline_lines_spacings]` on Anima LT, for one — and a missed member
+	 * is exactly the clobber §3.4 exists to prevent. The suffix match is kept only as a
+	 * belt-and-braces union for contexts where the registry cannot be booted.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array $values setting_id => value map to test.
+	 *
+	 * @return string[] The connected per-element field ids present in $values.
+	 */
+	public function connected_font_field_ids_in( array $values ): array {
+		$ids = array_map( 'strval', array_keys( $values ) );
+
+		try {
+			$derived = $this->headless_customizer->get_theme_font_target_setting_ids();
+		} catch ( \Throwable $e ) {
+			$derived = [];
+		}
+
+		$found = array_values( array_intersect( $ids, $derived ) );
+
+		foreach ( $ids as $id ) {
+			if ( ! in_array( $id, $found, true ) && 1 === preg_match( '/\[[A-Za-z0-9_-]*_font\]$/', $id ) ) {
+				$found[] = $id;
+			}
+		}
+
+		return $found;
+	}
+
+	/**
+	 * Detect a §3.4 ordering conflict: one write carrying **both** a master font slot and
+	 * a connected per-element font field. The slot regenerates the whole defaults table,
+	 * so the per-element value written in the same breath is clobbered by the fan-out.
+	 *
+	 * Returns the offending sets rather than raising, so each caller can surface it in its
+	 * own idiom — the CLI as `code:"ordering_conflict"` exit 1, an ability as a validation
+	 * error. **`save()` deliberately does not call this**: see the class docblock note.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array $values setting_id => value map.
+	 *
+	 * @return array|null { master_slots: string[], per_element_fields: string[] } or null when clean.
+	 */
+	public function find_ordering_conflict( array $values ): ?array {
+		$slots = self::master_font_slots_in( $values );
+		if ( empty( $slots ) ) {
+			return null;
+		}
+
+		$per_element = $this->connected_font_field_ids_in( $values );
+		if ( empty( $per_element ) ) {
+			return null;
+		}
+
+		return [
+			'master_slots'       => $slots,
+			'per_element_fields' => $per_element,
+		];
+	}
+
+	/**
+	 * Apply §3.4's letter-spacing rule to a value map.
+	 *
+	 * A unitless letter-spacing emits a CSS var that computes `letter-spacing: normal`
+	 * silently (laws #7). But a blanket `unit:false` rejection makes the plugin's own
+	 * shipped state un-round-trippable — Anima LT persists
+	 * `anima_options[body_font].letter_spacing = {value: 0, unit: false}`. So:
+	 *
+	 * - `value === 0` with no usable unit → **normalized** to `{value: 0, unit: 'em'}`
+	 *   (at zero the unit is semantically irrelevant, and normalizing removes the hazard).
+	 * - a **nonzero** value with no usable unit → the setting is **stripped**,
+	 *   `reason:"invalid_value"` (exit 2 at the CLI), never silently written.
+	 *
+	 * `export` does not run this — it reports what is on disk (§3.4).
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param array $values setting_id => value map.
+	 *
+	 * @return array{0: array, 1: array[]} The normalized map, and the stripped entries.
+	 */
+	public function apply_letter_spacing_policy( array $values ): array {
+		$normalized = [];
+		$stripped   = [];
+
+		foreach ( $values as $setting_id => $value ) {
+			$setting_id = (string) $setting_id;
+			$invalid    = false;
+
+			$candidate = $this->normalize_letter_spacings( $value, $invalid );
+
+			if ( $invalid ) {
+				$stripped[] = [
+					'id'        => $setting_id,
+					'reason'    => self::REASON_INVALID_VALUE,
+					'requested' => $value,
+				];
+				continue;
+			}
+
+			$normalized[ $setting_id ] = $candidate;
+		}
+
+		return [ $normalized, $stripped ];
+	}
+
+	/**
+	 * Recursively normalize every `letter_spacing` sub-field of a setting value.
+	 *
+	 * @param mixed $value   Setting value.
+	 * @param bool  $invalid Set to true when a nonzero letter-spacing carries no usable unit.
+	 *
+	 * @return mixed The normalized value.
+	 */
+	protected function normalize_letter_spacings( $value, bool &$invalid ) {
+		$was_object = is_object( $value );
+		if ( $was_object ) {
+			$value = (array) $value;
+		}
+
+		if ( ! is_array( $value ) ) {
+			return $was_object ? (object) $value : $value;
+		}
+
+		foreach ( $value as $key => $item ) {
+			if ( 'letter_spacing' !== $key ) {
+				$value[ $key ] = $this->normalize_letter_spacings( $item, $invalid );
+				continue;
+			}
+
+			$letter_spacing = is_object( $item ) ? (array) $item : $item;
+			if ( ! is_array( $letter_spacing ) ) {
+				continue;
+			}
+
+			if ( 'em' === ( $letter_spacing['unit'] ?? null ) ) {
+				continue;
+			}
+
+			// A zero letter-spacing means the same thing in every unit, so adopt the
+			// canonical one rather than refusing the plugin's own shipped state.
+			if ( 0.0 === (float) ( $letter_spacing['value'] ?? 0 ) ) {
+				$letter_spacing['unit'] = 'em';
+				$value[ $key ]          = is_object( $item ) ? (object) $letter_spacing : $letter_spacing;
+				continue;
+			}
+
+			$invalid = true;
+		}
+
+		return $was_object ? (object) $value : $value;
 	}
 
 	/**

@@ -440,6 +440,283 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( [], $result['stripped'] );
 		}
 
+		/*
+		 * ------------------------------------------------------------------
+		 * H1 — persisted / unchanged / stripped are DISJOINT.
+		 * ------------------------------------------------------------------
+		 */
+
+		public function test_a_mixed_write_keeps_persisted_unchanged_and_stripped_disjoint(): void {
+			$this->mock_plus_entitlement_bridge( true, false );
+
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless
+				->method( 'get_settings_values' )
+				->willReturnOnConsecutiveCalls(
+					[
+						'sm_page_transitions_enable' => false,
+						'sm_content_inset'       => 10,
+						'sm_color_grades_number' => 12,
+					],
+					[
+						'sm_page_transitions_enable' => true,
+						'sm_content_inset'       => 10,
+						'sm_color_grades_number' => 12,
+					]
+				);
+			$headless
+				->method( 'save' )
+				->willReturn(
+					[
+						'saved'              => [ 'sm_page_transitions_enable', 'sm_content_inset' ],
+						'skipped'            => [],
+						'setting_validities' => [],
+					]
+				);
+
+			$requested = [
+				'sm_page_transitions_enable' => true,
+				'sm_content_inset'       => 10,
+				// Premium on a locked site: the gate drops it, so it is stripped — and its
+				// before == after is trivially true, which must NOT make it "unchanged".
+				'sm_color_grades_number' => 8,
+			];
+
+			$result = $this->create_writer( $headless )->save( $requested, true );
+
+			$stripped_ids  = array_column( $result['stripped'], 'id' );
+			$persisted_ids = array_keys( $result['persisted'] );
+
+			$this->assertSame( [ 'sm_color_grades_number' ], $stripped_ids );
+			$this->assertSame( [ 'sm_page_transitions_enable', 'sm_content_inset' ], $persisted_ids );
+			$this->assertSame( [ 'sm_content_inset' ], $result['unchanged'] );
+
+			$this->assertSame( [], array_intersect( $stripped_ids, $result['unchanged'] ), 'stripped ∩ unchanged must be empty' );
+			$this->assertSame( [], array_intersect( $stripped_ids, $persisted_ids ), 'stripped ∩ persisted must be empty' );
+		}
+
+		public function test_an_all_stripped_write_reports_nothing_as_unchanged(): void {
+			$this->mock_plus_entitlement_bridge( true, false );
+
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->expects( $this->never() )->method( 'save' );
+			$headless->method( 'get_settings_values' )->willReturn( [ 'sm_color_grades_number' => 12 ] );
+
+			$result = $this->create_writer( $headless )->save( [ 'sm_color_grades_number' => 8 ], true );
+
+			$this->assertSame( [], $result['unchanged'] );
+			$this->assertSame( [], $result['persisted'] );
+			$this->assertCount( 1, $result['stripped'] );
+		}
+
+		public function test_an_invalid_value_is_never_also_reported_as_persisted(): void {
+			$this->mock_plus_entitlement_bridge( true, true );
+
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->method( 'get_settings_values' )->willReturn( [ 'sm_font_sizing' => 'default', 'sm_bogus' => 'old' ] );
+			$headless
+				->method( 'save' )
+				->willReturn(
+					[
+						// The changeset lists an id in `saved` even when its own validation
+						// later reports the value invalid.
+						'saved'              => [ 'sm_font_sizing', 'sm_bogus' ],
+						'skipped'            => [],
+						'setting_validities' => [ 'sm_font_sizing' => true, 'sm_bogus' => false ],
+					]
+				);
+
+			$result = $this->create_writer( $headless )->save(
+				[ 'sm_font_sizing' => 'smaller', 'sm_bogus' => 'nope' ],
+				true
+			);
+
+			$this->assertArrayNotHasKey( 'sm_bogus', $result['persisted'] );
+			$this->assertNotContains( 'sm_bogus', $result['unchanged'] );
+			$this->assertSame( 'sm_bogus', $result['stripped'][0]['id'] );
+			$this->assertSame( SettingsWriter::REASON_INVALID_VALUE, $result['stripped'][0]['reason'] );
+		}
+
+		public function test_preview_and_a_real_run_classify_a_mixed_payload_identically(): void {
+			$this->mock_plus_entitlement_bridge( true, false );
+
+			$stored = [
+				'sm_page_transitions_enable' => false,
+				'sm_content_inset'       => 10,
+				'sm_color_grades_number' => 12,
+			];
+
+			$requested = [
+				'sm_page_transitions_enable' => true,
+				'sm_content_inset'       => 10,
+				'sm_color_grades_number' => 8,
+			];
+
+			$preview_headless = $this->createMock( HeadlessCustomizer::class );
+			$preview_headless->method( 'get_settings_values' )->willReturn( $stored );
+			$preview = $this->create_writer( $preview_headless )->preview( $requested );
+
+			$run_headless = $this->createMock( HeadlessCustomizer::class );
+			$run_headless
+				->method( 'get_settings_values' )
+				->willReturnOnConsecutiveCalls( $stored, array_merge( $stored, [ 'sm_page_transitions_enable' => true ] ) );
+			$run_headless
+				->method( 'save' )
+				->willReturn(
+					[
+						'saved'              => [ 'sm_page_transitions_enable', 'sm_content_inset' ],
+						'skipped'            => [],
+						'setting_validities' => [],
+					]
+				);
+			$run = $this->create_writer( $run_headless )->save( $requested, true );
+
+			$this->assertSame( array_keys( $preview['persisted'] ), array_keys( $run['persisted'] ) );
+			$this->assertSame( $preview['unchanged'], $run['unchanged'] );
+			$this->assertSame(
+				array_column( $preview['stripped'], 'reason' ),
+				array_column( $run['stripped'], 'reason' )
+			);
+		}
+
+		/*
+		 * ------------------------------------------------------------------
+		 * §3.4 v0.3.3 — letter-spacing normalization + ordering-conflict policy.
+		 * ------------------------------------------------------------------
+		 */
+
+		public function test_a_zero_unitless_letter_spacing_is_normalized_not_rejected(): void {
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy(
+				[
+					'anima_options[body_font]' => [
+						'font_family'    => 'PT Serif',
+						'letter_spacing' => [ 'value' => 0, 'unit' => false ],
+					],
+				]
+			);
+
+			$this->assertSame( [], $stripped );
+			$this->assertSame(
+				[ 'value' => 0, 'unit' => 'em' ],
+				$normalized['anima_options[body_font]']['letter_spacing']
+			);
+		}
+
+		public function test_a_nonzero_unitless_letter_spacing_is_stripped_as_invalid_value(): void {
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy(
+				[
+					'anima_options[body_font]' => [
+						'letter_spacing' => [ 'value' => 0.02, 'unit' => false ],
+					],
+					'sm_font_sizing'           => 'smaller',
+				]
+			);
+
+			$this->assertSame( [ 'sm_font_sizing' ], array_keys( $normalized ) );
+			$this->assertCount( 1, $stripped );
+			$this->assertSame( 'anima_options[body_font]', $stripped[0]['id'] );
+			$this->assertSame( SettingsWriter::REASON_INVALID_VALUE, $stripped[0]['reason'] );
+		}
+
+		public function test_a_valid_em_letter_spacing_passes_through_untouched(): void {
+			$values = [
+				'anima_options[body_font]' => [
+					'letter_spacing' => [ 'value' => 0.02, 'unit' => 'em' ],
+				],
+			];
+
+			[ $normalized, $stripped ] = $this->create_writer()->apply_letter_spacing_policy( $values );
+
+			$this->assertSame( $values, $normalized );
+			$this->assertSame( [], $stripped );
+		}
+
+		public function test_the_shipped_anima_default_round_trips_through_save(): void {
+			$this->mock_plus_entitlement_bridge( true, true );
+
+			$shipped = [
+				'font_family'    => 'PT Serif',
+				'font_size'      => [ 'value' => 16, 'unit' => false ],
+				'letter_spacing' => [ 'value' => 0, 'unit' => false ],
+			];
+
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless
+				->expects( $this->once() )
+				->method( 'save' )
+				->with(
+					$this->callback(
+						static function ( array $values ): bool {
+							return 'em' === $values['anima_options[body_font]']['letter_spacing']['unit'];
+						}
+					)
+				)
+				->willReturn( [ 'saved' => [ 'anima_options[body_font]' ], 'skipped' => [], 'setting_validities' => [] ] );
+
+			$result = $this->create_writer( $headless )->save( [ 'anima_options[body_font]' => $shipped ] );
+
+			$this->assertSame( [], $result['stripped'] );
+		}
+
+		public function test_ordering_conflict_uses_the_derived_field_set_not_a_name_pattern(): void {
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless
+				->method( 'get_theme_font_target_setting_ids' )
+				->willReturn( [ 'anima_options[body_font]', 'anima_options[headline_lines_spacings]' ] );
+
+			// `headline_lines_spacings` is a real connected font field that a `_font]`
+			// suffix regex would miss — the exact clobber §3.4 exists to prevent.
+			$conflict = $this->create_writer( $headless )->find_ordering_conflict(
+				[
+					'sm_font_palette'                        => 'julia',
+					'anima_options[headline_lines_spacings]' => 1.2,
+				]
+			);
+
+			$this->assertNotNull( $conflict );
+			$this->assertSame( [ 'sm_font_palette' ], $conflict['master_slots'] );
+			$this->assertSame( [ 'anima_options[headline_lines_spacings]' ], $conflict['per_element_fields'] );
+		}
+
+		public function test_no_ordering_conflict_without_a_master_slot(): void {
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->method( 'get_theme_font_target_setting_ids' )->willReturn( [ 'anima_options[body_font]' ] );
+
+			$this->assertNull(
+				$this->create_writer( $headless )->find_ordering_conflict( [ 'anima_options[body_font]' => [] ] )
+			);
+		}
+
+		public function test_save_does_not_enforce_the_ordering_law_so_the_site_editor_keeps_working(): void {
+			// The Site Editor PUTs its entire dirty set; auto-rejecting here would refuse a
+			// legitimate editor save. The law is offered to callers, not enforced in save().
+			$this->mock_plus_entitlement_bridge( true, true );
+
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->method( 'get_theme_font_target_setting_ids' )->willReturn( [ 'anima_options[body_font]' ] );
+			$headless
+				->expects( $this->once() )
+				->method( 'save' )
+				->willReturn( [ 'saved' => [ 'sm_font_palette', 'anima_options[body_font]' ], 'skipped' => [], 'setting_validities' => [] ] );
+
+			$result = $this->create_writer( $headless )->save(
+				[
+					'sm_font_palette'          => 'julia',
+					'anima_options[body_font]' => [ 'font_family' => 'Lato' ],
+				]
+			);
+
+			$this->assertNotInstanceOf( \WP_Error::class, $result );
+		}
+
+		public function test_master_font_slots_in_is_shared_policy(): void {
+			$this->assertSame(
+				[ 'sm_font_body' ],
+				SettingsWriter::master_font_slots_in( [ 'sm_font_body' => [], 'sm_font_sizing' => 'x' ] )
+			);
+			$this->assertSame( [], SettingsWriter::master_font_slots_in( [ 'sm_font_sizing' => 'x' ] ) );
+		}
+
 		private function create_writer( ?HeadlessCustomizer $headless = null, ?FontPalettes $font_palettes = null ): SettingsWriter {
 			return new SettingsWriter(
 				$headless ?: $this->createMock( HeadlessCustomizer::class ),
