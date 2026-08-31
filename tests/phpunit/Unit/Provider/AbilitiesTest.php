@@ -704,6 +704,53 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			);
 		}
 
+		public function test_an_unknown_generator_reaches_the_core_and_names_the_accepted_set(): void {
+			// M2: `generator` carries no schema `enum` any more (a schema enum rejects with
+			// a generic `ability_invalid_input` before execute_callback ever runs). The core
+			// is now the only gate, so a bad value must reach it and come back as
+			// `invalid_params` naming the accepted set — not a schema rejection.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			$result = $this->execute(
+				$this->core( null, $writer, null, $this->available_palette_generator() ),
+				'pixelgrade/apply-color-palette',
+				[
+					'source'    => [ [ 'uid' => 'g', 'sources' => [ [ 'uid' => 'c', 'label' => 'B', 'value' => '#722F37' ] ] ] ],
+					'generator' => 'bogus',
+					'confirm'   => true,
+				]
+			);
+
+			$this->assertInstanceOf( \WP_Error::class, $result );
+			$this->assertSame( 'invalid_params', $result->get_error_code() );
+			$this->assertStringContainsString( 'node', $result->get_error_message() );
+			$this->assertStringContainsString( 'none', $result->get_error_message() );
+		}
+
+		public function test_an_out_of_range_variation_reaches_the_core_and_names_the_valid_range(): void {
+			// M2: `variation` carries no schema minimum/maximum any more, so an out-of-range
+			// value must reach the core and come back as `invalid_params` naming the range —
+			// not a schema rejection.
+			$writer = $this->createMock( SettingsWriter::class );
+			$writer->expects( $this->never() )->method( 'save' );
+
+			$result = $this->execute(
+				$this->core( null, $writer, null, $this->available_palette_generator() ),
+				'pixelgrade/apply-color-palette',
+				[
+					'source'    => [ [ 'uid' => 'g', 'sources' => [ [ 'uid' => 'c', 'label' => 'B', 'value' => '#722F37' ] ] ] ],
+					'variation' => 13,
+					'confirm'   => true,
+				]
+			);
+
+			$this->assertInstanceOf( \WP_Error::class, $result );
+			$this->assertSame( 'invalid_params', $result->get_error_code() );
+			$this->assertStringContainsString( '1', $result->get_error_message() );
+			$this->assertStringContainsString( '12', $result->get_error_message() );
+		}
+
 		public function test_a_missing_generator_fails_without_writing_a_stale_ramp(): void {
 			$writer = $this->createMock( SettingsWriter::class );
 			$writer->expects( $this->never() )->method( 'save' );
@@ -808,6 +855,34 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 
 			$this->assertTrue( $result['ok'] );
 			$this->assertSame( 'ok', $result['code'] );
+		}
+
+		/*
+		 * ------------------------------------------------------------------
+		 * L1 — `run()` maps everything that is not exit 0/2 to a WP_Error,
+		 * the nova-blocks idiom, rather than singling out exit 1 alone.
+		 * ------------------------------------------------------------------
+		 */
+
+		public function test_a_synthetic_exit_3_core_result_becomes_a_wp_error_not_ok_true(): void {
+			// SM cores never emit exit 3 today; this proves the defensive mapping holds if
+			// one ever did, instead of inverting a denial into `ok:true`.
+			$core = $this->createMock( AgentCommands::class );
+			$core->method( 'flush_cache' )->willReturn(
+				[
+					'exit'     => 3,
+					'code'     => 'permission_denied',
+					'summary'  => 'Synthetic exit-3 result.',
+					'data'     => [],
+					'warnings' => [],
+				]
+			);
+
+			$result = $this->execute( $core, 'pixelgrade/flush-design-cache', [] );
+
+			$this->assertInstanceOf( \WP_Error::class, $result );
+			$this->assertSame( 'permission_denied', $result->get_error_code() );
+			$this->assertSame( 'Synthetic exit-3 result.', $result->get_error_message() );
 		}
 
 		/*

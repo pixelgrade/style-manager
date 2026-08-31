@@ -518,15 +518,12 @@ class Abilities extends AbstractHookProvider {
 						],
 						'variation' => [
 							'type'        => [ 'integer', 'null' ],
-							'minimum'     => 1,
-							'maximum'     => 12,
-							'description' => __( 'Set sm_site_color_variation and generate against it. Omit to keep the stored value — this setting is Plus-gated and sending it on an unentitled site strips the palette output too.', '__plugin_txtd' ),
+							'description' => __( 'Set sm_site_color_variation (a whole number from 1 to 12) and generate against it. Omit to keep the stored value — this setting is Plus-gated and sending it on an unentitled site strips the palette output too.', '__plugin_txtd' ),
 							'default'     => null,
 						],
 						'generator' => [
 							'type'        => 'string',
-							'enum'        => [ 'node', 'none' ],
-							'description' => __( '`node` runs the bundled generator against the source; `none` applies the supplied `output` verbatim.', '__plugin_txtd' ),
+							'description' => __( 'Either `node` (runs the bundled generator against the source) or `none` (applies the supplied `output` verbatim).', '__plugin_txtd' ),
 							'default'     => 'node',
 						],
 						'dry_run'   => [
@@ -613,8 +610,12 @@ class Abilities extends AbstractHookProvider {
 	 *
 	 * `ok:true` (the command's machinery completed — exit 0 or 2) returns the §2 envelope
 	 * whole, so a caller keeps `code`, the closed token it must branch on to notice an
-	 * exit-2 finding. `ok:false` (exit 1) becomes a `WP_Error` carrying the same code, the
-	 * same summary, and the payload under `data`.
+	 * exit-2 finding. Everything else becomes a `WP_Error` carrying the same code, the
+	 * same summary, and the payload under `data` — the nova-blocks idiom (map everything
+	 * NOT 0/2 to `WP_Error`), adopted so this file cannot invert a denial into a success
+	 * by singling out exit 1 alone. SM cores structurally never emit exit 3 today (there
+	 * is no ruling that produces it), so this is defensive: a future or malformed core
+	 * result can no longer fall through the "not exactly 1" gap and ship as `ok:true`.
 	 *
 	 * @param array $core An `AgentCommands` result.
 	 *
@@ -623,8 +624,9 @@ class Abilities extends AbstractHookProvider {
 	protected function run( array $core ) {
 		$code    = (string) $core['code'];
 		$summary = (string) $core['summary'];
+		$exit    = (int) $core['exit'];
 
-		if ( 1 === (int) $core['exit'] ) {
+		if ( 0 !== $exit && 2 !== $exit ) {
 			if ( 'confirmation_required' === $code ) {
 				$summary .= ' ' . __( 'Repeat the call with confirm: true, or with dry_run: true to preview it first.', '__plugin_txtd' );
 			}
