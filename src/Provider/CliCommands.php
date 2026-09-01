@@ -1264,7 +1264,7 @@ class CliCommands extends AbstractHookProvider {
 		$format = $this->format( $assoc_args );
 
 		if ( 'json' === $format ) {
-			\WP_CLI::line( (string) wp_json_encode( $payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+			\WP_CLI::line( (string) wp_json_encode( $payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
 		} elseif ( 'yaml' === $format ) {
 			\WP_CLI::line( $this->to_yaml( $payload ) );
 		} else {

@@ -220,6 +220,25 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertArrayHasKey( 'summary', $envelope );
 		}
 
+		public function test_json_format_emits_a_compact_single_line_envelope(): void {
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless->method( 'get_settings_values' )->willReturn( [ 'sm_font_sizing' => 'smaller' ] );
+
+			$this->invoke(
+				fn( CliCommands $c ) => $c->get( [], [ 'all' => true, 'format' => 'json' ] ),
+				$headless
+			);
+
+			$this->assertCount( 1, \WP_CLI::$lines );
+			$this->assertStringNotContainsString( "\n", \WP_CLI::$lines[0] );
+			$this->assertStringNotContainsString( "\r", \WP_CLI::$lines[0] );
+			$this->assertSame(
+				(string) json_encode( json_decode( \WP_CLI::$lines[0], true ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ),
+				\WP_CLI::$lines[0],
+				'The raw JSON envelope must use the canonical compact encoding.'
+			);
+		}
+
 		public function test_table_is_the_default_format(): void {
 			$headless = $this->createMock( HeadlessCustomizer::class );
 			$headless->method( 'get_settings_values' )->willReturn( [ 'sm_font_sizing' => 'smaller' ] );
