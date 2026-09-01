@@ -11,6 +11,7 @@ declare ( strict_types=1 );
 namespace Pixelgrade\StyleManager\Lab;
 
 use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
+use function Pixelgrade\StyleManager\sanitize_dynamic_style_css;
 use const Pixelgrade\StyleManager\VERSION;
 
 final class ShowcaseRoute extends AbstractHookProvider {
@@ -122,12 +123,15 @@ final class ShowcaseRoute extends AbstractHookProvider {
 
 	private function render_contextual_palette_css( QueryParams $params ): void {
 		$css = $this->contextual_palette->css_for_color( $params->contextual() );
+		$this->render_contextual_palette_style( $css );
+	}
 
+	private function render_contextual_palette_style( string $css ): void {
 		if ( '' === $css ) {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS inside a <style> tag; wp_strip_all_tags prevents tag breakout and HTML-escaping would corrupt valid CSS.
-		printf( '<style id="style-manager-lab-contextual-palette">%s</style>', wp_strip_all_tags( $css ) );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- dynamic CSS inside a <style> tag, sanitized for that context; HTML-escaping would corrupt valid CSS.
+		printf( '<style id="style-manager-lab-contextual-palette">%s</style>', sanitize_dynamic_style_css( $css ) );
 	}
 }

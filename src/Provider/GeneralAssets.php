@@ -113,7 +113,7 @@ class GeneralAssets extends AbstractHookProvider {
 	window.styleManager.siteColorVariation = <?php echo absint( $this->options->get( 'sm_site_color_variation', 1 ) ) ?>;
 	window.styleManager.colorsCustomPropertiesUrl = "<?php echo esc_url( $this->plugin->get_url( 'dist/css/sm-colors-custom-properties.css' ) ); ?>";
 	<?php if ( ( ! empty( $screen ) && $screen->is_block_editor() ) || is_customizer()) { ?>
- 	window.styleManager.frontendOutput = <?php echo wp_json_encode( $this->frontend_output->get_dynamic_style(), JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE ); ?>;
+	window.styleManager.frontendOutput = <?php echo wp_json_encode( $this->frontend_output->get_dynamic_style(), JSON_HEX_TAG ); ?>;
 	 <?php } ?>
 </script>
 
