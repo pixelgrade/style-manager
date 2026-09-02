@@ -451,7 +451,7 @@ function get_customizer_config( $key = false ) {
  * quoted font-family names, and any other well-formed CSS text pass through
  * unchanged.
  *
- * @since 2.5.3
+ * @since 2.6.0
  *
  * @param string $css Raw dynamic CSS.
  *

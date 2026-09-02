@@ -13,7 +13,7 @@
  *
  * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 2.5.3
+ * @since 2.6.0
  */
 
 declare ( strict_types = 1 );
@@ -25,7 +25,7 @@ use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 /**
  * Registers Style Manager's abilities.
  *
- * @since 2.5.3
+ * @since 2.6.0
  */
 class Abilities extends AbstractHookProvider {
 
@@ -58,7 +58,7 @@ class Abilities extends AbstractHookProvider {
 	/**
 	 * Create the abilities provider.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param AgentCommands $agent_commands The shared command cores.
 	 */
@@ -73,7 +73,7 @@ class Abilities extends AbstractHookProvider {
 	 * is WordPress core only since 6.9, and `wp_register_ability()` hard-fails outside the
 	 * `wp_abilities_api_init` action.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 */
 	public function register_hooks() {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
@@ -90,7 +90,7 @@ class Abilities extends AbstractHookProvider {
 	 * Each of the four Pixelgrade plugins does this, so it must work with any subset of
 	 * them active and must never double-register.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 */
 	public function register_category(): void {
 		if ( ! function_exists( 'wp_register_ability_category' ) ) {
@@ -113,7 +113,7 @@ class Abilities extends AbstractHookProvider {
 	/**
 	 * Register every ability this plugin owns.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 */
 	public function register_abilities(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
@@ -163,7 +163,7 @@ class Abilities extends AbstractHookProvider {
 	 * happens at `init` while entitlement state can change afterwards (a license activated
 	 * mid-request, dev mode toggled).
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param string|null $entitlement Optional entitlement key.
 	 *
@@ -220,7 +220,7 @@ class Abilities extends AbstractHookProvider {
 	 * Public so the annotation and privacy rules can be asserted as data rather than
 	 * inferred from a registry double.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @return array[]
 	 */

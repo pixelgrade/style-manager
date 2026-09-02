@@ -14,7 +14,7 @@ use function Pixelgrade\StyleManager\sanitize_dynamic_style_css;
  * (`EditWithBlocks`) alike, so a hostile stored value can't break out of
  * either sink.
  *
- * @since 2.5.3
+ * @since 2.6.0
  */
 class SanitizeDynamicStyleCssTest extends TestCase {
 

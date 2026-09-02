@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 2.5.2
+Stable tag: 2.6.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,21 @@ When fetching design assets or submitting the plugin's existing settings statist
 * Google Fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.6.0 =
+* New: manage the whole design system from the command line with `wp pixelgrade sm` — read settings, write settings, inspect the structure, and export or import a site's colors, typography and spacing as one document.
+* New: apply a color palette without opening a browser, with `wp pixelgrade sm apply-color-palette`. It generates the same color ramp the editor generates, from the same code.
+* New: apply a font palette from the command line with `wp pixelgrade sm apply-font-palette`.
+* New: the same eight design-system verbs are also available through the WordPress Abilities API on WordPress 6.9 and later, so compatible tooling can read and change the design system through exactly the rules the editor follows. They require the same capability the editor requires, and they stay out of the REST API unless a companion plugin explicitly opts them in.
+* Improved: `wp style-manager flush-cache` keeps working and now also points at its new name, `wp pixelgrade sm flush-cache`.
+* Maintenance: harden the inline style output — every place Style Manager prints generated CSS into a page now passes through one shared output helper.
+* Maintenance: align the color library the browser runs with the one the command line runs, so both produce identical palettes.
+* Developer: every `wp pixelgrade sm` command answers with one JSON envelope (`ok`, `code`, `summary`, `data`, `warnings`, plus `persisted`, `unchanged` and `stripped` on writes) and the 0/1/2/3 exit-code vocabulary. Under `--format=json` the envelope is a single compact line.
+* Developer: all setting writes now run through one `Provider\SettingsWriter` seam, so the Site Editor REST route, the command line and the abilities cannot disagree about gating, setting ordering, or the post-save fan-out.
+* Developer: the command bodies live in `Provider\AgentCommands` and are shared verbatim by the CLI and the abilities — one implementation behind two surfaces.
+* Developer: the headless palette generator ships as a committed build artifact at `dist/node/palette-generator.js`, with chroma-js pinned to an exact version and a lockstep test asserting the browser copy, the minified copy and the built artifact all carry that same pin.
+* Developer: CI now runs the PHP unit suite with Node available, asserts the palette parity guards actually executed rather than skipped, and rebuilds the committed artifact to fail on drift.
+* Tests: unit coverage for the settings writer, the shared command cores, the abilities surface, the palette parity fixtures, and the shared style-output helper.
 
 = 2.5.2 =
 * Fix: Prevent a fatal error when a Customizer text or textarea control receives a list of live-preview selectors instead of a boolean.

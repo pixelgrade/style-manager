@@ -36,7 +36,7 @@
  *
  * @package Style Manager
  * @license GPL-2.0-or-later
- * @since 2.5.3
+ * @since 2.6.0
  */
 
 declare ( strict_types = 1 );
@@ -48,7 +48,7 @@ use Pixelgrade\StyleManager\Customize\FontPalettes;
 /**
  * The shared command cores behind `wp pixelgrade sm` and the `pixelgrade/*` abilities.
  *
- * @since 2.5.3
+ * @since 2.6.0
  */
 class AgentCommands {
 
@@ -108,7 +108,7 @@ class AgentCommands {
 	/**
 	 * Create the command cores.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param Options                         $options               Options provider.
 	 * @param HeadlessCustomizer              $headless_customizer   Headless Customizer.
@@ -146,7 +146,7 @@ class AgentCommands {
 	 * and the offenders in `data.unknown`. A partial read returning success would be
 	 * exactly the silent-empty-map hazard §3.0 exists to prevent.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param string[]    $ids      Setting ids to read.
 	 * @param bool        $all      Return every readable setting.
@@ -224,7 +224,7 @@ class AgentCommands {
 	 * The `html` key is omitted unless asked for — the rendered control markup is heavy
 	 * and no agent needs it to reason about the design system.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param string|null $section   Only describe this section.
 	 * @param bool        $with_html Include the rendered control markup.
@@ -285,7 +285,7 @@ class AgentCommands {
 	 * title. Values are reported exactly as stored (§3.4: export passes shipped state
 	 * through unmodified).
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param string[]|null $include Narrow to these ids. `null` means no narrowing; an
 	 *                               empty array narrows to nothing, which is what an
@@ -366,7 +366,7 @@ class AgentCommands {
 	 * This is §4's single carve-out: a read-only ability mapping to a REST GET rather than
 	 * to a command. The payload assembly is NOT copied here; it is delegated.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @return array The core result.
 	 */
@@ -416,7 +416,7 @@ class AgentCommands {
 	 * enforced here because one invocation is exactly the law's scope. The law itself is
 	 * never re-derived: `SettingsWriter::find_ordering_conflict()` is the shared policy.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param array         $values   Requested id => value map, typed.
 	 * @param bool          $dry_run  Report the predicted diff without writing.
@@ -483,7 +483,7 @@ class AgentCommands {
 	 * `tier_locked_palette` rather than being rejected up front. The default `system`
 	 * value is not in that catalog, so returning to it is a `set`, not a palette apply.
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param string        $palette_id The font palette id.
 	 * @param bool          $dry_run    Report the predicted diff without writing.
@@ -552,7 +552,7 @@ class AgentCommands {
 	 * `generator: none` requires an output and applies it verbatim (F-W5-2), and any
 	 * source-based apply records the palette as custom (F-W5-3).
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @param array $params {
 	 *     @type string        $source         Required. The palette source JSON.
@@ -715,7 +715,7 @@ class AgentCommands {
 	 * Invalidate Style Manager's cached Customizer config and option details
 	 * (`sm flush-cache`).
 	 *
-	 * @since 2.5.3
+	 * @since 2.6.0
 	 *
 	 * @return array The core result.
 	 */
