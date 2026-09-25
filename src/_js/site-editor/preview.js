@@ -6,6 +6,7 @@ import { getCSSFromPalettes, maybeFillPalettesArray } from '../customizer/utils'
 import { getFontDetails, determineFontType, convertFontVariantToFVD } from '../customizer/fonts/utils';
 import { standardizeToArray } from '../utils/standardize-to-array';
 import { getFontMobileScaleCSS } from '../utils/font-mobile-scale';
+import { createContentInsetExplicitTracker, getContentInsetExplicitCSS } from '../utils/content-inset-explicit';
 
 const getStyleTagID = settingID => `dynamic_style_${ settingID.replace( /\W/g, '_' ) }`;
 
@@ -121,6 +122,17 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
 
   // Phone Heading Scale: JS twin of style_manager_font_mobile_scale_css_cb().
   window.sm_font_mobile_scale_css_cb = getFontMobileScaleCSS;
+
+  // Content Inset opt-in signal: JS twin of
+  // style_manager_content_inset_explicit_css_cb(). The loaded value is seeded
+  // here (renderAll may run later); moving the control flips the signal on.
+  const trackContentInset = createContentInsetExplicitTracker();
+  const contentInsetSetting = api( 'sm_content_inset' );
+  if ( contentInsetSetting ) {
+    trackContentInset( contentInsetSetting() );
+  }
+  window.sm_content_inset_explicit_css_cb = ( value, selector, property ) =>
+    getContentInsetExplicitCSS( trackContentInset( value ), selector, property );
 
   // Pitch carries no CSS of its own; on change it recomputes and rewrites the
   // sm_rail_scale style tag(s) — top document + canvas — same pattern as

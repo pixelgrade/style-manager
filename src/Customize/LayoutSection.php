@@ -146,6 +146,16 @@ class LayoutSection extends AbstractHookProvider {
 							'selector' => ':root',
 							'unit'     => '',
 						],
+						// Opt-in signal for the Layout board contract (Nova Blocks
+						// insets the Sidecar content lines by Content Inset only
+						// once a value is saved; untouched sites stay
+						// byte-identical). Emitted only when the option exists.
+						[
+							'property'        => '--sm-content-inset-explicit',
+							'selector'        => ':root',
+							'unit'            => '',
+							'callback_filter' => 'sm_content_inset_explicit_css_cb',
+						],
 					],
 				],
 				// The rail-scale presets (the "face"): named {base, pitch} points that

@@ -41,6 +41,7 @@ class Preview extends AbstractHookProvider {
 		$this->add_action( 'customize_preview_init', 'sm_rail_scale_css_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_rail_pitch_css_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_font_mobile_scale_css_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_content_inset_explicit_css_cb_customizer_preview', 20 );
 	}
 
 	/**
@@ -263,6 +264,21 @@ function sm_font_mobile_scale_css_cb(value, selector, property, unit) {
 	var share = Math.max(0, Math.min(100, Number(value)));
 	var slope = Math.round((100 - share) / 100 * 10000) / 10000;
 	return '@media not screen and (min-width: 1440px) { ' + selector + ' { ' + property + ': ' + slope + '; } }\\n';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
+	}
+
+	// Content Inset opt-in signal: JS twin of
+	// style_manager_content_inset_explicit_css_cb() (canonical module:
+	// src/_js/utils/content-inset-explicit.js). The first value is the loaded
+	// state (the server style already reflects a saved value); once the value
+	// moves in this session the signal is on.
+	protected function sm_content_inset_explicit_css_cb_customizer_preview() {
+		$js = "
+window.__smContentInsetTrack = (function(){ var seen = false, initial, touched = false; return function(v){ var n = (v === null || v === undefined) ? '' : String(v); if (!seen) { seen = true; initial = n; } else if (n !== initial) { touched = true; } return touched; }; })();
+function sm_content_inset_explicit_css_cb(value, selector, property, unit) {
+	return window.__smContentInsetTrack(value) ? selector + ' { ' + property + ': 1; }\\n' : '';
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );

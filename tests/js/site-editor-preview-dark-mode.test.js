@@ -82,6 +82,8 @@ const loadInitializePreview = () => {
 			const convertFontVariantToFVD = value => value;
 			const standardizeToArray = value => Array.isArray( value ) ? value : [ value ];
 			const getFontMobileScaleCSS = () => '';
+			const createContentInsetExplicitTracker = () => () => false;
+			const getContentInsetExplicitCSS = () => '';
 			`
 		)
 		.replace( 'export const initializePreview', 'const initializePreview' );

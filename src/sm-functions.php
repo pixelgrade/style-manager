@@ -238,6 +238,47 @@ function style_manager_rail_pitch_css_cb( $value, string $selector, string $prop
 }
 
 /**
+ * CSS callback: the Content Inset opt-in signal.
+ *
+ * `sm_content_inset` always emits `--sm-content-inset` (its registered default
+ * is 230), so a consumer cannot tell a saved value from the default. Nova
+ * Blocks' layout engine applies the Layout board contract (content lines inset
+ * by Content Inset) only once the user has saved a Content Inset, so sites that
+ * never touched it render byte-identically. This emits
+ * `--sm-content-inset-explicit: 1` only when the option exists in the database
+ * (including a Customizer changeset preview, which filters get_option()).
+ *
+ * @since 2.6.1
+ *
+ * @param mixed  $value    The resolved Content Inset value (ignored).
+ * @param string $selector The CSS selector (`:root`).
+ * @param string $property The signal property (`--sm-content-inset-explicit`).
+ * @param string $unit     Ignored.
+ *
+ * @return string
+ */
+function style_manager_content_inset_explicit_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
+	if ( ! style_manager_content_inset_is_explicit() ) {
+		return '';
+	}
+
+	return $selector . ' { ' . $property . ': 1; }' . PHP_EOL;
+}
+
+/**
+ * Whether the user has saved a Content Inset value.
+ *
+ * @since 2.6.1
+ *
+ * @return bool
+ */
+function style_manager_content_inset_is_explicit(): bool {
+	$saved = get_option( 'sm_content_inset', null );
+
+	return null !== $saved && false !== $saved && '' !== $saved && is_numeric( $saved );
+}
+
+/**
  * Resolve the theme's small-screen font-size slope from the Phone Heading Scale.
  *
  * The value is the share (0-100) of their desktop size that large roles keep on
@@ -1300,5 +1341,7 @@ function sm_site_color_variation_cb( ...$args ) { return style_manager_site_colo
 function sm_rail_scale_css_cb( ...$args ) { return style_manager_rail_scale_css_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_pitch_css_cb().
 function sm_rail_pitch_css_cb( ...$args ) { return style_manager_rail_pitch_css_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_content_inset_explicit_css_cb(); the name matches its JS preview twin.
+function sm_content_inset_explicit_css_cb( ...$args ) { return style_manager_content_inset_explicit_css_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_font_mobile_scale_css_cb(); the name matches its JS preview twin.
 function sm_font_mobile_scale_css_cb( ...$args ) { return style_manager_font_mobile_scale_css_cb( ...$args ); }
