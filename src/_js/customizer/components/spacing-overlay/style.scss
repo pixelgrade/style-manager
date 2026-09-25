@@ -107,6 +107,45 @@
     }
   }
 
+  // Which rail the contract is drawn with (the Sidecar default is Small).
+  &__rail-pick {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 10px;
+    font-size: 11.5px;
+    color: var(--lp-ink-dim);
+
+    span {
+      margin-right: 6px;
+    }
+
+    .sm-layout-preview__rail-pick-sep {
+      margin-left: 14px;
+    }
+
+    button {
+      border: 1px solid var(--lp-line);
+      background: var(--lp-panel-2);
+      color: var(--lp-ink-dim);
+      font: inherit;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--lp-ink);
+      }
+
+      &.is-active {
+        background: var(--lp-accent);
+        border-color: var(--lp-accent);
+        color: #fff;
+      }
+    }
+  }
+
   &__default-note {
     margin: 0 0 10px;
     font-size: 11.5px;
@@ -176,6 +215,11 @@
     color: var(--lp-ink-dim);
     line-height: 1.55;
     max-width: 660px;
+  }
+  .cx-caption p.cx-measured {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--lp-accent);
   }
   .cx-chips {
     display: flex;
