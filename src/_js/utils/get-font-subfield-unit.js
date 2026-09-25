@@ -50,3 +50,14 @@ export const getFontSubfieldUnit = ( settingID, field ) => {
 
   return 'px'
 };
+
+// Mirror of the server-side Utils\Fonts::standardizeNumericalValue(): an explicit unit wins,
+// and an empty one ({value: 0.04, unit: false}) is deduced from the field config, so it does
+// not produce a unitless value the browser drops.
+export const resolveFontSubfieldUnit = ( settingID, field, unit ) => {
+  if ( ! _.includes( [ undefined, null, '', 'false', false ], unit ) ) {
+    return unit;
+  }
+
+  return getFontSubfieldUnit( settingID, field );
+};

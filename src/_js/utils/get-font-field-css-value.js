@@ -1,7 +1,7 @@
 // Mirror logic of server-side Utils\Fonts::getCSSValue()
 import _ from "lodash";
 import { getFontFamilyFallbackStack } from "./get-font-family-fallback-stack";
-import { getFontSubfieldUnit } from "./get-font-subfield-unit";
+import { getFontSubfieldUnit, resolveFontSubfieldUnit } from "./get-font-subfield-unit";
 import { sanitizeFontFamilyCSSValue } from './sanitize-font-family-css-value';
 
 export const getFontFieldCSSValue = ( settingID, value ) => {
@@ -81,9 +81,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
       // If we have a standardized value field (as array), use that.
       if ( typeof value.letter_spacing.value !== 'undefined' ) {
         CSSValue[ 'letter-spacing' ] = value.letter_spacing.value;
-        if ( typeof value.letter_spacing.unit !== 'undefined' ) {
-          letterSpacingUnit = value.letter_spacing.unit
-        }
+        letterSpacingUnit = resolveFontSubfieldUnit( settingID, 'letter-spacing', value.letter_spacing.unit )
       } else {
         letterSpacingUnit = getFontSubfieldUnit( settingID, 'letter-spacing' )
       }
@@ -105,9 +103,7 @@ export const getFontFieldCSSValue = ( settingID, value ) => {
       // If we have a standardized value field (as array), use that.
       if ( typeof value.line_height.value !== 'undefined' ) {
         CSSValue[ 'line-height' ] = value.line_height.value;
-        if ( !!value.line_height.unit !== 'undefined' ) {
-          lineHeightUnit = value.line_height.unit
-        }
+        lineHeightUnit = resolveFontSubfieldUnit( settingID, 'line-height', value.line_height.unit )
       } else {
         lineHeightUnit = getFontSubfieldUnit( settingID, 'line-height' )
       }

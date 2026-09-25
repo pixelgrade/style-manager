@@ -10,6 +10,7 @@ import { getConnectedFieldsIDs, getSetting } from "../../global-service";
 import { Overlay } from "../index";
 import './style.scss';
 import elements from "./elements";
+import { getEffectivePreviewFontData } from "./effective-font-data";
 import _ from "lodash";
 
 const TypographyOverlay = ( props ) => {
@@ -112,24 +113,19 @@ const Element = ( props ) => {
       const styles = {};
 
       wp.customize( connectedSettingID, connectedSetting => {
-        const value = connectedSetting();
-        const FontFieldCSSValue = getFontFieldCSSValue( connectedSettingID, value );
-        const StringCSSValue = convertCSSValuesToStrings( FontFieldCSSValue );
+        wp.customize( `${ category }_elevation`, elevationSetting => {
+          wp.customize( `${ category }_pitch`, pitchSetting => {
+            const elevation = elevationSetting();
+            const pitch = pitchSetting();
+            const derivedFontData = getConnectedFieldFontData( connectedSettingID, category, fontsLogic, elevation, pitch );
+            const fontData = getEffectivePreviewFontData( connectedSetting(), derivedFontData );
+            const FontFieldCSSValue = getFontFieldCSSValue( connectedSettingID, fontData );
+            const StringCSSValue = convertCSSValuesToStrings( FontFieldCSSValue );
 
-        Object.assign( styles, StringCSSValue );
-      } );
+            setSize( parseInt( fontData?.font_size?.value ?? fontData?.font_size, 10 ) );
 
-      wp.customize( `${ category }_elevation`, elevationSetting => {
-        wp.customize( `${ category }_pitch`, pitchSetting => {
-          const elevation = elevationSetting();
-          const pitch = pitchSetting();
-          const connectedFieldFontData = getConnectedFieldFontData( connectedSettingID, category, fontsLogic, elevation, pitch );
-          const FontFieldCSSValue = getFontFieldCSSValue( connectedSettingID, connectedFieldFontData );
-          const StringCSSValue = convertCSSValuesToStrings( FontFieldCSSValue );
-
-          setSize( parseInt( connectedFieldFontData?.font_size?.value, 10 ) );
-
-          Object.assign( styles, StringCSSValue );
+            Object.assign( styles, StringCSSValue );
+          } );
         } );
       } );
 
