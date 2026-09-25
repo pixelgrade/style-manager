@@ -88,6 +88,108 @@
 		}
 	}
 
+	// Condensed group: a companion range (e.g. the phone heading scale) sits
+	// inside its host control (Font Sizing) as one inline-labelled row under
+	// the pills; both descriptions live in info tips.
+	.sm-has-companion {
+		.customize-control-title {
+			display: flex;
+			align-items: center;
+			gap: 2px;
+			margin-bottom: 12px;
+		}
+
+	}
+
+	// Same specificity as the native-control margin reset above.
+	&#customize-controls[id] .sm-has-companion .sm-companion-mount {
+		margin-top: 16px;
+	}
+
+	.sm-info-tip-mount {
+		display: inline-flex;
+	}
+
+	.sm-info-tip.components-button {
+		min-width: 24px;
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		color: #757575;
+
+		&:hover,
+		&:focus {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	// Label + info tip on the first line, slider and value full width below,
+	// like core's RangeControl layout, so the track keeps a usable length.
+	.sm-companion-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 2px;
+
+		&__label {
+			flex: 0 0 auto;
+			font-size: 13px;
+		}
+
+		> .components-base-control {
+			flex: 1 0 100%;
+			min-width: 0;
+			margin-top: 4px;
+		}
+	}
+
+	// Match the slider row instead of the 40px default input; the component's
+	// own emotion styles outrank a plain class chain.
+	&#customize-controls[id] .sm-companion-row {
+		.components-input-control__container,
+		input.components-input-control__input {
+			height: 32px;
+			min-height: 32px;
+		}
+
+		// Unit suffix (e.g. %) inside the number box, after the value.
+		&.has-suffix {
+			.components-range-control__number,
+			.components-number-control {
+				width: 64px;
+			}
+
+			.components-input-control__container {
+				position: relative;
+
+				&::after {
+					content: var(--sm-companion-suffix);
+					position: absolute;
+					top: 50%;
+					right: 8px;
+					transform: translateY(-50%);
+					color: #757575;
+					font-size: 13px;
+					pointer-events: none;
+				}
+			}
+
+			input.components-input-control__input {
+				padding-right: 20px;
+				text-align: right;
+				-moz-appearance: textfield;
+
+				// The spinner reserves width and pushes the value off the
+				// suffix; arrow keys still step the value.
+				&::-webkit-inner-spin-button,
+				&::-webkit-outer-spin-button {
+					-webkit-appearance: none;
+					margin: 0;
+				}
+			}
+		}
+	}
+
 	.customize-control-title,
 	.sm-control__label,
 	.sm-blinds__title,
@@ -2086,4 +2188,13 @@ $sm-se-board-exit-ms: 220ms;
 		font-size: 13px;
 		color: #757575;
 	}
+}
+
+// The info tips' tooltips render in a portal outside the sidebar; wrap their
+// descriptions instead of running one long line off the panel.
+.components-tooltip.sm-info-tip__tooltip {
+	max-width: 240px;
+	white-space: normal;
+	text-align: left;
+	line-height: 1.4;
 }

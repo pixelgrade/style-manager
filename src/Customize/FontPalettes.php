@@ -1075,7 +1075,7 @@ class FontPalettes extends AbstractHookProvider {
 					'setting_type' => 'option',
 					'setting_id'   => 'sm_font_mobile_scale',
 					'label'        => esc_html__( 'Phone Heading Scale', '__plugin_txtd' ),
-					'desc'         => esc_html__( 'How much of their desktop size large headings keep on phones. At 100 phones show desktop sizes; at 0 they shrink to 16px on the narrowest phones. Desktop sizes do not change.', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'The share of their desktop size that large headings keep on phones: 100% shows desktop sizes, 0% shrinks them to 16px on the narrowest phones. Desktop sizes do not change.', '__plugin_txtd' ),
 					'default'      => '',
 					'live'         => true,
 					'priority'     => 3.5,

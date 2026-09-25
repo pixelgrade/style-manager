@@ -439,6 +439,125 @@ const NativeText = ( { settingId, overrides } ) => {
   );
 };
 
+/**
+ * A small info button whose tooltip carries a control's description, so a
+ * condensed group keeps its help text without spending rows on it.
+ */
+const InfoTip = ( { text, label } ) => {
+  const { Button, Tooltip } = wp.components;
+
+  if ( ! text ) {
+    return null;
+  }
+
+  return (
+    <Tooltip text={ text } placement="bottom-start" className="sm-info-tip__tooltip">
+      <Button className="sm-info-tip" icon="info-outline" size="small" label={ label } showTooltip={ false } />
+    </Tooltip>
+  );
+};
+
+/**
+ * A range shown as a compact, inline-labelled row inside another control
+ * (see getCompanionRows). Same two-way binding as NativeRange; the visible
+ * label sits beside an info tip, the range keeps it as its accessible name.
+ */
+const NativeCompanionRange = ( { settingId, label, initialPosition, suffix } ) => {
+  const { RangeControl } = wp.components;
+  const { __, sprintf } = wp.i18n;
+  const config = getConfig( settingId );
+  const attrs = config.input_attrs || {};
+
+  return (
+    <BoundControl settingId={ settingId }>
+      { ( value, onChange ) => (
+        <div className={ `sm-native-range sm-companion-row${ suffix ? ' has-suffix' : '' }` } style={ suffix ? { '--sm-companion-suffix': JSON.stringify( suffix ) } : undefined }>
+          <span className="sm-companion-row__label" aria-hidden="true">{ label }</span>
+          <InfoTip
+            text={ stripHtml( config.desc ) }
+            /* translators: %s: control label. */
+            label={ sprintf( __( 'About %s', '__plugin_txtd' ), label ) }
+          />
+          <RangeControl
+            __nextHasNoMarginBottom
+            label={ label }
+            hideLabelFromVision
+            value={ value === '' || value === undefined ? undefined : Number( value ) }
+            onChange={ onChange }
+            min={ attrs.min !== undefined ? Number( attrs.min ) : 0 }
+            max={ attrs.max !== undefined ? Number( attrs.max ) : 100 }
+            step={ attrs.step !== undefined ? Number( attrs.step ) : 1 }
+            initialPosition={ initialPosition }
+            renderTooltipContent={ suffix ? current => `${ current }${ suffix }` : undefined }
+            withInputField
+          />
+        </div>
+      ) }
+    </BoundControl>
+  );
+};
+
+/**
+ * Settings shown as a condensed row inside a host control instead of their own
+ * row: the phone scale reads as the small-screen half of Font Sizing. The
+ * setting, its CSS and its reset entry are unchanged — only the skin moves.
+ */
+const getCompanionRows = () => {
+  const { __ } = wp.i18n;
+
+  return {
+    sm_font_mobile_scale: {
+      host: 'sm_font_sizing',
+      label: __( 'Phone heading scale', '__plugin_txtd' ),
+      // A share of the desktop size, not a size: show it as a percentage.
+      suffix: '%',
+      // While unset the theme keeps its own slope (Anima 0.6 = 40 here), so
+      // the handle starts where the page already is, not at mid-track.
+      initialPosition: 40,
+    },
+  };
+};
+
+const renderCompanionRow = ( eng, li, settingId, companion ) => {
+  const { __, sprintf } = wp.i18n;
+  const hostLi = eng.root.querySelector( `#${ CSS.escape( controlLiId( `${ companion.host }_control` ) ) }` );
+  if ( ! hostLi ) {
+    return false;
+  }
+
+  li.style.display = 'none';
+
+  if ( hostLi.querySelector( '.sm-companion-mount' ) ) {
+    return true;
+  }
+
+  hostLi.classList.add( 'sm-has-companion' );
+
+  // The host's description moves into an info tip beside its title.
+  const hostTitle = hostLi.querySelector( '.customize-control-title' );
+  const hostDescription = hostLi.querySelector( '.customize-control-description' );
+  const hostHelp = hostDescription ? hostDescription.textContent.trim() : '';
+  if ( hostTitle && hostHelp ) {
+    const tipTarget = document.createElement( 'span' );
+    tipTarget.className = 'sm-info-tip-mount';
+    hostTitle.appendChild( tipTarget );
+    ReactDOM.render(
+      /* translators: %s: control label. */
+      <InfoTip text={ hostHelp } label={ sprintf( __( 'About %s', '__plugin_txtd' ), hostTitle.textContent.trim() ) } />,
+      tipTarget
+    );
+    hostDescription.style.display = 'none';
+  }
+
+  const target = document.createElement( 'div' );
+  target.className = 'sm-native-control sm-companion-mount';
+  hostLi.appendChild( target );
+
+  ReactDOM.render( <NativeCompanionRange settingId={ settingId } label={ companion.label } initialPosition={ companion.initialPosition } suffix={ companion.suffix } />, target );
+
+  return true;
+};
+
 const COMPONENTS = {
   range: NativeRange,
   sm_toggle: NativeToggle,
@@ -550,6 +669,11 @@ export const mountNativeControls = ( eng, payload ) => {
       // Frame's style. Handled before the component lookup so it applies even
       // to control types native-controls otherwise leaves alone (sm_radio):
       // render a mapped on/off switch into the title row and drop this row.
+      const companion = getCompanionRows()[ settingId ];
+      if ( companion && renderCompanionRow( eng, li, settingId, companion ) ) {
+        return;
+      }
+
       const mapped = masterToggleMap[ settingId ];
       if ( mapped ) {
         const introLi = eng.root.querySelector( `#${ CSS.escape( controlLiId( mapped.introControlId ) ) }` );
