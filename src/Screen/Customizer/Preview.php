@@ -40,6 +40,7 @@ class Preview extends AbstractHookProvider {
 		$this->add_action( 'customize_preview_init', 'sm_color_switch_darker_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_rail_scale_css_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_rail_pitch_css_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_font_mobile_scale_css_cb_customizer_preview', 20 );
 	}
 
 	/**
@@ -248,6 +249,20 @@ function sm_rail_pitch_css_cb(value, selector, property, unit) {
 	var tag = document.getElementById('dynamic_style_sm_rail_scale');
 	if (tag) tag.innerHTML = css;
 	return '';
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
+	}
+
+	// Phone Heading Scale: JS twin of style_manager_font_mobile_scale_css_cb()
+	// (canonical module: src/_js/utils/font-mobile-scale.js).
+	protected function sm_font_mobile_scale_css_cb_customizer_preview() {
+		$js = "
+function sm_font_mobile_scale_css_cb(value, selector, property, unit) {
+	if (value === null || value === undefined || typeof value === 'boolean' || String(value).trim() === '' || !isFinite(Number(value))) return '';
+	var share = Math.max(0, Math.min(100, Number(value)));
+	var slope = Math.round((100 - share) / 100 * 10000) / 10000;
+	return '@media not screen and (min-width: 1440px) { ' + selector + ' { ' + property + ': ' + slope + '; } }\\n';
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );

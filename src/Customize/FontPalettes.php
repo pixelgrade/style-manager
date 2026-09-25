@@ -1066,6 +1066,33 @@ class FontPalettes extends AbstractHookProvider {
 						'largest'  => esc_html__( 'Largest', '__plugin_txtd' ),
 					],
 				],
+				// The small-screen hierarchy, independent of the desktop scale above:
+				// it sets only the theme's phone slope, never a connected field or a
+				// desktop size. Unset ('') until touched, so the theme's own slope
+				// stays byte-identical. See style_manager_font_mobile_scale_slope().
+				'sm_font_mobile_scale'        => [
+					'type'         => 'range',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_font_mobile_scale',
+					'label'        => esc_html__( 'Phone Heading Scale', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'How much of their desktop size large headings keep on phones. At 100 phones show desktop sizes; at 0 they shrink to 16px on the narrowest phones. Desktop sizes do not change.', '__plugin_txtd' ),
+					'default'      => '',
+					'live'         => true,
+					'priority'     => 3.5,
+					'input_attrs'  => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+					'css'          => [
+						[
+							'property'        => '--theme-font-size-slope-adjust',
+							'selector'        => ':root',
+							'unit'            => '',
+							'callback_filter' => 'sm_font_mobile_scale_css_cb',
+						],
+					],
+				],
 				self::SM_FONT_SIZING_BASELINE_OPTION_KEY => [
 					'type'         => 'hidden_control',
 					'setting_type' => 'option',
@@ -1372,6 +1399,7 @@ class FontPalettes extends AbstractHookProvider {
 	protected function reorganize_customizer_controls( array $sm_panel_config, array $sm_section_config ): array {
 		$font_palettes_fields = [
 			'sm_font_sizing',
+			'sm_font_mobile_scale',
 			self::SM_FONT_SIZING_BASELINE_OPTION_KEY,
 			'sm_separator_0_0',
 			'sm_current_font_palette',

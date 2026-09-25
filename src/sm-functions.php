@@ -238,6 +238,63 @@ function style_manager_rail_pitch_css_cb( $value, string $selector, string $prop
 }
 
 /**
+ * Resolve the theme's small-screen font-size slope from the Phone Heading Scale.
+ *
+ * The value is the share (0-100) of their desktop size that large roles keep on
+ * the narrowest phones: 100 keeps desktop sizes, 0 shrinks them down to the
+ * theme's minimum font size. Anima interpolates every role between its desktop
+ * size at 1440px and `desktop - (desktop - minimum) * slope` at 320px, so the
+ * slope is `1 - value / 100`, clamped to 0-1. Roles near the minimum barely
+ * move, so in practice this owns the heading hierarchy on phones.
+ *
+ * An unset ('' / non-numeric) value returns null: emit nothing and keep the
+ * theme's own slope (legacy-until-touched, byte-identical rendering).
+ *
+ * @since 2.6.1
+ *
+ * @param mixed $value The sm_font_mobile_scale value.
+ *
+ * @return float|null
+ */
+function style_manager_font_mobile_scale_slope( $value ): ?float {
+	if ( ! is_numeric( $value ) ) {
+		return null;
+	}
+
+	$share = max( 0.0, min( 100.0, (float) $value ) );
+
+	return round( ( 100.0 - $share ) / 100.0, 4 );
+}
+
+/**
+ * CSS callback for the Phone Heading Scale (sm_font_mobile_scale).
+ *
+ * Sets only the theme's slope below the 1440px typography breakpoint, where
+ * desktop role sizes are reached, so no desktop size and no connected field
+ * changes. The JS twins live in `src/_js/utils/font-mobile-scale.js` (Site
+ * Editor preview) and `src/Screen/Customizer/Preview.php` (Customizer
+ * preview) — keep them in sync.
+ *
+ * @since 2.6.1
+ *
+ * @param mixed  $value    The sm_font_mobile_scale value.
+ * @param string $selector The CSS selector (`:root`).
+ * @param string $property The slope custom property.
+ * @param string $unit     Unused; the slope is unitless.
+ *
+ * @return string
+ */
+function style_manager_font_mobile_scale_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
+	$slope = style_manager_font_mobile_scale_slope( $value );
+
+	if ( null === $slope ) {
+		return '';
+	}
+
+	return '@media not screen and (min-width: 1440px) { ' . $selector . ' { ' . $property . ': ' . (string) $slope . '; } }' . PHP_EOL;
+}
+
+/**
  * @since   2.0.0
  *
  * @param          $label
@@ -1243,3 +1300,5 @@ function sm_site_color_variation_cb( ...$args ) { return style_manager_site_colo
 function sm_rail_scale_css_cb( ...$args ) { return style_manager_rail_scale_css_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_pitch_css_cb().
 function sm_rail_pitch_css_cb( ...$args ) { return style_manager_rail_pitch_css_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_font_mobile_scale_css_cb(); the name matches its JS preview twin.
+function sm_font_mobile_scale_css_cb( ...$args ) { return style_manager_font_mobile_scale_css_cb( ...$args ); }

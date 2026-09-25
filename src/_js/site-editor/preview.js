@@ -5,6 +5,7 @@ import { getSettingCSS } from '../customizer-preview/utils';
 import { getCSSFromPalettes, maybeFillPalettesArray } from '../customizer/utils';
 import { getFontDetails, determineFontType, convertFontVariantToFVD } from '../customizer/fonts/utils';
 import { standardizeToArray } from '../utils/standardize-to-array';
+import { getFontMobileScaleCSS } from '../utils/font-mobile-scale';
 
 const getStyleTagID = settingID => `dynamic_style_${ settingID.replace( /\W/g, '_' ) }`;
 
@@ -117,6 +118,9 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
     }
     return `${ selector } { ${ property }: ${ v }${ unit || '' }; }`;
   };
+
+  // Phone Heading Scale: JS twin of style_manager_font_mobile_scale_css_cb().
+  window.sm_font_mobile_scale_css_cb = getFontMobileScaleCSS;
 
   // Pitch carries no CSS of its own; on change it recomputes and rewrites the
   // sm_rail_scale style tag(s) — top document + canvas — same pattern as
