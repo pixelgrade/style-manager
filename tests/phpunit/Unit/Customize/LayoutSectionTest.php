@@ -49,6 +49,33 @@ class LayoutSectionTest extends TestCase {
 		$this->assertSame( 'sm_rail_pitch', $keys[ array_search( 'sm_rail_gap', $keys, true ) - 1 ] );
 		$this->assertSame( 'sm_spacing_level', $keys[ array_search( 'sm_rail_gap', $keys, true ) + 1 ] );
 	}
+
+	public function test_layout_defines_a_small_only_rail_control_that_emits_through_the_rail_scale(): void {
+		$config  = $this->section->expose_add_style_manager_section_layout_config( [] );
+		$options = $config['sections']['style_manager_section']['options'];
+		$control = $options['sm_rail_small'];
+
+		$this->assertSame( 'range', $control['type'] );
+		$this->assertSame( 'option', $control['setting_type'] );
+		$this->assertSame( 'sm_rail_small', $control['setting_id'] );
+		$this->assertTrue( $control['live'] );
+		// Unset by default: untouched sites emit nothing new.
+		$this->assertSame( '', $control['default'] );
+		$this->assertSame( [ 'min' => 100, 'max' => 420, 'step' => 1, 'data-preview' => true ], $control['input_attrs'] );
+		// Inert own CSS (live-preview binding only); sm_rail_scale emits the token.
+		$this->assertCount( 1, $control['css'] );
+		$this->assertSame( 'sm_rail_small_css_cb', $control['css'][0]['callback_filter'] );
+		$this->assertNotSame( '--sm-rail-small', $control['css'][0]['property'] );
+	}
+
+	public function test_layout_places_the_small_only_rail_before_the_rail_scale(): void {
+		$config = $this->section->expose_add_style_manager_section_layout_config( [] );
+		$panel  = $this->section->expose_reorganize_customizer_controls( [], $config['sections']['style_manager_section'] );
+		$keys   = array_keys( $panel['sections']['sm_layout_section']['options'] );
+
+		$this->assertSame( 'sm_content_inset', $keys[ array_search( 'sm_rail_small', $keys, true ) - 1 ] );
+		$this->assertSame( 'sm_rail_scale_preset', $keys[ array_search( 'sm_rail_small', $keys, true ) + 1 ] );
+	}
 }
 
 class TestLayoutSection extends LayoutSection {

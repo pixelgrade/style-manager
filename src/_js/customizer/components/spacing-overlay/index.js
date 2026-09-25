@@ -25,7 +25,8 @@ import './style.scss';
  * canvas' live styles (probe-environment.js) — so the board's "reading" is the
  * page's reading column at that width (nova-blocks#655). The rail math mirrors the PHP (style_manager_rail_widths)
  * + the preview JS twins; untouched, the rails are Small 230, Medium 330,
- * Large 400 (Small no longer follows the Content Inset).
+ * Large 400 (Small no longer follows the Content Inset; a saved Small-only
+ * value, sm_rail_small, replaces the Small default).
  */
 
 const BASE_STEP = 32;
@@ -278,6 +279,7 @@ const LayoutPreview = () => {
   const [ contentInset, setContentInset ] = useState( () => numOr( getSettingValue( 'sm_content_inset', 230 ), 230 ) );
   const [ base, setBase ] = useState( () => getSettingValue( 'sm_rail_scale', '' ) );
   const [ pitch, setPitch ] = useState( () => getSettingValue( 'sm_rail_pitch', '' ) );
+  const [ railSmall, setRailSmall ] = useState( () => getSettingValue( 'sm_rail_small', '' ) );
   const [ railGap, setRailGap ] = useState( () => numOr( getSettingValue( 'sm_rail_gap', 2 ), 2 ) );
   const [ spacingLevel, setSpacingLevel ] = useState( () => numOr( getSettingValue( 'sm_spacing_level', 1 ), 1 ) );
   const [ view, setView ] = useState( 'contract' );
@@ -304,6 +306,7 @@ const LayoutPreview = () => {
   } );
   useCustomizeSettingCallback( 'sm_rail_scale', v => setBase( v ) );
   useCustomizeSettingCallback( 'sm_rail_pitch', v => setPitch( v ) );
+  useCustomizeSettingCallback( 'sm_rail_small', v => setRailSmall( v ) );
   useCustomizeSettingCallback( 'sm_rail_gap', v => setRailGap( numOr( v, 2 ) ) );
   useCustomizeSettingCallback( 'sm_spacing_level', v => setSpacingLevel( numOr( v, 1 ) ) );
 
@@ -322,13 +325,13 @@ const LayoutPreview = () => {
       alive = false;
       clearTimeout( timer );
     };
-  }, [ modelWidth, containerWidth, contentInset, base, pitch, railGap, spacingLevel ] );
+  }, [ modelWidth, containerWidth, contentInset, base, pitch, railSmall, railGap, spacingLevel ] );
 
   useEffect( () => () => disposeEnvironmentProbe(), [] );
 
   const baseStep = Math.round( BASE_STEP * spacingLevel );
 
-  const r = resolveRails( base, pitch );
+  const r = resolveRails( base, pitch, railSmall );
   const touched = r.touched;
   const runtime = env || { ...DEFAULT_ENVIRONMENT, viewport: modelWidth };
   const explicit = !! ( env?.explicit || insetTouched );
@@ -416,7 +419,13 @@ const LayoutPreview = () => {
         ) }
         { ! touched && (
           <p className="sm-layout-preview__default-note">
-            { __( 'Showing the default rail scale — Small 230, Medium 330, Large 400 — until you set one.', '__plugin_txtd' ) }
+            { r.smallOnly
+              ? wp.i18n.sprintf(
+                /* translators: %s: the Small rail width, in rail tokens. */
+                __( 'Showing your Small rail (%s) with the default Medium 330 and Large 400 — until you set a rail scale.', '__plugin_txtd' ),
+                r.s
+              )
+              : __( 'Showing the default rail scale — Small 230, Medium 330, Large 400 — until you set one.', '__plugin_txtd' ) }
           </p>
         ) }
         <div className="sm-layout-preview__board" dangerouslySetInnerHTML={ { __html: board } } />

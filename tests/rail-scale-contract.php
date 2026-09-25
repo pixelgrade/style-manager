@@ -9,6 +9,7 @@
  *  - untouched (both settings unset) -> no widths (byte-identical rendering)
  *  - v1 compatibility (base set, pitch unset) -> fixed 330/288, 400/288 ratios
  *  - v2 math (pitch set) incl. the soft-ceiling sanity points
+ *  - Small-only (sm_rail_small) -> Small alone, Medium/Large unset
  *  - S <= M <= L for every input (inversion impossible)
  */
 
@@ -83,6 +84,15 @@ namespace {
 	// Pitch-only touch (base unset) -> default base 300.
 	$s3 = style_manager_rail_widths( '', 22 );
 	$assert_true( $near( $s3['small'], 300 ), 'v2 pitch-only defaults base to 300 (got ' . $s3['small'] . ')' );
+
+	// --- Small-only (sm_rail_small, nova-blocks#655): Small alone while untouched ---
+	$assert_same( array( 'small' => 180, 'medium' => null, 'large' => null ), style_manager_rail_widths( '', '', 180 ), 'small-only 180 -> Small alone' );
+	$assert_same( style_manager_rail_widths( 288, '' ), style_manager_rail_widths( 288, '', 180 ), 'a touched scale ignores small-only' );
+	$GLOBALS['sm_rail_contract_options'] = array( 'sm_rail_small' => '180' );
+	$assert_same( ':root { --sm-rail-small: 180; }' . PHP_EOL, style_manager_rail_scale_css_cb( '', ':root', '--sm-rail-small', '' ), 'small-only emits Small' );
+	$assert_same( '', style_manager_rail_scale_css_cb( '', ':root', '--sm-rail-medium', '' ), 'small-only leaves Medium unset' );
+	$assert_same( '', style_manager_rail_scale_css_cb( '', ':root', '--sm-rail-large', '' ), 'small-only leaves Large unset' );
+	$GLOBALS['sm_rail_contract_options'] = array();
 
 	// --- S <= M <= L across a full sweep (both models) ---
 	$ok_order = true;

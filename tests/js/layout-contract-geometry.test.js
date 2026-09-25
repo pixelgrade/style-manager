@@ -5,6 +5,7 @@ import {
   RAIL_SMALL_DEFAULT,
   contractGeometry,
   readPreviewEnvironment,
+  railWidths,
   resolveRails,
   scaledInset,
 } from '../../src/_js/customizer/components/spacing-overlay/contract-geometry.js';
@@ -182,4 +183,38 @@ test( 'beside a rail the rail gap is the minimum when the inset is smaller', () 
   const g = contractGeometry( { env: labEnv( 1440 ), containerSetting: 75, insetSetting: 40, explicit: true, railRight: 230 } );
   assert.ok( Math.abs( g.ge - g.ce - 64 ) < 1e-9, 'rail gap wins beside the rail' );
   assert.ok( Math.abs( g.cs - g.ws - 40 * 15 / 16 ) < 1e-9, 'the free side takes the inset' );
+} );
+
+// Small-only rail (nova-blocks#655, H-S6): `sm_rail_small` sets Small while the
+// Rail Scale is untouched; Medium and Large stay on their defaults.
+test( 'a Small-only value sets Small and leaves Medium and Large on their defaults', () => {
+  const r = resolveRails( '', '', 180 );
+  assert.equal( r.s, 180 );
+  assert.equal( r.m, 330 );
+  assert.equal( r.l, 400 );
+  assert.equal( r.touched, false );
+  assert.equal( r.smallOnly, true );
+  assert.deepEqual( railWidths( '', '', '180' ), { s: 180, m: null, l: null, mult: 330 / 288 } );
+  // Kept exact, like the inset it replaces.
+  assert.equal( resolveRails( '', '', 187.5 ).s, 187.5 );
+} );
+
+test( 'a touched Rail Scale owns all three sizes and ignores the Small-only value', () => {
+  assert.deepEqual( resolveRails( 288, '', 180 ), resolveRails( 288, '' ) );
+  assert.deepEqual( resolveRails( 250, 16, 180 ), resolveRails( 250, 16 ) );
+  assert.deepEqual( resolveRails( '', 0, 180 ), resolveRails( '', 0 ) );
+} );
+
+test( 'an empty or invalid Small-only value keeps the untouched defaults', () => {
+  for ( const raw of [ '', null, undefined, 0, '0', -5, 'wide' ] ) {
+    const r = resolveRails( '', '', raw );
+    assert.deepEqual( [ r.s, r.m, r.l, r.smallOnly ], [ 230, 330, 400, false ], String( raw ) );
+  }
+} );
+
+test( 'the rail-less legacy budget follows the Small-only value', () => {
+  const pinned = contractGeometry( { env: labEnv( 1440 ), containerSetting: 75, insetSetting: 230, explicit: false, railSmall: resolveRails( '', '', 180 ).s } );
+  const base = contractGeometry( { env: labEnv( 1440 ), containerSetting: 75, insetSetting: 230, explicit: false } );
+  // 50 rail tokens narrower on each side at the 15/16 body scale.
+  assert.ok( Math.abs( ( pinned.reading - base.reading ) - 2 * 50 * labEnv( 1440 ).bodyFontSize / 16 ) < 0.01 );
 } );

@@ -30,7 +30,9 @@
  *   runs to the container edge on a free side; a rail-less page keeps the
  *   default Small-rail budget on both sides (container - 2 x (Small + gap)).
  * - the Small rail default is 230 (Style Manager's Content Inset default) —
- *   no longer the saved Content Inset (nova-blocks#655 decision 2).
+ *   no longer the saved Content Inset (nova-blocks#655 decision 2) — unless a
+ *   Small-only value (sm_rail_small) is saved while the Rail Scale is
+ *   untouched; the upgrade routine pins a previously saved inset there.
  */
 
 // Nova's `--nb-rail-small-setting` once a Content Inset is saved; while none
@@ -49,13 +51,24 @@ export const DEFAULT_ENVIRONMENT = {
 
 const railSoft = x => x / Math.pow( 1 + Math.pow( x / 600, 12 ), 1 / 12 );
 
-// Resolve S/M/L from the two rail settings — mirrors style_manager_rail_widths().
-// Returns null when BOTH are unset (the caller then uses the defaults).
-export const railWidths = ( baseRaw, pitchRaw ) => {
+// A Small-only rail value (sm_rail_small), kept exact; null when unset/invalid.
+const railSmallValue = raw => {
+  if ( raw === '' || raw == null || typeof raw === 'boolean' || isNaN( Number( raw ) ) || Number( raw ) <= 0 ) {
+    return null;
+  }
+  return Number( raw );
+};
+
+// Resolve S/M/L from the rail settings — mirrors style_manager_rail_widths().
+// Returns null when Base and Pitch are unset and no Small-only value is saved
+// (the caller then uses the defaults). Small-only mode (nova-blocks#655, H-S6)
+// sets Small alone: Medium/Large come back null (their defaults apply).
+export const railWidths = ( baseRaw, pitchRaw, smallRaw = '' ) => {
   const baseSet = baseRaw !== '' && baseRaw != null && ! isNaN( parseFloat( baseRaw ) ) && parseFloat( baseRaw ) > 0;
   const pitchSet = pitchRaw !== '' && pitchRaw != null && ! isNaN( parseFloat( pitchRaw ) );
   if ( ! baseSet && ! pitchSet ) {
-    return null;
+    const small = railSmallValue( smallRaw );
+    return null === small ? null : { s: small, m: null, l: null, mult: 330 / 288 };
   }
   let s, m, l, mult = 330 / 288;
   if ( pitchSet ) {
@@ -71,13 +84,21 @@ export const railWidths = ( baseRaw, pitchRaw ) => {
 };
 
 // The rail tokens the page uses: the rail scale once touched, else the
-// defaults (Small 230, Medium 330, Large 400).
-export const resolveRails = ( baseRaw, pitchRaw ) => {
-  const resolved = railWidths( baseRaw, pitchRaw );
-  if ( resolved ) {
-    return { ...resolved, touched: true };
+// defaults (Small 230, Medium 330, Large 400) with a Small-only value, when
+// saved, replacing the Small default.
+export const resolveRails = ( baseRaw, pitchRaw, smallRaw = '' ) => {
+  const resolved = railWidths( baseRaw, pitchRaw, smallRaw );
+  if ( resolved && null !== resolved.m ) {
+    return { ...resolved, touched: true, smallOnly: false };
   }
-  return { s: RAIL_SMALL_DEFAULT, m: RAIL_MEDIUM_DEFAULT, l: RAIL_LARGE_DEFAULT, mult: 330 / 288, touched: false };
+  return {
+    s: resolved ? resolved.s : RAIL_SMALL_DEFAULT,
+    m: RAIL_MEDIUM_DEFAULT,
+    l: RAIL_LARGE_DEFAULT,
+    mult: 330 / 288,
+    touched: false,
+    smallOnly: !! resolved,
+  };
 };
 
 // The font-relative inset, scaled down below 1280px (Nova `--nb-content-inset`).

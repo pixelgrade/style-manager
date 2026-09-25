@@ -32,6 +32,13 @@ class Upgrade extends AbstractHookProvider {
 	const VERSION_OPTION_NAME = 'style_manager_dbversion';
 
 	/**
+	 * One-shot flag for the Small rail pin (nova-blocks#655).
+	 *
+	 * @var string
+	 */
+	const RAIL_SMALL_MIGRATION_FLAG = 'sm_rail_small_from_inset_migrated_v1';
+
+	/**
 	 * Options.
 	 *
 	 * @var Options
@@ -181,6 +188,49 @@ class Upgrade extends AbstractHookProvider {
 			}
 			add_option( 'sm_font_sizing_absolute_migrated_v2', '1', '', false );
 		}
+
+		// Keep the Small rail where a saved Content Inset put it (nova-blocks#655).
+		if ( ! get_option( self::RAIL_SMALL_MIGRATION_FLAG, false ) ) {
+			if ( $this->migrate_rail_small_from_content_inset() ) {
+				$this->options->invalidate_all_caches();
+			}
+			add_option( self::RAIL_SMALL_MIGRATION_FLAG, '1', '', false );
+		}
+	}
+
+	/**
+	 * Pin the Small rail a saved Content Inset used to set.
+	 *
+	 * Until nova-blocks#655, Nova's Small rail fell back to the Content Inset
+	 * whenever no Rail Scale was set: `var(--sm-rail-small, <inset>)`. Nova now
+	 * reads the Content Inset DEFAULT there instead, so a site with a saved
+	 * inset and no Rail Scale would silently change its Small rail. Write that
+	 * previously effective width (the saved inset, same rail-token units) to the
+	 * Small-only setting, which emits `--sm-rail-small` alone: Small keeps its
+	 * width and Medium/Large stay on their defaults.
+	 *
+	 * Never touches a site with any saved rail setting (a Rail Scale already
+	 * owned its Small rail before the decoupling).
+	 *
+	 * @since 2.6.1
+	 *
+	 * @return bool Whether a value was written.
+	 */
+	protected function migrate_rail_small_from_content_inset(): bool {
+		// Only a saved (numeric, positive) inset ever set the Small rail.
+		$small = \style_manager_rail_small_value( get_option( 'sm_content_inset', null ) );
+		if ( null === $small ) {
+			return false;
+		}
+
+		foreach ( [ 'sm_rail_scale', 'sm_rail_pitch', 'sm_rail_small' ] as $rail_option ) {
+			$saved = get_option( $rail_option, '' );
+			if ( null !== $saved && false !== $saved && '' !== $saved ) {
+				return false;
+			}
+		}
+
+		return (bool) update_option( 'sm_rail_small', $small );
 	}
 
 	/**

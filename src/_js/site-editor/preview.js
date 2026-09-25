@@ -87,11 +87,13 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
     const s = api( id );
     return s ? s() : '';
   };
-  const railWidths = ( baseRaw, pitchRaw ) => {
+  const railWidths = ( baseRaw, pitchRaw, smallRaw ) => {
     const baseSet = baseRaw !== '' && baseRaw != null && ! isNaN( parseFloat( baseRaw ) ) && parseFloat( baseRaw ) > 0;
     const pitchSet = pitchRaw !== '' && pitchRaw != null && ! isNaN( parseFloat( pitchRaw ) );
     if ( ! baseSet && ! pitchSet ) {
-      return null;
+      // Small-only (sm_rail_small): Small alone, Medium/Large keep their defaults.
+      const smallSet = smallRaw !== '' && smallRaw != null && 'boolean' !== typeof smallRaw && ! isNaN( Number( smallRaw ) ) && Number( smallRaw ) > 0;
+      return smallSet ? { small: Number( smallRaw ), medium: null, large: null } : null;
     }
     let s, m, l;
     if ( pitchSet ) {
@@ -106,15 +108,17 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
     return { small: Math.round( s ), medium: Math.round( m ), large: Math.round( l ) };
   };
 
+  const railCurrent = () => railWidths( railRead( 'sm_rail_scale' ), railRead( 'sm_rail_pitch' ), railRead( 'sm_rail_small' ) );
+
   window.sm_rail_scale_css_cb = ( value, selector, property, unit = '' ) => {
-    const w = railWidths( railRead( 'sm_rail_scale' ), railRead( 'sm_rail_pitch' ) );
+    const w = railCurrent();
     if ( ! w ) {
       return '';
     }
     const v = '--sm-rail-small' === property ? w.small
       : '--sm-rail-medium' === property ? w.medium
       : '--sm-rail-large' === property ? w.large : null;
-    if ( null === v ) {
+    if ( null == v ) {
       return '';
     }
     return `${ selector } { ${ property }: ${ v }${ unit || '' }; }`;
@@ -134,13 +138,16 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
   window.sm_content_inset_explicit_css_cb = ( value, selector, property ) =>
     getContentInsetExplicitCSS( trackContentInset( value ), selector, property );
 
-  // Pitch carries no CSS of its own; on change it recomputes and rewrites the
-  // sm_rail_scale style tag(s) — top document + canvas — same pattern as
-  // sm_site_color_variation_cb.
-  window.sm_rail_pitch_css_cb = () => {
-    const w = railWidths( railRead( 'sm_rail_scale' ), railRead( 'sm_rail_pitch' ) );
+  // Pitch and the Small-only rail carry no CSS of their own; on change they
+  // recompute and rewrite the sm_rail_scale style tag(s) — top document +
+  // canvas — same pattern as sm_site_color_variation_cb.
+  const railRewrite = () => {
+    const w = railCurrent();
     const css = w
-      ? `:root { --sm-rail-small: ${ w.small }; }\n:root { --sm-rail-medium: ${ w.medium }; }\n:root { --sm-rail-large: ${ w.large }; }\n`
+      ? [ 'small', 'medium', 'large' ]
+        .filter( size => null != w[ size ] )
+        .map( size => `:root { --sm-rail-${ size }: ${ w[ size ] }; }\n` )
+        .join( '' )
       : '';
     const tagId = getStyleTagID( 'sm_rail_scale' );
     document.querySelectorAll( `#${ tagId }` ).forEach( tag => { tag.innerHTML = css; } );
@@ -153,6 +160,8 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
     }
     return '';
   };
+  window.sm_rail_pitch_css_cb = railRewrite;
+  window.sm_rail_small_css_cb = railRewrite;
 };
 
 const getCanvasIframe = () => document.querySelector( 'iframe[name="editor-canvas"]' );

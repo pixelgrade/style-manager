@@ -40,6 +40,7 @@ class Preview extends AbstractHookProvider {
 		$this->add_action( 'customize_preview_init', 'sm_color_switch_darker_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_rail_scale_css_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_rail_pitch_css_cb_customizer_preview', 20 );
+		$this->add_action( 'customize_preview_init', 'sm_rail_small_css_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_font_mobile_scale_css_cb_customizer_preview', 20 );
 		$this->add_action( 'customize_preview_init', 'sm_content_inset_explicit_css_cb_customizer_preview', 20 );
 	}
@@ -207,10 +208,13 @@ function sm_color_switch_darker_cb(value, selector, property) {
 	protected function sm_rail_scale_css_cb_customizer_preview() {
 		$js = "
 window.__smRailSoft = function(x){ return x / Math.pow(1 + Math.pow(x/600, 12), 1/12); };
-window.__smRailWidths = function(baseRaw, pitchRaw){
+window.__smRailWidths = function(baseRaw, pitchRaw, smallRaw){
 	var baseSet = baseRaw !== '' && baseRaw != null && !isNaN(parseFloat(baseRaw)) && parseFloat(baseRaw) > 0;
 	var pitchSet = pitchRaw !== '' && pitchRaw != null && !isNaN(parseFloat(pitchRaw));
-	if (!baseSet && !pitchSet) return null;
+	if (!baseSet && !pitchSet) {
+		var small = (smallRaw === '' || smallRaw == null || typeof smallRaw === 'boolean' || isNaN(Number(smallRaw)) || Number(smallRaw) <= 0) ? null : Number(smallRaw);
+		return small === null ? null : { small: small, medium: null, large: null };
+	}
 	var s, m, l;
 	if (pitchSet) {
 		var base = baseSet ? parseFloat(baseRaw) : 300;
@@ -224,8 +228,23 @@ window.__smRailWidths = function(baseRaw, pitchRaw){
 	return { small: Math.round(s), medium: Math.round(m), large: Math.round(l) };
 };
 window.__smRailRead = function(id){ var s = wp.customize(id); return s ? s() : ''; };
+window.__smRailCurrent = function(){ return window.__smRailWidths(window.__smRailRead('sm_rail_scale'), window.__smRailRead('sm_rail_pitch'), window.__smRailRead('sm_rail_small')); };
+// Rewrite the sm_rail_scale style tag from the current settings (Pitch and
+// Small-only carry no CSS of their own).
+window.__smRailRewrite = function(){
+	var w = window.__smRailCurrent();
+	var css = '';
+	if (w) {
+		['small', 'medium', 'large'].forEach(function(size){
+			if (w[size] != null) css += ':root { --sm-rail-' + size + ': ' + w[size] + '; }\\n';
+		});
+	}
+	var tag = document.getElementById('dynamic_style_sm_rail_scale');
+	if (tag) tag.innerHTML = css;
+	return '';
+};
 function sm_rail_scale_css_cb(value, selector, property, unit) {
-	var w = window.__smRailWidths(window.__smRailRead('sm_rail_scale'), window.__smRailRead('sm_rail_pitch'));
+	var w = window.__smRailCurrent();
 	if (!w) return '';
 	var v = property === '--sm-rail-small' ? w.small : property === '--sm-rail-medium' ? w.medium : property === '--sm-rail-large' ? w.large : null;
 	if (v == null) return '';
@@ -240,16 +259,18 @@ function sm_rail_scale_css_cb(value, selector, property, unit) {
 	protected function sm_rail_pitch_css_cb_customizer_preview() {
 		$js = "
 function sm_rail_pitch_css_cb(value, selector, property, unit) {
-	var w = window.__smRailWidths(window.__smRailRead('sm_rail_scale'), window.__smRailRead('sm_rail_pitch'));
-	var css = '';
-	if (w) {
-		css = ':root { --sm-rail-small: ' + w.small + '; }\\n'
-			+ ':root { --sm-rail-medium: ' + w.medium + '; }\\n'
-			+ ':root { --sm-rail-large: ' + w.large + '; }\\n';
+	return window.__smRailRewrite();
+}" . PHP_EOL;
+
+		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );
 	}
-	var tag = document.getElementById('dynamic_style_sm_rail_scale');
-	if (tag) tag.innerHTML = css;
-	return '';
+
+	// The Small-only rail (sm_rail_small) carries no CSS of its own either; on
+	// change it rewrites the sm_rail_scale style tag like Pitch does.
+	protected function sm_rail_small_css_cb_customizer_preview() {
+		$js = "
+function sm_rail_small_css_cb(value, selector, property, unit) {
+	return window.__smRailRewrite();
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );

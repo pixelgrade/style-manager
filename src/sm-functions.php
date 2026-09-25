@@ -130,7 +130,12 @@ function style_manager_rail_soft( float $x ): float {
  *
  * Migration contract (see also the JS twins and the standalone contract test):
  *
- *  - BOTH unset  -> null (emit nothing; legacy-until-touched, byte-identical).
+ *  - BOTH unset  -> null (emit nothing; legacy-until-touched, byte-identical),
+ *    unless the Small-only value (sm_rail_small) is saved: then ONLY Small is
+ *    set ({ small, medium: null, large: null }) and Medium/Large keep the
+ *    consumer's defaults (Nova: 330 / 400). This is the slot the saved Content
+ *    Inset used to fill before Nova decoupled the Small rail from it
+ *    (nova-blocks#655), so a pinned Small rail changes nothing else.
  *  - base set, pitch UNSET -> v1 compatibility: the shipped fixed ratios
  *    (Medium = base*330/288, Large = base*400/288). Keeps the handful of
  *    v1-touched sites (dev/lab only — v1 never reached starters) byte-stable.
@@ -144,16 +149,25 @@ function style_manager_rail_soft( float $x ): float {
  *
  * @param mixed $base_raw  The sm_rail_scale value.
  * @param mixed $pitch_raw The sm_rail_pitch value.
+ * @param mixed $small_raw The sm_rail_small value (Small-only; used only while
+ *                         Base and Pitch are both unset).
  *
- * @return array|null { small, medium, large } (integers) or null when unset.
+ * @return array|null { small, medium, large } (integers; Medium/Large null in
+ *                    Small-only mode) or null when unset.
  */
-function style_manager_rail_widths( $base_raw, $pitch_raw ): ?array {
+function style_manager_rail_widths( $base_raw, $pitch_raw, $small_raw = '' ): ?array {
 	$base_set  = is_numeric( $base_raw ) && (float) $base_raw > 0;
 	// Pitch 0 (Flat) is a valid, deliberate value — only '' / non-numeric is unset.
 	$pitch_set = is_numeric( $pitch_raw );
 
 	if ( ! $base_set && ! $pitch_set ) {
-		return null;
+		$small = style_manager_rail_small_value( $small_raw );
+
+		return null === $small ? null : [
+			'small'  => $small,
+			'medium' => null,
+			'large'  => null,
+		];
 	}
 
 	if ( $pitch_set ) {
@@ -178,6 +192,28 @@ function style_manager_rail_widths( $base_raw, $pitch_raw ): ?array {
 }
 
 /**
+ * Normalize a Small-only rail value (sm_rail_small).
+ *
+ * Kept exact (not rounded) so a pin written from a saved Content Inset renders
+ * the very width the old inset coupling produced.
+ *
+ * @since 2.6.1
+ *
+ * @param mixed $raw The sm_rail_small value.
+ *
+ * @return int|float|null The width in rail tokens, or null when unset/invalid.
+ */
+function style_manager_rail_small_value( $raw ) {
+	if ( ! is_numeric( $raw ) || (float) $raw <= 0 ) {
+		return null;
+	}
+
+	$value = (float) $raw;
+
+	return floor( $value ) === $value ? (int) $value : $value;
+}
+
+/**
  * CSS callback for the rail-scale (sidebar/rail) tokens.
  *
  * Emits the per-side-ready Small/Medium/Large rail tokens. The migration/compat
@@ -198,7 +234,7 @@ function style_manager_rail_widths( $base_raw, $pitch_raw ): ?array {
  * @return string
  */
 function style_manager_rail_scale_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
-	$widths = style_manager_rail_widths( $value, get_option( 'sm_rail_pitch', '' ) );
+	$widths = style_manager_rail_widths( $value, get_option( 'sm_rail_pitch', '' ), get_option( 'sm_rail_small', '' ) );
 
 	if ( null === $widths ) {
 		return '';
@@ -218,6 +254,11 @@ function style_manager_rail_scale_css_cb( $value, string $selector, string $prop
 			return '';
 	}
 
+	// Small-only mode leaves Medium/Large unset (the consumer's defaults).
+	if ( null === $out ) {
+		return '';
+	}
+
 	return $selector . ' { ' . $property . ': ' . (string) $out . $unit . '; }' . PHP_EOL;
 }
 
@@ -234,6 +275,21 @@ function style_manager_rail_scale_css_cb( $value, string $selector, string $prop
  * @return string Always empty.
  */
 function style_manager_rail_pitch_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
+	return '';
+}
+
+/**
+ * CSS callback for the Small-only rail setting (sm_rail_small).
+ *
+ * Like Pitch it carries no CSS of its own — sm_rail_scale reads it and emits
+ * `--sm-rail-small`. It exists only so the setting is bound in the live
+ * preview, where its JS twin recomputes the sm_rail_scale style tag.
+ *
+ * @since 2.6.1
+ *
+ * @return string Always empty.
+ */
+function style_manager_rail_small_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
 	return '';
 }
 
@@ -1341,6 +1397,8 @@ function sm_site_color_variation_cb( ...$args ) { return style_manager_site_colo
 function sm_rail_scale_css_cb( ...$args ) { return style_manager_rail_scale_css_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_pitch_css_cb().
 function sm_rail_pitch_css_cb( ...$args ) { return style_manager_rail_pitch_css_cb( ...$args ); }
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_rail_small_css_cb(); the name matches its JS preview twin.
+function sm_rail_small_css_cb( ...$args ) { return style_manager_rail_small_css_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_content_inset_explicit_css_cb(); the name matches its JS preview twin.
 function sm_content_inset_explicit_css_cb( ...$args ) { return style_manager_content_inset_explicit_css_cb( ...$args ); }
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- alias for style_manager_font_mobile_scale_css_cb(); the name matches its JS preview twin.

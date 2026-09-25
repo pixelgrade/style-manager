@@ -158,6 +158,37 @@ class LayoutSection extends AbstractHookProvider {
 						],
 					],
 				],
+				// The Small-only rail (nova-blocks#655, H-S6): sets the Small rail
+				// while the Rail Scale below is untouched, leaving Medium and Large on
+				// their defaults. It fills the slot a saved Content Inset used to fill
+				// (Nova's Small rail fell back to the inset until the two were
+				// decoupled); the upgrade routine pins that old width here. Once Base,
+				// Pitch or a Rail Scale preset is set, the scale owns all three sizes
+				// and this value is ignored. Like Pitch it has no CSS of its own:
+				// sm_rail_scale_css_cb reads it and emits `--sm-rail-small`.
+				'sm_rail_small'           => [
+					'type'         => 'range',
+					'setting_type' => 'option',
+					'setting_id'   => 'sm_rail_small',
+					'live'         => true,
+					'label'        => esc_html__( 'Small Rail', '__plugin_txtd' ),
+					'desc'         => esc_html__( 'Set the Small rail on its own while no Rail Scale is chosen; Medium and Large keep their defaults. A Rail Scale, Base or Pitch takes over all three sizes.', '__plugin_txtd' ),
+					'default'      => '',
+					'input_attrs'  => [
+						'min'          => 100,
+						'max'          => 420,
+						'step'         => 1,
+						'data-preview' => true,
+					],
+					'css'          => [
+						[
+							'property'        => '--sm-rail-small-sync',
+							'selector'        => ':root',
+							'unit'            => '',
+							'callback_filter' => 'sm_rail_small_css_cb',
+						],
+					],
+				],
 				// The rail-scale presets (the "face"): named {base, pitch} points that
 				// each write BOTH sm_rail_scale and sm_rail_pitch. The active preset is
 				// DERIVED from those two values by the preset field JS (Custom
@@ -203,7 +234,8 @@ class LayoutSection extends AbstractHookProvider {
 				// tokens through sm_rail_scale_css_cb (which also reads the pitch).
 				//
 				// Legacy-until-touched: the default is an empty sentinel. While BOTH
-				// base and pitch are unset the callback emits NOTHING, so consumers keep
+				// base and pitch are unset the callback emits NOTHING (only the Small
+				// token when sm_rail_small is saved), so consumers keep
 				// their built-in fallbacks and rendering stays byte-identical to the
 				// pre-token behaviour. See style_manager_rail_widths() for the full
 				// migration contract (both-unset / v1-compat / v2).
@@ -350,6 +382,7 @@ class LayoutSection extends AbstractHookProvider {
 		$layout_section_fields = [
 			'sm_site_container_width',
 			'sm_content_inset',
+			'sm_rail_small',
 			'sm_rail_scale_preset',
 			'sm_rail_scale',
 			'sm_rail_pitch',
