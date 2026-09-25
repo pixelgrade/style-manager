@@ -31,6 +31,24 @@ class FontPalettes extends AbstractHookProvider {
 	private const SM_FONT_SIZING_TRUSTED_BASELINE_OPTION_KEY = 'sm_font_sizing_trusted_baseline_v1';
 
 	/**
+	 * The connected-fields (type hierarchy) preset setting.
+	 */
+	const SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY = 'sm_fonts_connected_fields_preset';
+
+	/**
+	 * Who last set the connected-fields preset: `user` or `palette` (#204).
+	 *
+	 * A font palette may declare its own hierarchy preset. Selecting the palette applies that preset
+	 * only while the site's preset is not user-set; a preset the user chose is kept. A palette writing
+	 * the preset records `palette`, the user choosing one in the hierarchy control records `user`.
+	 * When no source is stored, a saved preset counts as user-set (see
+	 * classify_connected_fields_preset_user_set()).
+	 */
+	const SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY = 'sm_fonts_connected_fields_preset_source';
+	const CONNECTED_FIELDS_PRESET_SOURCE_USER = 'user';
+	const CONNECTED_FIELDS_PRESET_SOURCE_PALETTE = 'palette';
+
+	/**
 	 * Absolute Elevation/Pitch states for the free Font Sizing control.
 	 *
 	 * Keep in sync with customizer/fonts/font-sizing-presets.js.
@@ -1100,6 +1118,13 @@ class FontPalettes extends AbstractHookProvider {
 					'default'      => [],
 					'live'         => true,
 				],
+				self::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY => [
+					'type'         => 'hidden_control',
+					'setting_type' => 'option',
+					'setting_id'   => self::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY,
+					'default'      => '',
+					'live'         => true,
+				],
 				'sm_separator_0_0' => [ 'type' => 'html', 'html' => '', 'priority' => 4 ],
 				self::SM_FONT_PALETTE_OPTION_KEY => [
 					'type'         => 'preset',
@@ -1401,6 +1426,7 @@ class FontPalettes extends AbstractHookProvider {
 			'sm_font_sizing',
 			'sm_font_mobile_scale',
 			self::SM_FONT_SIZING_BASELINE_OPTION_KEY,
+			self::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY,
 			'sm_separator_0_0',
 			'sm_current_font_palette',
 			'sm_fine_tune_intro',
@@ -2026,12 +2052,214 @@ class FontPalettes extends AbstractHookProvider {
 	}
 
 	/**
+	 * The hierarchy preset a font palette declares, or '' when it declares none.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param array $palette_config A font palette config.
+	 *
+	 * @return string
+	 */
+	public static function get_palette_connected_fields_preset( array $palette_config ): string {
+		$preset = $palette_config['fonts_logic']['connected_fields_preset'] ?? '';
+
+		return is_string( $preset ) ? trim( $preset ) : '';
+	}
+
+	/**
+	 * Whether a connected-fields preset counts as set by the user (#204).
+	 *
+	 * An explicit source wins. Without one (sites saved before the source existed, or a preset
+	 * written by an agent or import), a saved preset counts as user-set: those sites keep the
+	 * hierarchy they render today, and only a site that never saved a preset lets a palette's
+	 * declared hierarchy apply.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param mixed $source          The stored source (`user`, `palette`, or anything else when unset).
+	 * @param bool  $preset_is_saved Whether the preset option has a saved value.
+	 *
+	 * @return bool
+	 */
+	public static function classify_connected_fields_preset_user_set( $source, bool $preset_is_saved ): bool {
+		if ( self::CONNECTED_FIELDS_PRESET_SOURCE_USER === $source ) {
+			return true;
+		}
+
+		if ( self::CONNECTED_FIELDS_PRESET_SOURCE_PALETTE === $source ) {
+			return false;
+		}
+
+		return $preset_is_saved;
+	}
+
+	/**
+	 * Whether the site's connected-fields preset is user-set, from the saved options (#204).
+	 *
+	 * @since 2.6.1
+	 *
+	 * @return bool
+	 */
+	public function is_connected_fields_preset_user_set(): bool {
+		$source = get_option( self::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY, '' );
+		if ( self::CONNECTED_FIELDS_PRESET_SOURCE_USER === $source || self::CONNECTED_FIELDS_PRESET_SOURCE_PALETTE === $source ) {
+			return self::classify_connected_fields_preset_user_set( $source, false );
+		}
+
+		return self::classify_connected_fields_preset_user_set( $source, $this->is_option_saved( self::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY ) );
+	}
+
+	/**
+	 * Whether an option has a row in the database.
+	 *
+	 * get_option() cannot answer this inside the Customizer: a previewed option setting supplies
+	 * its registered default when the option is missing.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param string $option_name The option name.
+	 *
+	 * @return bool
+	 */
+	protected function is_option_saved( string $option_name ): bool {
+		global $wpdb;
+
+		if ( ! $wpdb instanceof \wpdb || ! function_exists( 'wp_load_alloptions' ) ) {
+			return null !== get_option( $option_name, null );
+		}
+
+		$alloptions = wp_load_alloptions();
+		if ( isset( $alloptions[ $option_name ] ) ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- a one-row existence probe; get_option() is filtered in the Customizer.
+		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $option_name ) );
+	}
+
+	/**
+	 * The preset a palette writes when the site's preset is not user-set, or '' to leave it alone.
+	 *
+	 * The palette's declared preset, or the setting default when it declares none: while the preset
+	 * follows the palette, moving to a palette without a hierarchy must undo the previous palette's
+	 * (System -> Blair -> System round-trips, #206). A preset the theme does not offer is ignored.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param string $declared_preset The palette's declared preset ('' for none).
+	 * @param array  $preset_details  The preset setting details (`default`, `choices`).
+	 *
+	 * @return string
+	 */
+	public static function resolve_palette_connected_fields_preset( string $declared_preset, array $preset_details ): string {
+		$default = isset( $preset_details['default'] ) && is_string( $preset_details['default'] ) ? $preset_details['default'] : '';
+		$target  = '' !== $declared_preset ? $declared_preset : $default;
+
+		if ( '' === $target ) {
+			return '';
+		}
+
+		if ( ! empty( $preset_details['choices'] ) && is_array( $preset_details['choices'] ) && ! array_key_exists( $target, $preset_details['choices'] ) ) {
+			return '';
+		}
+
+		return $target;
+	}
+
+	/**
+	 * Point each master font at the connected fields a hierarchy preset assigns it.
+	 *
+	 * Mirrors the editors' initializeConnectedFieldsPresets(): a master listed in the preset's
+	 * `config` takes that list; a master the preset does not list keeps its own.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param array  $options_details All option details.
+	 * @param string $preset          The connected-fields preset in effect.
+	 *
+	 * @return array
+	 */
+	public static function apply_connected_fields_preset_to_details( array $options_details, string $preset ): array {
+		$config = $options_details[ self::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY ]['choices'][ $preset ]['config'] ?? null;
+		if ( '' === $preset || ! is_array( $config ) ) {
+			return $options_details;
+		}
+
+		foreach ( $config as $master_font_id => $connected_fields ) {
+			if ( ! is_array( $connected_fields ) || ! isset( $options_details[ $master_font_id ] ) || ! is_array( $options_details[ $master_font_id ] ) ) {
+				continue;
+			}
+
+			$options_details[ $master_font_id ]['connected_fields'] = array_values( $connected_fields );
+		}
+
+		return $options_details;
+	}
+
+	/**
+	 * Whether a palette card should say the palette carries its own hierarchy (#204).
+	 *
+	 * Only a declared preset that differs from the setting default is the palette's own; a palette
+	 * declaring the default hierarchy behaves like one declaring none.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param string $declared_preset The palette's declared preset ('' for none).
+	 * @param array  $preset_details  The preset setting details (`default`, `choices`).
+	 *
+	 * @return bool
+	 */
+	public static function palette_carries_own_hierarchy( string $declared_preset, array $preset_details ): bool {
+		if ( '' === $declared_preset ) {
+			return false;
+		}
+
+		$default = isset( $preset_details['default'] ) && is_string( $preset_details['default'] ) ? $preset_details['default'] : '';
+		if ( $declared_preset === $default ) {
+			return false;
+		}
+
+		return '' === self::resolve_palette_connected_fields_preset( $declared_preset, $preset_details ) ? false : true;
+	}
+
+	/**
+	 * Apply a palette's hierarchy preset unless the user set one (#204).
+	 *
+	 * Writes the preset directly (the palette is the actor, so the Plus save gate on the preset
+	 * control does not apply) and records the palette as its source.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param string $declared_preset The palette's declared preset ('' for none).
+	 * @param array  $options_details All option details.
+	 *
+	 * @return bool Whether the palette's hierarchy was applied.
+	 */
+	protected function maybe_apply_palette_connected_fields_preset( string $declared_preset, array $options_details ): bool {
+		if ( $this->is_connected_fields_preset_user_set() ) {
+			return false;
+		}
+
+		$preset_details = $options_details[ self::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY ] ?? [];
+		$target         = self::resolve_palette_connected_fields_preset( $declared_preset, is_array( $preset_details ) ? $preset_details : [] );
+		if ( '' === $target ) {
+			return false;
+		}
+
+		update_option( self::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY, $target );
+		update_option( self::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY, self::CONNECTED_FIELDS_PRESET_SOURCE_PALETTE );
+
+		return true;
+	}
+
+	/**
 	 * Apply the selected font palette to its connected theme font fields.
 	 *
 	 * This mirrors the Customizer palette-selection path for headless option
 	 * updates: write palette master fonts, rebuild option details, then persist
 	 * the derived connected field values. A palette owns voice, not the site's
-	 * connected-field anatomy or numeric type scale (issue #206).
+	 * numeric type scale (issue #206). Its declared hierarchy preset applies only
+	 * while the site's preset is not user-set (issue #204).
 	 *
 	 * @since 2.3.0
 	 *
@@ -2052,10 +2280,9 @@ class FontPalettes extends AbstractHookProvider {
 			return [];
 		}
 
-		$fonts_logic = $font_palettes[ $current_palette ]['fonts_logic'];
-		if ( ! empty( $fonts_logic['connected_fields_preset'] ) ) {
-			unset( $fonts_logic['connected_fields_preset'] );
-		}
+		$fonts_logic     = $font_palettes[ $current_palette ]['fonts_logic'];
+		$declared_preset = self::get_palette_connected_fields_preset( $font_palettes[ $current_palette ] );
+		unset( $fonts_logic['connected_fields_preset'] );
 
 		$fonts_logic = $this->preprocess_fonts_logic_config( $fonts_logic );
 		if ( empty( $fonts_logic ) ) {
@@ -2072,6 +2299,16 @@ class FontPalettes extends AbstractHookProvider {
 		if ( empty( $options_details ) ) {
 			return [];
 		}
+
+		$this->maybe_apply_palette_connected_fields_preset( $declared_preset, $options_details );
+
+		// Fan out along the hierarchy the site now has, like the editors do after load, instead of
+		// the theme's static master mapping (which would undo a non-default preset on save).
+		$preset_details  = $options_details[ self::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY ] ?? [];
+		$options_details = self::apply_connected_fields_preset_to_details(
+			$options_details,
+			(string) get_option( self::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY, is_array( $preset_details ) ? ( $preset_details['default'] ?? '' ) : '' )
+		);
 
 		$updated_fields = [];
 		foreach ( $fonts_logic as $master_font_id => $font_logic ) {
@@ -2894,6 +3131,10 @@ class FontPalettes extends AbstractHookProvider {
 		}
 
 		$localized['fontPalettes']['masterSettingIds'] = $this->get_all_master_font_controls_ids();
+
+		// #204: whether the hierarchy preset is user-set, resolved server-side so the legacy rule
+		// (a saved preset without a source is the user's) lives in one place.
+		$localized['fontPalettes']['connectedFieldsPresetUserSet'] = $this->is_connected_fields_preset_user_set();
 
 		$localized['fontPalettes']['variations'] = [
 			'light'   => [],

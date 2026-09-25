@@ -127,6 +127,8 @@ class SettingsWriter {
 
 		$stripped = $this->map_gate_strips( $requested, $gated );
 
+		$gated = $this->mark_connected_fields_preset_source( $gated );
+
 		// §3.4: normalize zero-valued unitless letter-spacings, strip the nonzero
 		// ones that carry no usable unit. Runs after the gate so a premium id is
 		// reported with the more actionable `plus_locked` reason.
@@ -704,6 +706,11 @@ class SettingsWriter {
 			unset( $values[ $premium_id ] );
 		}
 
+		// The hierarchy preset's source only describes the gated preset. A locked save cannot
+		// persist a user preset, so it cannot claim one either; the palette's own hierarchy is
+		// applied server-side after save (#204).
+		unset( $values[ FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY ] );
+
 		// The public baseline is editable client state. A locked client may have
 		// previewed premium fine tuning, so never persist that submitted copy.
 		// Rebuild it from pre-save server state before allowing the free named
@@ -721,6 +728,30 @@ class SettingsWriter {
 		if ( array_key_exists( self::PALETTE_OUTPUT_SETTING_ID, $values )
 			&& ( $has_premium_setting_change || ! $this->has_free_palette_setting_change( $original_values ) ) ) {
 			unset( $values[ self::PALETTE_OUTPUT_SETTING_ID ] );
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Record a directly written hierarchy preset as the user's (#204).
+	 *
+	 * The editors send the source with the preset themselves. A caller that writes the preset on
+	 * its own (an agent, the REST endpoint) is choosing it, so it counts as user-set. When the same
+	 * write also selects a font palette, the preset may be that palette's own hierarchy, so the
+	 * stored source is left to the caller.
+	 *
+	 * @since 2.6.1
+	 *
+	 * @param array $values Setting id => value map that passed the gate.
+	 *
+	 * @return array
+	 */
+	public function mark_connected_fields_preset_source( array $values ): array {
+		if ( array_key_exists( FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY, $values )
+			&& ! array_key_exists( FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY, $values )
+			&& ! array_key_exists( FontPalettes::SM_FONT_PALETTE_OPTION_KEY, $values ) ) {
+			$values[ FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY ] = FontPalettes::CONNECTED_FIELDS_PRESET_SOURCE_USER;
 		}
 
 		return $values;

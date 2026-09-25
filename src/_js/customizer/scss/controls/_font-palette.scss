@@ -162,6 +162,21 @@
     color: #333;
   }
 
+  // The palette carries its own type hierarchy (#204): core help-text styling,
+  // in the admin font rather than the palette's specimen fonts.
+  .font-palette-preview__hierarchy {
+    display: block;
+    position: relative;
+    z-index: 1;
+    margin-top: 8px;
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 1.4;
+    color: #757575;
+  }
+
   .voice-tuner-fit {
     position: absolute;
     top: var(--customizer-spacing);

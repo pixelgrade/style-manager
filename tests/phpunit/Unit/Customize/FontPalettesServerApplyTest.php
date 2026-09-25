@@ -116,7 +116,9 @@ class FontPalettesServerApplyTest extends TestCase {
 		$applied = $font_palettes->apply_current_font_palette_to_connected_fields();
 
 		$this->assertSame( [ 'body_font' ], $applied );
-		$this->assertArrayNotHasKey( 'sm_fonts_connected_fields_preset', $updated_options );
+		// #204: this site never saved a hierarchy preset, so the palette's own applies.
+		$this->assertSame( 'preset-2', $updated_options['sm_fonts_connected_fields_preset'] ?? null );
+		$this->assertSame( 'palette', $updated_options['sm_fonts_connected_fields_preset_source'] ?? null );
 		$this->assertSame( 'Reforma1969', $updated_options['sm_font_body']['font_family'] ?? null );
 		$this->assertSame( 'Reforma1969', $theme_mods['anima_options']['body_font']['font_family'] ?? null );
 		$this->assertEquals(

@@ -805,6 +805,73 @@ namespace Pixelgrade\StyleManager\Tests\Unit\Provider {
 			$this->assertSame( [], SettingsWriter::master_font_slots_in( [ 'sm_font_sizing' => 'x' ] ) );
 		}
 
+		/*
+		 * ------------------------------------------------------------------
+		 * #204: who set the hierarchy (connected-fields) preset.
+		 * ------------------------------------------------------------------
+		 */
+
+		public function test_a_preset_written_on_its_own_is_recorded_as_the_users(): void {
+			$this->assertSame(
+				[
+					FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY        => 'preset-3',
+					FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY => 'user',
+				],
+				$this->create_writer()->mark_connected_fields_preset_source(
+					[ FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY => 'preset-3' ]
+				)
+			);
+		}
+
+		public function test_a_preset_saved_with_a_palette_or_an_explicit_source_is_left_to_the_caller(): void {
+			$with_palette = [
+				FontPalettes::SM_FONT_PALETTE_OPTION_KEY                  => 'hiv3tt',
+				FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY => 'preset-2-5',
+			];
+			$with_source  = [
+				FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY        => 'preset-2-5',
+				FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY => 'palette',
+			];
+
+			$this->assertSame( $with_palette, $this->create_writer()->mark_connected_fields_preset_source( $with_palette ) );
+			$this->assertSame( $with_source, $this->create_writer()->mark_connected_fields_preset_source( $with_source ) );
+			$this->assertSame( [ 'sm_font_sizing' => 'normal' ], $this->create_writer()->mark_connected_fields_preset_source( [ 'sm_font_sizing' => 'normal' ] ) );
+		}
+
+		public function test_a_locked_save_cannot_claim_the_hierarchy_preset(): void {
+			$this->mock_plus_entitlement_bridge( true, false );
+
+			$this->assertSame(
+				[ FontPalettes::SM_FONT_PALETTE_OPTION_KEY => 'hiv3tt' ],
+				$this->create_writer()->strip_locked_premium_settings(
+					[
+						FontPalettes::SM_FONT_PALETTE_OPTION_KEY                         => 'hiv3tt',
+						FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY        => 'preset-3',
+						FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY => 'user',
+					]
+				)
+			);
+		}
+
+		public function test_save_records_a_lone_preset_write_as_the_users(): void {
+			$this->mock_plus_entitlement_bridge( true, true );
+
+			$headless = $this->createMock( HeadlessCustomizer::class );
+			$headless
+				->expects( $this->once() )
+				->method( 'save' )
+				->with(
+					[
+						FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY        => 'preset-3',
+						FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_SOURCE_OPTION_KEY => 'user',
+					]
+				)
+				->willReturn( [ 'saved' => [], 'skipped' => [], 'setting_validities' => [] ] );
+			Functions\when( 'do_action' )->justReturn( null );
+
+			$this->create_writer( $headless )->save( [ FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY => 'preset-3' ] );
+		}
+
 		private function create_writer( ?HeadlessCustomizer $headless = null, ?FontPalettes $font_palettes = null ): SettingsWriter {
 			return new SettingsWriter(
 				$headless ?: $this->createMock( HeadlessCustomizer::class ),

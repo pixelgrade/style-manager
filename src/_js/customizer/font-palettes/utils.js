@@ -95,3 +95,88 @@ export const applyFontPaletteSelection = (
     setFontSetting( settingID, config );
   } );
 };
+
+export const CONNECTED_FIELDS_PRESET_SETTING_ID = 'sm_fonts_connected_fields_preset';
+export const CONNECTED_FIELDS_PRESET_SOURCE_SETTING_ID = 'sm_fonts_connected_fields_preset_source';
+export const CONNECTED_FIELDS_PRESET_SOURCE_USER = 'user';
+export const CONNECTED_FIELDS_PRESET_SOURCE_PALETTE = 'palette';
+
+/**
+ * The hierarchy preset a palette writes while the site's preset is not user-set,
+ * or '' to leave it alone (#204). JS twin of
+ * FontPalettes::resolve_palette_connected_fields_preset().
+ *
+ * A palette without a declared preset restores the setting default, so the
+ * previous palette's hierarchy does not linger (System -> Blair -> System
+ * round-trips, #206). A preset the theme does not offer is ignored.
+ */
+export const resolvePaletteConnectedFieldsPreset = ( declaredPreset = '', presetConfig = {} ) => {
+  const declared = 'string' === typeof declaredPreset ? declaredPreset.trim() : '';
+  const fallback = 'string' === typeof presetConfig?.default ? presetConfig.default : '';
+  const target = declared || fallback;
+
+  if ( ! target ) {
+    return '';
+  }
+
+  const choices = presetConfig?.choices;
+  if ( choices && 'object' === typeof choices && Object.keys( choices ).length
+    && ! Object.prototype.hasOwnProperty.call( choices, target ) ) {
+    return '';
+  }
+
+  return target;
+};
+
+/**
+ * Track who owns the hierarchy preset in an editor session (#204).
+ *
+ * - `applyPalette()` writes the palette's hierarchy only while the preset is
+ *   not user-set, and records `palette` as its source.
+ * - `onPresetChange()` runs on every preset change; any change the palette did
+ *   not make is the user's choice, so it records `user` and the preset is kept
+ *   from then on.
+ *
+ * `userSet` is the server's classification at load (a saved preset without a
+ * source counts as the user's).
+ */
+export const createConnectedFieldsPresetOwnership = ( { userSet = false } = {} ) => {
+  let isUserSet = !! userSet;
+  let applyingPalette = false;
+
+  return {
+    isUserSet: () => isUserSet,
+
+    applyPalette( declaredPreset, presetConfig, { setPreset, setSource } ) {
+      if ( isUserSet ) {
+        return '';
+      }
+
+      const target = resolvePaletteConnectedFieldsPreset( declaredPreset, presetConfig );
+      if ( ! target ) {
+        return '';
+      }
+
+      applyingPalette = true;
+      try {
+        setPreset( target );
+        setSource( CONNECTED_FIELDS_PRESET_SOURCE_PALETTE );
+      } finally {
+        applyingPalette = false;
+      }
+
+      return target;
+    },
+
+    onPresetChange( setSource ) {
+      if ( applyingPalette ) {
+        return false;
+      }
+
+      isUserSet = true;
+      setSource( CONNECTED_FIELDS_PRESET_SOURCE_USER );
+
+      return true;
+    },
+  };
+};

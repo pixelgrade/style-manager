@@ -286,6 +286,12 @@ class Preset extends BaseControl {
 				// they're badged "Plus" and the pick is gated on save, not on sight.
 				$locked_ids = array_map( 'strval', $this->sm_font_palettes->get_locked_palette_ids() );
 
+				// The hierarchy preset setting, to tell which palettes carry their own hierarchy (#204).
+				$hierarchy_preset_details = get_option_details( FontPalettes::SM_FONTS_CONNECTED_FIELDS_PRESET_OPTION_KEY );
+				if ( ! is_array( $hierarchy_preset_details ) ) {
+					$hierarchy_preset_details = [];
+				}
+
 				// Collect all preview font variants needed for the cards.
 				$preview_heading_size = 34;
 				$preview_body_size    = 15;
@@ -358,12 +364,16 @@ class Preset extends BaseControl {
 							$choice_config['fonts_logic'] = [];
 						}
 
-						if ( ! empty( $choice_config['fonts_logic']['connected_fields_preset'] ) ) {
-							unset( $choice_config['fonts_logic']['connected_fields_preset'] );
-						}
+						// The declared hierarchy preset travels on its own attribute: the editors apply it
+						// only while the site's preset is not user-set (#204).
+						$declared_hierarchy_preset = FontPalettes::get_palette_connected_fields_preset( $choice_config );
+						unset( $choice_config['fonts_logic']['connected_fields_preset'] );
 
 						$fonts = $this->convertChoiceOptionsIdsToSettingIds( $choice_config['fonts_logic'] );
 						$data  .= ' data-fonts_logic=\'' . esc_attr( json_encode( $fonts ) ) . '\'';
+						$data  .= ' data-connected_fields_preset="' . esc_attr( $declared_hierarchy_preset ) . '"';
+
+						$carries_own_hierarchy = FontPalettes::palette_carries_own_hierarchy( $declared_hierarchy_preset, $hierarchy_preset_details );
 
 						// Extract preview font styles from the palette's fonts_logic.
 						$fonts_logic   = $choice_config['fonts_logic'];
@@ -419,6 +429,10 @@ class Preset extends BaseControl {
 								style="font-family: '<?php echo esc_attr( $heading_font_family ); ?>', sans-serif; font-weight: <?php echo esc_attr( $heading_font_weight ); ?>; letter-spacing: <?php echo esc_attr( $heading_letter_spacing ); ?>; text-transform: <?php echo esc_attr( $heading_text_transform ); ?>;"><?php echo esc_html( $preview_title ); ?></span>
 							<span class="font-palette-preview__desc"
 								style="font-family: '<?php echo esc_attr( $body_font_family ); ?>', serif; font-weight: <?php echo esc_attr( $body_font_weight ); ?>;"><?php echo esc_html( $preview_desc ); ?></span>
+							<?php if ( $carries_own_hierarchy ) { ?>
+							<span class="font-palette-preview__hierarchy"
+								title="<?php esc_attr_e( 'Selecting this palette applies its hierarchy, unless you have chosen a hierarchy preset yourself.', '__plugin_txtd' ); ?>"><?php esc_html_e( 'Includes its own type hierarchy', '__plugin_txtd' ); ?></span>
+							<?php } ?>
 							<label for="<?php echo esc_attr( $choice_value ) . '-font-palette'; ?>">
 								<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
 							</label>

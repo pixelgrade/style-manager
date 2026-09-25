@@ -116,6 +116,27 @@ test( 'locked Plus never sends the client-owned font sizing baseline', () => {
 	);
 } );
 
+test( 'locked Plus never sends the hierarchy preset source (#204)', () => {
+	assert.deepEqual(
+		filterLockedPlusChangedValues(
+			{ sm_font_palette: 'hiv3tt', sm_fonts_connected_fields_preset_source: 'palette' },
+			lockedPlusFont
+		),
+		{ sm_font_palette: 'hiv3tt' }
+	);
+	assert.deepEqual(
+		filterLockedPlusChangedValues( { sm_fonts_connected_fields_preset_source: 'user' }, lockedPlusFont ),
+		{}
+	);
+	assert.deepEqual(
+		filterLockedPlusChangedValues(
+			{ sm_fonts_connected_fields_preset_source: 'user' },
+			{ ...lockedPlusFont, locked: false }
+		),
+		{ sm_fonts_connected_fields_preset_source: 'user' }
+	);
+} );
+
 test( 'unlocked Plus does not filter palette output or premium tuning', () => {
 	const changed = {
 		sm_color_grades_number: 8,
