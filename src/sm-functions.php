@@ -918,6 +918,246 @@ function style_manager_hex_to_rgb_channels( string $color ): array {
 }
 
 /**
+ * The contrast-floor colour roles every palette variation carries.
+ *
+ * Each role is derived from the variation's own colours and guaranteed a minimum WCAG contrast
+ * against that variation's bg, so it works on every surface; the key becomes
+ * `--sm-<key>-color-N`, and the SCSS `apply-variation` mixin maps it to `--sm-current-<key>-color`.
+ * The first role is quiet text (`fg-muted`, style-manager#214). A later role (for example the
+ * primary / secondary rule colours of nova-blocks#668) is one more entry here AND in the JS twin
+ * `CONTRAST_FLOOR_ROLES` (`src/_js/shared/contrast-floor.js`); both are pinned to
+ * `tests/phpunit/fixtures/quiet-text/corpus.json`, so there is no filter: a server-only change
+ * would drift from the Customizer and Site Editor previews.
+ *
+ * - source:      the variation colour the role starts from.
+ * - minContrast: the floor against the variation's bg.
+ * - maxMix:      how far toward bg the role may soften (0 = the source, 1 = all the way).
+ *
+ * @since 2.7.0
+ *
+ * @return array<string, array{source: string, minContrast: float, maxMix: float}>
+ */
+function style_manager_get_contrast_floor_roles(): array {
+	return [
+		'fg-muted' => [
+			'source'      => 'fg1',
+			'minContrast' => 4.5,
+			'maxMix'      => 1.0,
+		],
+	];
+}
+
+/**
+ * The softest colour on the source → background line that keeps a contrast floor.
+ *
+ * Mirrors `getContrastFloorColor()` in `src/_js/shared/contrast-floor.js` byte for byte:
+ *
+ * 1. Walk from `$source` toward `$background` in 1/200 steps, at most `$max_mix` of the way, and
+ *    keep the last step that still measures >= `$min_contrast` against the background.
+ * 2. When `$source` itself is below the floor, walk from it away from the background (toward
+ *    black or white, whichever contrasts more with it) and keep the first step that passes.
+ *    Black or white always clears 4.58:1, so any floor up to that is guaranteed.
+ * 3. A value that is not a plain hex colour is passed through unchanged.
+ *
+ * @since 2.7.0
+ *
+ * @param string $background   The variation's ground (bg).
+ * @param string $source       The colour the role starts from (e.g. fg1).
+ * @param float  $min_contrast The contrast floor against `$background`.
+ * @param float  $max_mix      How far toward `$background` the colour may soften, 0–1.
+ *
+ * @return string A lowercase #rrggbb colour, or `$source` unchanged when either input is not hex.
+ */
+function style_manager_get_contrast_floor_color( string $background, string $source, float $min_contrast, float $max_mix = 1.0 ): string {
+	static $cache = [];
+
+	$steps      = 200;
+	$bg_hex     = style_manager_normalize_short_hex( $background );
+	$source_hex = style_manager_normalize_short_hex( $source );
+
+	if ( null === $bg_hex || null === $source_hex ) {
+		return $source;
+	}
+
+	$max_steps = min( $steps - 1, (int) round( max( 0.0, min( 1.0, $max_mix ) ) * $steps ) );
+	$key       = $bg_hex . '|' . $source_hex . '|' . $min_contrast . '|' . $max_steps;
+
+	if ( isset( $cache[ $key ] ) ) {
+		return $cache[ $key ];
+	}
+
+	$bg           = sm_hex_to_rgb_channels( $bg_hex );
+	$from         = sm_hex_to_rgb_channels( $source_hex );
+	$bg_luminance = style_manager_rgb_channels_relative_luminance( $bg );
+
+	/*
+	 * `$step` / `$steps` of the way from `$from` to a target, rounded half up in exact integer
+	 * math (PHP round() pre-rounds floats, JS Math.round() does not), then tested against the
+	 * floor. Inlined, with a luminance lookup table, because this runs per palette variation on
+	 * every uncached stylesheet render.
+	 */
+	$walk = static function ( array $target, int $step ) use ( $from, $steps, $bg_luminance, $min_contrast ): ?array {
+		$mixed = [
+			intdiv( 2 * ( $from[0] * ( $steps - $step ) + $target[0] * $step ) + $steps, 2 * $steps ),
+			intdiv( 2 * ( $from[1] * ( $steps - $step ) + $target[1] * $step ) + $steps, 2 * $steps ),
+			intdiv( 2 * ( $from[2] * ( $steps - $step ) + $target[2] * $step ) + $steps, 2 * $steps ),
+		];
+
+		$luminance = style_manager_rgb_channels_relative_luminance( $mixed );
+		$ratio     = ( max( $luminance, $bg_luminance ) + 0.05 ) / ( min( $luminance, $bg_luminance ) + 0.05 );
+
+		return $ratio >= $min_contrast ? $mixed : null;
+	};
+
+	$found = null;
+
+	if ( null !== $walk( $from, 0 ) ) {
+		$found = $from;
+
+		// When every channel moves the same way, luminance (and so the contrast against bg)
+		// changes monotonically along the walk, the passing steps form a prefix, and a binary
+		// search finds the same last passing step the linear walk would.
+		$monotonic = ( $bg[0] >= $from[0] && $bg[1] >= $from[1] && $bg[2] >= $from[2] )
+			|| ( $bg[0] <= $from[0] && $bg[1] <= $from[1] && $bg[2] <= $from[2] );
+
+		if ( $monotonic ) {
+			$low  = 0;
+			$high = $max_steps + 1;
+			while ( $high - $low > 1 ) {
+				$middle    = intdiv( $low + $high, 2 );
+				$candidate = $walk( $bg, $middle );
+				if ( null === $candidate ) {
+					$high = $middle;
+				} else {
+					$low = $middle;
+				}
+			}
+			$found = $low > 0 ? $walk( $bg, $low ) : $from;
+		} else {
+			for ( $step = 1; $step <= $max_steps; $step++ ) {
+				$candidate = $walk( $bg, $step );
+
+				if ( null === $candidate ) {
+					break;
+				}
+
+				$found = $candidate;
+			}
+		}
+	} else {
+		$black_ratio = ( $bg_luminance + 0.05 ) / 0.05;
+		$white_ratio = 1.05 / ( $bg_luminance + 0.05 );
+		$extreme     = $black_ratio >= $white_ratio ? [ 0, 0, 0 ] : [ 255, 255, 255 ];
+
+		for ( $step = 1; $step <= $steps; $step++ ) {
+			$found = $walk( $extreme, $step );
+
+			if ( null !== $found ) {
+				break;
+			}
+		}
+	}
+
+	$result = null === $found ? $source_hex : sprintf( '#%02x%02x%02x', $found[0], $found[1], $found[2] );
+
+	$cache[ $key ] = $result;
+
+	return $result;
+}
+
+/**
+ * Every contrast-floor role colour for one palette variation.
+ *
+ * @since 2.7.0
+ *
+ * @param object|array $variation A palette variation ({ bg, fg1, fg2, accent, … }).
+ *
+ * @return array<string, string> Role key => colour. Roles whose source or bg is missing are left out.
+ */
+function style_manager_get_contrast_floor_role_colors( $variation ): array {
+	$variation = (array) $variation;
+	$colors    = [];
+
+	if ( empty( $variation['bg'] ) || ! is_string( $variation['bg'] ) ) {
+		return $colors;
+	}
+
+	foreach ( style_manager_get_contrast_floor_roles() as $key => $role ) {
+		$source = $variation[ $role['source'] ] ?? null;
+
+		if ( ! empty( $source ) && is_string( $source ) ) {
+			$colors[ $key ] = style_manager_get_contrast_floor_color( $variation['bg'], $source, (float) $role['minContrast'], (float) $role['maxMix'] );
+		}
+	}
+
+	return $colors;
+}
+
+/**
+ * The quiet-text colour (style-manager#214) for one ground and text colour: softer than the text,
+ * never below 4.5:1 on the ground.
+ *
+ * @since 2.7.0
+ *
+ * @param string $background The variation's bg.
+ * @param string $foreground The variation's fg1.
+ *
+ * @return string
+ */
+function style_manager_get_quiet_text_color( string $background, string $foreground ): string {
+	$role = style_manager_get_contrast_floor_roles()['fg-muted'];
+
+	return style_manager_get_contrast_floor_color( $background, $foreground, (float) $role['minContrast'], (float) $role['maxMix'] );
+}
+
+/**
+ * A plain #rgb / #rrggbb colour as lowercase #rrggbb, or null.
+ *
+ * @since 2.7.0
+ *
+ * @param string $color Colour.
+ *
+ * @return string|null
+ */
+function style_manager_normalize_short_hex( string $color ): ?string {
+	$color = strtolower( trim( $color ) );
+
+	if ( 1 !== preg_match( '/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/', $color ) ) {
+		return null;
+	}
+
+	if ( 4 === strlen( $color ) ) {
+		$color = '#' . $color[1] . $color[1] . $color[2] . $color[2] . $color[3] . $color[3];
+	}
+
+	return $color;
+}
+
+/**
+ * WCAG relative luminance of integer RGB channels — the formula of
+ * style_manager_hex_color_relative_luminance(), without the hex round-trip.
+ *
+ * @since 2.7.0
+ *
+ * @param int[] $channels RGB channels, 0–255.
+ *
+ * @return float
+ */
+function style_manager_rgb_channels_relative_luminance( array $channels ): float {
+	static $linear = null;
+
+	if ( null === $linear ) {
+		$linear = [];
+		for ( $channel = 0; $channel <= 255; $channel++ ) {
+			$value              = $channel / 255;
+			$linear[ $channel ] = $value <= 0.03928 ? $value / 12.92 : pow( ( $value + 0.055 ) / 1.055, 2.4 );
+		}
+	}
+
+	return 0.2126 * $linear[ $channels[0] ] + 0.7152 * $linear[ $channels[1] ] + 0.0722 * $linear[ $channels[2] ];
+}
+
+/**
  * @since   2.0.0
  *
  * @param object[] $palettes
@@ -983,8 +1223,19 @@ function style_manager_get_variation_css_variables( $variations, $index, $offset
 	$output = '';
 
 	$variation = $variations[ ( $index + $offset ) % 12 ];
+	$roles     = style_manager_get_contrast_floor_roles();
 
 	foreach ( $variation as $key => $value ) {
+		// Contrast-floor roles are always derived below, so a stored value can never bypass the floor.
+		if ( isset( $roles[ $key ] ) ) {
+			continue;
+		}
+
+		$output .= '--sm-' . $key . '-color-' . ( $index + 1 ) . ': ' . $value . '; ';
+	}
+
+	// The quiet-text role (style-manager#214) and any later contrast-floor role.
+	foreach ( style_manager_get_contrast_floor_role_colors( $variation ) as $key => $value ) {
 		$output .= '--sm-' . $key . '-color-' . ( $index + 1 ) . ': ' . $value . '; ';
 	}
 

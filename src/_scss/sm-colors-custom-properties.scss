@@ -9,6 +9,9 @@
   --sm-current-accent3-color: var(--sm-accent3-color-#{ $i }, var(--sm-current-accent2-color));
   --sm-current-fg1-color: var(--sm-fg1-color-#{ $i });
   --sm-current-fg2-color: var(--sm-fg2-color-#{ $i });
+  // Quiet text (meta, dates, terms, captions): softer than fg1, never below 4.5:1 on this
+  // variation's ground. Falls back to fg1 where a palette stylesheet predates the role.
+  --sm-current-fg-muted-color: var(--sm-fg-muted-color-#{ $i }, var(--sm-current-fg1-color));
   // Semantic line colors resolve from the consuming element's current ink,
   // preserving nested palette contexts and explicit block text colors.
   --sm-current-divider-color: color-mix(in srgb, currentColor 20%, transparent);

@@ -1,3 +1,5 @@
+import { CONTRAST_FLOOR_ROLES, getContrastFloorRoleColors } from '../../shared/contrast-floor.js';
+
 export const getCSSFromPalettes = ( palettesArray, variation = 1 ) => {
 
   const palettes = palettesArray.slice();
@@ -52,10 +54,20 @@ const getVariationsCSS = ( variations, offset ) => {
 const getVariationCSS = ( variations, index, offset ) => {
   const variation = variations[ ( index + offset ) % 12 ];
 
-  return Object.keys( variation ).reduce( ( acc, key ) => {
+  // Contrast-floor roles (the quiet-text `fg-muted`, style-manager#214) are always derived
+  // from the variation's own colours, so a stored value can never bypass the floor.
+  const stored = Object.keys( variation ).filter( key => ! Object.prototype.hasOwnProperty.call( CONTRAST_FLOOR_ROLES, key ) );
+  const derived = getContrastFloorRoleColors( variation );
+
+  const storedCSS = stored.reduce( ( acc, key ) => {
     return `${ acc }
 --sm-${ key }-color-${ index + 1 }: ${ variation[ key ] };`
   }, '' );
+
+  return Object.keys( derived ).reduce( ( acc, key ) => {
+    return `${ acc }
+--sm-${ key }-color-${ index + 1 }: ${ derived[ key ] };`
+  }, storedCSS );
 
 };
 
