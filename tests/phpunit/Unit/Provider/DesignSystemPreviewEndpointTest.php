@@ -67,16 +67,50 @@ class DesignSystemPreviewEndpointTest extends TestCase {
 		$options = $this->options_mock( $this->option_details_fixture(), 4 );
 		$payload = $this->create_endpoint( $options )->get_payload();
 
+		// mutedText is the quiet-text role (style-manager#214), derived from this variation's
+		// own surface and text, not the stored fg2 (style-manager#216).
 		$this->assertSame(
 			[
 				'variation' => 4,
 				'surface'   => '#b2eca1',
 				'text'      => '#0f261d',
-				'mutedText' => '#173d2d',
+				'mutedText' => style_manager_get_quiet_text_color( '#b2eca1', '#0f261d' ),
 				'accent'    => '#00825a',
 			],
 			$payload['colors']['current']
 		);
+	}
+
+	public function test_muted_text_is_the_quiet_text_role_derived_from_surface_and_text_not_the_stored_fg2(): void {
+		$palette = $this->palette_fixture();
+		// Sabotage the stored fg2 with an implausible value: if mutedText ever fell back to
+		// reading it directly, this test would catch the regression.
+		$palette->variations[3]->fg2 = '#ff00ff';
+
+		$payload = $this->create_endpoint(
+			$this->options_mock( $this->option_details_fixture(), 4 ),
+			[ 'palettes' => [ $palette ] ]
+		)->get_payload();
+
+		$this->assertNotSame( '#ff00ff', $payload['colors']['current']['mutedText'] );
+		$this->assertSame(
+			style_manager_get_quiet_text_color( '#b2eca1', '#0f261d' ),
+			$payload['colors']['current']['mutedText']
+		);
+	}
+
+	public function test_colors_are_invalid_when_a_variation_is_missing_surface_or_text(): void {
+		$palette = $this->palette_fixture();
+		// The site variation (index 3, see the fixture above) loses its text colour: with no fg1
+		// to derive the quiet-text role from, the whole variation is invalid, same as before #216.
+		unset( $palette->variations[3]->fg1 );
+
+		$payload = $this->create_endpoint(
+			$this->options_mock( $this->option_details_fixture(), 4 ),
+			[ 'palettes' => [ $palette ] ]
+		)->get_payload();
+
+		$this->assertNull( $payload['colors'] );
 	}
 
 	public function test_typography_uses_the_connected_field_nearest_each_preview_size(): void {

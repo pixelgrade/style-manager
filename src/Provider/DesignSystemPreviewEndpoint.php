@@ -472,12 +472,22 @@ final class DesignSystemPreviewEndpoint extends AbstractHookProvider {
 
 	/**
 	 * Normalizes a palette variation to the public color-role names.
+	 *
+	 * `mutedText` reads the quiet-text role (style-manager#214, `--sm-current-fg-muted-color`):
+	 * derived from this variation's own surface and text, guaranteed 4.5:1 against the surface on
+	 * every variation. It is computed here rather than read from a stored key, the same way the
+	 * CSS generator derives it, so a palette saved before #214 still gets it (style-manager#216).
 	 */
 	private function normalize_variation( array $variation ): ?array {
+		$surface = $this->normalize_color( $variation['bg'] ?? '' );
+		$text    = $this->normalize_color( $variation['fg1'] ?? '' );
+
 		$normalized = [
-			'surface'   => $this->normalize_color( $variation['bg'] ?? '' ),
-			'text'      => $this->normalize_color( $variation['fg1'] ?? '' ),
-			'mutedText' => $this->normalize_color( $variation['fg2'] ?? '' ),
+			'surface'   => $surface,
+			'text'      => $text,
+			'mutedText' => '' !== $surface && '' !== $text
+				? $this->normalize_color( \style_manager_get_quiet_text_color( $surface, $text ) )
+				: '',
 			'accent'    => $this->normalize_color( $variation['accent'] ?? '' ),
 		];
 
