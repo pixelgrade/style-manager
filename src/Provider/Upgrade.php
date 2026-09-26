@@ -212,7 +212,7 @@ class Upgrade extends AbstractHookProvider {
 	 * Never touches a site with any saved rail setting (a Rail Scale already
 	 * owned its Small rail before the decoupling).
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @return bool Whether a value was written.
 	 */

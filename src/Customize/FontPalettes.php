@@ -2054,7 +2054,7 @@ class FontPalettes extends AbstractHookProvider {
 	/**
 	 * The hierarchy preset a font palette declares, or '' when it declares none.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param array $palette_config A font palette config.
 	 *
@@ -2074,7 +2074,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * hierarchy they render today, and only a site that never saved a preset lets a palette's
 	 * declared hierarchy apply.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param mixed $source          The stored source (`user`, `palette`, or anything else when unset).
 	 * @param bool  $preset_is_saved Whether the preset option has a saved value.
@@ -2096,7 +2096,7 @@ class FontPalettes extends AbstractHookProvider {
 	/**
 	 * Whether the site's connected-fields preset is user-set, from the saved options (#204).
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @return bool
 	 */
@@ -2115,7 +2115,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * get_option() cannot answer this inside the Customizer: a previewed option setting supplies
 	 * its registered default when the option is missing.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param string $option_name The option name.
 	 *
@@ -2144,7 +2144,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * follows the palette, moving to a palette without a hierarchy must undo the previous palette's
 	 * (System -> Blair -> System round-trips, #206). A preset the theme does not offer is ignored.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param string $declared_preset The palette's declared preset ('' for none).
 	 * @param array  $preset_details  The preset setting details (`default`, `choices`).
@@ -2172,7 +2172,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * Mirrors the editors' initializeConnectedFieldsPresets(): a master listed in the preset's
 	 * `config` takes that list; a master the preset does not list keeps its own.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param array  $options_details All option details.
 	 * @param string $preset          The connected-fields preset in effect.
@@ -2202,7 +2202,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * Only a declared preset that differs from the setting default is the palette's own; a palette
 	 * declaring the default hierarchy behaves like one declaring none.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param string $declared_preset The palette's declared preset ('' for none).
 	 * @param array  $preset_details  The preset setting details (`default`, `choices`).
@@ -2228,7 +2228,7 @@ class FontPalettes extends AbstractHookProvider {
 	 * Writes the preset directly (the palette is the actor, so the Plus save gate on the preset
 	 * control does not apply) and records the palette as its source.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param string $declared_preset The palette's declared preset ('' for none).
 	 * @param array  $options_details All option details.

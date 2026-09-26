@@ -741,7 +741,7 @@ class SettingsWriter {
 	 * write also selects a font palette, the preset may be that palette's own hierarchy, so the
 	 * stored source is left to the caller.
 	 *
-	 * @since 2.6.1
+	 * @since 2.7.0
 	 *
 	 * @param array $values Setting id => value map that passed the gate.
 	 *

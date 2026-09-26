@@ -197,7 +197,7 @@ function style_manager_rail_widths( $base_raw, $pitch_raw, $small_raw = '' ): ?a
  * Kept exact (not rounded) so a pin written from a saved Content Inset renders
  * the very width the old inset coupling produced.
  *
- * @since 2.6.1
+ * @since 2.7.0
  *
  * @param mixed $raw The sm_rail_small value.
  *
@@ -350,7 +350,7 @@ function style_manager_rail_pitch_css_cb( $value, string $selector, string $prop
  * `--sm-rail-small`. It exists only so the setting is bound in the live
  * preview, where its JS twin recomputes the sm_rail_scale style tag.
  *
- * @since 2.6.1
+ * @since 2.7.0
  *
  * @return string Always empty.
  */
@@ -369,7 +369,7 @@ function style_manager_rail_small_css_cb( $value, string $selector, string $prop
  * `--sm-content-inset-explicit: 1` only when the option exists in the database
  * (including a Customizer changeset preview, which filters get_option()).
  *
- * @since 2.6.1
+ * @since 2.7.0
  *
  * @param mixed  $value    The resolved Content Inset value (ignored).
  * @param string $selector The CSS selector (`:root`).
@@ -389,7 +389,7 @@ function style_manager_content_inset_explicit_css_cb( $value, string $selector, 
 /**
  * Whether the user has saved a Content Inset value.
  *
- * @since 2.6.1
+ * @since 2.7.0
  *
  * @return bool
  */
@@ -412,7 +412,7 @@ function style_manager_content_inset_is_explicit(): bool {
  * An unset ('' / non-numeric) value returns null: emit nothing and keep the
  * theme's own slope (legacy-until-touched, byte-identical rendering).
  *
- * @since 2.6.1
+ * @since 2.7.0
  *
  * @param mixed $value The sm_font_mobile_scale value.
  *
@@ -437,7 +437,7 @@ function style_manager_font_mobile_scale_slope( $value ): ?float {
  * Editor preview) and `src/Screen/Customizer/Preview.php` (Customizer
  * preview) — keep them in sync.
  *
- * @since 2.6.1
+ * @since 2.7.0
  *
  * @param mixed  $value    The sm_font_mobile_scale value.
  * @param string $selector The CSS selector (`:root`).

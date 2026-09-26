@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.1
-Stable tag: 2.6.0
+Stable tag: 2.7.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,21 @@ When fetching design assets or submitting the plugin's existing settings statist
 * Google Fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.7.0 =
+* New: use fonts installed through the WordPress Font Library (Appearance > Fonts) in Style Manager's font fields. They are listed first, in a "Font Library" group, in both the Customizer and the Site Editor, and they load from your own site.
+* New: a Phone Heading Scale next to Font Sizing lets you decide how much headings shrink on phones, without changing any desktop size.
+* New: a quiet-text color role for secondary text such as meta, dates, terms and captions. On every palette variation it keeps at least 4.5:1 contrast against its background, and it works with palettes saved before this version without regenerating them.
+* New: a Small Rail setting in Layout sets the small rail width on its own, so a site that relied on Content Inset for its rail keeps it without moving the Medium and Large rails.
+* Improved: applying a font palette no longer replaces a type hierarchy preset you chose yourself. A palette applies its own hierarchy only while you haven't picked one.
+* Improved: the Typography preview now shows per-element overrides such as weight and uppercase, so it matches the site.
+* Improved: the Layout board is drawn from the real page geometry (container, rails and Content Inset), so the reading width it prints matches what visitors see.
+* Improved: the Phone Heading Scale is grouped with Font Sizing in the Site Editor.
+* Improved: font families are chosen in Style Manager, so blocks no longer show their own Font picker. Font size, line height and the other typography settings stay on the blocks.
+* Fix: the Layout rail controls (Small Rail, Rail Base and Rail Pitch) now show the width the site actually renders, and the slider and the number box always show the same value.
+* Fix: the Design System Preview uses the quiet-text role for muted text, so its contrast matches the site.
+* Developer: `--sm-content-inset-explicit: 1` is printed only when Content Inset has been saved, so themes and plugins can tell a saved value from the default.
+* Developer: every palette variation emits `--sm-fg-muted-color-N`, mapped to `--sm-current-fg-muted-color` in each color context. PHP and JavaScript produce identical values across a 2,060-variation test corpus.
 
 = 2.6.0 =
 * New: manage the whole design system from the command line with `wp pixelgrade sm` — read settings, write settings, inspect the structure, and export or import a site's colors, typography and spacing as one document.
