@@ -17,6 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { NativeFont } from './font-control';
+import { resolveRangeDisplayValue } from './range-display-value';
 
 const stripHtml = html => {
   const div = document.createElement( 'div' );
@@ -57,6 +58,9 @@ const NativeRange = ( { settingId } ) => {
   const { RangeControl } = wp.components;
   const config = getConfig( settingId );
   const attrs = config.input_attrs || {};
+  const min = attrs.min !== undefined ? Number( attrs.min ) : 0;
+  const max = attrs.max !== undefined ? Number( attrs.max ) : 100;
+  const step = attrs.step !== undefined ? Number( attrs.step ) : 1;
 
   return (
     <BoundControl settingId={ settingId }>
@@ -66,11 +70,16 @@ const NativeRange = ( { settingId } ) => {
             __nextHasNoMarginBottom
             label={ config.label }
             help={ stripHtml( config.desc ) || undefined }
-            value={ value === '' || value === undefined ? undefined : Number( value ) }
+            // An untouched "empty sentinel" setting (sm_rail_small,
+            // sm_rail_scale, sm_rail_pitch — see LayoutSection.php) must
+            // still show ONE consistent number in both the slider and the
+            // number field (style-manager#215); resolveRangeDisplayValue()
+            // computes it once so neither half of the control drifts.
+            value={ resolveRangeDisplayValue( value, min, max, step ) }
             onChange={ onChange }
-            min={ attrs.min !== undefined ? Number( attrs.min ) : 0 }
-            max={ attrs.max !== undefined ? Number( attrs.max ) : 100 }
-            step={ attrs.step !== undefined ? Number( attrs.step ) : 1 }
+            min={ min }
+            max={ max }
+            step={ step }
             withInputField
           />
         </div>
