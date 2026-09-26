@@ -26,6 +26,194 @@ class Fonts {
 	const FLOAT_PRECISION = 2;
 
 	/**
+	 * The fallback stack for a font whose category is unknown (style-manager#219).
+	 *
+	 * @since 2.7.0
+	 */
+	const NEUTRAL_FALLBACK_STACK = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+	/**
+	 * Category names every font source may use for the known categories.
+	 *
+	 * Checked after the category list's own keys and aliases.
+	 *
+	 * @since 2.7.0
+	 */
+	const FALLBACK_CATEGORY_ALIASES = [
+		'sans'       => 'sans-serif',
+		'sans serif' => 'sans-serif',
+		'system-ui'  => 'sans-serif',
+		'mono'       => 'monospace',
+		'monospaced' => 'monospace',
+		'script'     => 'handwriting',
+		'cursive'    => 'handwriting',
+	];
+
+	/**
+	 * The CSS generic family closing each known category, used when the
+	 * category list has no stack for it. Display has no fitting generic.
+	 *
+	 * @since 2.7.0
+	 */
+	const FALLBACK_CATEGORY_GENERICS = [
+		'serif'       => 'serif',
+		'sans-serif'  => 'sans-serif',
+		'monospace'   => 'monospace',
+		'handwriting' => 'cursive',
+	];
+
+	/**
+	 * Style tags that name a font's real category, for fonts catalogued as display.
+	 *
+	 * @since 2.7.0
+	 */
+	const FALLBACK_CLASSIFICATION_TAGS = [
+		'serif'       => 'serif',
+		'sans'        => 'sans-serif',
+		'sans-serif'  => 'sans-serif',
+		'mono'        => 'monospace',
+		'monospace'   => 'monospace',
+		'script'      => 'handwriting',
+		'handwriting' => 'handwriting',
+	];
+
+	/**
+	 * Resolve the fallback stack for a font from its catalog data (style-manager#219).
+	 *
+	 * JS twin: src/_js/utils/resolve-font-fallback-stack.js — keep in sync (both
+	 * run tests/js/support/font-fallback-stack-cases.json).
+	 *
+	 * - A display font tagged with a classification (e.g. `serif`) gets that
+	 *   category's stack: display is a use, not a letterform.
+	 * - Otherwise the font's own stack wins, unless it is a bare CSS generic
+	 *   (`serif`), which the category stack extends.
+	 * - Then the stack of the font's category, or of $catalog_category (the
+	 *   Google Fonts category of the same family) when the font has none.
+	 * - A known category missing from the list falls back to its CSS generic.
+	 * - Anything else gets the neutral stack.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param array  $details          Font details (category, fallback_stack, tags).
+	 * @param array  $categories       Category id => [ fallback_stack, aliases ].
+	 * @param string $catalog_category Optional. Category to use when the font has none.
+	 *
+	 * @return string The stack, or '' for fonts without details (system font stacks).
+	 */
+	public static function resolveFallbackStack( array $details, array $categories, string $catalog_category = '' ): string {
+		if ( empty( $details ) ) {
+			return '';
+		}
+
+		$own      = trim( (string) ( $details['fallback_stack'] ?? '' ) );
+		$declared = self::fallbackCategoryKey( $details['category'] ?? '', $categories );
+
+		$tagged = self::fallbackTagCategory( $details['tags'] ?? [] );
+		if ( '' !== $tagged && $tagged !== $declared && ( '' === $declared || 'display' === $declared ) ) {
+			$stack = self::fallbackCategoryStack( $tagged, $categories );
+			if ( '' !== $stack ) {
+				return $stack;
+			}
+		}
+
+		if ( '' !== $own && ! in_array( strtolower( $own ), [ 'serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui' ], true ) ) {
+			return $own;
+		}
+
+		$category = '' !== $declared ? $declared : self::fallbackCategoryKey( $catalog_category, $categories );
+		$stack    = '' !== $category ? self::fallbackCategoryStack( $category, $categories ) : '';
+		if ( '' !== $stack ) {
+			return $stack;
+		}
+
+		return '' !== $own ? $own : self::NEUTRAL_FALLBACK_STACK;
+	}
+
+	/**
+	 * Map a category name to a known category id ('' when unknown).
+	 *
+	 * Exact matches only: the list's keys, then its aliases, then the built-in
+	 * names. The built-in categories count as known even when missing from the list.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param mixed $category   The category name.
+	 * @param array $categories The category list.
+	 *
+	 * @return string
+	 */
+	protected static function fallbackCategoryKey( $category, array $categories ): string {
+		$category = is_string( $category ) ? strtolower( trim( $category ) ) : '';
+		if ( '' === $category ) {
+			return '';
+		}
+
+		foreach ( $categories as $id => $details ) {
+			if ( strtolower( (string) $id ) === $category ) {
+				return (string) $id;
+			}
+		}
+
+		foreach ( $categories as $id => $details ) {
+			$aliases = is_array( $details ) ? self::maybeExplodeList( $details['aliases'] ?? [] ) : [];
+			foreach ( $aliases as $alias ) {
+				if ( strtolower( trim( (string) $alias ) ) === $category ) {
+					return (string) $id;
+				}
+			}
+		}
+
+		if ( isset( self::FALLBACK_CATEGORY_ALIASES[ $category ] ) ) {
+			return self::FALLBACK_CATEGORY_ALIASES[ $category ];
+		}
+
+		return in_array( $category, [ 'serif', 'sans-serif', 'display', 'monospace', 'handwriting' ], true ) ? $category : '';
+	}
+
+	/**
+	 * The category a font's style tags name, or ''.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param mixed $tags Tag slugs, or cloud tag objects with a `slug`.
+	 *
+	 * @return string
+	 */
+	protected static function fallbackTagCategory( $tags ): string {
+		if ( ! is_array( $tags ) ) {
+			return '';
+		}
+
+		foreach ( $tags as $tag ) {
+			$slug = is_array( $tag ) ? ( $tag['slug'] ?? ( $tag['name'] ?? '' ) ) : $tag;
+			$slug = is_string( $slug ) ? strtolower( trim( $slug ) ) : '';
+			if ( isset( self::FALLBACK_CLASSIFICATION_TAGS[ $slug ] ) ) {
+				return self::FALLBACK_CLASSIFICATION_TAGS[ $slug ];
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * The stack of a known category: the list's stack, else its CSS generic.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param string $category   A known category id.
+	 * @param array  $categories The category list.
+	 *
+	 * @return string
+	 */
+	protected static function fallbackCategoryStack( string $category, array $categories ): string {
+		if ( ! empty( $categories[ $category ]['fallback_stack'] ) && is_string( $categories[ $category ]['fallback_stack'] ) ) {
+			return trim( $categories[ $category ]['fallback_stack'] );
+		}
+
+		return self::FALLBACK_CATEGORY_GENERICS[ $category ] ?? '';
+	}
+
+	/**
 	 * Cleanup stuff like tab characters.
 	 *
 	 * @param string $string

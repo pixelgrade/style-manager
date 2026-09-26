@@ -1506,33 +1506,17 @@ class Fonts extends AbstractHookProvider {
 	 * @return string
 	 */
 	protected function getFontFamilyFallbackStack( $fontFamily ): string {
-		$fallbackStack = '';
+		$fontFamily = (string) $fontFamily;
 
-		$fontDetails = $this->getFontDetails( $fontFamily );
-		if ( ! empty( $fontDetails['fallback_stack'] ) ) {
-			$fallbackStack = $fontDetails['fallback_stack'];
-		} elseif ( ! empty( $fontDetails['category'] ) ) {
-			$category = $fontDetails['category'];
-			// Search in the available categories for a match.
-			if ( ! empty( $this->categories[ $category ] ) ) {
-				// Matched by category ID/key
-				$fallbackStack = ! empty( $this->categories[ $category ]['fallback_stack'] ) ? $this->categories[ $category ]['fallback_stack'] : '';
-			} else {
-				// We need to search for aliases.
-				foreach ( $this->categories as $category_id => $category_details ) {
-					if ( ! empty( $category_details['aliases'] ) ) {
-						$aliases = FontsHelper::maybeImplodeList( $category_details['aliases'] );
-						if ( false !== strpos( $aliases, $category ) ) {
-							// Found it.
-							$fallbackStack = ! empty( $category_details['fallback_stack'] ) ? $category_details['fallback_stack'] : '';
-							break;
-						}
-					}
-				}
-			}
+		// Each family gets the stack of its own category (style-manager#219).
+		// A family without a category (e.g. a Font Library family whose stack
+		// names no generic) borrows the Google Fonts category of the same name.
+		$catalog_category = '';
+		if ( isset( $this->google_fonts[ $fontFamily ]['category'] ) && is_string( $this->google_fonts[ $fontFamily ]['category'] ) ) {
+			$catalog_category = $this->google_fonts[ $fontFamily ]['category'];
 		}
 
-		return $fallbackStack;
+		return FontsHelper::resolveFallbackStack( $this->getFontDetails( $fontFamily ), $this->categories, $catalog_category );
 	}
 
 	/**

@@ -22,6 +22,7 @@ import { ensureFontFamilyOption } from '../customizer/fonts/native-ui';
 import { applyFontFamilySelection } from './font-setting-adapter';
 import { getStaffPicksCollections } from './font-staff-picks';
 import { loadFontFaces, variantMatchesFace } from '../utils/load-font-faces';
+import { resolveFontFallbackStack } from '../utils/resolve-font-fallback-stack';
 
 const HEADER_HEIGHT = 34;
 const ITEM_HEIGHT = 40;
@@ -121,7 +122,7 @@ const getCatalog = () => {
       family,
       display: details.family_display || family,
       category: details.category || '',
-      fallback: details.fallback_stack || '',
+      fallback: resolveFontFallbackStack( details, fonts.categories || {}, fonts.google_fonts?.[ family ]?.category || '' ),
       src: details.src || false,
       faces: details.font_faces || false,
       group,
@@ -547,9 +548,10 @@ export const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
   const details = family ? getFontDetails( family ) : false;
   const display = ( details && details.family_display ) || family || '';
   const fontType = family ? determineFontType( family ) : 'system_font';
+  const fallback = details ? resolveFontFallbackStack( details, window.styleManager?.fonts?.categories || {}, window.styleManager?.fonts?.google_fonts?.[ family ]?.category || '' ) : '';
   const stack = 'system_font' === fontType
     ? ( ( details && details.fallback_stack ) || 'inherit' )
-    : quoteFamily( family || '' ) + ( details && details.fallback_stack ? `, ${ details.fallback_stack }` : '' );
+    : quoteFamily( family || '' ) + ( fallback ? `, ${ fallback }` : '' );
 
   // Make sure the button's own preview face is available.
   useEffect( () => {
@@ -559,7 +561,7 @@ export const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
         group: fontType.replace( '_font', '' ),
         src: details.src || false,
         faces: details.font_faces || false,
-        fallback: details.fallback_stack || '',
+        fallback,
       } ] );
     }
   }, [ family ] );

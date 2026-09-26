@@ -1,0 +1,41 @@
+{
+  "_comment": "Shared by tests/js/font-fallback-stack.test.js and tests/phpunit/Unit/FontFallbackStackTest.php so the PHP resolver and its JS twin stay identical (style-manager#219). Stacks mirror the Pixelgrade Cloud font categories.",
+  "categories": {
+    "serif": { "aliases": [], "fallback_stack": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    "sans-serif": { "aliases": [], "fallback_stack": "\"SF Pro Text\", \"Helvetica Neue\", Helvetica, Arial, sans-serif" },
+    "display": { "aliases": [], "fallback_stack": "\"SF Pro Display\", Impact, \"Arial Black\", sans-serif" },
+    "handwriting": { "aliases": [ "script", "cursive" ], "fallback_stack": "\"Lucida Handwriting\", \"Brush Script MT\", cursive" },
+    "monospace": { "aliases": [ "monospaced" ], "fallback_stack": "Consolas, Monaco, \"Courier New\", Courier, monospace" },
+    "fantasy": { "aliases": [], "fallback_stack": "\"Brush Script MT\", \"Comic Sans MS\"" }
+  },
+  "neutral": "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+  "cases": [
+    { "name": "no details (system font value)", "details": {}, "expected": "" },
+    { "name": "Google serif", "details": { "family": "Lora", "category": "serif" }, "expected": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    { "name": "Google sans", "details": { "family": "Inter", "category": "sans-serif" }, "expected": "\"SF Pro Text\", \"Helvetica Neue\", Helvetica, Arial, sans-serif" },
+    { "name": "Google display", "details": { "family": "Syne", "category": "display" }, "expected": "\"SF Pro Display\", Impact, \"Arial Black\", sans-serif" },
+    { "name": "Google monospace", "details": { "family": "Space Mono", "category": "monospace" }, "expected": "Consolas, Monaco, \"Courier New\", Courier, monospace" },
+    { "name": "Google handwriting", "details": { "family": "Caveat", "category": "handwriting" }, "expected": "\"Lucida Handwriting\", \"Brush Script MT\", cursive" },
+    { "name": "category case and spacing", "details": { "family": "X", "category": " Serif " }, "expected": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    { "name": "category alias from the catalog", "details": { "family": "X", "category": "script" }, "expected": "\"Lucida Handwriting\", \"Brush Script MT\", cursive" },
+    { "name": "built-in alias sans", "details": { "family": "X", "category": "sans" }, "expected": "\"SF Pro Text\", \"Helvetica Neue\", Helvetica, Arial, sans-serif" },
+    { "name": "built-in alias mono", "details": { "family": "X", "category": "mono" }, "expected": "Consolas, Monaco, \"Courier New\", Courier, monospace" },
+    { "name": "a substring of an alias is not a match", "details": { "family": "X", "category": "spaced" }, "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif" },
+    { "name": "cloud font with its own curated stack", "details": { "family": "Butler", "category": "serif", "fallback_stack": "Didot, Georgia, serif" }, "expected": "Didot, Georgia, serif" },
+    { "name": "display font tagged serif gets the serif stack", "details": { "family": "Restora", "category": "display", "fallback_stack": "\"SF Pro Display\", Impact, \"Arial Black\", sans-serif", "tags": [ "ligatures", "serif", "swash" ] }, "expected": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    { "name": "display font tagged sans gets the sans stack", "details": { "family": "X", "category": "display", "tags": [ "condensed", "sans" ] }, "expected": "\"SF Pro Text\", \"Helvetica Neue\", Helvetica, Arial, sans-serif" },
+    { "name": "display font without a classification tag stays display", "details": { "family": "Murmure", "category": "display", "tags": [ "brutalist", "condensed" ] }, "expected": "\"SF Pro Display\", Impact, \"Arial Black\", sans-serif" },
+    { "name": "a tag never overrides a specific category", "details": { "family": "Cabinet", "category": "sans-serif", "tags": [ "serif" ] }, "expected": "\"SF Pro Text\", \"Helvetica Neue\", Helvetica, Arial, sans-serif" },
+    { "name": "tags as cloud objects", "details": { "family": "X", "category": "display", "tags": [ { "slug": "serif", "name": "serif" } ] }, "expected": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    { "name": "Font Library family with a bare generic gets its category stack", "details": { "family": "Lora", "category": "serif", "fallback_stack": "serif" }, "expected": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    { "name": "Font Library family with its own stack keeps it", "details": { "family": "Lora", "category": "serif", "fallback_stack": "Georgia, serif" }, "expected": "Georgia, serif" },
+    { "name": "Font Library cursive generic", "details": { "family": "X", "category": "cursive", "fallback_stack": "cursive" }, "expected": "\"Lucida Handwriting\", \"Brush Script MT\", cursive" },
+    { "name": "Font Library family without a generic uses the Google catalog", "details": { "family": "Lora", "category": "other", "fallback_stack": "" }, "catalogCategory": "serif", "expected": "Constantia, \"Lucida Bright\", Georgia, serif" },
+    { "name": "unknown category gets the neutral stack", "details": { "family": "X", "category": "other" }, "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif" },
+    { "name": "no category and no stack gets the neutral stack", "details": { "family": "X" }, "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif" },
+    { "name": "no category keeps an own stack", "details": { "family": "Space Grotesk", "fallback_stack": "-apple-system, Arial, sans-serif" }, "expected": "-apple-system, Arial, sans-serif" },
+    { "name": "known category missing from the list falls back to its generic", "details": { "family": "Lora", "category": "serif" }, "categories": {}, "expected": "serif" },
+    { "name": "handwriting missing from the list falls back to cursive", "details": { "family": "X", "category": "handwriting" }, "categories": {}, "expected": "cursive" },
+    { "name": "display missing from the list gets the neutral stack", "details": { "family": "X", "category": "display" }, "categories": {}, "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif" }
+  ]
+}

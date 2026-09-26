@@ -44,6 +44,27 @@ class CloudFontsLocalSrcTest extends TestCase {
 		);
 	}
 
+	/*
+	 * style-manager#219: the style tags that classify a display font reach the
+	 * fallback-stack resolver.
+	 */
+	public function test_preprocess_font_config_keeps_the_tag_slugs(): void {
+		$cloud_fonts = $this->create_cloud_fonts( [ 'typography_host_cloud_fonts_locally' => '' ], $this->createMock( LocalFontStore::class ) );
+
+		$result = $this->invoke_preprocess_font_config( $cloud_fonts, [
+			'font_family' => 'Restora',
+			'category'    => 'display',
+			'tags'        => [
+				[ 'id' => 56, 'type' => 'cloud_font_tag', 'name' => 'serif', 'slug' => 'serif' ],
+				[ 'id' => 60, 'type' => 'cloud_font_tag', 'name' => 'swash', 'slug' => 'swash' ],
+			],
+		] );
+		$this->assertSame( [ 'serif', 'swash' ], $result['tags'] );
+
+		$result = $this->invoke_preprocess_font_config( $cloud_fonts, [ 'font_family' => 'Trueno' ] );
+		$this->assertSame( [], $result['tags'] );
+	}
+
 	public function test_preprocess_font_config_keeps_remote_src_when_setting_disabled(): void {
 		$local_font_store = $this->createMock( LocalFontStore::class );
 		$local_font_store

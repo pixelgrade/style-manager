@@ -363,6 +363,31 @@ class CloudFonts extends AbstractHookProvider {
 	}
 
 	/**
+	 * The slugs of a cloud font's style tags.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param mixed $tags Cloud tag objects (`slug`, `name`) or slugs.
+	 *
+	 * @return string[]
+	 */
+	protected static function tag_slugs( $tags ): array {
+		if ( ! is_array( $tags ) ) {
+			return [];
+		}
+
+		$slugs = [];
+		foreach ( $tags as $tag ) {
+			$slug = is_array( $tag ) ? ( $tag['slug'] ?? ( $tag['name'] ?? '' ) ) : $tag;
+			if ( is_string( $slug ) && '' !== trim( $slug ) ) {
+				$slugs[] = strtolower( trim( $slug ) );
+			}
+		}
+
+		return $slugs;
+	}
+
+	/**
 	 * Preprocess a cloud font config before using it.
 	 *
 	 * @since 2.0.0
@@ -384,6 +409,8 @@ class CloudFonts extends AbstractHookProvider {
 			'variants'       => empty( $font_config['variants'] ) ? [] : $font_config['variants'],
 			'category'       => empty( $font_config['category'] ) ? '' : $font_config['category'],
 			'fallback_stack' => empty( $font_config['fallback_stack'] ) ? '' : $font_config['fallback_stack'],
+			// Style tags (e.g. `serif` on a display font) refine the fallback stack (style-manager#219).
+			'tags'           => self::tag_slugs( $font_config['tags'] ?? [] ),
 		];
 
 		$family = (string) ( $font_config['font_family'] ?? '' );
