@@ -292,14 +292,17 @@ function sm_font_mobile_scale_css_cb(value, selector, property, unit) {
 
 	// Content Inset opt-in signal: JS twin of
 	// style_manager_content_inset_explicit_css_cb() (canonical module:
-	// src/_js/utils/content-inset-explicit.js). The first value is the loaded
-	// state (the server style already reflects a saved value); once the value
-	// moves in this session the signal is on.
+	// src/_js/utils/content-inset-explicit.js; tests/js/content-inset-explicit.test.js
+	// evaluates this copy). The first value is the loaded state (the server style
+	// already reflects it); once the value moves in this session the preview shows
+	// what saving would do: a value is explicit, a reset is not (style-manager#220).
 	protected function sm_content_inset_explicit_css_cb_customizer_preview() {
 		$js = "
 window.__smContentInsetTrack = (function(){ var seen = false, initial, touched = false; return function(v){ var n = (v === null || v === undefined) ? '' : String(v); if (!seen) { seen = true; initial = n; } else if (n !== initial) { touched = true; } return touched; }; })();
 function sm_content_inset_explicit_css_cb(value, selector, property, unit) {
-	return window.__smContentInsetTrack(value) ? selector + ' { ' + property + ': 1; }\\n' : '';
+	if (!window.__smContentInsetTrack(value)) return '';
+	var hasValue = value !== null && value !== undefined && typeof value !== 'boolean' && String(value).trim() !== '' && isFinite(Number(String(value).trim()));
+	return selector + ' { ' + property + ': ' + (hasValue ? 1 : 0) + '; }\\n';
 }" . PHP_EOL;
 
 		wp_add_inline_script( 'pixelgrade_style_manager-previewer', $js );

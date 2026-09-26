@@ -217,20 +217,10 @@ class Upgrade extends AbstractHookProvider {
 	 * @return bool Whether a value was written.
 	 */
 	protected function migrate_rail_small_from_content_inset(): bool {
-		// Only a saved (numeric, positive) inset ever set the Small rail.
-		$small = \style_manager_rail_small_value( get_option( 'sm_content_inset', null ) );
-		if ( null === $small ) {
-			return false;
-		}
-
-		foreach ( [ 'sm_rail_scale', 'sm_rail_pitch', 'sm_rail_small' ] as $rail_option ) {
-			$saved = get_option( $rail_option, '' );
-			if ( null !== $saved && false !== $saved && '' !== $saved ) {
-				return false;
-			}
-		}
-
-		return (bool) update_option( 'sm_rail_small', $small );
+		// Only a saved (numeric, positive) inset ever set the Small rail. Every
+		// inset saved before 2.7.0 is legacy (style-manager#220), so the shared
+		// pin applies as is.
+		return \style_manager_pin_rail_small_from_content_inset();
 	}
 
 	/**

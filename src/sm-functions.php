@@ -214,6 +214,39 @@ function style_manager_rail_small_value( $raw ) {
 }
 
 /**
+ * The raw Small-only rail value: `sm_rail_small`, or a legacy Content Inset.
+ *
+ * Before nova-blocks#655 the Small rail fell back to a saved Content Inset. A
+ * legacy (not explicit) inset keeps doing that (style-manager#220), so a site
+ * whose inset was saved before 2.7.0 or imported with a starter keeps its
+ * Small rail. A saved `sm_rail_small` always wins.
+ *
+ * @since 2.7.0
+ *
+ * @return mixed
+ */
+function style_manager_rail_small_raw() {
+	$small = get_option( 'sm_rail_small', '' );
+	if ( null !== style_manager_rail_small_value( $small ) ) {
+		return $small;
+	}
+
+	// A pending reset in a Customizer preview goes back to the default rail.
+	$pending = style_manager_content_inset_pending_preview_value();
+	if ( null !== $pending && ! style_manager_content_inset_has_value( $pending['value'] ) ) {
+		return $small;
+	}
+
+	// Otherwise the stored legacy inset (a publish pins it, see
+	// style_manager_mark_content_inset_saved()).
+	if ( style_manager_content_inset_stored_is_legacy() ) {
+		return style_manager_content_inset_stored_value();
+	}
+
+	return $small;
+}
+
+/**
  * Resolve the effective Small rail width while the Small Rail / Rail Base
  * controls are unset — i.e. the exact width style_manager_rail_widths() (and
  * therefore the frontend) currently renders.
@@ -238,7 +271,7 @@ function style_manager_effective_rail_small(): int {
 	$widths = style_manager_rail_widths(
 		get_option( 'sm_rail_scale', '' ),
 		get_option( 'sm_rail_pitch', '' ),
-		get_option( 'sm_rail_small', '' )
+		style_manager_rail_small_raw()
 	);
 
 	if ( null === $widths ) {
@@ -299,7 +332,7 @@ function style_manager_effective_rail_pitch(): int {
  * @return string
  */
 function style_manager_rail_scale_css_cb( $value, string $selector, string $property, string $unit = '' ): string {
-	$widths = style_manager_rail_widths( $value, get_option( 'sm_rail_pitch', '' ), get_option( 'sm_rail_small', '' ) );
+	$widths = style_manager_rail_widths( $value, get_option( 'sm_rail_pitch', '' ), style_manager_rail_small_raw() );
 
 	if ( null === $widths ) {
 		return '';
@@ -364,10 +397,10 @@ function style_manager_rail_small_css_cb( $value, string $selector, string $prop
  * `sm_content_inset` always emits `--sm-content-inset` (its registered default
  * is 230), so a consumer cannot tell a saved value from the default. Nova
  * Blocks' layout engine applies the Layout board contract (content lines inset
- * by Content Inset) only once the user has saved a Content Inset, so sites that
- * never touched it render byte-identically. This emits
- * `--sm-content-inset-explicit: 1` only when the option exists in the database
- * (including a Customizer changeset preview, which filters get_option()).
+ * by Content Inset) only once the user has saved a Content Inset through Style
+ * Manager, so other sites render as before. This emits
+ * `--sm-content-inset-explicit: 1` only for an explicit value (see
+ * style_manager_content_inset_is_explicit()).
  *
  * @since 2.7.0
  *
@@ -387,16 +420,197 @@ function style_manager_content_inset_explicit_css_cb( $value, string $selector, 
 }
 
 /**
- * Whether the user has saved a Content Inset value.
+ * The option that records the Content Inset value Style Manager saved.
+ *
+ * Deliberately outside the `sm_*` design-option namespace, so exporting or
+ * importing the design options never carries it along.
+ *
+ * @since 2.7.0
+ */
+const STYLE_MANAGER_CONTENT_INSET_EXPLICIT_OPTION = 'style_manager_content_inset_explicit';
+
+/**
+ * Whether a raw Content Inset value is a usable (numeric) value.
+ *
+ * @since 2.7.0
+ *
+ * @param mixed $value The raw value.
+ *
+ * @return bool
+ */
+function style_manager_content_inset_has_value( $value ): bool {
+	return null !== $value && false !== $value && ! is_bool( $value ) && '' !== $value && is_numeric( $value );
+}
+
+/**
+ * Whether the saved Content Inset is explicit (style-manager#220).
+ *
+ * A value is explicit only when Style Manager's own save path stored it: the
+ * Customizer, the Site Editor panel and `wp pixelgrade sm set` all publish a
+ * changeset, and style_manager_mark_content_inset_saved() records the saved
+ * value. A value saved before 2.7.0, or written straight to the option (a
+ * starter import, a raw `wp option update`), is legacy until it is saved again.
+ * The marker holds the value it was set for, so a raw write of a different
+ * value makes the inset legacy again.
+ *
+ * In a Customizer preview (including a Site Editor Live Site changeset preview)
+ * a pending Content Inset previews what publishing would do: it is explicit
+ * whenever it holds a value.
  *
  * @since 2.7.0
  *
  * @return bool
  */
 function style_manager_content_inset_is_explicit(): bool {
-	$saved = get_option( 'sm_content_inset', null );
+	$pending = style_manager_content_inset_pending_preview_value();
+	if ( null !== $pending ) {
+		return style_manager_content_inset_has_value( $pending['value'] );
+	}
 
-	return null !== $saved && false !== $saved && '' !== $saved && is_numeric( $saved );
+	return style_manager_content_inset_stored_is_explicit();
+}
+
+/**
+ * Whether the stored Content Inset is explicit, ignoring any preview.
+ *
+ * @since 2.7.0
+ *
+ * @return bool
+ */
+function style_manager_content_inset_stored_is_explicit(): bool {
+	$saved = style_manager_content_inset_stored_value();
+	if ( ! style_manager_content_inset_has_value( $saved ) ) {
+		return false;
+	}
+
+	$marked = get_option( STYLE_MANAGER_CONTENT_INSET_EXPLICIT_OPTION, null );
+
+	return style_manager_content_inset_has_value( $marked ) && (float) $marked === (float) $saved;
+}
+
+/**
+ * Whether a Content Inset is stored but not explicit (style-manager#220).
+ *
+ * A legacy inset keeps its 2.6 behaviour: no `--sm-content-inset-explicit`
+ * signal, and it still sets the Small rail (style_manager_rail_small_raw()).
+ *
+ * @since 2.7.0
+ *
+ * @return bool
+ */
+function style_manager_content_inset_stored_is_legacy(): bool {
+	return style_manager_content_inset_has_value( style_manager_content_inset_stored_value() )
+		&& ! style_manager_content_inset_stored_is_explicit();
+}
+
+/**
+ * The stored Content Inset value.
+ *
+ * In a Customizer preview (which also covers a changeset being published)
+ * core filters get_option() to answer the pending value, so while a Content
+ * Inset is pending the stored value is read from the options table.
+ *
+ * @since 2.7.0
+ *
+ * @return mixed
+ */
+function style_manager_content_inset_stored_value() {
+	if ( null === style_manager_content_inset_pending_preview_value() ) {
+		return get_option( 'sm_content_inset', null );
+	}
+
+	global $wpdb;
+	if ( ! is_object( $wpdb ) ) {
+		return null;
+	}
+
+	$raw = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", 'sm_content_inset' ) );
+
+	return null === $raw ? null : maybe_unserialize( $raw );
+}
+
+/**
+ * The Content Inset value pending in the current Customizer preview.
+ *
+ * @since 2.7.0
+ *
+ * @return array|null `[ 'value' => mixed ]` when this is a preview request with
+ *                    a pending Content Inset, null otherwise.
+ */
+function style_manager_content_inset_pending_preview_value(): ?array {
+	$manager = $GLOBALS['wp_customize'] ?? null;
+	if ( ! is_object( $manager )
+		|| ! method_exists( $manager, 'is_preview' )
+		|| ! method_exists( $manager, 'unsanitized_post_values' )
+		|| ! $manager->is_preview() ) {
+		return null;
+	}
+
+	$pending = $manager->unsanitized_post_values();
+	if ( ! is_array( $pending ) || ! array_key_exists( 'sm_content_inset', $pending ) ) {
+		return null;
+	}
+
+	return [ 'value' => $pending['sm_content_inset'] ];
+}
+
+/**
+ * Record a Content Inset saved through Style Manager (style-manager#220).
+ *
+ * Runs on `customize_save_sm_content_inset`, just before the value is written,
+ * for every Style Manager save path (they all publish a changeset). A value
+ * becomes explicit; a reset (no value) removes the marker.
+ *
+ * When the save turns a legacy inset explicit, the inset stops setting the
+ * Small rail. If no rail setting is saved, the Small rail is pinned to the
+ * legacy value, exactly like the 2.7.0 upgrade routine does
+ * (Upgrade::migrate_rail_small_from_content_inset()), so only the inset changes.
+ *
+ * @since 2.7.0
+ *
+ * @param mixed $value The Content Inset value being saved.
+ */
+function style_manager_mark_content_inset_saved( $value ): void {
+	if ( ! style_manager_content_inset_has_value( $value ) ) {
+		delete_option( STYLE_MANAGER_CONTENT_INSET_EXPLICIT_OPTION );
+
+		return;
+	}
+
+	if ( style_manager_content_inset_stored_is_legacy() ) {
+		style_manager_pin_rail_small_from_content_inset( style_manager_content_inset_stored_value() );
+	}
+
+	$value = (float) $value;
+	update_option( STYLE_MANAGER_CONTENT_INSET_EXPLICIT_OPTION, (string) ( floor( $value ) === $value ? (int) $value : $value ) );
+}
+
+/**
+ * Pin the Small rail a saved (legacy) Content Inset sets.
+ *
+ * Writes the saved inset, exact, to `sm_rail_small`, but never when any rail
+ * setting (Rail Scale, Pitch or Small) is saved.
+ *
+ * @since 2.7.0
+ *
+ * @param mixed $inset Optional. The legacy inset. Defaults to the saved option.
+ *
+ * @return bool Whether a value was written.
+ */
+function style_manager_pin_rail_small_from_content_inset( $inset = null ): bool {
+	$small = style_manager_rail_small_value( null === $inset ? get_option( 'sm_content_inset', null ) : $inset );
+	if ( null === $small ) {
+		return false;
+	}
+
+	foreach ( [ 'sm_rail_scale', 'sm_rail_pitch', 'sm_rail_small' ] as $rail_option ) {
+		$saved = get_option( $rail_option, '' );
+		if ( null !== $saved && false !== $saved && '' !== $saved ) {
+			return false;
+		}
+	}
+
+	return (bool) update_option( 'sm_rail_small', $small );
 }
 
 /**

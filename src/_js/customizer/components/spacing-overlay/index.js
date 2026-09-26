@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { Overlay } from '../index';
 import useCustomizeSettingCallback from '../../hooks/use-customize-setting-callback';
-import { createContentInsetExplicitTracker } from '../../../utils/content-inset-explicit';
+import { createContentInsetExplicitTracker, contentInsetHasValue } from '../../../utils/content-inset-explicit';
 import {
   DEFAULT_ENVIRONMENT,
   contractGeometry,
@@ -296,10 +296,12 @@ const LayoutPreview = () => {
     insetTracker.current( getSettingValue( 'sm_content_inset', '' ) );
   }
   const [ insetTouched, setInsetTouched ] = useState( false );
+  const [ insetHasValue, setInsetHasValue ] = useState( true );
 
   useCustomizeSettingCallback( 'sm_site_container_width', v => setContainerWidth( numOr( v, 75 ) ) );
   useCustomizeSettingCallback( 'sm_content_inset', v => {
     setContentInset( numOr( v, 230 ) );
+    setInsetHasValue( contentInsetHasValue( v ) );
     if ( insetTracker.current( v ) ) {
       setInsetTouched( true );
     }
@@ -334,7 +336,9 @@ const LayoutPreview = () => {
   const r = resolveRails( base, pitch, railSmall );
   const touched = r.touched;
   const runtime = env || { ...DEFAULT_ENVIRONMENT, viewport: modelWidth };
-  const explicit = !! ( env?.explicit || insetTouched );
+  // Once touched, the board shows what saving would do (a reset is legacy);
+  // untouched, it reads the page's signal (style-manager#220).
+  const explicit = insetTouched ? insetHasValue : !! env?.explicit;
 
   const cw = Math.round( containerWidth );
   const ci = Math.round( contentInset );

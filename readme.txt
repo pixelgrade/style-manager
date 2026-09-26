@@ -134,7 +134,8 @@ When fetching design assets or submitting the plugin's existing settings statist
 * Improved: font families are chosen in Style Manager, so blocks no longer show their own Font picker. Font size, line height and the other typography settings stay on the blocks.
 * Fix: the Layout rail controls (Small Rail, Rail Base and Rail Pitch) now show the width the site actually renders, and the slider and the number box always show the same value.
 * Fix: the Design System Preview uses the quiet-text role for muted text, so its contrast matches the site.
-* Developer: `--sm-content-inset-explicit: 1` is printed only when Content Inset has been saved, so themes and plugins can tell a saved value from the default.
+* Improved: a Content Inset saved before this version, or set by a starter site import, keeps its previous look (the same reading width and small rail). It switches to the new behaviour the next time you save Content Inset in the Customizer, the Site Editor or with `wp pixelgrade sm set`. Resetting Content Inset goes back to the previous behaviour.
+* Developer: `--sm-content-inset-explicit: 1` is printed only when Content Inset was saved through Style Manager (the Customizer, the Site Editor or `wp pixelgrade sm set`), so themes and plugins can tell a chosen value from the default or an imported one.
 * Developer: every palette variation emits `--sm-fg-muted-color-N`, mapped to `--sm-current-fg-muted-color` in each color context. PHP and JavaScript produce identical values across a 2,060-variation test corpus.
 
 = 2.6.0 =

@@ -72,6 +72,15 @@ class RailEffectiveDefaultsTest extends TestCase {
 		$this->assertSame( 300, style_manager_effective_rail_small() );
 	}
 
+	public function test_a_legacy_inset_is_the_effective_small(): void {
+		// style-manager#220: the Small rail a legacy (unmarked) inset still sets.
+		$this->with_options( [ 'sm_content_inset' => '180' ] );
+		$this->assertSame( 180, style_manager_effective_rail_small() );
+
+		$this->with_options( [ 'sm_content_inset' => '180', 'style_manager_content_inset_explicit' => '180' ] );
+		$this->assertSame( 230, style_manager_effective_rail_small() );
+	}
+
 	public function test_an_invalid_small_only_value_falls_back_to_the_default(): void {
 		foreach ( [ '', null, false, 0, '0', -10, 'wide' ] as $raw ) {
 			$this->with_options( [ 'sm_rail_small' => $raw ] );

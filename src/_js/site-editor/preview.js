@@ -130,14 +130,15 @@ const installCssCallbacks = ( api, fallbackPalettes, userPalettesCount ) => {
 
   // Content Inset opt-in signal: JS twin of
   // style_manager_content_inset_explicit_css_cb(). The loaded value is seeded
-  // here (renderAll may run later); moving the control flips the signal on.
+  // here (renderAll may run later); once the control moves, the canvas shows
+  // what saving would do: a value is explicit, a reset is not.
   const trackContentInset = createContentInsetExplicitTracker();
   const contentInsetSetting = api( 'sm_content_inset' );
   if ( contentInsetSetting ) {
     trackContentInset( contentInsetSetting() );
   }
   window.sm_content_inset_explicit_css_cb = ( value, selector, property ) =>
-    getContentInsetExplicitCSS( trackContentInset( value ), selector, property );
+    getContentInsetExplicitCSS( trackContentInset( value ), selector, property, value );
 
   // Pitch and the Small-only rail carry no CSS of their own; on change they
   // recompute and rewrite the sm_rail_scale style tag(s) — top document +

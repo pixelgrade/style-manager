@@ -59,6 +59,29 @@ class LayoutSection extends AbstractHookProvider {
 		 */
 		$this->add_filter( 'style_manager/filter_fields', 'add_style_manager_section_layout_config', 12, 1 );
 		$this->add_filter( 'style_manager/sm_panel_config', 'reorganize_customizer_controls', 20, 2 );
+
+		/*
+		 * Every Style Manager save path (Customizer, Site Editor panel,
+		 * `wp pixelgrade sm set`) publishes a changeset, which runs this action
+		 * just before the Content Inset is written: that marks it explicit
+		 * (style-manager#220). Raw option writes never run it.
+		 */
+		$this->add_action( 'customize_save_sm_content_inset', 'mark_content_inset_saved', 10, 1 );
+	}
+
+	/**
+	 * Mark a Content Inset saved through Style Manager as explicit.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param \WP_Customize_Setting|object $setting The Content Inset setting being saved.
+	 */
+	protected function mark_content_inset_saved( $setting ) {
+		if ( ! is_object( $setting ) || ! method_exists( $setting, 'post_value' ) ) {
+			return;
+		}
+
+		\style_manager_mark_content_inset_saved( $setting->post_value() );
 	}
 
 	/**
@@ -148,8 +171,9 @@ class LayoutSection extends AbstractHookProvider {
 						],
 						// Opt-in signal for the Layout board contract (Nova Blocks
 						// insets the Sidecar content lines by Content Inset only
-						// once a value is saved; untouched sites stay
-						// byte-identical). Emitted only when the option exists.
+						// once a value is saved through Style Manager; untouched,
+						// upgraded and imported sites keep their look). Emitted
+						// only for an explicit value (style-manager#220).
 						[
 							'property'        => '--sm-content-inset-explicit',
 							'selector'        => ':root',

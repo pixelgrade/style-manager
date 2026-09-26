@@ -66,6 +66,70 @@ class RailSmallCssTest extends TestCase {
 		);
 	}
 
+	public function test_a_legacy_inset_still_sets_the_small_rail(): void {
+		// style-manager#220: an inset saved before 2.7.0 or written by a starter
+		// import keeps its 2.6 role — it is the Small rail, Medium/Large stay default.
+		$this->with_options( [ 'sm_content_inset' => '180' ] );
+		$this->assertSame( ':root { --sm-rail-small: 180; }' . PHP_EOL, $this->emitted( '' ) );
+
+		$this->with_options( [ 'sm_content_inset' => '187.5' ] );
+		$this->assertSame( ':root { --sm-rail-small: 187.5; }' . PHP_EOL, $this->emitted( '' ) );
+	}
+
+	public function test_an_explicit_inset_no_longer_sets_the_small_rail(): void {
+		$this->with_options( [ 'sm_content_inset' => '180', 'style_manager_content_inset_explicit' => '180' ] );
+		$this->assertSame( '', $this->emitted( '' ) );
+	}
+
+	public function test_saved_rail_settings_win_over_a_legacy_inset(): void {
+		$this->with_options( [ 'sm_content_inset' => '180', 'sm_rail_small' => '200' ] );
+		$this->assertSame( ':root { --sm-rail-small: 200; }' . PHP_EOL, $this->emitted( '' ) );
+
+		$this->with_options( [ 'sm_content_inset' => '180', 'sm_rail_pitch' => '' ] );
+		$this->assertSame(
+			':root { --sm-rail-small: 288; }' . PHP_EOL . ':root { --sm-rail-medium: 330; }' . PHP_EOL . ':root { --sm-rail-large: 400; }' . PHP_EOL,
+			$this->emitted( 288 )
+		);
+	}
+
+	public function test_a_customizer_preview_keeps_the_small_rail_a_publish_would_pin(): void {
+		// Stored legacy 180, pending 150: publishing pins 180, so the preview shows 180.
+		$GLOBALS['wp_customize'] = new class() {
+			public array $pending = [ 'sm_content_inset' => 150 ];
+
+			public function is_preview(): bool {
+				return true;
+			}
+
+			public function unsanitized_post_values(): array {
+				return $this->pending;
+			}
+		};
+		$GLOBALS['wpdb'] = new class() {
+			public string $options = 'wp_options';
+
+			public function prepare( $query, ...$args ) {
+				return str_replace( '%s', "'" . $args[0] . "'", $query );
+			}
+
+			public function get_var( $query ) {
+				return false !== strpos( $query, "'sm_content_inset'" ) ? '180' : null;
+			}
+		};
+		Functions\when( 'maybe_unserialize' )->returnArg( 1 );
+
+		// The preview filter makes get_option() answer the pending value.
+		$this->with_options( [ 'sm_content_inset' => 150 ] );
+		$this->assertSame( ':root { --sm-rail-small: 180; }' . PHP_EOL, $this->emitted( '' ) );
+
+		// A pending reset goes back to the default Small rail.
+		$GLOBALS['wp_customize']->pending = [ 'sm_content_inset' => '' ];
+		$this->with_options( [ 'sm_content_inset' => '' ] );
+		$this->assertSame( '', $this->emitted( '' ) );
+
+		unset( $GLOBALS['wp_customize'], $GLOBALS['wpdb'] );
+	}
+
 	public function test_the_small_setting_callback_is_inert(): void {
 		$this->assertSame( '', style_manager_rail_small_css_cb( 180, ':root', '--sm-rail-small-sync' ) );
 		$this->assertSame( '', sm_rail_small_css_cb( 180, ':root', '--sm-rail-small-sync' ) );
