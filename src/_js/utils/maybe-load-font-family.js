@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import { standardizeToArray } from './standardize-to-array';
+import { loadFontFaces } from './load-font-faces';
 
 function getParentStyleManager() {
   try {
@@ -26,6 +27,20 @@ export const maybeLoadFontFamily = function( font, settingID ) {
     return;
   }
 
+  if ( typeof font.font_family === 'undefined' ) {
+    return
+  }
+
+  const smCustomizer = getParentSmCustomizer();
+
+  // Font Library fonts carry their own @font-face data: load it through the
+  // CSS Font Loading API (no Web Font Loader needed), skipping the faces this
+  // document already has (e.g. printed by WordPress).
+  if ( smCustomizer && 'font_library_font' === smCustomizer.determineFontType( font.font_family ) ) {
+    loadFontFaces( smCustomizer.getFontDetails( font.font_family, 'font_library_font' ), document );
+    return;
+  }
+
   // Without the Web Font Loader on the page we cannot load anything —
   // bail instead of throwing (it loads async in some contexts).
   if ( typeof WebFont === 'undefined' ) {
@@ -34,16 +49,11 @@ export const maybeLoadFontFamily = function( font, settingID ) {
 
   window.fontsCache = window.fontsCache ?? [];
 
-  if ( typeof font.font_family === 'undefined' ) {
-    return
-  }
-
   const fontConfig = sm?.config?.settings?.[ settingID ];
   const loadAllVariants = !!fontConfig?.fields?.[ 'font-weight' ]?.loadAllVariants;
 
   let family = font.font_family;
   // The font family may be a comma separated list like "Roboto, sans"
-  const smCustomizer = getParentSmCustomizer();
   if ( ! smCustomizer ) {
     return;
   }

@@ -25,6 +25,9 @@ class EditWithBlocksTest extends TestCase {
 		Filters\expectAdded( 'enqueue_block_editor_assets' )
 			->once()
 			->with( Mockery::type( \Closure::class ), 10, 1 );
+		Filters\expectAdded( 'enqueue_block_editor_assets' )
+			->once()
+			->with( Mockery::type( \Closure::class ), 5, 1 );
 		Filters\expectAdded( 'enqueue_block_assets' )
 			->once()
 			->with( Mockery::type( \Closure::class ), 10, 1 );
@@ -33,7 +36,7 @@ class EditWithBlocksTest extends TestCase {
 			->with( Mockery::type( \Closure::class ), 999, 1 );
 
 		$this->create_edit_screen()->register_hooks();
-		$this->addToAssertionCount( 3 );
+		$this->addToAssertionCount( 4 );
 	}
 
 	public function test_carbon_fields_styles_are_enqueued_before_iframe_assets_are_resolved(): void {
@@ -442,6 +445,48 @@ class EditWithBlocksTest extends TestCase {
 		$this->assertSame(
 			'Colors, typography and spacing are global — edited in the Site Editor.',
 			$payload['copy']['description']
+		);
+	}
+
+	public function test_font_family_ownership_script_loads_while_style_manager_owns_fonts(): void {
+		$fonts = $this->createMock( Fonts::class );
+		$fonts->method( 'owns_font_families' )->willReturn( true );
+
+		$plugin = $this->createMock( \Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\PluginInterface::class );
+		$plugin->method( 'get_url' )->willReturnCallback( static function ( string $path ): string {
+			return 'https://example.test/style-manager/' . $path;
+		} );
+
+		Functions\expect( 'wp_enqueue_script' )
+			->once()
+			->with(
+				'pixelgrade_style_manager-editor-font-ownership',
+				'https://example.test/style-manager/dist/js/editor-font-ownership.js',
+				[ 'wp-hooks', 'wp-block-editor' ],
+				\Pixelgrade\StyleManager\VERSION,
+				true
+			);
+
+		$screen = $this->create_edit_screen( $fonts );
+		$screen->set_plugin( $plugin );
+		$screen->enqueue_font_family_ownership();
+		$this->addToAssertionCount( 1 );
+	}
+
+	public function test_font_family_ownership_script_stays_out_when_style_manager_does_not_own_fonts(): void {
+		$fonts = $this->createMock( Fonts::class );
+		$fonts->method( 'owns_font_families' )->willReturn( false );
+
+		Functions\expect( 'wp_enqueue_script' )->never();
+
+		$this->create_edit_screen( $fonts )->enqueue_font_family_ownership();
+		$this->addToAssertionCount( 1 );
+	}
+
+	public function test_the_core_google_fonts_collection_stays_registered(): void {
+		$this->assertFalse(
+			method_exists( EditWithBlocks::class, 'maybe_deregister_font_collections' ),
+			'The Font Library is a Style Manager font source now; its Google Fonts collection must stay installable.'
 		);
 	}
 

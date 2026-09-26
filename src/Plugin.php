@@ -52,6 +52,7 @@ class Plugin extends BasePlugin implements Composable {
 			->register_hooks( $container->get( 'customize.design_assets' ) )
 			->register_hooks( $container->get( 'customize.font_palettes' ) )
 			->register_hooks( $container->get( 'customize.fonts' ) )
+			->register_hooks( $container->get( 'customize.font_library_fonts' ) )
 			->register_hooks( $container->get( 'hooks.local_fonts' ) )
 			->register_hooks( $container->get( 'hooks.local_fonts_endpoints' ) )
 			->register_hooks( $container->get( 'customize.layout_section' ) )

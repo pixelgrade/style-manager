@@ -17,6 +17,7 @@ use Pixelgrade\StyleManager\Vendor\Cedaro\WP\Plugin\AbstractHookProvider;
 use Pixelgrade\StyleManager\Vendor\Psr\Log\LoggerInterface;
 use \Pixelgrade\StyleManager\Utils\Fonts as FontsHelper;
 use function Pixelgrade\StyleManager\is_customizer;
+use function Pixelgrade\StyleManager\is_sm_supported;
 use function Pixelgrade\StyleManager\sanitize_dynamic_style_css;
 
 /**
@@ -63,6 +64,16 @@ class Fonts extends AbstractHookProvider {
 	 * @var      array
 	 */
 	protected $third_party_fonts = [];
+
+	/**
+	 * The fonts installed through the WordPress Font Library.
+	 *
+	 * @see FontLibraryFonts
+	 *
+	 * @since    2.7.0
+	 * @var      array
+	 */
+	protected array $font_library_fonts = [];
 
 	/**
 	 * The font categories list.
@@ -154,6 +165,19 @@ class Fonts extends AbstractHookProvider {
 		/*
 		 * Gather all fonts, by type.
 		 */
+
+		/*
+		 * Fonts installed through the WordPress Font Library (see FontLibraryFonts).
+		 * The user installed these on this site on purpose, so they come first.
+		 */
+		$font_library_fonts       = FontsHelper::standardizeFontsList( apply_filters( 'style_manager/font_library_fonts', [] ) );
+		$this->font_library_fonts = is_array( $font_library_fonts ) ? $font_library_fonts : [];
+		if ( ! empty( $this->font_library_fonts ) ) {
+			add_action( 'style_manager/font_family_select_before_options', [
+				$this,
+				'output_font_library_fonts_select_options_group',
+			], 10, 2 );
+		}
 
 		$this->third_party_fonts = FontsHelper::standardizeFontsList( apply_filters( 'style_manager/third_party_fonts', [] ) );
 		// Add the fonts to selects of the Customizer controls.
@@ -512,6 +536,32 @@ class Fonts extends AbstractHookProvider {
 		return $this->third_party_fonts;
 	}
 
+	public function get_font_library_fonts(): array {
+		return $this->font_library_fonts;
+	}
+
+	/**
+	 * Whether Style Manager owns the site's font families: the active theme
+	 * supports Style Manager and declares font fields.
+	 *
+	 * While it does, block-level font family pickers stay out of the way
+	 * (see EditWithBlocks::enqueue_font_family_ownership()).
+	 *
+	 * @since 2.7.0
+	 *
+	 * @return bool
+	 */
+	public function owns_font_families(): bool {
+		$owns = false;
+		if ( is_sm_supported() ) {
+			$font_fields = [];
+			$this->get_fields_by_key( $this->options->get_details_all(), 'type', 'font', $font_fields );
+			$owns = ! empty( $font_fields );
+		}
+
+		return (bool) apply_filters( 'style_manager/owns_font_families', $owns );
+	}
+
 	public function get_categories(): array {
 		return $this->categories;
 	}
@@ -523,6 +573,11 @@ class Fonts extends AbstractHookProvider {
 		}
 
 		switch ( $font_type ) {
+			case 'font_library_font':
+				if ( isset( $this->font_library_fonts[ $font_family ] ) ) {
+					return $this->font_library_fonts[ $font_family ];
+				}
+				break;
 			case 'theme_font':
 				return $this->theme_fonts[ $font_family ];
 			case 'cloud_font':
@@ -544,6 +599,25 @@ class Fonts extends AbstractHookProvider {
 		}
 
 		return [];
+	}
+
+	public function output_font_library_fonts_select_options_group( $active_font_family, $current_value ) {
+		// Allow others to add options here
+		do_action( 'style_manager/font_family_before_font_library_fonts_options', $active_font_family, $current_value );
+
+		if ( ! empty( $this->font_library_fonts ) ) {
+			echo '<optgroup label="' . esc_attr__( 'Font Library', '__plugin_txtd' ) . '">';
+			foreach ( $this->get_font_library_fonts() as $font ) {
+				if ( ! empty( $font['family'] ) ) {
+					// Display the select option's HTML.
+					$this->output_font_family_option( $font['family'], $active_font_family );
+				}
+			}
+			echo '</optgroup>';
+		}
+
+		// Allow others to add options here
+		do_action( 'style_manager/font_family_after_font_library_fonts_options', $active_font_family, $current_value );
 	}
 
 	function output_third_party_fonts_select_options_group( $active_font_family, $current_value ) {
@@ -737,11 +811,14 @@ class Fonts extends AbstractHookProvider {
 			return '';
 		}
 
+		// A family installed in the Font Library is listed (and loaded) from there only.
+		$google_fonts = array_diff_key( $this->get_google_fonts(), $this->font_library_fonts );
+
 		ob_start();
 		if ( $this->plugin_settings->get( 'typography_group_google_fonts', 'yes' ) ) {
 
 			$grouped_google_fonts = [];
-			foreach ( $this->get_google_fonts() as $font_details ) {
+			foreach ( $google_fonts as $font_details ) {
 				if ( isset( $font_details['category'] ) ) {
 					$grouped_google_fonts[ $font_details['category'] ][] = $font_details;
 				} else {
@@ -760,7 +837,7 @@ class Fonts extends AbstractHookProvider {
 
 		} else {
 			echo '<optgroup label="' . esc_attr__( 'Google fonts', '__plugin_txtd' ) . '">';
-			foreach ( $this->get_google_fonts() as $font_details ) {
+			foreach ( $google_fonts as $font_details ) {
 				$this->output_font_family_option( $font_details['family'] );
 			}
 			echo '</optgroup>';
@@ -987,7 +1064,6 @@ class Fonts extends AbstractHookProvider {
 	 * (self-hosted/mirrored or remote) with a stylesheet `src`, as opposed to
 	 * Google or system fonts.
 	 *
-	 * Reuses the same font field value iteration as getFontsStylesheetUrls().
 	 * Side-effect free.
 	 *
 	 * @since 2.4.0
@@ -995,6 +1071,28 @@ class Fonts extends AbstractHookProvider {
 	 * @return string[] Deduped list of font family names.
 	 */
 	public function get_used_cloud_font_families(): array {
+		// We are only interested in cloud fonts with an actual stylesheet to mirror.
+		return array_values( array_filter( $this->get_used_font_families_of_type( 'cloud_font' ), function ( $font_family ) {
+			$font_details = $this->getFontDetails( $font_family, 'cloud_font' );
+
+			return ! empty( $font_details['src'] );
+		} ) );
+	}
+
+	/**
+	 * Gather the distinct font families of a given font type currently in use
+	 * across all saved font field values.
+	 *
+	 * Reuses the same font field value iteration as getFontsStylesheetUrls().
+	 * Side-effect free.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param string $font_type The font type (e.g. `cloud_font`, `font_library_font`).
+	 *
+	 * @return string[] Deduped list of font family names.
+	 */
+	public function get_used_font_families_of_type( string $font_type ): array {
 		$families = [];
 
 		$font_fields = [];
@@ -1040,13 +1138,7 @@ class Fonts extends AbstractHookProvider {
 			}
 			$font_family = $value['font_family'];
 
-			// We are only interested in cloud fonts with an actual stylesheet to mirror.
-			if ( 'cloud_font' !== $this->determineFontType( $font_family ) ) {
-				continue;
-			}
-
-			$font_details = $this->getFontDetails( $font_family, 'cloud_font' );
-			if ( empty( $font_details['src'] ) ) {
+			if ( $font_type !== $this->determineFontType( $font_family ) ) {
 				continue;
 			}
 
@@ -1666,6 +1758,7 @@ if (typeof WebFont !== 'undefined') {
 
 		$localized['fonts']['floatPrecision'] = FontsHelper::FLOAT_PRECISION;
 
+		$localized['fonts']['font_library_fonts'] = $this->get_font_library_fonts();
 		$localized['fonts']['third_party_fonts'] = $this->get_third_party_fonts();
 		$localized['fonts']['theme_fonts']       = $this->get_theme_fonts();
 		$localized['fonts']['cloud_fonts']       = $this->get_cloud_fonts();
@@ -1755,19 +1848,23 @@ if (typeof WebFont !== 'undefined') {
 	/**
 	 * Determine a font type based on its font family.
 	 *
-	 * We will follow a stack in the following order: third-party fonts, cloud fonts, theme fonts, Google fonts, system fonts.
+	 * We will follow a stack in the following order: Font Library fonts, third-party fonts, cloud fonts, theme fonts, Google fonts, system fonts.
+	 * Font Library fonts come first so a family installed locally (e.g. from the Google Fonts collection)
+	 * loads from this site instead of a remote service.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param string $fontFamily
 	 *
-	 * @return string The font type: third_party_font, cloud_font, theme_font, google_font, or system_font.
+	 * @return string The font type: font_library_font, third_party_font, cloud_font, theme_font, google_font, or system_font.
 	 */
 	public function determineFontType( string $fontFamily ): string {
 		// The default is a standard font (aka no special loading or processing).
 		$fontType = 'system_font';
 
-		if ( ! empty( $this->third_party_fonts[ $fontFamily ] ) ) {
+		if ( ! empty( $this->font_library_fonts[ $fontFamily ] ) ) {
+			$fontType = 'font_library_font';
+		} elseif ( ! empty( $this->third_party_fonts[ $fontFamily ] ) ) {
 			$fontType = 'third_party_font';
 		} elseif ( ! empty( $this->cloud_fonts[ $fontFamily ] ) ) {
 			$fontType = 'cloud_font';

@@ -7,6 +7,11 @@ export const getFontDetails = function( fontFamily, fontType = false ) {
   }
 
   switch ( fontType ) {
+    case 'font_library_font':
+      if ( typeof styleManager.fonts.font_library_fonts?.[fontFamily] !== 'undefined' ) {
+        return styleManager.fonts.font_library_fonts[fontFamily]
+      }
+      break;
     case 'theme_font':
       return styleManager.fonts.theme_fonts[fontFamily];
       break;

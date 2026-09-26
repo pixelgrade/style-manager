@@ -21,6 +21,7 @@ import { getFontDetails, determineFontType } from '../customizer/fonts/utils';
 import { ensureFontFamilyOption } from '../customizer/fonts/native-ui';
 import { applyFontFamilySelection } from './font-setting-adapter';
 import { getStaffPicksCollections } from './font-staff-picks';
+import { loadFontFaces, variantMatchesFace } from '../utils/load-font-faces';
 
 const HEADER_HEIGHT = 34;
 const ITEM_HEIGHT = 40;
@@ -73,6 +74,15 @@ const previewFontStack = font => {
  * fonts load their own stylesheet. Best effort: no WebFont, no previews.
  */
 const loadPreviewFonts = fonts => {
+  // Font Library fonts carry their own @font-face data: preview one face
+  // (the regular one when there is one) through the CSS Font Loading API.
+  fonts.filter( font => Array.isArray( font.faces ) && font.faces.length && ! requestedPreviews.has( font.family ) )
+    .forEach( font => {
+      requestedPreviews.add( font.family );
+      const face = font.faces.find( candidate => variantMatchesFace( '400', candidate.fontWeight, candidate.fontStyle ) ) || font.faces[ 0 ];
+      loadFontFaces( { font_faces: [ face ] }, document );
+    } );
+
   if ( typeof WebFont === 'undefined' ) {
     return;
   }
@@ -113,27 +123,34 @@ const getCatalog = () => {
       category: details.category || '',
       fallback: details.fallback_stack || '',
       src: details.src || false,
+      faces: details.font_faces || false,
       group,
     };
   } ).filter( font => !! font.family );
 
+  // A family installed in the Font Library is listed (and loaded) from there only.
+  const library = normalize( fonts.font_library_fonts, 'library' );
+  const libraryFamilies = new Set( library.map( font => font.family ) );
+
   catalogCache = {
+    library,
     third: normalize( fonts.third_party_fonts, 'third' ),
     theme: normalize( fonts.theme_fonts, 'theme' ),
     cloud: normalize( fonts.cloud_fonts, 'cloud' ),
     system: normalize( fonts.system_fonts, 'system' ),
-    google: normalize( fonts.google_fonts, 'google' ),
+    google: normalize( fonts.google_fonts, 'google' ).filter( font => ! libraryFamilies.has( font.family ) ),
   };
 
   return catalogCache;
 };
 
-const GROUP_ORDER = [ 'recommended', 'third', 'theme', 'cloud', 'system', 'google' ];
+const GROUP_ORDER = [ 'recommended', 'library', 'third', 'theme', 'cloud', 'system', 'google' ];
 
 const getGroupLabels = () => {
   const { __ } = wp.i18n;
   return {
     recommended: __( 'Recommended', '__plugin_txtd' ),
+    library: __( 'Font Library', '__plugin_txtd' ),
     third: __( 'Third-Party Fonts', '__plugin_txtd' ),
     theme: __( 'Theme Fonts', '__plugin_txtd' ),
     cloud: __( 'Cloud Fonts', '__plugin_txtd' ),
@@ -541,6 +558,7 @@ export const FontFamilyControl = ( { label, family, recommended, onPick } ) => {
         family,
         group: fontType.replace( '_font', '' ),
         src: details.src || false,
+        faces: details.font_faces || false,
         fallback: details.fallback_stack || '',
       } ] );
     }

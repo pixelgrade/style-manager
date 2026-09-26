@@ -148,7 +148,7 @@ class SiteEditor extends AbstractHookProvider {
 			'description'      => esc_html__( 'Colors, typography, spacing, and the rest of your design system are managed through Style Manager — right here in the Site Editor. Open the Style Manager sidebar to make handy color changes, balance fonts, and adjust spacing, each step bringing you closer to a striking result.', '__plugin_txtd' ),
 			'buttonLabel'      => esc_html__( 'Open Style Manager', '__plugin_txtd' ),
 			'resourcesEyebrow' => esc_html__( 'Jump right in', '__plugin_txtd' ),
-			'resources'        => [
+			'resources'        => array_values( array_filter( [
 				[
 					'title'       => esc_html__( 'The Color System', '__plugin_txtd' ),
 					'description' => esc_html__( 'Set the overall mood of your site with a palette that feels calm, bold, playful, or anywhere in between.', '__plugin_txtd' ),
@@ -161,8 +161,33 @@ class SiteEditor extends AbstractHookProvider {
 					'buttonLabel' => esc_html__( 'Change Fonts', '__plugin_txtd' ),
 					'url'         => esc_url_raw( add_query_arg( 'sm-section', 'sm_font_palettes_section', $editor_url ) ),
 				],
-			],
+				$this->get_font_library_resource(),
+			] ) ),
 		] );
+	}
+
+	/**
+	 * The Styles handoff card that points to the WordPress Font Library.
+	 *
+	 * Fonts installed there show up in the Style Manager font fields (see
+	 * FontLibraryFonts). WordPress 7.0+ has the standalone Appearance > Fonts
+	 * screen; older versions have no Font Library screen outside Global Styles.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @return array|null
+	 */
+	protected function get_font_library_resource(): ?array {
+		if ( ! defined( 'ABSPATH' ) || ! file_exists( ABSPATH . 'wp-admin/font-library.php' ) ) {
+			return null;
+		}
+
+		return [
+			'title'       => esc_html__( 'Your Own Fonts', '__plugin_txtd' ),
+			'description' => esc_html__( 'Install Google Fonts or upload your own in the Font Library. They show up in the Style Manager font fields under Font Library.', '__plugin_txtd' ),
+			'buttonLabel' => esc_html__( 'Manage Fonts', '__plugin_txtd' ),
+			'url'         => esc_url_raw( admin_url( 'font-library.php' ) ),
+		];
 	}
 
 	/**

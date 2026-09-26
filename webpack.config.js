@@ -11,6 +11,7 @@ const files = [
   'customizer-search',
   'dark-mode',
   'design-hub',
+  'editor-font-ownership',
   'editor-launcher',
   'lab',
   'lab-showcase',

@@ -205,9 +205,36 @@ class EditWithBlocks extends AbstractHookProvider {
 		$this->add_filter( 'admin_body_class', 'add_sm_dark_classname_to_body' );
 		$this->add_action( 'admin_enqueue_scripts', 'print_script_to_move_dark_classname_to_html' );
 
-		// Deregister WP Font Library collections when SM is managing fonts,
-		// to prevent duplicate font UI alongside Style Manager's font controls.
-		$this->add_action( 'init', 'maybe_deregister_font_collections', 20 );
+		// Style Manager owns font families: blocks do not offer their own font family picker.
+		$this->add_action( 'enqueue_block_editor_assets', 'enqueue_font_family_ownership', 5 );
+	}
+
+	/**
+	 * Keep block-level font family pickers out of the way while Style Manager
+	 * owns the site's font families.
+	 *
+	 * Fonts installed through the WordPress Font Library become user-origin
+	 * font family presets, and core then offers a "Font" picker on every block
+	 * that supports it. Style Manager is the one place fonts are chosen, so
+	 * this answers the block editor's `blockEditor.useSetting.before` filter
+	 * with no font families for block-level reads (see
+	 * src/_js/utils/font-family-ownership.js). Font size, line height, and the
+	 * Font Library itself stay untouched.
+	 *
+	 * @since 2.7.0
+	 */
+	public function enqueue_font_family_ownership() {
+		if ( ! $this->sm_fonts->owns_font_families() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'pixelgrade_style_manager-editor-font-ownership',
+			$this->plugin->get_url( 'dist/js/editor-font-ownership.js' ),
+			[ 'wp-hooks', 'wp-block-editor' ],
+			VERSION,
+			true
+		);
 	}
 
 	/**
@@ -243,28 +270,6 @@ class EditWithBlocks extends AbstractHookProvider {
 			[],
 			\Carbon_Fields\VERSION
 		);
-	}
-
-	/**
-	 * Deregister WP Font Library font collections when Style Manager manages fonts.
-	 *
-	 * Prevents the WP Font Library UI from showing alongside SM's font controls.
-	 * Only deregisters when SM is active and has font palettes configured.
-	 */
-	public function maybe_deregister_font_collections() {
-		if ( ! function_exists( 'wp_unregister_font_collection' ) ) {
-			return;
-		}
-
-		// Only deregister if SM is managing fonts (has font palettes).
-		$sm_fonts_config = $this->options->get( 'sm_font_palette', false );
-		if ( empty( $sm_fonts_config ) ) {
-			return;
-		}
-
-		if ( function_exists( 'wp_unregister_font_collection' ) ) {
-			wp_unregister_font_collection( 'google-fonts' );
-		}
 	}
 
 	/**

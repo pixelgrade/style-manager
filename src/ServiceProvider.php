@@ -92,6 +92,11 @@ class ServiceProvider implements ServiceProviderInterface {
 				$container['logger']
 			);
 		};
+		$container['customize.font_library_fonts'] = function( $container ) {
+			return new Customize\FontLibraryFonts(
+				$container['customize.fonts']
+			);
+		};
 		$container['customize.layout_section'] = function() {
 			return new Customize\LayoutSection();
 		};

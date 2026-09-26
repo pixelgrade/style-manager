@@ -5,6 +5,7 @@ import { getSettingCSS } from '../customizer-preview/utils';
 import { getCSSFromPalettes, maybeFillPalettesArray } from '../customizer/utils';
 import { getFontDetails, determineFontType, convertFontVariantToFVD } from '../customizer/fonts/utils';
 import { standardizeToArray } from '../utils/standardize-to-array';
+import { loadFontFaces } from '../utils/load-font-faces';
 import { getFontMobileScaleCSS } from '../utils/font-mobile-scale';
 import { createContentInsetExplicitTracker, getContentInsetExplicitCSS } from '../utils/content-inset-explicit';
 
@@ -217,7 +218,17 @@ const syncFontPresetsToCanvas = canvasDocument => {
  * mirroring maybeLoadFontFamily() but with WebFont's `context` option.
  */
 const loadFontInContext = ( font, settingID, contextWindow, cache ) => {
-  if ( 'undefined' === typeof WebFont || ! font || 'undefined' === typeof font.font_family ) {
+  if ( ! font || 'undefined' === typeof font.font_family ) {
+    return;
+  }
+
+  // Font Library fonts carry their own @font-face data (no Web Font Loader needed).
+  if ( 'font_library_font' === determineFontType( font.font_family ) ) {
+    loadFontFaces( getFontDetails( font.font_family, 'font_library_font' ), contextWindow?.document );
+    return;
+  }
+
+  if ( 'undefined' === typeof WebFont ) {
     return;
   }
 
