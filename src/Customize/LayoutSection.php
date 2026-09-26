@@ -179,6 +179,11 @@ class LayoutSection extends AbstractHookProvider {
 						'max'          => 420,
 						'step'         => 1,
 						'data-preview' => true,
+						// While unset, the box and slider must show the width the site
+						// ACTUALLY renders, not an arbitrary (min+max)/2 midpoint
+						// (style-manager#215). Derived from the exact same contract as
+						// style_manager_rail_widths() — see its docblock.
+						'data-effective-default' => style_manager_effective_rail_small(),
 					],
 					'css'          => [
 						[
@@ -252,6 +257,9 @@ class LayoutSection extends AbstractHookProvider {
 						'max'          => 420,
 						'step'         => 1,
 						'data-preview' => true,
+						// Base's effective value IS the effective Small — the same
+						// contract as the Small Rail control above (style-manager#215).
+						'data-effective-default' => style_manager_effective_rail_small(),
 					],
 					'css'          => [
 						[
@@ -295,6 +303,10 @@ class LayoutSection extends AbstractHookProvider {
 						'max'          => 45,
 						'step'         => 1,
 						'data-preview' => true,
+						// No pitch reproduces the default Medium/Large; 0 (Flat) is the
+						// documented neutral placeholder (style-manager#215; see
+						// style_manager_effective_rail_pitch()'s docblock for why).
+						'data-effective-default' => style_manager_effective_rail_pitch(),
 					],
 					'css'          => [
 						[

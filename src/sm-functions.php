@@ -214,6 +214,71 @@ function style_manager_rail_small_value( $raw ) {
 }
 
 /**
+ * Resolve the effective Small rail width while the Small Rail / Rail Base
+ * controls are unset — i.e. the exact width style_manager_rail_widths() (and
+ * therefore the frontend) currently renders.
+ *
+ * pixelgrade/style-manager#215 (follow-up): the Layout panel must show this
+ * number in place of the range control's arbitrary (min+max)/2 midpoint,
+ * because the midpoint advertises a width nothing applies. This reads live
+ * option state, so it must only be called from an admin-only context
+ * (Customizer / Site Editor panel config); it is not part of the cached
+ * frontend CSS path (Provider\Options::get_details_all()).
+ *
+ * Both the "Small Rail" (sm_rail_small) and "Rail Base (Small)"
+ * (sm_rail_scale) controls use this SAME value — Base's effective value IS
+ * the effective Small, by definition (style_manager_rail_widths()'s `small`
+ * key, whichever branch produced it).
+ *
+ * @since 2.6.2
+ *
+ * @return int The effective Small rail width, rounded to the control's step (1).
+ */
+function style_manager_effective_rail_small(): int {
+	$widths = style_manager_rail_widths(
+		get_option( 'sm_rail_scale', '' ),
+		get_option( 'sm_rail_pitch', '' ),
+		get_option( 'sm_rail_small', '' )
+	);
+
+	if ( null === $widths ) {
+		// Nothing saved at all (no Rail Scale, no Small-only value): Nova's
+		// default Small rail budget once decoupled from Content Inset
+		// (nova-blocks#655 decision 2). Matches the JS twin
+		// (contract-geometry.js RAIL_SMALL_DEFAULT) used by the Layout board.
+		return 230;
+	}
+
+	return (int) round( $widths['small'] );
+}
+
+/**
+ * Resolve the effective Rail Pitch while the Pitch control is unset.
+ *
+ * There is no pitch value to derive: the v2 math (style_manager_rail_widths())
+ * models Medium/Large as a GEOMETRIC progression from the base
+ * (Medium = base * mult, Large = base * mult^2, so Medium^2 == base * Large),
+ * while the actual defaults consumers fall back to (Small 288 / Medium 330 /
+ * Large 400 — the v1-compatibility fixed ratios, 330/288 and 400/288) are an
+ * ARITHMETIC progression instead (330^2 = 108900 != 288 * 400 = 115200). That
+ * mismatch holds for ANY base, so no Base/Pitch combination in the v2 model
+ * ever reproduces the defaults. There is also no "v1-compat equivalent"
+ * pitch: v1-compat mode is defined precisely by Pitch being unset, so it has
+ * no pitch value of its own to borrow.
+ *
+ * 0 (Flat) is the deliberate, documented placeholder in place of that
+ * nonexistent value — the only number that does not fabricate a specific
+ * curvature the render isn't actually applying.
+ *
+ * @since 2.6.2
+ *
+ * @return int Always 0 (Flat); see the docblock for why no other value exists.
+ */
+function style_manager_effective_rail_pitch(): int {
+	return 0;
+}
+
+/**
  * CSS callback for the rail-scale (sidebar/rail) tokens.
  *
  * Emits the per-side-ready Small/Medium/Large rail tokens. The migration/compat

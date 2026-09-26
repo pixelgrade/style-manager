@@ -17,7 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { NativeFont } from './font-control';
-import { resolveRangeDisplayValue } from './range-display-value';
+import { resolveRangeDisplayValue } from '../utils/range-display-value';
 
 const stripHtml = html => {
   const div = document.createElement( 'div' );
@@ -61,6 +61,10 @@ const NativeRange = ( { settingId } ) => {
   const min = attrs.min !== undefined ? Number( attrs.min ) : 0;
   const max = attrs.max !== undefined ? Number( attrs.max ) : 100;
   const step = attrs.step !== undefined ? Number( attrs.step ) : 1;
+  // PHP-derived from the same contract as style_manager_rail_widths() (see
+  // LayoutSection.php); undefined for controls with no effective-default
+  // wiring, which resolveRangeDisplayValue() falls back to the midpoint for.
+  const effectiveDefault = attrs['data-effective-default'];
 
   return (
     <BoundControl settingId={ settingId }>
@@ -73,9 +77,11 @@ const NativeRange = ( { settingId } ) => {
             // An untouched "empty sentinel" setting (sm_rail_small,
             // sm_rail_scale, sm_rail_pitch — see LayoutSection.php) must
             // still show ONE consistent number in both the slider and the
-            // number field (style-manager#215); resolveRangeDisplayValue()
+            // number field (style-manager#215), and that number must be the
+            // width the site ACTUALLY renders, not an arbitrary (min+max)/2
+            // midpoint (style-manager#215 follow-up). resolveRangeDisplayValue()
             // computes it once so neither half of the control drifts.
-            value={ resolveRangeDisplayValue( value, min, max, step ) }
+            value={ resolveRangeDisplayValue( value, min, max, step, effectiveDefault ) }
             onChange={ onChange }
             min={ min }
             max={ max }

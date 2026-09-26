@@ -15,6 +15,10 @@ class LayoutSectionTest extends TestCase {
 
 		Functions\when( 'apply_filters' )->returnArg( 2 );
 		Functions\when( 'esc_html__' )->returnArg( 1 );
+		// Nothing saved: style_manager_effective_rail_small()/_pitch() (called
+		// while building the field config, style-manager#215) resolve to their
+		// "nothing saved" defaults (230 / 0 — see RailEffectiveDefaultsTest).
+		Functions\when( 'get_option' )->justReturn( '' );
 
 		$this->section = new TestLayoutSection();
 	}
@@ -30,6 +34,7 @@ class LayoutSectionTest extends TestCase {
 		$this->assertTrue( $control['live'] );
 		$this->assertSame( 'Rail Gap', $control['label'] );
 		$this->assertSame( 2, $control['default'] );
+		// Rail Gap always has a real default (2) — no effective-default plumbing.
 		$this->assertSame(
 			[ 'min' => 1, 'max' => 5, 'step' => 0.25, 'data-preview' => true ],
 			$control['input_attrs']
@@ -61,11 +66,37 @@ class LayoutSectionTest extends TestCase {
 		$this->assertTrue( $control['live'] );
 		// Unset by default: untouched sites emit nothing new.
 		$this->assertSame( '', $control['default'] );
-		$this->assertSame( [ 'min' => 100, 'max' => 420, 'step' => 1, 'data-preview' => true ], $control['input_attrs'] );
+		// style-manager#215: carries the effective Small (230 while nothing is
+		// saved) so the box/slider never show a fabricated (min+max)/2 midpoint.
+		$this->assertSame(
+			[ 'min' => 100, 'max' => 420, 'step' => 1, 'data-preview' => true, 'data-effective-default' => 230 ],
+			$control['input_attrs']
+		);
 		// Inert own CSS (live-preview binding only); sm_rail_scale emits the token.
 		$this->assertCount( 1, $control['css'] );
 		$this->assertSame( 'sm_rail_small_css_cb', $control['css'][0]['callback_filter'] );
 		$this->assertNotSame( '--sm-rail-small', $control['css'][0]['property'] );
+	}
+
+	public function test_layout_carries_the_effective_small_on_rail_base(): void {
+		// style-manager#215: "Rail Base (Small)" (sm_rail_scale) shows the SAME
+		// effective value as the Small Rail control above — Base's effective
+		// value IS the effective Small, by definition.
+		$config  = $this->section->expose_add_style_manager_section_layout_config( [] );
+		$options = $config['sections']['style_manager_section']['options'];
+		$control = $options['sm_rail_scale'];
+
+		$this->assertSame( 230, $control['input_attrs']['data-effective-default'] );
+	}
+
+	public function test_layout_carries_the_effective_pitch_on_rail_pitch(): void {
+		// style-manager#215: no pitch reproduces the default Medium/Large — 0
+		// (Flat) is the documented placeholder (style_manager_effective_rail_pitch()).
+		$config  = $this->section->expose_add_style_manager_section_layout_config( [] );
+		$options = $config['sections']['style_manager_section']['options'];
+		$control = $options['sm_rail_pitch'];
+
+		$this->assertSame( 0, $control['input_attrs']['data-effective-default'] );
 	}
 
 	public function test_layout_places_the_small_only_rail_before_the_rail_scale(): void {

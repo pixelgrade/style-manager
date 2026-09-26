@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { resolveRangeDisplayValue } from '../../src/_js/site-editor/range-display-value.js';
+import { resolveRangeDisplayValue } from '../../src/_js/utils/range-display-value.js';
 
 // pixelgrade/style-manager#215: the Site Editor's NativeRange (native-controls.js)
 // passed `value={ undefined }` to RangeControl for an untouched "empty sentinel"
@@ -51,4 +51,36 @@ test( 'a real saved value of 0 is never treated as the empty sentinel', () => {
 
 test( 'a real saved value of "0" (string) is never treated as the empty sentinel', () => {
   assert.equal( resolveRangeDisplayValue( '0', -1, 1, 1 ), 0 );
+} );
+
+// style-manager#215 (follow-up): the (min+max)/2 midpoint above advertises a
+// width nothing actually applies (e.g. 260 for "Rail Base (Small)", when the
+// frontend renders 230 or a saved Small-only value). PHP derives the REAL
+// effective value from the same contract as style_manager_rail_widths() and
+// passes it through `input_attrs['data-effective-default']`; when present it
+// must win over the generic midpoint, for the slider AND the number field
+// alike (they share this single resolved value).
+
+test( 'a PHP-provided effective default wins over the (min+max)/2 midpoint', () => {
+  // "Rail Base (Small)" with nothing saved: the frontend renders 230, not
+  // the 260 midpoint.
+  assert.equal( resolveRangeDisplayValue( '', 100, 420, 1, 230 ), 230 );
+} );
+
+test( 'the effective default applies the same way to undefined and null', () => {
+  assert.equal( resolveRangeDisplayValue( undefined, 100, 420, 1, 230 ), 230 );
+  assert.equal( resolveRangeDisplayValue( null, 100, 420, 1, 230 ), 230 );
+} );
+
+test( 'an effective default of 0 (Rail Pitch\'s documented Flat placeholder) is honoured, not treated as absent', () => {
+  assert.equal( resolveRangeDisplayValue( '', 0, 45, 1, 0 ), 0 );
+} );
+
+test( 'without an effective default, the (min+max)/2 midpoint is still the fallback', () => {
+  assert.equal( resolveRangeDisplayValue( '', 100, 420, 1, undefined ), 260 );
+  assert.equal( resolveRangeDisplayValue( '', 100, 420, 1, null ), 260 );
+} );
+
+test( 'a real saved value ignores the effective default entirely', () => {
+  assert.equal( resolveRangeDisplayValue( '342', 100, 420, 1, 230 ), 342 );
 } );

@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+import { resolveRangeDisplayValue } from '../../../utils/range-display-value';
+
 export const handleRangeFields = () => {
 
   const rangeControlSelectors = [
@@ -20,6 +22,30 @@ export const handleRangeFields = () => {
     $rangeFields.each( function( i, obj ) {
       const $range = $( obj );
       const settingID = $range.data( 'customize-setting-link' );
+
+      // style-manager#215 (follow-up): while the setting is unset (PHP
+      // rendered an empty `value` attribute), the browser's own native
+      // <input type="range"> default-value fallback ((min+max)/2) shows a
+      // width nothing applies (e.g. 260 for "Rail Base (Small)", when the
+      // site actually renders 230 or a saved Small-only value). Snap the
+      // slider to the PHP-derived `data-effective-default` (present only on
+      // controls wired with one — see LayoutSection.php) BEFORE cloning it
+      // into the number field, so both start in sync on the real rendered
+      // value; a control with a real saved value (a non-empty `value`
+      // attribute) is left untouched, and one with no effective default
+      // keeps its previous (unchanged) midpoint rendering.
+      const rawValueAttr = $range.attr( 'value' );
+      if ( '' === rawValueAttr || undefined === rawValueAttr ) {
+        const effectiveDefaultAttr = $range.attr( 'data-effective-default' );
+        $range.val( resolveRangeDisplayValue(
+          rawValueAttr,
+          parseFloat( $range.attr( 'min' ) ),
+          parseFloat( $range.attr( 'max' ) ),
+          parseFloat( $range.attr( 'step' ) ) || 1,
+          undefined !== effectiveDefaultAttr ? parseFloat( effectiveDefaultAttr ) : undefined
+        ) );
+      }
+
       const $number = $range.clone();
 
       $number.attr( 'type', 'text' ).attr( 'class', 'range-value' ).removeAttr( 'data-value_entry' );
