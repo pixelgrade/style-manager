@@ -45,3 +45,13 @@ Re-apply after updating Carbon Fields.
 
 ### Service/Meta_Query_Service.php (1 location)
 - `filter_meta_query_array()`: Cast `$condition['key']` to string in `preg_replace()` call
+
+## Bundled Pimple container
+
+The WordPress.org build applies the PHP 8.5 `SplObjectStorage` API replacements
+to the staged copy of `core/Pimple/Container.php`. This preserves factory,
+extension, protected callable and shared-service behavior. The patch follows
+the offset methods used in the separately scoped Pimple 3.6.2 dependency.
+
+Run `php tests/carbon-fields-pimple-contract.php /path/to/extracted/style-manager`
+with PHP 8.5 or later to verify the release copy.

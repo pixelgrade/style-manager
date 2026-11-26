@@ -1,5 +1,7 @@
 const gulp = require( 'gulp' ),
   cp = require( 'child_process' ),
+  fs = require( 'fs' ),
+  path = require( 'path' ),
   commandExistsSync = require('command-exists').sync,
   log = require('fancy-log'),
   plugins = require( 'gulp-load-plugins' )();
@@ -34,8 +36,40 @@ function maybeFixIncorrectLineEndings( done ) {
 maybeFixIncorrectLineEndings.description = 'Make sure that all line endings in the files in the build directory are UNIX line endings.';
 gulp.task( 'build:fix:line-endings', maybeFixIncorrectLineEndings );
 
+// Carbon Fields bundles its own Pimple. Apply the PHP 8.5 API replacements
+// to the release copy until the bundled dependency includes them upstream.
+function fixCarbonFieldsPimple( done ) {
+  const { slug } = require( './gulpconfig.json' );
+  const filename = path.resolve( '..', 'build', slug, 'vendor/htmlburger/carbon-fields/core/Pimple/Container.php' );
+  const source = fs.readFileSync( filename, 'utf8' );
+  const replacements = [
+    [ '$this->factories->attach($callable);', '$this->factories->offsetSet($callable);' ],
+    [ '$this->protected->attach($callable);', '$this->protected->offsetSet($callable);' ],
+    [ '$this->factories->detach($factory);', '$this->factories->offsetUnset($factory);' ],
+    [ '$this->factories->attach($extended);', '$this->factories->offsetSet($extended);' ],
+  ];
+
+  let patched = source;
+  for ( const [ previous, replacement ] of replacements ) {
+    const previousCount = source.split( previous ).length - 1;
+    const replacementCount = source.split( replacement ).length - 1;
+    if ( previousCount + replacementCount !== 1 ) {
+      throw new Error( 'Review the Carbon Fields Pimple patch for this vendor version: ' + previous );
+    }
+    patched = patched.replace( previous, replacement );
+  }
+
+  if ( patched !== source ) {
+    fs.writeFileSync( filename, patched );
+  }
+  done();
+}
+
+gulp.task( 'build:fix:carbon-fields-pimple', fixCarbonFieldsPimple );
+
 gulp.task( 'build:fix', gulp.series(
   'build:fix:dir-permissions',
   'build:fix:file-permissions',
   'build:fix:line-endings',
+  'build:fix:carbon-fields-pimple',
 ) );
