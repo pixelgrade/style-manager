@@ -3,7 +3,7 @@ Contributors: pixelgrade, vlad.olaru, babbardel, razvanonofrei, gorby31
 Tags: design, site editor, typography, colors, color palettes
 Requires at least: 6.5
 Tested up to: 7.2
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,10 @@ When fetching design assets or submitting the plugin's existing settings statist
 * Google Fonts referenced by font palettes are served by Google Fonts (https://fonts.googleapis.com / https://fonts.gstatic.com). See Google's Privacy Policy at https://policies.google.com/privacy.
 
 == Changelog ==
+
+= 2.7.1 =
+* Fixed PHP deprecations in the bundled Pimple dependency.
+* Tested with WordPress 7.2.
 
 = 2.7.0 =
 * New: use fonts installed through the WordPress Font Library (Appearance > Fonts) in Style Manager's font fields. They are listed first, in a "Font Library" group, in both the Customizer and the Site Editor, and they load from your own site.
