@@ -152,7 +152,7 @@ class Container implements \ArrayAccess
         if (!\is_object($callable) || !\method_exists($callable, '__invoke')) {
             throw new \Pixelgrade\StyleManager\Vendor\Pimple\Exception\ExpectedInvokableException('Service definition is not a Closure or invokable object.');
         }
-        $this->factories->attach($callable);
+        $this->factories->offsetSet($callable);
         return $callable;
     }
     /**
@@ -171,7 +171,7 @@ class Container implements \ArrayAccess
         if (!\is_object($callable) || !\method_exists($callable, '__invoke')) {
             throw new \Pixelgrade\StyleManager\Vendor\Pimple\Exception\ExpectedInvokableException('Callable is not a Closure or invokable object.');
         }
-        $this->protected->attach($callable);
+        $this->protected->offsetSet($callable);
         return $callable;
     }
     /**
@@ -231,8 +231,8 @@ class Container implements \ArrayAccess
             return $callable($factory($c), $c);
         };
         if (isset($this->factories[$factory])) {
-            $this->factories->detach($factory);
-            $this->factories->attach($extended);
+            $this->factories->offsetUnset($factory);
+            $this->factories->offsetSet($extended);
         }
         return $this[$id] = $extended;
     }
